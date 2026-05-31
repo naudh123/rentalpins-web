@@ -1,14 +1,24 @@
 /** App-wide config from env (client-safe where prefixed NEXT_PUBLIC_). */
 
-export const deployEnv =
-  process.env.NEXT_PUBLIC_DEPLOY_ENV === "staging" ? "staging" : "production";
+import {
+  resolveDeployEnv,
+  resolveShowStagingBanner,
+  type DeployEnv,
+} from "@/lib/deploy-env";
+
+export type { DeployEnv };
+
+/** Staging only when DEPLOY_ENV=staging or BASE_PATH=/staging — never from SHOW_STAGING_BANNER on prod. */
+export const deployEnv = resolveDeployEnv();
 
 /** Must match `basePath` in next.config.ts (from NEXT_PUBLIC_BASE_PATH). */
 export const basePath =
   process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, "") || "";
 
-export const showStagingBanner =
-  deployEnv === "staging" || process.env.NEXT_PUBLIC_SHOW_STAGING_BANNER === "true";
+export const showStagingBanner = resolveShowStagingBanner(deployEnv);
+
+/** Height of AppShell mobile bottom nav (matches h-[4.25rem] spacer). */
+export const MOBILE_BOTTOM_NAV_HEIGHT = "4.25rem";
 
 function normalizeSiteUrl(raw: string): string {
   const trimmed = raw.replace(/\/$/, "");

@@ -16,6 +16,8 @@ interface Props {
   listingTitle: string;
   listingImage: string;
   className?: string;
+  /** Shorter label + compact tap target for mobile contact bar. */
+  compact?: boolean;
   /** GA4 `lead_placement` for contact funnel segmentation. */
   leadPlacement?: string;
 }
@@ -26,6 +28,7 @@ export default function MessageOwnerButton({
   listingTitle,
   listingImage,
   className = "",
+  compact = false,
   leadPlacement,
 }: Props) {
   const router = useRouter();
@@ -85,9 +88,13 @@ export default function MessageOwnerButton({
         onClick={handleClick}
         disabled={busy}
         aria-busy={busy}
-        className="w-full rounded-full border border-[var(--border)] py-3.5 text-center font-medium text-[var(--text)] hover:border-[var(--accent)] disabled:opacity-50 sm:w-auto sm:min-w-[160px] sm:px-6"
+        className={
+          compact
+            ? "flex min-h-11 w-full min-w-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-2 py-2.5 text-xs font-semibold text-[var(--text)] hover:border-[var(--accent)] disabled:opacity-50"
+            : "w-full rounded-full border border-[var(--border)] py-3.5 text-center font-medium text-[var(--text)] hover:border-[var(--accent)] disabled:opacity-50 sm:w-auto sm:min-w-[160px] sm:px-6"
+        }
       >
-        {busy ? "Opening chat…" : "Message owner"}
+        {busy ? "…" : compact ? "Message" : "Message owner"}
       </button>
       <span className="sr-only" aria-live="polite">
         {busy ? "Opening chat with owner." : error ? error : ""}

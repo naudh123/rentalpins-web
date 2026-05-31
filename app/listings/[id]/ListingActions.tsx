@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import MessageOwnerButton from "@/components/listings/MessageOwnerButton";
+import { MOBILE_BOTTOM_NAV_HEIGHT } from "@/lib/config";
 import { trackEvent, trackLeadStarted, trackLeadSubmitted } from "@/lib/ga4";
 import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
 
@@ -13,6 +14,9 @@ interface Props {
   listingImage: string;
   listingUrl: string;
 }
+
+const mobileBtn =
+  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-full px-2 py-2.5 text-xs font-semibold leading-tight sm:text-sm";
 
 export default function ListingActions({
   listingId,
@@ -59,14 +63,16 @@ export default function ListingActions({
   }
 
   const hasChatFallback = Boolean(ownerUid);
-  const contactRow = (placement: "desktop" | "mobile") => (
+  const mobileBottom = `calc(${MOBILE_BOTTOM_NAV_HEIGHT} + env(safe-area-inset-bottom, 0px))`;
+
+  const desktopContact = (
     <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap">
       {wa ? (
         <a
           href={wa}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => onWhatsAppClick(placement)}
+          onClick={() => onWhatsAppClick("desktop")}
           className="rp-btn flex flex-1 items-center justify-center bg-[#25D366] py-3.5 font-medium text-white shadow-none hover:brightness-105"
         >
           WhatsApp
@@ -83,7 +89,7 @@ export default function ListingActions({
       {telHref && (
         <a
           href={telHref}
-          onClick={() => onCallClick(placement)}
+          onClick={() => onCallClick("desktop")}
           className="rp-btn rp-btn-secondary flex flex-1 py-3.5"
         >
           Call
@@ -94,9 +100,57 @@ export default function ListingActions({
         sellerUid={ownerUid}
         listingTitle={title}
         listingImage={listingImage}
-        leadPlacement={placement}
+        leadPlacement="desktop"
         className="flex-1 [&_button]:rp-btn [&_button]:rp-btn-secondary [&_button]:w-full [&_button]:py-3.5"
       />
+    </div>
+  );
+
+  const mobileActions = (
+    <div
+      className={`grid w-full gap-2 ${
+        wa && telHref && hasChatFallback
+          ? "grid-cols-3"
+          : [wa, telHref, hasChatFallback].filter(Boolean).length === 2
+            ? "grid-cols-2"
+            : "grid-cols-1"
+      }`}
+    >
+      {wa ? (
+        <a
+          href={wa}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => onWhatsAppClick("mobile")}
+          className={`${mobileBtn} bg-[#25D366] text-white shadow-none hover:brightness-105`}
+        >
+          <span className="truncate">WhatsApp</span>
+        </a>
+      ) : null}
+      {telHref ? (
+        <a
+          href={telHref}
+          onClick={() => onCallClick("mobile")}
+          className={`${mobileBtn} rp-btn-secondary border border-[var(--border)] bg-[var(--surface)]`}
+        >
+          <span className="truncate">Call</span>
+        </a>
+      ) : null}
+      {hasChatFallback ? (
+        <MessageOwnerButton
+          listingId={listingId}
+          sellerUid={ownerUid}
+          listingTitle={title}
+          listingImage={listingImage}
+          leadPlacement="mobile"
+          compact
+          className="min-w-0 flex-1"
+        />
+      ) : !wa ? (
+        <p className="col-span-full text-center text-xs text-[var(--muted)]">
+          Owner contact not available.
+        </p>
+      ) : null}
     </div>
   );
 
@@ -104,17 +158,24 @@ export default function ListingActions({
     <div id="listing-contact" ref={contactRef} className="scroll-mt-24">
       <div className="rp-card mt-4 hidden p-4 sm:block" aria-label="Contact owner">
         <p className="rp-label mb-3">Contact owner</p>
-        {contactRow("desktop")}
+        {desktopContact}
       </div>
 
       <div
-        className="fixed inset-x-0 bottom-[4.25rem] z-40 border-t border-[var(--border-subtle)] rp-glass p-3 sm:bottom-0 sm:hidden"
+        className="fixed inset-x-0 z-40 border-t border-[var(--border-subtle)] rp-glass px-3 py-2.5 sm:hidden"
         aria-label="Contact owner"
-        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        style={{ bottom: mobileBottom }}
       >
-        {contactRow("mobile")}
+        <div className="mx-auto w-full max-w-lg">{mobileActions}</div>
       </div>
-      <div className="h-36 sm:hidden" aria-hidden />
+
+      <div
+        className="sm:hidden"
+        style={{
+          height: `calc(${MOBILE_BOTTOM_NAV_HEIGHT} + 4.5rem + env(safe-area-inset-bottom, 0px))`,
+        }}
+        aria-hidden
+      />
     </div>
   );
 }
