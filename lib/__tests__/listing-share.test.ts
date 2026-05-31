@@ -40,6 +40,13 @@ describe("listing-share", () => {
     );
   });
 
+  it("uses production URL when NEXT_PUBLIC_SITE_URL is localhost", () => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "http://localhost:3000");
+    expect(listingCanonicalUrl("abc123")).toBe(
+      "https://www.rentalpins.com/listings/abc123"
+    );
+  });
+
   it("points OG image at dynamic opengraph-image route", () => {
     expect(listingOgImagePath("abc123")).toBe(
       "/listings/abc123/opengraph-image"

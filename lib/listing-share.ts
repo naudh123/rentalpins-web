@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ListingDetail } from "@/lib/types/listing";
-import { appPath, siteUrl } from "@/lib/config";
+import { appPath, publicSiteUrl } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
 
 export const LISTING_OG_WIDTH = 1200;
@@ -8,7 +8,7 @@ export const LISTING_OG_HEIGHT = 630;
 
 /** Public listing URL — always absolute, www host in production. */
 export function listingCanonicalUrl(listingId: string): string {
-  return `${siteUrl}${appPath(`/listings/${listingId}`)}`;
+  return `${publicSiteUrl()}${appPath(`/listings/${listingId}`)}`;
 }
 
 /** Path to dynamic OG image (resolved via metadataBase). */

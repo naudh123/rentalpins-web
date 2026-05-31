@@ -20,15 +20,41 @@ export const showStagingBanner = resolveShowStagingBanner(deployEnv);
 /** Height of AppShell mobile bottom nav (matches bottom spacer + Post FAB). */
 export const MOBILE_BOTTOM_NAV_HEIGHT = "4.75rem";
 
+const DEFAULT_PUBLIC_SITE = "https://www.rentalpins.com";
+
 function normalizeSiteUrl(raw: string): string {
   const trimmed = raw.replace(/\/$/, "");
-  if (trimmed === "https://rentalpins.com") return "https://www.rentalpins.com";
+  if (trimmed === "https://rentalpins.com") return DEFAULT_PUBLIC_SITE;
   return trimmed;
 }
 
-export const siteUrl = normalizeSiteUrl(
-  process.env.NEXT_PUBLIC_SITE_URL || "https://www.rentalpins.com"
-);
+function readSiteUrlFromEnv(): string {
+  return normalizeSiteUrl(
+    process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_PUBLIC_SITE
+  );
+}
+
+function isLocalDevSiteUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname;
+    return host === "localhost" || host === "127.0.0.1";
+  } catch {
+    return false;
+  }
+}
+
+export const siteUrl = readSiteUrlFromEnv();
+
+/** Public URL for share/copy/WhatsApp — never localhost so recipients can open links. */
+export function publicSiteUrl(): string {
+  const override = process.env.NEXT_PUBLIC_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (override && !isLocalDevSiteUrl(override)) {
+    return normalizeSiteUrl(override);
+  }
+  const configured = readSiteUrlFromEnv();
+  if (isLocalDevSiteUrl(configured)) return DEFAULT_PUBLIC_SITE;
+  return configured;
+}
 
 /** Production defaults to required unless explicitly set to "false". */
 export const requirePhoneVerification =

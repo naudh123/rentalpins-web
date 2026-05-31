@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { appPath, siteUrl } from "@/lib/config";
+import { appPath, publicSiteUrl } from "@/lib/config";
 import { trackEvent } from "@/lib/ga4";
 
 interface Props {
@@ -31,7 +31,7 @@ export default function CopySearchLinkButton({ disabled = false }: Props) {
       typeof window !== "undefined" ? window.location.search.replace(/^\?/, "") : "";
     const qs = liveQs || searchParams.toString();
     const path = appPath(pathname || "/search");
-    const url = `${siteUrl}${path}${qs ? `?${qs}` : ""}`;
+    const url = `${publicSiteUrl()}${path}${qs ? `?${qs}` : ""}`;
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
         await navigator.share({
