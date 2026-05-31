@@ -37,7 +37,7 @@ import {
   extractSearchKeywords,
   generateRankingKey,
 } from "@/lib/listing-publish";
-import { appPath } from "@/lib/config";
+import { appPath, requirePhoneVerification } from "@/lib/config";
 import { parsePostDraftListing } from "@/lib/draft-listing";
 import { uploadListingImages } from "@/lib/storage-upload";
 import { mapCallableError } from "@/lib/auth-errors";
@@ -437,17 +437,21 @@ export default function PostListingForm({ listingId = null }: Props) {
   }, [listingId, user]);
 
   if (needsPhoneLink) {
+    const postNext = listingId ? `/post?listingId=${listingId}` : "/post";
     return (
       <div className="mx-auto max-w-md px-4 py-12 text-center">
-        <h1 className="font-serif text-2xl">Verify your phone</h1>
+        <h1 className="font-serif text-2xl">Add your mobile number</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">
-          Posting requires a verified mobile number on your account.
+          You signed in with Google. To post a listing, verify your mobile number
+          once — renters will contact you on WhatsApp using this number.
         </p>
         <Link
-          href={appPath("/auth/login?link=1&next=/post")}
+          href={appPath(
+            `/auth/login?link=1&next=${encodeURIComponent(postNext)}`
+          )}
           className="mt-6 inline-block rounded-full bg-[var(--accent)] px-6 py-3 font-medium text-[var(--accent-fg)]"
         >
-          Verify phone
+          Verify mobile (OTP)
         </Link>
       </div>
     );
@@ -530,11 +534,19 @@ export default function PostListingForm({ listingId = null }: Props) {
   }
 
   if (!canPostListing) {
+    const postNext = listingId ? `/post?listingId=${listingId}` : "/post";
     return (
       <div className="mx-auto max-w-md px-4 py-12 text-center">
-        <p className="text-[var(--muted)]">Sign in to post a listing.</p>
-        <Link href={appPath("/auth/login?next=/post")} className="mt-4 text-[var(--accent)]">
-          Sign in
+        <p className="text-[var(--muted)]">
+          {user
+            ? "Complete sign-in to post a listing."
+            : "Sign in to post a listing."}
+        </p>
+        <Link
+          href={appPath(`/auth/login?next=${encodeURIComponent(postNext)}`)}
+          className="mt-4 text-[var(--accent)]"
+        >
+          {user ? "Continue sign-in" : "Sign in"}
         </Link>
       </div>
     );
@@ -609,6 +621,23 @@ export default function PostListingForm({ listingId = null }: Props) {
       return;
     }
 
+    const ownerPhone = user.phoneNumber || profile.phone || "";
+    const phoneDigits = ownerPhone.replace(/\D/g, "");
+    if (requirePhoneVerification && !user.phoneNumber) {
+      failValidation(
+        "phone_not_verified",
+        "Verify your mobile number before posting (needed for WhatsApp contact)."
+      );
+      return;
+    }
+    if (phoneDigits.length < 8) {
+      failValidation(
+        "phone_missing",
+        "A valid mobile number is required so renters can reach you on WhatsApp."
+      );
+      return;
+    }
+
     setAiNotice(null);
     setError("");
     submittingRef.current = true;
@@ -616,7 +645,6 @@ export default function PostListingForm({ listingId = null }: Props) {
 
     try {
       const searchableTitle = createSearchableTitle(trimmedTitle);
-      const ownerPhone = profile.phone || user.phoneNumber || "";
       const db = getClientDb();
 
       const savedCount = photoSlots.filter((s) => s.kind === "saved").length;

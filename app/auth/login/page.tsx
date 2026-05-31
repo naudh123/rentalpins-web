@@ -77,7 +77,7 @@ function LoginContent() {
   }
 
   const showPhoneOnly =
-    linkPhone || Boolean(user && (needsPhoneLink || mustVerifyPhone(user, profile)));
+    linkPhone || Boolean(user && (needsPhoneLink || mustVerifyPhone(user)));
   const authState = user ? "authenticated" : "unauthenticated";
 
   function authStateMeta() {
@@ -295,7 +295,7 @@ function LoginContent() {
 
   useEffect(() => {
     if (loading || !user || confirmation) return;
-    if (!canLeaveLogin(user, profile)) return;
+    if (!canLeaveLogin(user)) return;
     if (!trackedAutoRedirect) {
       setTrackedAutoRedirect(true);
       trackEvent("login_redirected_after_auth", {
@@ -555,7 +555,7 @@ function LoginContent() {
     try {
       const p = await signInWithGoogle();
       const currentUser = getClientAuth().currentUser;
-      if (canLeaveLogin(currentUser, p)) {
+      if (canLeaveLogin(currentUser)) {
         setGoogleResolved(true);
         trackEvent("login_success", {
           destination: normalizeNext(next),
@@ -663,8 +663,8 @@ function LoginContent() {
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
           {showPhoneOnly
-            ? "A verified mobile number is required to post listings and contact owners."
-            : "Sign in with phone OTP or Google to save searches, chat, and post."}
+            ? "Link your mobile with a one-time OTP. It is saved on your listing so renters can message you on WhatsApp."
+            : "Sign in with Google or phone OTP. Google users verify mobile once before posting."}
         </p>
 
         {showPhoneOnly && (signedInEmail || signedInName) && (

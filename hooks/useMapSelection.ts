@@ -7,6 +7,10 @@ import {
   flushPersistedMapView,
   type PersistedMapView,
 } from "@/lib/map-last-view";
+import {
+  ensureMobileListingFocusZoom,
+  isMobileMapLayout,
+} from "@/lib/map-mobile";
 
 export type MapSelectionSource = "pin" | "list" | "keyboard" | "hover";
 
@@ -90,20 +94,12 @@ export function useMapSelection({
         if (view) flushPersistedMapView(view);
         if (skipMapSyncRef) skipMapSyncRef.current = true;
         googleMap.panTo({ lat: listing.lat, lng: listing.lng });
-        if ((googleMap.getZoom() ?? 0) < 15) {
-          googleMap.setZoom(15);
-        }
-      }
-      if (
-        source === "pin" &&
-        typeof window !== "undefined" &&
-        window.matchMedia("(max-width: 767px)").matches
-      ) {
-        onPinSelectedMobile?.();
+        if (isMobileMapLayout()) ensureMobileListingFocusZoom(googleMap);
+        else if ((googleMap.getZoom() ?? 0) < 15) googleMap.setZoom(15);
       }
       scheduleUrlSync();
     },
-    [buildPersistedView, mapRef, onPinSelectedMobile, scheduleUrlSync, skipMapSyncRef]
+    [buildPersistedView, mapRef, scheduleUrlSync, skipMapSyncRef]
   );
 
   useEffect(() => {
@@ -119,7 +115,8 @@ export function useMapSelection({
     if (googleMap) {
       if (skipMapSyncRef) skipMapSyncRef.current = true;
       googleMap.panTo({ lat: found.lat, lng: found.lng });
-      if ((googleMap.getZoom() ?? 0) < 15) googleMap.setZoom(15);
+      if (isMobileMapLayout()) ensureMobileListingFocusZoom(googleMap);
+      else if ((googleMap.getZoom() ?? 0) < 15) googleMap.setZoom(15);
     }
     onInitialSelectedFromUrlRef.current?.();
   }, [initialSelectedId, listings, mapRef, skipMapSyncRef]);

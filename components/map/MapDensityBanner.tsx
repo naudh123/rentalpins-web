@@ -11,7 +11,7 @@ interface Props {
 export default function MapDensityBanner({ message, onZoomIn, onFitAll, onDismiss }: Props) {
   return (
     <div
-      className="pointer-events-auto absolute bottom-32 left-3 right-3 z-10 mx-auto flex max-w-md items-center justify-between gap-2 rounded-2xl border border-[var(--brand-orange)]/25 bg-[var(--surface)]/95 px-3 py-2.5 text-xs text-[var(--brand-navy)] shadow-[0_8px_32px_rgba(30,58,110,0.12)] backdrop-blur-sm md:bottom-16 md:left-4 md:right-auto md:gap-3 md:px-4"
+      className="pointer-events-auto absolute bottom-32 left-3 right-3 z-10 mx-auto hidden max-w-md items-center justify-between gap-2 rounded-2xl border border-[var(--brand-orange)]/25 bg-[var(--surface)]/95 px-3 py-2.5 text-xs text-[var(--brand-navy)] shadow-[0_8px_32px_rgba(30,58,110,0.12)] backdrop-blur-sm md:bottom-16 md:left-4 md:right-auto md:flex md:gap-3 md:px-4"
       role="status"
       aria-live="polite"
     >

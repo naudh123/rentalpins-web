@@ -193,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const needsPhoneLink = Boolean(
-    user && !user.phoneNumber && (!profile?.phone || profile.phone.length < 8)
+    user && requirePhoneVerification && !user.phoneNumber
   );
 
   const isBlocked = Boolean(profile?.isBlocked);

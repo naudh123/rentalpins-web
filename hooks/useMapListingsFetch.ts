@@ -64,8 +64,11 @@ export function useMapListingsFetch({
   const lastFetchedBoundsRef = useRef<MapBounds | null>(null);
   const lastFetchedZoomRef = useRef<number | null>(null);
   const lastFetchKeyRef = useRef<string | null>(null);
+  const lastEmptyFetchAtRef = useRef(0);
   const skipNextIdleFetchRef = useRef(false);
   const listingsLengthRef = useRef(initial.listings.length);
+
+  const EMPTY_REFETCH_MIN_MS = 4000;
 
   useEffect(() => {
     listingsLengthRef.current = rawListings.length;
@@ -89,13 +92,23 @@ export function useMapListingsFetch({
         return;
       }
 
+      if (
+        !force &&
+        listingsLengthRef.current === 0 &&
+        lastEmptyFetchAtRef.current > 0 &&
+        Date.now() - lastEmptyFetchAtRef.current < EMPTY_REFETCH_MIN_MS
+      ) {
+        onFetched?.(map);
+        return;
+      }
+
       fetchAbortRef.current?.abort();
       const abortController = new AbortController();
       fetchAbortRef.current = abortController;
       const generation = ++fetchGenerationRef.current;
-      const isInitialLoad = listingsLengthRef.current === 0;
+      const isInitialLoad = listingsLengthRef.current === 0 && !lastFetchKeyRef.current;
       if (isInitialLoad) setLoading(true);
-      else setRefreshing(true);
+      else if (listingsLengthRef.current > 0) setRefreshing(true);
       setFetchError("");
 
       try {
@@ -159,6 +172,8 @@ export function useMapListingsFetch({
         setPrefixCapActive(
           typeof data.prefixCapActive === "boolean" ? data.prefixCapActive : false
         );
+        if (mergedCount === 0) lastEmptyFetchAtRef.current = Date.now();
+        else lastEmptyFetchAtRef.current = 0;
         onFetched?.(map);
       } catch (e) {
         if (abortController.signal.aborted) return;
@@ -193,12 +208,18 @@ export function useMapListingsFetch({
     lastFetchedBoundsRef.current = null;
     lastFetchedZoomRef.current = null;
     lastFetchKeyRef.current = null;
+    lastEmptyFetchAtRef.current = 0;
   }, []);
 
   const pruneToViewport = useCallback((map: google.maps.Map) => {
     const strictBounds = boundsForMap(map);
     const zoom = map.getZoom() ?? DEFAULT_MAP_ZOOM;
-    setRawListings((prev) => pruneListingsToViewport(prev, strictBounds, zoom));
+    setRawListings((prev) => {
+      if (prev.length === 0) return prev;
+      const next = pruneListingsToViewport(prev, strictBounds, zoom);
+      if (next.length === prev.length) return prev;
+      return next;
+    });
   }, []);
 
   const abortFetch = useCallback(() => {

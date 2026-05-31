@@ -10,16 +10,23 @@ function PostPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const listingId = searchParams.get("listingId");
-  const { user, loading } = useAuth();
+  const { user, loading, needsPhoneLink } = useAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
-      const next = listingId ? `/post?listingId=${listingId}` : "/post";
+    if (loading) return;
+    const next = listingId ? `/post?listingId=${listingId}` : "/post";
+    if (!user) {
       router.replace(appPath(`/auth/login?next=${encodeURIComponent(next)}`));
+      return;
     }
-  }, [user, loading, router, listingId]);
+    if (needsPhoneLink) {
+      router.replace(
+        appPath(`/auth/login?link=1&next=${encodeURIComponent(next)}`)
+      );
+    }
+  }, [user, loading, needsPhoneLink, router, listingId]);
 
-  if (loading) {
+  if (loading || needsPhoneLink) {
     return <p className="p-8 text-center text-[var(--muted)]">Loading…</p>;
   }
 

@@ -170,9 +170,8 @@ export function useMapKeyboardShortcuts({
   ]);
 }
 
-/** map → peek → list → map */
+/** map ↔ list on mobile */
 export function nextMapMobileView(view: MapMobileView): MapMobileView {
-  if (view === "map") return "peek";
-  if (view === "peek") return "list";
-  return "map";
+  if (view === "peek") return "map";
+  return view === "map" ? "list" : "map";
 }

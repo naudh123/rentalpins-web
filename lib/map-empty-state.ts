@@ -16,14 +16,18 @@ export function resolveMapEmptyState(opts: {
     listingCount,
     totalInBounds,
     loading,
-    refreshing,
     areaMayHaveMore,
     filtersActive,
     keywordsActive,
     drawnAreaActive,
   } = opts;
 
-  if (loading || refreshing || listingCount > 0) {
+  if (listingCount > 0) {
+    return { show: false, variant: "no_listings" };
+  }
+
+  // Initial load only — background refresh with 0 pins keeps the empty UI stable.
+  if (loading) {
     return { show: false, variant: "no_listings" };
   }
 

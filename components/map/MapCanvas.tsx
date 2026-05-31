@@ -184,15 +184,13 @@ export default function MapCanvas({
       role="application"
       aria-label="Interactive rental map"
       aria-describedby="map-keyboard-help"
-      className={`relative min-h-[60vh] flex-1 overflow-hidden border-[var(--border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)] focus-visible:ring-offset-2 md:min-h-0 md:border-r ${
-        mobileView === "list" ? "max-md:hidden" : ""
-      }`}
+      className="relative min-h-[60vh] flex-1 overflow-hidden border-[var(--border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)] focus-visible:ring-offset-2 md:min-h-0 md:border-r"
       style={{ backgroundColor: MAP_ROADMAP_BACKGROUND }}
     >
       <p id="map-keyboard-help" className="sr-only">
         Press M to focus the map. Use arrow keys to browse listing pins, Enter to open the
-        selected listing, and Escape to clear selection. On mobile, swipe left for the list,
-        swipe right from the screen edge for the map, or swipe up from the map for results.
+        selected listing, and Escape to clear selection. On mobile, use the Map and List tabs
+        or the sheet handle to switch views; pinch to zoom the map.
       </p>
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {mapPinStatusText}
@@ -290,7 +288,6 @@ export default function MapCanvas({
 
       <MapEmptyOverlay
         visible={showEmptyOverlay}
-        className={mobileView === "peek" ? "max-md:hidden" : ""}
         variant={mapEmptyVariant}
         totalInBounds={totalInBounds}
         filtersActive={mapEmptyFiltersActive}
@@ -328,7 +325,7 @@ export default function MapCanvas({
 
       {resultsCountInfo.mapBadge && listings.length > 0 && (
         <div
-          className="pointer-events-none absolute left-3 top-[7.5rem] z-10 rounded-full border border-[var(--border)] bg-[var(--surface)]/95 px-3 py-1.5 text-xs font-medium text-[var(--brand-navy)] shadow-sm md:top-[8rem]"
+          className="pointer-events-none absolute left-3 top-[7.5rem] z-10 hidden rounded-full border border-[var(--border)] bg-[var(--surface)]/95 px-3 py-1.5 text-xs font-medium text-[var(--brand-navy)] shadow-sm md:top-[8rem] md:block"
           aria-live="polite"
         >
           {resultsCountInfo.mapBadge}
@@ -351,7 +348,13 @@ export default function MapCanvas({
         <MapKeywordChip keywords={textQuery} onClear={onClearKeywords} />
       </div>
 
-      {loading && !fetchError && (
+      {loading && !fetchError && listings.length === 0 && (
+        <div className="pointer-events-none absolute left-3 top-[4.25rem] rp-glass rounded-full px-3 py-1.5 text-xs text-[var(--muted)] md:top-[4.5rem]">
+          <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--brand-orange)]" />{" "}
+          Loading…
+        </div>
+      )}
+      {refreshing && !loading && !fetchError && listings.length > 0 && (
         <div className="pointer-events-none absolute left-3 top-[4.25rem] rp-glass rounded-full px-3 py-1.5 text-xs text-[var(--muted)] md:top-[4.5rem]">
           <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-[var(--brand-orange)]" />{" "}
           Updating…

@@ -9,6 +9,21 @@ import {
 import { mapGestureHandlingDuringDraw } from "@/lib/map-gestures";
 
 describe("resolveMapEmptyState", () => {
+  it("stays visible during background refresh when map has no pins", () => {
+    expect(
+      resolveMapEmptyState({
+        listingCount: 0,
+        totalInBounds: 0,
+        loading: false,
+        refreshing: true,
+        areaMayHaveMore: false,
+        filtersActive: false,
+        keywordsActive: false,
+        drawnAreaActive: false,
+      })
+    ).toEqual({ show: true, variant: "no_listings" });
+  });
+
   it("hides while loading or when pins exist", () => {
     expect(
       resolveMapEmptyState({

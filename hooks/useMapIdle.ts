@@ -72,18 +72,14 @@ export function useMapIdle({
       }
     }
 
-    const skipFetch =
-      skipNextIdleFetchRef.current &&
+    const boundsUnchanged =
       lastFetchedBoundsRef.current &&
       lastFetchedZoomRef.current === zoom &&
-      boundsNearlyEqual(bounds, lastFetchedBoundsRef.current);
+      boundsNearlyEqual(bounds, lastFetchedBoundsRef.current, 0.002);
+    const skipFetch =
+      skipNextIdleFetchRef.current && boundsUnchanged;
     if (skipNextIdleFetchRef.current) skipNextIdleFetchRef.current = false;
-    if (
-      skipFetch ||
-      (lastFetchedBoundsRef.current &&
-        lastFetchedZoomRef.current === zoom &&
-        boundsNearlyEqual(bounds, lastFetchedBoundsRef.current))
-    ) {
+    if (skipFetch || boundsUnchanged) {
       return;
     }
     scheduleFetchBounds(map);

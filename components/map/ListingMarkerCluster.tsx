@@ -26,6 +26,12 @@ import {
 import { buildPriceMarkerIcon, buildHoverRingIcon, buildUnitCountMarkerIcon, formatPinPrice } from "@/lib/map-pins";
 import { resolveHoverRingPosition } from "@/lib/map-hover-ring-position";
 import {
+  afterFitBoundsClampMobile,
+  isMobileMapLayout,
+  MOBILE_MAP_MAX_FIT_ZOOM,
+  MOBILE_MAP_MIN_FOCUS_ZOOM,
+} from "@/lib/map-mobile";
+import {
   buildingKeysForAffectedListings,
   buildingMarkerStyleKey,
   isBuildingHoverOnlyHighlight,
@@ -497,13 +503,31 @@ export default function ListingMarkerCluster({
           m?.setPosition(pos);
         }
         mapInstance.panTo(center);
-        if (zoom < 15) mapInstance.setZoom(15);
+        if (isMobileMapLayout()) {
+          if (zoom < MOBILE_MAP_MIN_FOCUS_ZOOM) {
+            mapInstance.setZoom(MOBILE_MAP_MIN_FOCUS_ZOOM);
+          }
+        } else if (zoom < 15) {
+          mapInstance.setZoom(15);
+        }
         return;
       }
 
       spiderfyDisplayRef.current.clear();
       const bounds = cluster.bounds;
-      if (bounds) mapInstance.fitBounds(bounds, 48);
+      if (bounds) {
+        if (isMobileMapLayout()) {
+          mapInstance.panTo(bounds.getCenter());
+          const nextZoom = Math.min(
+            Math.max(zoom + 1, MOBILE_MAP_MIN_FOCUS_ZOOM),
+            MOBILE_MAP_MAX_FIT_ZOOM
+          );
+          if ((mapInstance.getZoom() ?? 0) < nextZoom) mapInstance.setZoom(nextZoom);
+        } else {
+          mapInstance.fitBounds(bounds, 48);
+        }
+        afterFitBoundsClampMobile(mapInstance);
+      }
     };
 
     if (!clustererRef.current) {

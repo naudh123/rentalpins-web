@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, type RefObject } from "react";
 import { trackEvent } from "@/lib/ga4";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
-import { useMobileMapEdgeSwipe } from "@/hooks/useMobileMapEdgeSwipe";
 import { useMobileMapSheetDrag } from "@/hooks/useMobileMapSheet";
 import type { MapMobileView } from "@/components/map/MapMobileViewSwitcher";
 import { nextMapMobileView } from "@/hooks/useMapKeyboardShortcuts";
@@ -56,19 +55,12 @@ export function useMapMobileInteractions({
     sheetLastTriggerRef.current?.focus();
   }, [mobileView, sheetLastTriggerRef]);
 
-  useMobileMapEdgeSwipe({
-    mapRegionRef,
-    panelRef: resultsPanelRef,
-    view: mobileView,
-    onViewChange: (next) => setMobileViewTracked(next, "edge_swipe"),
-  });
-
   useMobileMapSheetDrag({
     panelRef: resultsPanelRef,
     handleRef: sheetHandleRef,
     open: mobileView === "list",
     onOpen: (method) => openMobileSheet(method),
-    onClose: () => setMobileViewTracked("peek", "drag_handle"),
+    onClose: () => setMobileViewTracked("map", "drag_handle"),
   });
 
   useFocusTrap({

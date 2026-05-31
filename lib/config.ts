@@ -14,8 +14,11 @@ export const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
   "https://www.rentalpins.com";
 
+/** Production defaults to required unless explicitly set to "false". */
 export const requirePhoneVerification =
-  process.env.NEXT_PUBLIC_REQUIRE_PHONE_VERIFICATION === "true";
+  process.env.NEXT_PUBLIC_REQUIRE_PHONE_VERIFICATION === "true" ||
+  (deployEnv === "production" &&
+    process.env.NEXT_PUBLIC_REQUIRE_PHONE_VERIFICATION !== "false");
 
 export const gaMeasurementId =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-VGVQGGL24W";

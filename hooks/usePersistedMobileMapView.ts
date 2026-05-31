@@ -6,14 +6,15 @@ import type { MapMobileView } from "@/components/map/MapMobileViewSwitcher";
 const STORAGE_KEY = "rp_map_mobile_view";
 
 function readStoredView(): MapMobileView {
-  if (typeof window === "undefined") return "peek";
+  if (typeof window === "undefined") return "map";
   try {
     const v = sessionStorage.getItem(STORAGE_KEY);
-    if (v === "map" || v === "peek" || v === "list") return v;
+    if (v === "map" || v === "list") return v;
+    if (v === "peek") return "map";
   } catch {
     // Ignore storage errors.
   }
-  return "peek";
+  return "map";
 }
 
 /** Remember Map / Both / List on mobile across visits in the same session. */

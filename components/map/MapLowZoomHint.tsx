@@ -14,7 +14,7 @@ export default function MapLowZoomHint({ visible, listingCount, onDismiss }: Pro
 
   return (
     <div
-      className="pointer-events-auto absolute bottom-24 left-3 right-3 z-10 mx-auto flex max-w-sm items-center justify-between gap-2 rounded-2xl border border-[var(--brand-navy)]/15 bg-[var(--surface)]/90 px-3 py-2.5 text-xs text-[var(--brand-navy)] shadow-sm backdrop-blur-sm md:bottom-20 md:left-auto md:right-4 md:px-4"
+      className="pointer-events-auto absolute bottom-24 left-3 right-3 z-10 mx-auto hidden max-w-sm items-center justify-between gap-2 rounded-2xl border border-[var(--brand-navy)]/15 bg-[var(--surface)]/90 px-3 py-2.5 text-xs text-[var(--brand-navy)] shadow-sm backdrop-blur-sm md:bottom-20 md:left-auto md:right-4 md:flex md:px-4"
       role="status"
       aria-live="polite"
     >

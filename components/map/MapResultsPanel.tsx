@@ -120,9 +120,7 @@ export default function MapResultsPanel({
       className={`rp-map-results-panel fixed inset-x-0 bottom-0 z-30 flex flex-col border-t border-[var(--border)] bg-[var(--bg)] pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(0,0,0,0.08)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none md:static md:max-h-none md:shrink-0 md:translate-y-0 md:border-l md:border-t-0 md:pb-0 md:shadow-none md:relative ${
         mobileView === "map"
           ? "pointer-events-none translate-y-full"
-          : mobileView === "list"
-            ? "max-h-[min(92dvh,100%)] translate-y-0"
-            : "max-h-[82vh] translate-y-[calc(100%-4.25rem)]"
+          : "max-h-[min(92dvh,100%)] translate-y-0"
       }`}
       style={{ ["--map-panel-width" as string]: `${panelWidth}px` }}
       role={mobileView === "list" ? "dialog" : undefined}
@@ -143,7 +141,7 @@ export default function MapResultsPanel({
         aria-label={mobileView === "list" ? "Collapse listings panel" : "Expand listings panel"}
         onClick={(e) => {
           onSheetTrigger(e.currentTarget);
-          if (mobileView === "list") onMobileViewChange("peek", "drag_handle");
+          if (mobileView === "list") onMobileViewChange("map", "drag_handle");
           else onMobileViewChange("list", "drag_handle");
         }}
         aria-expanded={mobileView === "list"}
@@ -163,7 +161,7 @@ export default function MapResultsPanel({
         refreshing={refreshing}
         countInfo={countInfo}
         saveSearchSlot={
-          <div className="flex items-center gap-1">
+          <div className="hidden items-center gap-1 md:flex">
             <button
               type="button"
               className="rp-btn rp-btn-ghost !px-2.5 text-xs"

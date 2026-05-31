@@ -8,11 +8,10 @@ interface Props {
   onChange: (view: MapMobileView) => void;
 }
 
-/** Luxury segmented control — full map, split peek, or full list on mobile. */
+/** Map ↔ list on mobile (full map uses pinch zoom; no split “Both” sheet). */
 export default function MapMobileViewSwitcher({ view, listingCount, onChange }: Props) {
   const tabs: { id: MapMobileView; label: string }[] = [
     { id: "map", label: "Map" },
-    { id: "peek", label: "Both" },
     { id: "list", label: listingCount > 0 ? `List (${listingCount})` : "List" },
   ];
 

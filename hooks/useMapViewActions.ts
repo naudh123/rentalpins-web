@@ -16,6 +16,11 @@ import type { SearchUrlState } from "@/lib/search-url";
 import type { MapBounds } from "@/lib/types/saved-search";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
 import { fitBoundsPaddingForMobileView } from "@/lib/map-fit-padding";
+import {
+  afterFitBoundsClampMobile,
+  ensureMobileListingFocusZoom,
+  isMobileMapLayout,
+} from "@/lib/map-mobile";
 import type { MapMobileView } from "@/components/map/MapMobileViewSwitcher";
 import type { DrawMode } from "@/components/map/MapDrawAreaController";
 import { trackEvent } from "@/lib/ga4";
@@ -145,7 +150,8 @@ export function useMapViewActions({
       );
       if (coords.length === 1) {
         map.panTo({ lat: coords[0].lat, lng: coords[0].lng });
-        if ((map.getZoom() ?? 0) < 15) map.setZoom(15);
+        if (isMobileMapLayout()) ensureMobileListingFocusZoom(map);
+        else if ((map.getZoom() ?? 0) < 15) map.setZoom(15);
         trackEvent("map_fit_all_results_clicked", { count: 1 });
         return;
       }
@@ -153,6 +159,7 @@ export function useMapViewActions({
       const bounds = new google.maps.LatLngBounds();
       for (const l of coords) bounds.extend({ lat: l.lat, lng: l.lng });
       map.fitBounds(bounds, fitBoundsPaddingForMobileView(mobileView));
+      afterFitBoundsClampMobile(map);
       trackEvent("map_fit_all_results_clicked", { count: coords.length });
     },
     [mapRef]

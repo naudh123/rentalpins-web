@@ -289,8 +289,11 @@ export default function SearchMap({
     selectedIdRef,
     buildPersistedView,
     scheduleUrlSync,
-    onPinSelectedMobile: () => openMobileSheet("pin_selected"),
-    onInitialSelectedFromUrl: () => openMobileSheet("selected_from_url"),
+    onInitialSelectedFromUrl: () => {
+      if (typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches) {
+        openMobileSheet("selected_from_url");
+      }
+    },
     skipMapSyncRef,
   });
 
@@ -393,7 +396,7 @@ export default function SearchMap({
     [filters, placeQuery, textQuery, mapCenter, mapZoom, drawnShape]
   );
 
-  const mapPinsPaused = !pageVisible || mobileView === "list";
+  const mapPinsPaused = !pageVisible;
 
   const mapEmpty = useMapEmptyState({
     listingCount: listings.length,
@@ -672,10 +675,14 @@ export default function SearchMap({
   });
 
   if (!googleMapsApiKey) {
+    const envHint =
+      process.env.NEXT_PUBLIC_DEPLOY_ENV === "production"
+        ? "Vercel → Project → Settings → Environment Variables → Production"
+        : ".env.local";
     return (
       <div className="flex h-[60vh] items-center justify-center rounded-xl border border-[var(--border)] p-6 text-center text-[var(--muted)]">
-        Set <code className="text-[var(--accent)]">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> in
-        .env.local to enable the map.
+        Set <code className="text-[var(--accent)]">NEXT_PUBLIC_GOOGLE_MAPS_API_KEY</code> in{" "}
+        {envHint} to enable the map.
       </div>
     );
   }
