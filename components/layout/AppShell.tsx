@@ -24,13 +24,17 @@ const DESKTOP_NAV = [
   { href: "/chat", label: "Chat" },
 ] as const;
 
-const MOBILE_NAV = [
+const MOBILE_NAV_LEFT = [
   { href: "/search", label: "Search", Icon: IconSearch },
   { href: "/saved-listings", label: "Saved", Icon: IconSaved },
-  { href: "/post", label: "Post", Icon: IconPost },
+] as const;
+
+const MOBILE_NAV_RIGHT = [
   { href: "/chat", label: "Chat", Icon: IconChat },
   { href: "/auth/login", label: "Account", Icon: IconUser },
 ] as const;
+
+const POST_HREF = "/post";
 
 const MARKETING_PREFIXES = [
   "/rentals",
@@ -64,6 +68,48 @@ function isActive(pathname: string | null, href: string): boolean {
   if (href === "/") return normalizedPathname === "/";
   return (
     normalizedPathname === href || normalizedPathname.startsWith(`${href}/`)
+  );
+}
+
+function isPostPath(pathname: string | null): boolean {
+  if (!pathname) return false;
+  const normalized =
+    basePath && pathname.startsWith(basePath)
+      ? pathname.slice(basePath.length) || "/"
+      : pathname;
+  return normalized === POST_HREF || normalized.startsWith(`${POST_HREF}/`);
+}
+
+function MobileNavItem({
+  href,
+  label,
+  Icon,
+  active,
+  unreadChatCount,
+}: {
+  href: string;
+  label: string;
+  Icon: typeof IconSearch;
+  active: boolean;
+  unreadChatCount: number;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[11px] font-medium transition ${
+        active ? "text-[var(--brand-orange)]" : "text-[var(--muted)]"
+      }`}
+    >
+      <span className="relative">
+        <Icon className="h-5 w-5" />
+        {label === "Chat" && unreadChatCount > 0 && (
+          <span className="absolute -right-2 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--brand-orange)] px-1 text-[9px] font-bold leading-4 text-white">
+            {unreadChatCount > 9 ? "9+" : unreadChatCount}
+          </span>
+        )}
+      </span>
+      <span className="truncate">{label}</span>
+    </Link>
   );
 }
 
@@ -135,26 +181,45 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <Logo href={appPath("/")} size="sm" />
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
-            {DESKTOP_NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={appPath(item.href)}
-                className={`rounded-full px-3.5 py-1.5 text-sm transition ${
-                  isActive(pathname, item.href)
-                    ? "bg-[color-mix(in_srgb,var(--brand-orange)_14%,transparent)] font-semibold text-[var(--brand-orange)]"
-                    : "text-[var(--muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--brand-navy)]"
-                }`}
-              >
-                <span className="relative inline-flex items-center">
-                  {item.label}
-                  {item.href === "/chat" && unreadChatCount > 0 && (
-                    <span className="ml-1 inline-flex min-w-4 items-center justify-center rounded-full bg-[var(--brand-orange)] px-1 text-[10px] font-bold leading-4 text-white">
-                      {unreadChatCount > 9 ? "9+" : unreadChatCount}
-                    </span>
-                  )}
-                </span>
-              </Link>
-            ))}
+            {DESKTOP_NAV.map((item) => {
+              const active = isActive(pathname, item.href);
+              const isPost = item.href === POST_HREF;
+              return (
+                <Link
+                  key={item.href}
+                  href={appPath(item.href)}
+                  className={
+                    isPost
+                      ? `inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold shadow-[var(--shadow-glow)] transition ${
+                          active
+                            ? "bg-[var(--brand-orange-hover)] text-white"
+                            : "bg-[var(--brand-orange)] text-white hover:bg-[var(--brand-orange-hover)]"
+                        }`
+                      : `rounded-full px-3.5 py-1.5 text-sm transition ${
+                          active
+                            ? "bg-[color-mix(in_srgb,var(--brand-orange)_14%,transparent)] font-semibold text-[var(--brand-orange)]"
+                            : "text-[var(--muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--brand-navy)]"
+                        }`
+                  }
+                >
+                  <span className="relative inline-flex items-center">
+                    {isPost ? (
+                      <>
+                        <IconPost className="h-4 w-4" />
+                        {item.label}
+                      </>
+                    ) : (
+                      item.label
+                    )}
+                    {item.href === "/chat" && unreadChatCount > 0 && (
+                      <span className="ml-1 inline-flex min-w-4 items-center justify-center rounded-full bg-[var(--brand-orange)] px-1 text-[10px] font-bold leading-4 text-white">
+                        {unreadChatCount > 9 ? "9+" : unreadChatCount}
+                      </span>
+                    )}
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -190,40 +255,80 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <main className="rp-app-main">{children}</main>
 
       <nav
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border-subtle)] rp-glass pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border-subtle)] bg-[var(--surface)]/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(30,58,110,0.08)] backdrop-blur-md md:hidden"
         aria-label="Mobile"
       >
-        <div className="mx-auto flex max-w-lg items-stretch justify-around">
-          {MOBILE_NAV.map((item) => {
-            const href = item.href === "/auth/login" ? accountHref : appPath(item.href);
-            const active =
+        <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-1">
+          {MOBILE_NAV_LEFT.map((item) => (
+            <MobileNavItem
+              key={item.href}
+              href={appPath(item.href)}
+              label={item.label}
+              Icon={item.Icon}
+              active={isActive(pathname, item.href)}
+              unreadChatCount={0}
+            />
+          ))}
+
+          <Link
+            href={appPath(POST_HREF)}
+            aria-label="Post a listing — list your property for rent"
+            aria-current={isPostPath(pathname) ? "page" : undefined}
+            className="relative -mt-6 flex flex-col items-center justify-end pb-1.5"
+          >
+            <span
+              className={`flex h-[3.35rem] w-[3.35rem] items-center justify-center rounded-full bg-gradient-to-br from-[var(--brand-orange)] to-[var(--brand-orange-hover)] text-white ring-4 ring-[var(--bg)] transition active:scale-95 ${
+                isPostPath(pathname)
+                  ? "shadow-[0_8px_28px_rgba(232,80,26,0.55)]"
+                  : "shadow-[var(--shadow-glow)]"
+              }`}
+            >
+              <svg
+                className="h-8 w-8"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.75"
+                aria-hidden
+              >
+                <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+              </svg>
+            </span>
+            <span
+              className={`mt-1 text-[11px] font-bold tracking-wide ${
+                isPostPath(pathname)
+                  ? "text-[var(--brand-orange)]"
+                  : "text-[var(--brand-navy)]"
+              }`}
+            >
+              Post
+            </span>
+          </Link>
+
+          {MOBILE_NAV_RIGHT.map((item) => {
+            const href =
+              item.href === "/auth/login" ? accountHref : appPath(item.href);
+            const active = Boolean(
               isActive(pathname, item.href) ||
-              (item.href === "/auth/login" && user && normalizedPathname === "/profile");
-            const { Icon } = item;
+                (item.href === "/auth/login" &&
+                  user &&
+                  normalizedPathname === "/profile")
+            );
             return (
-              <Link
+              <MobileNavItem
                 key={item.href}
                 href={href}
-                className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-1 py-2.5 text-xs font-medium transition ${
-                  active ? "text-[var(--brand-orange)]" : "text-[var(--muted)]"
-                }`}
-              >
-                <span className="relative">
-                  <Icon className="h-5 w-5" />
-                  {item.href === "/chat" && unreadChatCount > 0 && (
-                    <span className="absolute -right-2 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--brand-orange)] px-1 text-[9px] font-bold leading-4 text-white">
-                      {unreadChatCount > 9 ? "9+" : unreadChatCount}
-                    </span>
-                  )}
-                </span>
-                {item.label}
-              </Link>
+                label={item.label}
+                Icon={item.Icon}
+                active={active}
+                unreadChatCount={unreadChatCount}
+              />
             );
           })}
         </div>
       </nav>
 
-      <div className="h-[4.25rem] shrink-0 md:hidden" aria-hidden />
+      <div className="h-[4.75rem] shrink-0 md:hidden" aria-hidden />
     </div>
   );
 }

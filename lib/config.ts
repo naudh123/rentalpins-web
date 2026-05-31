@@ -17,8 +17,8 @@ export const basePath =
 
 export const showStagingBanner = resolveShowStagingBanner(deployEnv);
 
-/** Height of AppShell mobile bottom nav (matches h-[4.25rem] spacer). */
-export const MOBILE_BOTTOM_NAV_HEIGHT = "4.25rem";
+/** Height of AppShell mobile bottom nav (matches bottom spacer + Post FAB). */
+export const MOBILE_BOTTOM_NAV_HEIGHT = "4.75rem";
 
 function normalizeSiteUrl(raw: string): string {
   const trimmed = raw.replace(/\/$/, "");
