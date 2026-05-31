@@ -12,7 +12,6 @@ import {
   capGeohashPrefixesNearCenter,
   geohashMaxPrefixesForZoom,
   GEOHASH_CENTER_BOOST_PREFIXES,
-  GEOHASH_QUERY_BATCH_SIZE,
   geohashPrefixesForViewport,
   isLikelyGeohashPrefixCapped,
   sortGeohashPrefixesNearCenter,
@@ -146,26 +145,22 @@ async function fetchGeohashPrefixWave(
   limitPerPrefix: number,
   listingsRef: CollectionReference
 ) {
-  const snapshots: Array<QuerySnapshot | null> = [];
-  for (let i = 0; i < prefixes.length; i += GEOHASH_QUERY_BATCH_SIZE) {
-    const batch = prefixes.slice(i, i + GEOHASH_QUERY_BATCH_SIZE);
-    const wave = await Promise.all(
-      batch.map((prefix) =>
-        listingsRef
-          .where("isActive", "==", true)
-          .where("position.geohash", ">=", prefix)
-          .where("position.geohash", "<=", prefix + "\uf8ff")
-          .limit(limitPerPrefix)
-          .get()
-          .catch((err) => {
-            console.error("geohash query failed:", prefix, err);
-            return null;
-          })
-      )
-    );
-    snapshots.push(...wave);
-  }
-  return snapshots;
+  if (prefixes.length === 0) return [];
+
+  return Promise.all(
+    prefixes.map((prefix) =>
+      listingsRef
+        .where("isActive", "==", true)
+        .where("position.geohash", ">=", prefix)
+        .where("position.geohash", "<=", prefix + "\uf8ff")
+        .limit(limitPerPrefix)
+        .get()
+        .catch((err) => {
+          console.error("geohash query failed:", prefix, err);
+          return null;
+        })
+    )
+  );
 }
 
 function mergeGeohashSnapshots(
@@ -211,16 +206,19 @@ export async function fetchListingsInBounds(
   const seen = new Set<string>();
   const all: ListingCard[] = [];
 
-  const primaryWaveCount = Math.ceil(prefixes.length / GEOHASH_QUERY_BATCH_SIZE);
+  const primaryWaveCount = 1;
   const snapshots = await fetchGeohashPrefixWave(prefixes, limitPerPrefix, listingsRef);
   mergeGeohashSnapshots(snapshots, bounds, seen, all);
 
   let boostWaveCount = 0;
   let boostLimitPerPrefix: number | undefined;
-  if (isLikelyResultCapSaturated(all.length, gridSteps, limitPerPrefix)) {
+  if (
+    all.length > 0 &&
+    isLikelyResultCapSaturated(all.length, gridSteps, limitPerPrefix)
+  ) {
     const boostPrefixes = prefixes.slice(0, GEOHASH_CENTER_BOOST_PREFIXES);
     boostLimitPerPrefix = bonusLimitPerPrefix(limitPerPrefix);
-    boostWaveCount = Math.ceil(boostPrefixes.length / GEOHASH_QUERY_BATCH_SIZE);
+    boostWaveCount = 1;
     const boostSnaps = await fetchGeohashPrefixWave(
       boostPrefixes,
       boostLimitPerPrefix,

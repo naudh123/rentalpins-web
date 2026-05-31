@@ -63,10 +63,10 @@ describe("geohash-bounds", () => {
     expect(z16.prefixes.length).toBeGreaterThan(z15.prefixes.length);
   });
 
-  it("adds finer center prefixes at metro zoom", () => {
-    const base = geohashPrefixesForViewport(bounds, 13);
+  it("adds inner tiles from city zoom 14+", () => {
     const wide = geohashPrefixesForViewport(bounds, 10);
-    expect(base.prefixes.length).toBeGreaterThan(wide.prefixes.length);
+    const city = geohashPrefixesForViewport(bounds, 14);
+    expect(city.prefixes.length).toBeGreaterThan(wide.prefixes.length);
   });
 
   it("adds inner tiles at street zoom 15", () => {
@@ -76,7 +76,7 @@ describe("geohash-bounds", () => {
   });
 
   it("defines center boost pass constants", () => {
-    expect(GEOHASH_CENTER_BOOST_PREFIXES).toBe(16);
+    expect(GEOHASH_CENTER_BOOST_PREFIXES).toBe(10);
     expect(bonusLimitPerPrefix(52)).toBe(76);
     expect(bonusLimitPerPrefix(80)).toBe(96);
   });
@@ -97,11 +97,15 @@ describe("geohash-bounds", () => {
     expect(sorted.length).toBe(prefixes.length);
   });
 
-  it("batches prefix queries in waves of 24", () => {
-    expect(GEOHASH_QUERY_BATCH_SIZE).toBe(24);
-    const prefixes = geohashPrefixesForBounds(bounds, 6, 8);
-    const waves = Math.ceil(prefixes.length / GEOHASH_QUERY_BATCH_SIZE);
-    expect(waves).toBeGreaterThanOrEqual(4);
+  it("keeps prefix budget within zoom-aware cap", () => {
+    expect(GEOHASH_QUERY_BATCH_SIZE).toBe(32);
+    const capped = capGeohashPrefixesNearCenter(
+      geohashPrefixesForViewport(bounds, 12).prefixes,
+      30.73,
+      76.78,
+      geohashMaxPrefixesForZoom(12)
+    );
+    expect(capped.length).toBeLessThanOrEqual(geohashMaxPrefixesForZoom(12));
   });
 
   it("detects likely cap saturation", () => {

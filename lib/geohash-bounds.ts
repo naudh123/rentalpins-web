@@ -12,7 +12,7 @@ export function geohashPrecisionForZoom(zoom: number | null | undefined): number
 /** Grid divisions per axis (inclusive steps → (steps+1)² prefixes). */
 export function gridStepsForPrecision(precision: number): number {
   if (precision >= 7) return 8;
-  if (precision >= 6) return 8; // 81 cells — better coverage in dense hubs
+  if (precision >= 6) return 6; // 81 cells — better coverage in dense hubs
   if (precision >= 5) return 6;
   return 5;
 }
@@ -70,7 +70,7 @@ export function geohashPrefixesForViewport(
     };
   }
 
-  if (z >= 12 && z <= 15) {
+  if (z >= 14 && z <= 15) {
     const inner = shrinkBoundsTowardCenter(bounds, 0.5);
     const innerPrecision = Math.min(precision + 1, 7);
     const innerSteps = Math.max(3, Math.floor(gridSteps / 2));
@@ -121,20 +121,20 @@ export function sortGeohashPrefixesNearCenter(
   });
 }
 
-/** Max parallel Firestore geohash prefix queries per wave. */
-export const GEOHASH_QUERY_BATCH_SIZE = 24;
+/** Legacy chunk size (tests/docs); queries now run in one parallel wave. */
+export const GEOHASH_QUERY_BATCH_SIZE = 32;
 
 /** Safety cap — prefer center cells when the viewport grid exceeds budget (cost guard). */
-export const GEOHASH_MAX_PREFIXES = 112;
+export const GEOHASH_MAX_PREFIXES = 80;
 
-/** Zoom-aware prefix budget — finer grids at street zoom, cheaper when zoomed out. */
+/** Zoom-aware prefix budget — fewer cells = faster fetch on mobile. */
 export function geohashMaxPrefixesForZoom(zoom: number | null | undefined): number {
   const z = zoom ?? 11;
-  if (z >= 16) return 128;
+  if (z >= 16) return 72;
   if (z >= 14) return GEOHASH_MAX_PREFIXES;
-  if (z >= 12) return 96;
-  if (z >= 10) return 80;
-  return 64;
+  if (z >= 12) return 56;
+  if (z >= 10) return 44;
+  return 36;
 }
 
 /** True when the viewport grid exceeds the zoom-aware prefix budget (center cells kept). */
@@ -156,8 +156,8 @@ export function capGeohashPrefixesNearCenter(
   return sortGeohashPrefixesNearCenter(prefixes, centerLat, centerLng).slice(0, max);
 }
 
-/** Re-query this many center cells with a higher limit when the first pass hits the cap. */
-export const GEOHASH_CENTER_BOOST_PREFIXES = 16;
+/** Re-query center cells with a higher limit when the first pass hits the cap. */
+export const GEOHASH_CENTER_BOOST_PREFIXES = 10;
 
 /** Hard cap on per-prefix limit for the center boost pass. */
 export const GEOHASH_BOOST_LIMIT_CAP = 96;

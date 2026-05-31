@@ -199,7 +199,7 @@ export function useMapListingsFetch({
       if (fetchDebounceRef.current) clearTimeout(fetchDebounceRef.current);
       fetchDebounceRef.current = setTimeout(() => {
         void fetchBounds(map, force);
-      }, 400);
+      }, 280);
     },
     [fetchBounds, pageVisibleRef]
   );

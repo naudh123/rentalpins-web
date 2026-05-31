@@ -50,8 +50,15 @@ export async function GET(request: Request) {
   const mapZoom = zoom != null && Number.isFinite(zoom) ? zoom : null;
 
   try {
+    const started = Date.now();
     const { listings, totalInBounds, filteredCount, resultsMayBeIncomplete, prefixCapActive } =
       await fetchListingsInBounds(validated.bounds, filters, { zoom: mapZoom });
+    const elapsedMs = Date.now() - started;
+    if (elapsedMs > 4000) {
+      console.warn(
+        `[listings] slow fetch ${elapsedMs}ms zoom=${mapZoom ?? "?"} count=${listings.length}`
+      );
+    }
     return NextResponse.json(
       {
         listings,
