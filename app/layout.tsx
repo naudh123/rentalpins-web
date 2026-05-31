@@ -1,68 +1,92 @@
+import type { Metadata, Viewport } from "next";
+import Script from "next/script";
+import { DM_Sans, Playfair_Display } from "next/font/google";
+import { AuthProvider } from "@/components/providers/AuthProvider";
+import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
+import { SavedListingsProvider } from "@/components/providers/SavedListingsProvider";
+import AppShell from "@/components/layout/AppShell";
+import {
+  JsonLdOrganization,
+  JsonLdSoftwareApplication,
+  JsonLdWebsite,
+} from "@/components/JsonLd";
+import { gaMeasurementId, siteUrl, deployEnv } from "@/lib/config";
 import "./globals.css";
-import type { Metadata } from "next";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "RentalPins – Discover Rentals Around You",
+    default: "RentalPins — Rent Anything, Anywhere",
     template: "%s | RentalPins",
   },
   description:
-    "RentalPins is a location-based rental marketplace that helps users discover and list rental properties and services across India.",
-  keywords: [  "furnisher room for rent","luxury room for rent",  "apartment for rent",  "olx", "flat for rent","room for rent",
-    "rental marketplace",
-    "property rental",
-    "rent houses",
-    "rent services",
-    "local rentals",
-    "RentalPins",
-  ],
-  authors: [{ name: "RentalPins" }],
-  creator: "RentalPins",
-  publisher: "RentalPins",
+    "Global rental marketplace. Map search, verified owners, WhatsApp contact.",
+  robots: deployEnv === "staging" ? { index: false, follow: false } : undefined,
+};
 
-  metadataBase: new URL("https://www.rentalpins.com"),
-
-  openGraph: {
-    title: "RentalPins – Discover Rentals Around You",
-    description:
-      "Find rental properties and services near you using location-based discovery.",
-    url: "https://www.rentalpins.com",
-    siteName: "RentalPins",
-    images: [
-  {
-    url: "/og-image.png",
-    width: 1200,
-    height: 630,
-    alt: "RentalPins – Location Based Rental Marketplace",
-  },
-],
-
-    locale: "en_IN",
-    type: "website",
-  },
-
-  twitter: {
-    card: "summary_large_image",
-    title: "RentalPins – Discover Rentals Around You",
-    description:
-      "Discover rental properties and services across India with RentalPins.",
-    images: ["/logo/logo.png"],
-  },
-
-  robots: {
-    index: true,
-    follow: true,
-  },
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#1E3A6E",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${dmSans.variable} ${playfair.variable}`}>
+      <body>
+        <JsonLdOrganization />
+        <JsonLdWebsite />
+        <JsonLdSoftwareApplication />
+        <AuthProvider>
+          <SavedListingsProvider>
+            <AppShell>{children}</AppShell>
+          </SavedListingsProvider>
+          <AnalyticsProvider />
+        </AuthProvider>
+        {gaMeasurementId && deployEnv !== "staging" && (
+          <>
+            {/* Default-deny consent mode — upgrades to granted after user accepts. */}
+            <Script id="ga4-consent-default" strategy="beforeInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('consent', 'default', {
+                  analytics_storage: 'denied',
+                  ad_storage: 'denied',
+                  wait_for_update: 500
+                });
+              `}
+            </Script>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga4-init" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaMeasurementId}', { send_page_view: false });
+              `}
+            </Script>
+          </>
+        )}
+      </body>
     </html>
   );
 }

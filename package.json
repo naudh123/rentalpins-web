@@ -1,26 +1,42 @@
 {
-  "name": "rentalpins-web",
+  "name": "rentalpins-full-web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack -H 127.0.0.1",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:env": "node scripts/check-env.mjs",
+    "check:env:prod": "node scripts/check-env.mjs --production",
+    "check:firestore-sync": "node scripts/verify-firestore-web-sync.mjs"
   },
   "dependencies": {
+    "@googlemaps/markerclusterer": "^2.6.2",
+    "@react-google-maps/api": "^2.20.8",
+    "firebase": "^11.10.0",
+    "firebase-admin": "^13.7.0",
+    "framer-motion": "^12.23.24",
+    "gray-matter": "^4.0.3",
     "next": "16.1.1",
+    "next-mdx-remote": "^6.0.0",
+    "ngeohash": "^0.6.3",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/ngeohash": "^0.6.8",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }

@@ -1,0 +1,13 @@
+{
+  "name": "RentalPins — Map-first rentals",
+  "short_name": "RentalPins",
+  "description": "Browse rooms, PG, flats, vehicles and more on a live map. Chandigarh, Ludhiana, Delhi, Jaipur, Lucknow, Mumbai, London, Nairobi, Lagos. Direct owner contact.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1E3A6E",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

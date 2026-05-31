@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RentalPins Full Web (working ground)
 
-## Getting Started
+Next.js replacement for `www.rentalpins.com`. Production repos are read-only references.
 
-First, run the development server:
+## Quick start
 
 ```bash
+cd C:\RentIt_Dev\apps\RentalPins_Full_web
+cp .env.example .env.local
+# Fill Firebase + Google Maps keys
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Local dev:** http://localhost:3000 (do not set `NEXT_PUBLIC_BASE_PATH`)
+- **Hosted staging:** set `NEXT_PUBLIC_BASE_PATH=/staging` → https://www.rentalpins.com/staging
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## v1 scope
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Map search · listing detail · post listing · payments (Razorpay via Cloud Functions) · chat · Firebase phone OTP + Google
 
-## Learn More
+## Pre-cutover
 
-To learn more about Next.js, take a look at the following resources:
+- Checklist: [`docs/PRE_CUTOVER_CHECKLIST.md`](docs/PRE_CUTOVER_CHECKLIST.md)
+- Firestore web queries + deploy: [`docs/firestore-web-queries.md`](docs/firestore-web-queries.md)
+- Env validation: `npm run check:env` (production: `npm run check:env:prod`)
+- Health endpoint after deploy: `GET /api/health`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## References (read-only)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `C:\Users\naudh\rentalpins-web`
+- `C:\RentIt_Dev\apps\rentit_clean`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+See `RENTALPINS_WEB_ROADMAP.md` for full product decisions.

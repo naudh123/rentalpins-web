@@ -1,0 +1,49 @@
+# RentalPins — robots.txt
+# Served at https://www.rentalpins.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Canonical discovery for humans, search engines, and AI assistants
+Sitemap: https://www.rentalpins.com/sitemap.xml
+
+# Optional context for LLMs (dynamic, regenerated from site config)
+# https://www.rentalpins.com/llms.txt
+
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+# AI search & assistants — public site yes; API no (each bot uses only its own stanza)
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /api/

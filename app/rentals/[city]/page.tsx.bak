@@ -1,0 +1,188 @@
+// ─── app/rentals/[city]/page.tsx ──────────────────────────────────────────────
+// Dynamic route — handles ALL city hub pages.
+// DEBUG VERSION — includes console.logs to diagnose 404 issues.
+// Once working, you can remove the console.log lines.
+
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  getCityBySlug,
+  getAllCities,
+  type CityConfig,
+} from "@/lib/cities-config";
+import { fetchAreaListings } from "@/lib/listings";
+import { getAreaConfig } from "@/lib/area-config";
+import ListingsGrid from "@/components/ListingsGrid";
+import AreaClient from "../../rentals-shared/AreaClient";
+
+// ─── Static params ────────────────────────────────────────────────────────────
+export function generateStaticParams() {
+  const cities = getAllCities();
+  console.log("📋 generateStaticParams cities:", cities.map(c => c.slug));
+  return cities.map((city) => ({ city: city.slug }));
+}
+
+// ─── Dynamic metadata ─────────────────────────────────────────────────────────
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ city: string }> | { city: string };
+}): Promise<Metadata> {
+  // Next.js 15 makes params a Promise — await handles both cases
+  const resolvedParams = await Promise.resolve(params);
+  const city = getCityBySlug(resolvedParams.city);
+  if (!city) return { title: "Not Found" };
+
+  const areaNames = city.popularAreas.slice(0, 5).join(", ");
+
+  return {
+    title: `Rentals in ${city.name} — ${areaNames} & More | RentalPins`,
+    description: `Find rooms, apartments, PG, vehicles, electronics and more on rent across ${city.name}. ${city.heroDescription} Contact owners directly on RentalPins. No broker fee. Free to list.`,
+    keywords: [
+      `rentals in ${city.name}`,
+      ...city.popularAreas.slice(0, 8).map((a) => `rentals in ${a}`),
+      `room for rent ${city.name}`,
+      `apartment for rent ${city.name}`,
+      `PG in ${city.name}`,
+      `no broker ${city.name}`,
+      `RentalPins ${city.name}`,
+    ],
+    openGraph: {
+      title: `Rentals in ${city.name} — ${areaNames} | RentalPins`,
+      description: `Browse live rental listings across ${city.name} — property, vehicles, electronics and more on one map. Covering ${areaNames} and more.`,
+      url: `https://www.rentalpins.com/rentals/${city.slug}`,
+      siteName: "RentalPins",
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+      locale: "en_IN",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Rentals in ${city.name} | RentalPins`,
+      description: `Find rentals on the map across ${city.name}. Free to browse, easy to list.`,
+      images: ["/og-image.png"],
+    },
+    alternates: {
+      canonical: `https://www.rentalpins.com/rentals/${city.slug}`,
+    },
+  };
+}
+
+export const revalidate = 7200;
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+export default async function CityPage({
+  params,
+}: {
+  params: Promise<{ city: string }> | { city: string };
+}) {
+  // Next.js 15 makes params a Promise — await handles both cases
+  const resolvedParams = await Promise.resolve(params);
+
+  // 🔍 DEBUG LOGS — check your terminal when visiting /rentals/chandigarh
+  console.log("🔍 CityPage params.city:", resolvedParams.city);
+
+  const city = getCityBySlug(resolvedParams.city);
+  console.log("🔍 CityPage city found:", city?.slug ?? "NOT FOUND");
+
+  if (!city) {
+    console.log("❌ CityPage: city not found in config, returning 404");
+    notFound();
+  }
+
+  // Fetch listings — wrapped in try/catch so Firestore errors don't cause 404
+  let listings: any[] = [];
+  try {
+    const area = getAreaConfig(resolvedParams.city);
+    console.log("🔍 CityPage area config:", area ? "found" : "not found");
+    if (area) {
+      listings = await fetchAreaListings(area, 20);
+      console.log("🔍 CityPage listings fetched:", listings.length);
+    }
+  } catch (err) {
+    console.error("⚠️ CityPage listings fetch failed:", err);
+    // Continue with empty listings — don't 404 the whole page
+  }
+
+  const spokeLinks = city.areas.map((a) => ({
+    label: a.name,
+    href: `/rentals/${city.slug}/${a.slug}`,
+  }));
+
+  const areaData = {
+    name: city.name,
+    slug: city.slug,
+    parentCity: "",
+    parentSlug: "",
+    country: city.country,
+    tagline: city.tagline,
+    badge: city.badge,
+    primaryFocus: "",
+    heroDescription: city.heroDescription,
+    coordinates: city.coordinates,
+    popularAreas: city.popularAreas,
+    topCategories: city.topCategories,
+    popularSearches: city.popularSearches,
+    spokeLinks,
+    faqs: city.faqs,
+    ctaHeading: city.ctaHeading,
+    ctaBody: city.ctaBody,
+  };
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: `RentalPins ${city.name}`,
+    description: city.heroDescription,
+    url: `https://www.rentalpins.com/rentals/${city.slug}`,
+    image: "https://www.rentalpins.com/logo/logo.png",
+    telephone: "+91-9915209240",
+    email: "support@rentalpins.com",
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: city.coordinates.lat,
+      longitude: city.coordinates.lng,
+    },
+    areaServed: city.popularAreas.map((a) => ({
+      "@type": "City",
+      name: a,
+    })),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.rentalpins.com" },
+      { "@type": "ListItem", position: 2, name: "Rentals", item: "https://www.rentalpins.com/rentals" },
+      { "@type": "ListItem", position: 3, name: city.name, item: `https://www.rentalpins.com/rentals/${city.slug}` },
+    ],
+  };
+
+  const faqJsonLd =
+    city.faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: city.faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }
+      : null;
+
+  console.log("✅ CityPage rendering:", city.slug);
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
+      <ListingsGrid listings={listings} areaName={city.name} />
+      <AreaClient area={areaData} />
+    </>
+  );
+}

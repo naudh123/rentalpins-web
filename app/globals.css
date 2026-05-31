@@ -1,26 +1,284 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Logo palette */
+  --brand-navy: #1e3a6e;
+  --brand-navy-dark: #0f2554;
+  --brand-orange: #e8501a;
+  --brand-orange-hover: #d34415;
+
+  --bg: #ffffff;
+  --bg-elevated: #f8fafc;
+  --surface: #ffffff;
+  --surface-hover: #f4f6fa;
+  --border: #dde3f0;
+  --border-subtle: #e8ecf4;
+  --text: #0f1c35;
+  --muted: #6b7a99;
+
+  /* Semantic: orange = primary CTA, navy = brand / links */
+  --accent: var(--brand-orange);
+  --accent-dim: var(--brand-orange-hover);
+  --accent-fg: #ffffff;
+  --primary: var(--brand-navy);
+  --primary-fg: #ffffff;
+
+  --success: #16a34a;
+  --danger: #dc2626;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --shadow-card: 0 8px 32px -8px rgba(30, 58, 110, 0.1);
+  --shadow-glow: 0 8px 28px -6px rgba(232, 80, 26, 0.35);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Short viewport height (landscape phones, constrained split-screen). */
+@custom-variant short (@media (max-height: 740px));
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--brand-orange) 25%, transparent);
+  color: var(--text);
+}
+
+/* ── Primitives ───────────────────────────────────────────── */
+.rp-gradient-hero {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(30, 58, 110, 0.08), transparent),
+    radial-gradient(ellipse 50% 40% at 100% 0%, rgba(232, 80, 26, 0.06), transparent),
+    var(--bg);
+}
+
+.rp-glass {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.rp-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+}
+
+.rp-card-interactive {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.rp-card-interactive:hover {
+  border-color: color-mix(in srgb, var(--brand-orange) 35%, var(--border));
+  box-shadow: var(--shadow-card);
+}
+
+.rp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.rp-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.rp-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Improve touch responsiveness in mobile browsers. */
+.rp-btn,
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.rp-btn-primary {
+  background: linear-gradient(135deg, var(--brand-orange) 0%, var(--brand-orange-hover) 100%);
+  color: var(--accent-fg);
+  padding: 0.75rem 1.5rem;
+  box-shadow: var(--shadow-glow);
+}
+
+.rp-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.04);
+}
+
+.rp-btn-secondary {
+  background: var(--surface);
+  color: var(--brand-navy);
+  border: 1.5px solid var(--border);
+  padding: 0.75rem 1.5rem;
+}
+
+.rp-btn-secondary:hover:not(:disabled) {
+  border-color: var(--brand-navy);
+  background: var(--surface-hover);
+}
+
+.rp-btn-ghost {
+  background: var(--surface);
+  color: var(--brand-navy);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}
+
+.rp-btn-ghost:hover:not(:disabled) {
+  border-color: var(--brand-orange);
+  color: var(--brand-orange);
+}
+
+.rp-input {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rp-input::placeholder {
+  color: var(--muted);
+}
+
+.rp-input:focus {
+  border-color: var(--brand-navy);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-navy) 12%, transparent);
+}
+
+.rp-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.375rem 0.875rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--muted);
+  transition: all 0.15s ease;
+}
+
+.rp-chip:hover {
+  border-color: color-mix(in srgb, var(--brand-navy) 30%, var(--border));
+  color: var(--brand-navy);
+}
+
+.rp-chip-active {
+  background: color-mix(in srgb, var(--brand-orange) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--brand-orange) 50%, var(--border));
+  color: var(--brand-orange);
+  font-weight: 600;
+}
+
+.rp-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--brand-orange) 14%, var(--surface));
+  color: var(--brand-orange);
+}
+
+.rp-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 0.375rem;
+}
+
+.rp-section-title {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--brand-navy);
+}
+
+.rp-wordmark-navy {
+  color: var(--brand-navy);
+}
+
+.rp-wordmark-orange {
+  color: var(--brand-orange);
+}
+
+/* Map / full-height app pages */
+.rp-app-main {
+  flex: 1;
+  min-height: 0;
+}
+
+.rp-map-layout {
+  height: calc(100dvh - 3.5rem - 4.25rem);
+}
+
+.rp-map-results-panel {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .rp-map-results-panel {
+    width: var(--map-panel-width, 520px);
+  }
+}
+
+@media (min-width: 768px) {
+  .rp-map-layout {
+    height: calc(100dvh - 3.5rem);
+  }
+}
+
+@media (max-width: 767px) {
+  /* Prevent iOS Safari zoom on input focus. */
+  .rp-input {
+    font-size: 16px;
+  }
 }

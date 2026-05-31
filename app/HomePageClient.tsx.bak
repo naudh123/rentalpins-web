@@ -1,0 +1,596 @@
+"use client";
+import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
+
+// ─── Brand ────────────────────────────────────────────────────────────────────
+const BRAND = {
+  primary: "#1E3A6E",
+  accent: "#E8501A",
+  accentLight: "#FF6B35",
+  bg: "#FFFFFF",
+  surface: "#F4F6FA",
+  text: "#0F1C35",
+  muted: "#6B7A99",
+  border: "#DDE3F0",
+} as const;
+
+const PLAY_URL =
+  "https://play.google.com/store/apps/details?id=com.rentit_clean.rentit";
+const APP_URL = "https://app.rentalpins.com";
+
+// ─── Cities for navbar dropdown ──────────────────────────────────────────────
+const NAV_CITIES = [
+  {
+    hub: "Chandigarh Tricity",
+    href: "/rentals/chandigarh",
+    spokes: [
+      { label: "Mohali", href: "/rentals/chandigarh/mohali" },
+      { label: "Kharar", href: "/rentals/chandigarh/kharar" },
+      { label: "Panchkula", href: "/rentals/chandigarh/panchkula" },
+      { label: "Zirakpur", href: "/rentals/chandigarh/zirakpur" },
+      { label: "Landran", href: "/rentals/chandigarh/landran" },
+    ],
+  },
+  {
+    hub: "Ludhiana",
+    href: "/rentals/ludhiana",
+    spokes: [
+      { label: "Sarabha Nagar", href: "/rentals/ludhiana/sarabha-nagar" },
+      { label: "Model Town", href: "/rentals/ludhiana/model-town" },
+      { label: "Pakhowal Road", href: "/rentals/ludhiana/pakhowal-road" },
+      { label: "BRS Nagar", href: "/rentals/ludhiana/brs-nagar" },
+      { label: "Focal Point", href: "/rentals/ludhiana/focal-point" },
+    ],
+  },
+  { hub: "NCR Delhi", href: "/rentals/ncr", spokes: [] },
+];
+
+// ─── Cities Dropdown ──────────────────────────────────────────────────────────
+function CitiesDropdown() {
+  const [open, setOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const enter = () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); setOpen(true); };
+  const leave = () => { timeoutRef.current = setTimeout(() => setOpen(false), 150); };
+  useEffect(() => () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); }, []);
+
+  return (
+    <div style={{ position: "relative" }} onMouseEnter={enter} onMouseLeave={leave}>
+      <button onClick={() => setOpen(p => !p)} style={{
+        fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500,
+        color: open ? BRAND.accent : BRAND.text, background: "none", border: "none",
+        cursor: "pointer", display: "flex", alignItems: "center", gap: 4, padding: "4px 0",
+      }}>
+        Cities
+        <span style={{ fontSize: 10, opacity: 0.6, transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s", display: "inline-block" }}>▼</span>
+      </button>
+      {open && (
+        <div style={{ position: "absolute", top: "100%", left: "50%", transform: "translateX(-50%)", paddingTop: 8, zIndex: 300 }}>
+          <div style={{ background: "#fff", border: `1px solid ${BRAND.border}`, borderRadius: 16, boxShadow: "0 16px 48px rgba(0,0,0,0.12)", padding: 16, minWidth: 420, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+            {NAV_CITIES.map(city => (
+              <div key={city.hub}>
+                <a href={city.href} style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 700, color: BRAND.primary, textDecoration: "none", marginBottom: 6, letterSpacing: "0.04em", textTransform: "uppercase" as const }}>{city.hub}</a>
+                {city.spokes.map(s => (
+                  <a key={s.href} href={s.href} style={{ display: "block", fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: BRAND.muted, textDecoration: "none", padding: "3px 0" }}>› {s.label}</a>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Compact Navbar ──────────────────────────────────────────────────────────
+function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <nav style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
+      background: "rgba(255,255,255,0.97)", backdropFilter: "blur(12px)",
+      borderBottom: `1px solid ${BRAND.border}`, padding: "0 20px", height: 56,
+      display: "flex", alignItems: "center",
+    }}>
+      <div style={{ maxWidth: 1400, margin: "0 auto", width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none", flexShrink: 0 }}>
+          <Image src="/logo/logo.png" alt="RentalPins" width={28} height={28} style={{ objectFit: "contain" }} priority />
+          <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: BRAND.primary }}>
+            Rental<span style={{ color: BRAND.accent }}>Pins</span>
+          </span>
+        </a>
+
+        <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 24 }}>
+          <CitiesDropdown />
+        </div>
+
+        <div className="desktop-nav" style={{ display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }}>
+          <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" style={{
+            padding: "7px 14px", borderRadius: 8, background: BRAND.accent, color: "#fff",
+            fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600, textDecoration: "none",
+          }}>Get Android App</a>
+        </div>
+
+        <button className="mobile-menu-btn" onClick={() => setMenuOpen(!menuOpen)} style={{
+          display: "none", background: "none", border: "none", cursor: "pointer", fontSize: 22, color: BRAND.primary,
+        }} aria-label="Toggle menu">☰</button>
+      </div>
+
+      {menuOpen && (
+        <div style={{ position: "fixed", top: 56, left: 0, right: 0, background: "#fff", borderBottom: `1px solid ${BRAND.border}`, padding: "12px 20px 20px", zIndex: 200 }}>
+          {([
+            ["Chandigarh", "/rentals/chandigarh"],
+            ["  Mohali", "/rentals/chandigarh/mohali"],
+            ["  Kharar", "/rentals/chandigarh/kharar"],
+            ["  Panchkula", "/rentals/chandigarh/panchkula"],
+            ["  Zirakpur", "/rentals/chandigarh/zirakpur"],
+            ["Ludhiana", "/rentals/ludhiana"],
+            ["  Model Town", "/rentals/ludhiana/model-town"],
+            ["  Sarabha Nagar", "/rentals/ludhiana/sarabha-nagar"],
+          ] as const).map(([label, href]) => (
+            <a key={label} href={href} onClick={() => setMenuOpen(false)} style={{
+              display: "block", padding: "11px 0", fontFamily: "'DM Sans', sans-serif", fontSize: 14,
+              fontWeight: label.startsWith("  ") ? 400 : 500,
+              color: label.startsWith("  ") ? BRAND.muted : BRAND.text,
+              textDecoration: "none", borderBottom: `1px solid ${BRAND.border}`,
+              paddingLeft: label.startsWith("  ") ? 16 : 0,
+            }}>{label.startsWith("  ") ? `› ${label.trim()}` : label}</a>
+          ))}
+          <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" style={{
+            display: "block", textAlign: "center", padding: "11px 0", borderRadius: 8,
+            background: BRAND.accent, color: "#fff", fontFamily: "'DM Sans', sans-serif",
+            fontSize: 13, fontWeight: 600, textDecoration: "none", marginTop: 12,
+          }}>Get Android App</a>
+        </div>
+      )}
+    </nav>
+  );
+}
+
+// ─── Map Iframe (fills viewport minus navbar) ────────────────────────────────
+function IframeMap() {
+  const searchParams = useSearchParams();
+  const listingId = searchParams.get("listing");
+  const [loaded, setLoaded] = useState(false);
+
+  const iframeSrc = listingId
+    ? `${APP_URL}/?embed=1&listing=${listingId}`
+    : `${APP_URL}/?embed=1`;
+
+  return (
+    <div style={{
+      position: "relative",
+      width: "100%",
+      height: "calc(100vh - 56px)",   // full viewport minus compact navbar
+      minHeight: 480,
+      background: BRAND.primary,
+    }}>
+      {!loaded && <LoadingScreen />}
+      <iframe
+        src={iframeSrc}
+        title="RentalPins Live Map — Browse rental listings across India"
+        onLoad={() => setLoaded(true)}
+        style={{
+          width: "100%", height: "100%", border: "none", display: "block",
+          opacity: loaded ? 1 : 0, transition: "opacity 0.4s ease",
+        }}
+        allow="geolocation; camera"
+        loading="eager"
+      />
+    </div>
+  );
+}
+
+// ─── Loading Screen ───────────────────────────────────────────────────────────
+function LoadingScreen() {
+  const pins = [
+    { left: "18%", top: "30%" }, { left: "35%", top: "22%" },
+    { left: "52%", top: "45%" }, { left: "70%", top: "35%" },
+    { left: "25%", top: "60%" }, { left: "60%", top: "65%" },
+    { left: "80%", top: "50%" }, { left: "42%", top: "75%" },
+    { left: "15%", top: "48%" }, { left: "75%", top: "20%" },
+  ];
+
+  return (
+    <div style={{
+      position: "absolute", inset: 0,
+      background: `linear-gradient(145deg, #1a3562 0%, #0d1f3c 50%, #152e55 100%)`,
+      zIndex: 10, overflow: "hidden",
+    }}>
+      <div style={{
+        position: "absolute", inset: 0, opacity: 0.06,
+        backgroundImage: "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+        backgroundSize: "60px 60px",
+      }} />
+
+      {pins.map((pin, i) => (
+        <div key={i} style={{
+          position: "absolute", left: pin.left, top: pin.top,
+          animation: `pinFadeIn 0.6s ease ${i * 0.12}s both, pinPulse 2s ease-in-out ${i * 0.3}s infinite`,
+        }}>
+          <div style={{
+            width: 20, height: 20, borderRadius: "50% 50% 50% 0",
+            background: `${BRAND.accent}${i < 3 ? "cc" : "66"}`,
+            transform: "rotate(-45deg)",
+            boxShadow: `0 0 ${i < 3 ? 16 : 8}px ${BRAND.accent}${i < 3 ? "44" : "22"}`,
+          }} />
+          <div style={{
+            position: "absolute", top: -6, left: -6, width: 32, height: 32,
+            borderRadius: "50%", border: `1.5px solid ${BRAND.accent}33`,
+            animation: `ringExpand 2.5s ease-out ${i * 0.4}s infinite`,
+          }} />
+        </div>
+      ))}
+
+      <div style={{
+        position: "absolute", inset: 0,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", zIndex: 2,
+      }}>
+        <div style={{
+          width: 52, height: 52, borderRadius: "50%",
+          background: `${BRAND.accent}22`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          marginBottom: 20, animation: "pinPulse 1.5s ease-in-out infinite",
+        }}>
+          <div style={{
+            width: 28, height: 28, borderRadius: "50% 50% 50% 0",
+            background: BRAND.accent, transform: "rotate(-45deg)",
+            boxShadow: `0 4px 20px ${BRAND.accent}66`,
+          }} />
+        </div>
+
+        <div style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: "clamp(20px, 3vw, 26px)", fontWeight: 700,
+          color: "#fff", marginBottom: 8, textAlign: "center",
+        }}>Loading live rentals...</div>
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 14,
+          color: "rgba(255,255,255,0.5)", marginBottom: 28, textAlign: "center",
+        }}>Discovering listings near you</div>
+
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" as const, justifyContent: "center", maxWidth: 400 }}>
+          {["Property", "Vehicles", "Electronics", "Furniture", "Machinery"].map((cat, i) => (
+            <span key={cat} style={{
+              fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: 600,
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)",
+              borderRadius: 100, padding: "6px 14px", color: "rgba(255,255,255,0.4)",
+              animation: `pinFadeIn 0.4s ease ${0.8 + i * 0.1}s both`,
+            }}>{cat}</span>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", gap: 6, marginTop: 28 }}>
+          {[0, 1, 2].map(i => (
+            <div key={i} style={{
+              width: 6, height: 6, borderRadius: "50%", background: BRAND.accent,
+              animation: `dotPulse 1.2s ease-in-out ${i * 0.2}s infinite`,
+            }} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Scroll Indicator (subtle hint there's more below) ───────────────────────
+function ScrollHint() {
+  return (
+    <a href="#seo-content" style={{
+      position: "absolute", bottom: 20, left: "50%", transform: "translateX(-50%)",
+      zIndex: 50, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(8px)",
+      border: `1px solid ${BRAND.border}`, borderRadius: 100,
+      padding: "8px 16px", fontFamily: "'DM Sans', sans-serif",
+      fontSize: 12, fontWeight: 600, color: BRAND.text,
+      textDecoration: "none", display: "flex", alignItems: "center", gap: 6,
+      boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+      animation: "bounce 2s ease-in-out infinite",
+    }}>
+      Explore cities ↓
+    </a>
+  );
+}
+
+// ─── SEO Content (below fold — Google crawls, users rarely see) ──────────────
+function SEOContent() {
+  return (
+    <section id="seo-content" style={{ background: "#fff" }}>
+      {/* Hero text for Google */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "48px 24px 32px", textAlign: "center" }}>
+        <h1 style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: "clamp(26px, 4vw, 38px)", fontWeight: 800,
+          color: BRAND.primary, lineHeight: 1.2, marginBottom: 16,
+        }}>
+          Find Rooms, PG, Flats, Vehicles &amp; More on Rent Near You
+        </h1>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif", fontSize: 15,
+          color: BRAND.muted, lineHeight: 1.7, maxWidth: 640, margin: "0 auto",
+        }}>
+          RentalPins is India's map-based rental marketplace. Browse rental listings pinned on a live map — property, vehicles, electronics, furniture and more across Chandigarh, Ludhiana and other cities. Contact owners directly. No broker fee. Free to list.
+        </p>
+      </div>
+
+      {/* City cards */}
+      <section style={{ padding: "32px 24px 48px", background: BRAND.surface }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <h2 style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: "clamp(20px, 3vw, 26px)", fontWeight: 700,
+            color: BRAND.primary, textAlign: "center", marginBottom: 8,
+          }}>Browse Rentals by City</h2>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif", fontSize: 13,
+            color: BRAND.muted, textAlign: "center", marginBottom: 24,
+          }}>Explore rental listings across India's fastest-growing cities</p>
+
+          <div style={{
+            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+            gap: 14,
+          }}>
+            {[
+              { name: "Chandigarh Tricity", href: "/rentals/chandigarh", areas: "Chandigarh, Mohali, Panchkula, Zirakpur, Kharar", status: "Live" },
+              { name: "Ludhiana", href: "/rentals/ludhiana", areas: "Ludhiana, Khanna, Samrala, Jagraon", status: "Live" },
+              { name: "NCR Delhi", href: "/rentals/ncr", areas: "Delhi, Noida, Gurugram, Ghaziabad", status: "Coming Soon" },
+            ].map(city => (
+              <a key={city.name} href={city.href} style={{
+                display: "block", background: "#fff", border: `1px solid ${BRAND.border}`,
+                borderRadius: 12, padding: "18px 18px", textDecoration: "none",
+                transition: "border-color 0.2s, box-shadow 0.2s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = BRAND.accent; e.currentTarget.style.boxShadow = `0 4px 16px ${BRAND.accent}22`; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = BRAND.border; e.currentTarget.style.boxShadow = "none"; }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 700, color: BRAND.primary }}>{city.name}</span>
+                  <span style={{
+                    fontFamily: "'DM Sans', sans-serif", fontSize: 10, fontWeight: 600,
+                    color: city.status === "Live" ? "#2E7D32" : BRAND.muted,
+                    background: city.status === "Live" ? "#E8F5E9" : BRAND.surface,
+                    padding: "2px 8px", borderRadius: 100,
+                  }}>{city.status}</span>
+                </div>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: BRAND.muted, lineHeight: 1.5, margin: 0 }}>{city.areas}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 9 Categories */}
+      <section style={{ padding: "36px 24px", background: "#fff", textAlign: "center" }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: "clamp(20px, 3vw, 26px)", fontWeight: 700,
+          color: BRAND.primary, marginBottom: 20,
+        }}>9 Rental Categories — Not Just Property</h2>
+        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 8, justifyContent: "center", maxWidth: 700, margin: "0 auto" }}>
+          {["🏠 Property", "🚗 Vehicles", "💻 Electronics", "🍳 Home Appliances", "🛋️ Furniture", "🏗️ Heavy Machinery", "🔧 Construction", "🎬 Events", "📦 Others"].map(c => (
+            <span key={c} style={{
+              fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600,
+              background: BRAND.surface, border: `1px solid ${BRAND.border}`,
+              borderRadius: 100, padding: "7px 16px", color: BRAND.text,
+            }}>{c}</span>
+          ))}
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section style={{ padding: "40px 24px", background: BRAND.surface }}>
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <h2 style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: "clamp(20px, 3vw, 26px)", fontWeight: 700,
+            color: BRAND.primary, textAlign: "center", marginBottom: 28,
+          }}>How RentalPins Works</h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
+            {[
+              { num: "01", title: "Browse the Map", desc: "Live map with pins. Filter by category and area." },
+              { num: "02", title: "Tap Any Pin", desc: "See photos, price, location and details instantly." },
+              { num: "03", title: "Contact the Owner", desc: "WhatsApp, call or in-app chat. No broker fees." },
+              { num: "04", title: "List Your Rental", desc: "Post in minutes. Your listing goes live on the map." },
+            ].map(s => (
+              <div key={s.num} style={{ background: "#fff", borderRadius: 12, padding: "20px 18px", border: `1px solid ${BRAND.border}` }}>
+                <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 24, fontWeight: 800, color: BRAND.accent, marginBottom: 6, opacity: 0.4 }}>{s.num}</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: BRAND.primary, marginBottom: 4 }}>{s.title}</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: BRAND.muted, lineHeight: 1.6 }}>{s.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Trust signals */}
+      <section style={{ padding: "36px 24px", background: "#fff" }}>
+        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, textAlign: "center" }}>
+          {[
+            ["OTP Verified", "Every user verified by mobile OTP"],
+            ["No Broker Fee", "Deal directly with owners"],
+            ["Free to List", "Post rental in minutes"],
+            ["9 Categories", "More than just property"],
+          ].map(([title, sub]) => (
+            <div key={title}>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700, color: BRAND.primary, marginBottom: 4 }}>{title}</div>
+              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: BRAND.muted }}>{sub}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <FAQ />
+    </section>
+  );
+}
+
+// ─── FAQ ──────────────────────────────────────────────────────────────────────
+function FAQ() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const faqs = [
+    { q: "How do I find a room for rent without a broker on RentalPins?", a: "Open RentalPins and browse the live map. All listings are posted directly by owners — no broker fees. Filter by category and area to find rooms, PG, flats, or any rental near you." },
+    { q: "Is it free to list a rental on RentalPins?", a: "Yes! RentalPins offers free listings across all cities. Download the app or browse at www.rentalpins.com to post your property, vehicle, or equipment in minutes." },
+    { q: "What cities does RentalPins cover?", a: "RentalPins currently covers Chandigarh Tricity (Chandigarh, Mohali, Panchkula, Zirakpur, Kharar, Landran, Banur), Ludhiana district (Ludhiana, Khanna, Samrala, Doraha, Jagraon), and NCR Delhi coming soon." },
+    { q: "What types of rentals are available on RentalPins?", a: "RentalPins has 9 rental categories: Property (rooms, flats, PG, villas, shops, offices), Vehicles, Electronics & Gadgets, Home Appliances, Furniture, Heavy Machinery, Construction Equipment, Event & Production gear, and more." },
+    { q: "How do I contact a rental owner on RentalPins?", a: "Tap any pin on the map to see listing details. Reach the owner via WhatsApp, direct call, or in-app chat. All users are OTP-verified for safety." },
+  ];
+  return (
+    <section style={{ padding: "48px 24px 32px", background: BRAND.surface }}>
+      <div style={{ maxWidth: 700, margin: "0 auto" }}>
+        <h2 style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: "clamp(20px, 3vw, 26px)", fontWeight: 700,
+          color: BRAND.primary, textAlign: "center", marginBottom: 28,
+        }}>Frequently Asked Questions</h2>
+        {faqs.map((faq, i) => (
+          <div key={i} style={{ borderBottom: `1px solid ${BRAND.border}`, padding: "14px 0" }}>
+            <button onClick={() => setOpenIdx(openIdx === i ? null : i)} style={{
+              width: "100%", textAlign: "left", background: "none", border: "none", cursor: "pointer",
+              fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, color: BRAND.text,
+              display: "flex", justifyContent: "space-between", alignItems: "center", padding: 0,
+            }}>
+              {faq.q}
+              <span style={{
+                fontSize: 18, color: BRAND.muted,
+                transform: openIdx === i ? "rotate(45deg)" : "rotate(0deg)",
+                transition: "transform 0.2s", flexShrink: 0, marginLeft: 12,
+              }}>+</span>
+            </button>
+            {openIdx === i && (
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: BRAND.muted, lineHeight: 1.7, marginTop: 8 }}>{faq.a}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ─── Footer ──────────────────────────────────────────────────────────────────
+function Footer() {
+  const cols = [
+    { title: "PLATFORM", links: [
+      { label: "Browse Rentals", href: "/" },
+      { label: "Get Android App", href: PLAY_URL },
+    ]},
+    { title: "CITIES", links: [
+      { label: "Chandigarh Tricity", href: "/rentals/chandigarh" },
+      { label: "Ludhiana", href: "/rentals/ludhiana" },
+    ]},
+    { title: "COMPANY", links: [
+      { label: "About", href: "/about" },
+      { label: "Contact", href: "/contact" },
+      { label: "Blog", href: "/blog" },
+    ]},
+    { title: "LEGAL", links: [
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Refund Policy", href: "/refund-policy" },
+    ]},
+  ];
+
+  return (
+    <footer style={{ background: BRAND.surface, borderTop: `1px solid ${BRAND.border}`, padding: "40px 24px 24px", fontFamily: "'DM Sans', sans-serif" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr 1fr", gap: 28 }} className="footer-grid">
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+            <Image src="/logo/logo.png" alt="RentalPins" width={26} height={26} style={{ objectFit: "contain" }} />
+            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: BRAND.primary }}>
+              Rental<span style={{ color: BRAND.accent }}>Pins</span>
+            </span>
+          </div>
+          <p style={{ fontSize: 12, color: BRAND.muted, lineHeight: 1.6, maxWidth: 220 }}>
+            Rent Anything Anywhere. India's map-first rental marketplace.
+          </p>
+          <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+            {[
+              { label: "f", href: "https://www.facebook.com/rentalpins" },
+              { label: "ig", href: "https://www.instagram.com/rentalpins/" },
+              { label: "X", href: "https://x.com/rentalpins" },
+            ].map(s => (
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" style={{
+                width: 30, height: 30, borderRadius: "50%", background: BRAND.border,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 11, fontWeight: 700, color: BRAND.muted, textDecoration: "none",
+              }}>{s.label}</a>
+            ))}
+          </div>
+        </div>
+        {cols.map(col => (
+          <div key={col.title}>
+            <h4 style={{ fontSize: 10, fontWeight: 700, color: BRAND.muted, letterSpacing: "0.08em", marginBottom: 12, textTransform: "uppercase" as const }}>{col.title}</h4>
+            {col.links.map(link => (
+              <a key={link.label} href={link.href} style={{ display: "block", fontSize: 12, fontWeight: 500, color: BRAND.text, textDecoration: "none", padding: "3px 0" }}>{link.label}</a>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={{ maxWidth: 1200, margin: "24px auto 0", paddingTop: 16, borderTop: `1px solid ${BRAND.border}`, display: "flex", justifyContent: "space-between", flexWrap: "wrap" as const, gap: 8 }}>
+        <span style={{ fontSize: 11, color: BRAND.muted }}>© {new Date().getFullYear()} RentalPins. All rights reserved.</span>
+        <span style={{ fontSize: 11, color: BRAND.muted }}>Made with love in Punjab, India</span>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Root ─────────────────────────────────────────────────────────────────────
+export default function HomePageClient() {
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+
+        .desktop-nav     { display: flex !important; }
+        .mobile-menu-btn { display: none !important; }
+
+        @keyframes pinFadeIn {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pinPulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50%      { transform: scale(1.15); opacity: 1; }
+        }
+        @keyframes ringExpand {
+          0%   { transform: scale(0.6); opacity: 0.6; }
+          100% { transform: scale(2.2); opacity: 0; }
+        }
+        @keyframes dotPulse {
+          0%, 100% { opacity: 0.3; transform: scale(0.8); }
+          50%      { opacity: 1;   transform: scale(1.2); }
+        }
+        @keyframes bounce {
+          0%, 100% { transform: translateX(-50%) translateY(0); }
+          50%      { transform: translateX(-50%) translateY(-6px); }
+        }
+
+        @media (max-width: 768px) {
+          .desktop-nav     { display: none !important; }
+          .mobile-menu-btn { display: flex !important; }
+          .footer-grid     { grid-template-columns: 1fr 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .footer-grid     { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      <Navbar />
+
+      {/* Map fills viewport minus navbar — user lands HERE */}
+      <main style={{ marginTop: 56, position: "relative" }}>
+        <React.Suspense fallback={<LoadingScreen />}>
+          <IframeMap />
+        </React.Suspense>
+        <ScrollHint />
+      </main>
+
+      {/* SEO content below fold — Google sees it, users rarely do */}
+      <SEOContent />
+
+      <Footer />
+    </>
+  );
+}

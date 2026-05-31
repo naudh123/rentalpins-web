@@ -1,0 +1,15 @@
+# ai.txt — RentalPins (https://www.rentalpins.com)
+# Machine-readable pointers for AI crawlers and assistants (Google AI Overviews,
+# ChatGPT browsing, Gemini, Perplexity, etc.). Longer context: /llms.txt
+
+Site: https://www.rentalpins.com
+App: https://app.rentalpins.com
+Name: RentalPins
+Summary: Map-first rental marketplace — property (rooms, PG, flats), vehicles, electronics, furniture, equipment, and more. India and selected global cities. Direct owner contact; free listing positioning. www = marketing & SEO; app = live map & posting.
+
+LLMs: https://www.rentalpins.com/llms.txt
+Sitemap: https://www.rentalpins.com/sitemap.xml
+Robots: https://www.rentalpins.com/robots.txt
+
+Contact: https://www.rentalpins.com/contact
+Privacy: https://www.rentalpins.com/privacy-policy

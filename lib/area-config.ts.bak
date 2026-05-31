@@ -1,0 +1,161 @@
+// lib/area-config.ts
+// Geohash prefixes computed from: node scripts/compute-geohashes.mjs
+// Precision 4 ≈ ~20km cell (city-level pages)
+// Precision 5 ≈ ~5km cell (area-level pages)
+
+export interface AreaConfig {
+  slug: string;
+  name: string;
+  city: string;
+  geohashPrefixes: string[];
+  center: { lat: number; lng: number };
+  radiusKm: number;
+  description: string;
+}
+
+// ─── Chandigarh Tricity ──────────────────────────────────────────────────────
+// All sub-areas fall under prefix-4: ttqw
+// Neighbors: ttqx, ttqz, ttqy, ttqv, ttqt, ttqm, ttqq, ttqr
+
+export const CHANDIGARH_AREAS: AreaConfig[] = [
+  {
+    slug: "chandigarh",
+    name: "Chandigarh Tricity",
+    city: "Chandigarh Tricity",
+    // City-wide: prefix-4 + key neighbors to catch edge listings
+    geohashPrefixes: ["ttqw", "ttqx", "ttqt", "ttqq", "ttqr", "ttqv"],
+    center: { lat: 30.7333, lng: 76.7794 },
+    radiusKm: 30,
+    description: "Browse rental listings across Chandigarh, Mohali, Kharar, Panchkula, Zirakpur and Landran.",
+  },
+  {
+    slug: "mohali",
+    name: "Mohali",
+    city: "Chandigarh Tricity",
+    // ttqw9 (center) + adjacent cells
+    geohashPrefixes: ["ttqw9", "ttqw8", "ttqwd", "ttqwc", "ttqw3", "ttqw6"],
+    center: { lat: 30.7046, lng: 76.7179 },
+    radiusKm: 8,
+    description: "Find rentals in Mohali — property, vehicles, electronics and more near you.",
+  },
+  {
+    slug: "kharar",
+    name: "Kharar",
+    city: "Chandigarh Tricity",
+    // ttqwb (center) + adjacent cells
+    geohashPrefixes: ["ttqwb", "ttqwc", "ttqw8", "ttqw9", "ttqw2", "ttqw3"],
+    center: { lat: 30.7460, lng: 76.6486 },
+    radiusKm: 6,
+    description: "Discover rental listings in Kharar — property, vehicles, equipment and more.",
+  },
+  {
+    slug: "panchkula",
+    name: "Panchkula",
+    city: "Chandigarh Tricity",
+    // ttqwt (center) + adjacent cells
+    geohashPrefixes: ["ttqwt", "ttqws", "ttqww", "ttqwe", "ttqwg", "ttqwk"],
+    center: { lat: 30.6942, lng: 76.8606 },
+    radiusKm: 8,
+    description: "Explore rentals in Panchkula — flats, PGs, vehicles and more.",
+  },
+  {
+    slug: "zirakpur",
+    name: "Zirakpur",
+    city: "Chandigarh Tricity",
+    // ttqw7 (center) + adjacent cells
+    geohashPrefixes: ["ttqw7", "ttqw6", "ttqwe", "ttqwk", "ttqw4", "ttqw5"],
+    center: { lat: 30.6434, lng: 76.8085 },
+    radiusKm: 6,
+    description: "Rent property, vehicles and equipment in Zirakpur on the map.",
+  },
+  {
+    slug: "landran",
+    name: "Landran",
+    city: "Chandigarh Tricity",
+    // ttqw6 (center) + adjacent cells
+    geohashPrefixes: ["ttqw6", "ttqw7", "ttqw3", "ttqw4", "ttqw9", "ttqwd"],
+    center: { lat: 30.6649, lng: 76.7652 },
+    radiusKm: 5,
+    description: "Browse rental listings in Landran — near Chandigarh University and beyond.",
+  },
+];
+
+// ─── Ludhiana ────────────────────────────────────────────────────────────────
+// All sub-areas fall under prefix-4: ttmz
+// Neighbors: tttb, ttw0, ttqp, ttqn, ttmy, ttmw, ttmx, ttt8
+
+export const LUDHIANA_AREAS: AreaConfig[] = [
+  {
+    slug: "ludhiana",
+    name: "Ludhiana",
+    city: "Ludhiana",
+    // City-wide: prefix-4 + key neighbors
+    geohashPrefixes: ["ttmz", "ttqn", "ttqp", "ttmy", "tttb", "ttt8"],
+    center: { lat: 30.9010, lng: 75.8573 },
+    radiusKm: 15,
+    description: "Browse rental listings across Ludhiana — property, vehicles, electronics and more.",
+  },
+  {
+    slug: "sarabha-nagar",
+    name: "Sarabha Nagar",
+    city: "Ludhiana",
+    // ttmzv (center) + adjacent cells
+    geohashPrefixes: ["ttmzv", "ttmzy", "ttmzt", "ttmzw", "ttmzs", "ttmzu"],
+    center: { lat: 30.8967, lng: 75.8283 },
+    radiusKm: 3,
+    description: "Find rentals in Sarabha Nagar, Ludhiana — premium location listings.",
+  },
+  {
+    slug: "model-town",
+    name: "Model Town",
+    city: "Ludhiana",
+    // ttmzv (same cell as Sarabha Nagar — they're close)
+    geohashPrefixes: ["ttmzv", "ttmzy", "ttmzw", "ttmzt", "ttmzs", "ttmzx"],
+    center: { lat: 30.9110, lng: 75.8481 },
+    radiusKm: 3,
+    description: "Explore rental listings in Model Town, Ludhiana — flats, shops, vehicles.",
+  },
+  {
+    slug: "pakhowal-road",
+    name: "Pakhowal Road",
+    city: "Ludhiana",
+    // ttmzt (center) + adjacent cells
+    geohashPrefixes: ["ttmzt", "ttmzv", "ttmzw", "ttmzs", "ttmze", "ttmzm"],
+    center: { lat: 30.8890, lng: 75.8320 },
+    radiusKm: 4,
+    description: "Discover rentals along Pakhowal Road, Ludhiana — all categories.",
+  },
+  {
+    slug: "brs-nagar",
+    name: "BRS Nagar",
+    city: "Ludhiana",
+    // ttmzv (same cell as Sarabha Nagar)
+    geohashPrefixes: ["ttmzv", "ttmzt", "ttmzy", "ttmzs", "ttmzu", "ttmzw"],
+    center: { lat: 30.9012, lng: 75.8178 },
+    radiusKm: 3,
+    description: "Browse rentals in BRS Nagar, Ludhiana — property and more.",
+  },
+  {
+    slug: "focal-point",
+    name: "Focal Point",
+    city: "Ludhiana",
+    // ttmzw (center) + adjacent cells
+    geohashPrefixes: ["ttmzw", "ttmzx", "ttmzy", "ttmzv", "ttmzt", "ttmzq"],
+    center: { lat: 30.8850, lng: 75.8890 },
+    radiusKm: 4,
+    description: "Find commercial and residential rentals in Focal Point, Ludhiana.",
+  },
+];
+
+// ─── Lookup Helpers ──────────────────────────────────────────────────────────
+
+export const ALL_AREAS: AreaConfig[] = [...CHANDIGARH_AREAS, ...LUDHIANA_AREAS];
+
+export function getAreaConfig(citySlug: string, areaSlug?: string): AreaConfig | undefined {
+  if (areaSlug) {
+    return ALL_AREAS.find(a => a.slug === areaSlug);
+  }
+  if (citySlug === "chandigarh") return CHANDIGARH_AREAS[0];
+  if (citySlug === "ludhiana")   return LUDHIANA_AREAS[0];
+  return undefined;
+}
