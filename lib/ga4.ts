@@ -102,7 +102,7 @@ export function trackListingSaved(listingId: string): void {
 
 export function trackListingShared(
   listingId: string,
-  method: "native_share" | "clipboard" | "manual_prompt"
+  method: "native_share" | "clipboard" | "manual_prompt" | "whatsapp_share"
 ): void {
   trackEvent("listing_shared", { listing_id: listingId, method });
 }

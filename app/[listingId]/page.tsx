@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { fetchListingById } from "@/lib/listings";
-import { appPath, siteUrl } from "@/lib/config";
+import { appPath } from "@/lib/config";
+import {
+  listingCanonicalUrl,
+  listingOgImagePath,
+  listingShareDescription,
+} from "@/lib/listing-share";
 
 interface Props {
   params: Promise<{ listingId: string }>;
@@ -11,16 +16,39 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { listingId } = await params;
   const listing = await fetchListingById(listingId);
+  const canonical = listingCanonicalUrl(listingId);
+
+  if (!listing) {
+    return {
+      title: "Listing details",
+      description: "Rental listing on RentalPins.",
+      alternates: { canonical },
+      robots: { index: false, follow: true },
+    };
+  }
+
+  const title = listing.title;
+  const description = listingShareDescription(listing);
+  const ogImage = listingOgImagePath(listingId);
 
   return {
-    title: listing?.title ?? "Listing details",
-    description: listing?.description.slice(0, 160) ?? "Rental listing on RentalPins.",
-    alternates: {
-      canonical: `${siteUrl}${appPath(`/listings/${listingId}`)}`,
+    title,
+    description,
+    alternates: { canonical },
+    robots: { index: false, follow: true },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: "RentalPins",
+      type: "website",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: title }],
     },
-    robots: {
-      index: false,
-      follow: true,
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImage],
     },
   };
 }

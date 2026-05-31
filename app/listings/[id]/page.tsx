@@ -33,6 +33,7 @@ import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { appPath, siteUrl } from "@/lib/config";
 import { mapSearchUrl } from "@/lib/map-search-url";
 import { formatPrice } from "@/lib/format";
+import { listingCanonicalUrl, listingShareMetadata } from "@/lib/listing-share";
 import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
 import ListingActions from "./ListingActions";
 
@@ -44,33 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const listing = await fetchListingById(id);
   if (!listing) return { title: "Listing not found" };
-
-  const canonical = `${siteUrl}${appPath(`/listings/${id}`)}`;
-  const description =
-    listing.description.slice(0, 160) ||
-    `${listing.title} — browse rentals on RentalPins.`;
-  const title = `${listing.title} | RentalPins`;
-  const ogImage = listing.imageUrls[0] || listing.imageUrl || "/og-image.png";
-
-  return {
-    title,
-    description,
-    alternates: { canonical },
-    openGraph: {
-      title,
-      description,
-      url: canonical,
-      siteName: "RentalPins",
-      type: "website",
-      images: [{ url: ogImage, width: 1200, height: 630 }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [ogImage],
-    },
-  };
+  return listingShareMetadata(listing, id);
 }
 
 export default async function ListingDetailPage({ params }: Props) {
@@ -95,7 +70,7 @@ export default async function ListingDetailPage({ params }: Props) {
         ? 1
         : 0;
 
-  const listingUrl = `${siteUrl}${appPath(`/listings/${id}`)}`;
+  const listingUrl = listingCanonicalUrl(id);
   const whatsAppHref = listing.ownerPhone
     ? whatsappUrl(listing.ownerPhone, listingWhatsAppMessage(listing.title, listingUrl))
     : "";

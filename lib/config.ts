@@ -10,9 +10,15 @@ export const basePath =
 export const showStagingBanner =
   deployEnv === "staging" || process.env.NEXT_PUBLIC_SHOW_STAGING_BANNER === "true";
 
-export const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://www.rentalpins.com";
+function normalizeSiteUrl(raw: string): string {
+  const trimmed = raw.replace(/\/$/, "");
+  if (trimmed === "https://rentalpins.com") return "https://www.rentalpins.com";
+  return trimmed;
+}
+
+export const siteUrl = normalizeSiteUrl(
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.rentalpins.com"
+);
 
 /** Production defaults to required unless explicitly set to "false". */
 export const requirePhoneVerification =

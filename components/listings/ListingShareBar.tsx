@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { trackListingShared } from "@/lib/ga4";
+import { whatsappListingShareUrl } from "@/lib/whatsapp";
 
 interface Props {
   listingId: string;
@@ -50,8 +51,19 @@ export default function ListingShareBar({ listingId, title, url }: Props) {
     }
   }
 
+  const whatsAppShareHref = whatsappListingShareUrl(title, url);
+
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <a
+        href={whatsAppShareHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackListingShared(listingId, "whatsapp_share")}
+        className="inline-flex items-center gap-1.5 rounded-full bg-[#25D366] px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:opacity-95"
+      >
+        WhatsApp
+      </a>
       <button
         type="button"
         onClick={() => void shareListing()}
