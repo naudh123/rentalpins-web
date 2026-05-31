@@ -5,7 +5,7 @@ import ListingCard from "@/components/listings/ListingCard";
 import OwnerTrustBadges from "@/components/listings/OwnerTrustBadges";
 import OwnerProfileShareButton from "@/components/listings/OwnerProfileShareButton";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import { appPath, siteUrl } from "@/lib/config";
+import { appPath, publicSiteUrl, siteUrl } from "@/lib/config";
 import { fetchMoreFromOwner } from "@/lib/listings";
 import { fetchOwnerTrust } from "@/lib/owner-trust";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { uid } = await params;
   const ownerTrust = await fetchOwnerTrust(uid);
   const ownerName = ownerTrust?.displayName || "Lister";
-  const canonical = `${siteUrl}${appPath(`/u/${uid}`)}`;
+  const canonical = `${publicSiteUrl()}${appPath(`/u/${uid}`)}`;
 
   return {
     title: `${ownerName} listings | RentalPins`,
@@ -35,7 +35,7 @@ export default async function OwnerStorefrontPage({ params }: Props) {
   if (!ownerTrust && listings.length === 0) notFound();
 
   const ownerName = ownerTrust?.displayName || "This lister";
-  const profileUrl = `${siteUrl}${appPath(`/u/${uid}`)}`;
+  const profileUrl = `${publicSiteUrl()}${appPath(`/u/${uid}`)}`;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 pb-24 md:pb-8">
