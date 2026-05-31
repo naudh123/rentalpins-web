@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server";
-import { deployEnv, googleMapsApiKey, requirePhoneVerification } from "@/lib/config";
+import {
+  deployEnv,
+  gaMeasurementId,
+  googleMapsApiKey,
+  requirePhoneVerification,
+} from "@/lib/config";
+import {
+  GA4_COLLECT_ENDPOINT,
+  ga4TagLoaderUrl,
+  isGa4ScriptEnabledOnBuild,
+} from "@/lib/analytics-config";
 
 /** Deployment smoke check — no secrets in response. */
 export async function GET() {
@@ -16,6 +26,15 @@ export async function GET() {
     firebaseClient: hasFirebaseClient,
     firebaseAdmin: hasAdmin,
     googleMaps: hasMapsKey,
+    analytics: {
+      measurementId: gaMeasurementId,
+      scriptEnabledOnBuild: isGa4ScriptEnabledOnBuild(),
+      requiresCookieConsent: true,
+      consentStorageKey: "rp_analytics_consent",
+      tagLoader: ga4TagLoaderUrl(),
+      collectEndpoint: GA4_COLLECT_ENDPOINT,
+      note: "Events send only after user taps Accept on the cookie banner (production builds).",
+    },
   };
 
   const ok = hasAdmin && hasMapsKey && hasFirebaseClient;

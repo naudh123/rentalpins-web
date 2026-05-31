@@ -2,17 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { canCollectGa4, isGa4ScriptEnabledOnBuild } from "@/lib/analytics-guard";
 import { gaMeasurementId } from "@/lib/config";
 import { applyConsentToGtag, readConsent, writeConsent } from "@/lib/consent";
 import { trackEvent } from "@/lib/ga4";
-
-/** Guards GA: only fires on production AND respects consent. */
-function isAnalyticsAllowed(): boolean {
-  if (typeof window === "undefined") return false;
-  const env = process.env.NEXT_PUBLIC_DEPLOY_ENV;
-  if (env === "staging") return false;
-  return readConsent() === "granted";
-}
 
 export default function AnalyticsProvider() {
   const pathname = usePathname();
@@ -38,7 +31,7 @@ export default function AnalyticsProvider() {
     if (!gaMeasurementId) return;
     if (prevPathname.current === pathname) return;
     prevPathname.current = pathname;
-    if (!isAnalyticsAllowed()) return;
+    if (!canCollectGa4()) return;
 
     trackEvent("page_view", {
       page_path: pathname,
@@ -67,13 +60,14 @@ export default function AnalyticsProvider() {
     setBannerVisible(false);
   }
 
+  if (!isGa4ScriptEnabledOnBuild()) return null;
   if (!bannerVisible || consentState !== null) return null;
 
   return (
     <div
       role="dialog"
       aria-label="Cookie consent"
-      className="fixed inset-x-0 bottom-[4.5rem] z-50 mx-auto max-w-lg px-4 pb-safe sm:bottom-4"
+      className="fixed inset-x-0 bottom-[7.75rem] z-[60] mx-auto max-w-lg px-4 sm:bottom-4"
     >
       <div className="rp-glass rounded-2xl border border-[var(--border)] p-4 shadow-lg">
         <p className="text-sm text-[var(--text)]">

@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  canCollectGa4,
+  ga4DebugEnabled,
+  isGa4ScriptEnabledOnBuild,
+} from "@/lib/analytics-guard";
+import { readConsent } from "@/lib/consent";
 import { gaMeasurementId } from "./config";
 
 type GtagParams = Record<string, string | number | boolean | undefined>;
@@ -19,8 +25,20 @@ export function trackEvent(
   name: string,
   params?: GtagParams
 ): void {
-  if (typeof window === "undefined" || !window.gtag) return;
-  window.gtag("event", name, params);
+  if (typeof window === "undefined") return;
+
+  if (ga4DebugEnabled()) {
+    console.info("[GA4]", name, params ?? {}, {
+      collect: canCollectGa4(),
+      consent: readConsent(),
+      scriptOnBuild: isGa4ScriptEnabledOnBuild(),
+      hasGtag: Boolean(window.gtag),
+      measurementId: gaMeasurementId,
+    });
+  }
+
+  if (!canCollectGa4()) return;
+  window.gtag!("event", name, params);
 }
 
 export function trackSearchInitiated(queryType: string, location?: string): void {
