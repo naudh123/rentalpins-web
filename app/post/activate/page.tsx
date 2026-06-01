@@ -17,9 +17,11 @@ import { callHttpsFunction } from "@/lib/firebase-callable";
 import { getClientDb } from "@/lib/firebase-client";
 import {
   fetchResolvedListingPlans,
+  resolveFreePlanEligibility,
   type ListingPlanRow,
   type ListingPlanTier,
 } from "@/lib/listing-plans";
+import { CallableError } from "@/lib/firebase-callable";
 import { openRazorpayCheckout } from "@/lib/razorpay-checkout";
 import { trackEvent } from "@/lib/ga4";
 
@@ -340,7 +342,7 @@ function ActivateContent() {
   }, []);
 
   useEffect(() => {
-    if (!activeListingId || trackedMissingId) return;
+    if (activeListingId || trackedMissingId) return;
     setTrackedMissingId(true);
     trackEvent("post_activate_missing_listing_id", {
       ...authStateMeta(),
@@ -840,6 +842,13 @@ function ActivateContent() {
     );
   }
 
+  function callableErrorCode(err: unknown): string {
+    if (err instanceof CallableError) {
+      return err.code.replace(/^functions\//, "");
+    }
+    return "unknown";
+  }
+
   async function activateFreePlan(plan: Plan, index: number) {
     if (!canPay || !profile || !user || !listing) return;
     const listingIdForApi = listing.id.trim();
@@ -853,6 +862,34 @@ function ActivateContent() {
     const signature = planSignature(plan);
     lastCheckoutPlanPositionRef.current = planPosition;
     lastCheckoutPlanSignatureRef.current = signature;
+
+    const db = getClientDb();
+    const eligibility = await resolveFreePlanEligibility(
+      db,
+      user.uid,
+      resolvedTierRef.current,
+      resolvedTargetIsoRef.current,
+      resolvedCityCodeRef.current
+    );
+    if (!eligibility.eligible) {
+      setError(eligibility.message);
+      trackEvent("post_activate_free_activate_failed", {
+        listing_id: listingIdForApi,
+        error_code: eligibility.code,
+        ...authStateMeta(),
+        retry_channel: "none",
+        ...phaseMeta("checkout"),
+        ...groupMeta("payment"),
+        ...pathMeta("normal"),
+        ...flowMeta(),
+        plan_id: plan.id,
+        plan_position: planPosition,
+        ...checkoutStateMeta(),
+      });
+      setBusy(false);
+      return;
+    }
+
     trackEvent("post_activate_free_activate_started", {
       listing_id: listingIdForApi,
       ...authStateMeta(),
@@ -903,9 +940,11 @@ function ActivateContent() {
       });
       router.push(appPath(`/listings/${listingIdForApi}`));
     } catch (err) {
-      setError(mapCallableError(err));
+      const message = mapCallableError(err);
+      setError(message);
       trackEvent("post_activate_free_activate_failed", {
         listing_id: listingIdForApi,
+        error_code: callableErrorCode(err),
         ...authStateMeta(),
         retry_channel: "none",
         ...phaseMeta("checkout"),

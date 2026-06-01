@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "check:env": "node scripts/check-env.mjs",
     "check:env:prod": "node scripts/check-env.mjs --production",
-    "check:firestore-sync": "node scripts/verify-firestore-web-sync.mjs"
+    "check:firestore-sync": "node scripts/verify-firestore-web-sync.mjs",
+    "check:seo-content": "node scripts/check-seo-content-thresholds.mjs"
   },
   "dependencies": {
     "@googlemaps/markerclusterer": "^2.6.2",

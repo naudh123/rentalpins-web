@@ -3,6 +3,8 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import MarketingShell from "@/components/MarketingShell";
 import { JsonLdBlogPosting } from "@/components/JsonLd";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import StructuredData from "@/components/seo/StructuredData";
 import type { Metadata } from "next";
 import { canonicalUrl } from "@/lib/seo";
 
@@ -56,8 +58,25 @@ export default async function BlogPostPage({ params }: Props) {
 
   const postUrl = canonicalUrl(`/blog/${post.slug}`);
 
+  const authorName = post.author ?? "RentalPins";
+
   return (
     <MarketingShell>
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", url: canonicalUrl("/") },
+          { name: "Blog", url: canonicalUrl("/blog") },
+          { name: post.title, url: postUrl },
+        ]}
+      />
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: authorName,
+          worksFor: { "@type": "Organization", name: "RentalPins" },
+        }}
+      />
       <JsonLdBlogPosting
         post={{
           title: post.title,

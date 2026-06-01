@@ -8,6 +8,7 @@ import { canLeaveLogin, mustVerifyPhone } from "@/lib/auth-guards";
 import { appPath, basePath } from "@/lib/config";
 import { getClientAuth } from "@/lib/firebase-client";
 import { trackEvent } from "@/lib/ga4";
+import { isValidPhoneForAuth, normalizePhoneForAuth } from "@/lib/phone-auth";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -150,7 +151,18 @@ function LoginContent() {
     if (message.includes("too-many-requests") || message.includes("too many requests")) {
       return "rate_limited";
     }
-    if (message.includes("invalid") || message.includes("code")) return "invalid_code";
+    if (
+      message.includes("security check") ||
+      message.includes("captcha") ||
+      message.includes("recaptcha") ||
+      message.includes("app credential")
+    ) {
+      return "captcha_failed";
+    }
+    if (message.includes("valid mobile") || message.includes("phone number")) {
+      return "invalid_phone";
+    }
+    if (message.includes("invalid") && message.includes("code")) return "invalid_code";
     if (message.includes("popup") && message.includes("closed")) return "popup_closed";
     if (message.includes("popup") && message.includes("blocked")) return "popup_blocked";
     return "unknown_error";
@@ -405,6 +417,23 @@ function LoginContent() {
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
     setError("");
+    const normalizedPhone = normalizePhoneForAuth(phone);
+    if (!isValidPhoneForAuth(normalizedPhone)) {
+      setError("Enter a valid mobile number with country code (e.g. +91 98765 43210).");
+      trackEvent("login_otp_send_failed", {
+        link_phone_mode: showPhoneOnly,
+        error_code: "invalid_phone",
+        ...eventGroupMeta("failure"),
+        ...phaseMeta("verification"),
+        ...authStateMeta(),
+        ...authRequirementMeta(),
+        ...loginPathMeta(),
+        ...methodMeta("otp"),
+        ...loginMeta(),
+      });
+      return;
+    }
+    setPhone(normalizedPhone);
     setBusy(true);
     const attemptMeta = nextAttemptMeta("otp");
     activeOtpAttemptRef.current = attemptMeta;
@@ -421,7 +450,7 @@ function LoginContent() {
       ...loginMeta(),
     });
     try {
-      await sendOtp(phone, "recaptcha-container", showPhoneOnly);
+      await sendOtp(normalizedPhone, "recaptcha-container", showPhoneOnly);
       setOtpSent(true);
     } catch (err) {
       const errorCode = errorCodeFromUnknown(err);

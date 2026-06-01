@@ -23,6 +23,7 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { getClientAuth, getClientDb } from "@/lib/firebase-client";
 import { mapAuthError } from "@/lib/auth-errors";
+import { normalizePhoneForAuth } from "@/lib/phone-auth";
 import { requirePhoneVerification } from "@/lib/config";
 import { currencyForIso, resolveIsoFromPhone } from "@/lib/phone-iso";
 import { isUserBlocked } from "@/lib/user-blocked";
@@ -64,6 +65,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 type RecaptchaWindow = {
   recaptchaVerifier?: RecaptchaVerifier;
   recaptchaContainerId?: string;
+  recaptchaRendered?: boolean;
 };
 
 function getRecaptchaWindow(): RecaptchaWindow {
@@ -80,6 +82,7 @@ function clearRecaptcha() {
     }
     win.recaptchaVerifier = undefined;
     win.recaptchaContainerId = undefined;
+    win.recaptchaRendered = false;
   }
 }
 
@@ -208,25 +211,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const sendOtp = useCallback(
     async (phone: string, containerId: string, forLink = false) => {
       const auth = getClientAuth();
+      const normalizedPhone = normalizePhoneForAuth(phone);
       if (
         process.env.NODE_ENV === "development" &&
         process.env.NEXT_PUBLIC_FIREBASE_PHONE_AUTH_TESTING === "true"
       ) {
         auth.settings.appVerificationDisabledForTesting = true;
       }
-      setPendingPhone(phone);
+      setPendingPhone(normalizedPhone);
       setLinkMode(forLink);
       try {
         const verifier = getRecaptcha(auth, containerId);
-        await verifier.render();
+        const win = getRecaptchaWindow();
+        if (!win.recaptchaRendered) {
+          await verifier.render();
+          win.recaptchaRendered = true;
+        }
 
         if (forLink && auth.currentUser) {
-          const result = await linkWithPhoneNumber(auth.currentUser, phone, verifier);
+          const result = await linkWithPhoneNumber(
+            auth.currentUser,
+            normalizedPhone,
+            verifier
+          );
           setConfirmation(result);
           return;
         }
 
-        const result = await signInWithPhoneNumber(auth, phone, verifier);
+        const result = await signInWithPhoneNumber(auth, normalizedPhone, verifier);
         setConfirmation(result);
       } catch (err) {
         clearRecaptcha();

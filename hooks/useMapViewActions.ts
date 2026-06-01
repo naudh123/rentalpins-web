@@ -24,6 +24,7 @@ import {
 import type { MapMobileView } from "@/components/map/MapMobileViewSwitcher";
 import type { DrawMode } from "@/components/map/MapDrawAreaController";
 import { trackEvent } from "@/lib/ga4";
+import { isGoogleMapsReady } from "@/lib/google-maps-guard";
 
 interface Options {
   mapRef: MutableRefObject<google.maps.Map | null>;
@@ -73,7 +74,7 @@ export function useMapViewActions({
   const applyMapFromUrlState = useCallback(
     (state: SearchUrlState) => {
       const map = mapRef.current;
-      if (!map || urlMapViewMatchesState(map, state)) return;
+      if (!map || !isGoogleMapsReady() || urlMapViewMatchesState(map, state)) return;
 
       skipMapSyncRef.current = true;
       skipNextIdleFetchRef.current = true;
@@ -144,7 +145,7 @@ export function useMapViewActions({
   const fitAllListings = useCallback(
     (listings: ListingCardData[], mobileView: MapMobileView) => {
       const map = mapRef.current;
-      if (!map) return;
+      if (!map || !isGoogleMapsReady()) return;
       const coords = listings.filter(
         (l) => Number.isFinite(l.lat) && Number.isFinite(l.lng)
       );

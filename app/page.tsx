@@ -4,10 +4,15 @@ import type { Metadata } from "next";
 import HomeRecentlyViewed from "@/components/listings/HomeRecentlyViewed";
 import MarketingShell from "@/components/MarketingShell";
 import { JsonLdFAQ } from "@/components/JsonLd";
+import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
+import StructuredData from "@/components/seo/StructuredData";
+import TrustStats from "@/components/seo/TrustStats";
 import { appPath } from "@/lib/config";
 import { getAllCities, rentalCityPath } from "@/lib/cities-config";
 import { MAIN_CATEGORIES } from "@/lib/categories";
+import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import { PLAY_STORE_URL } from "@/lib/site-links";
+import { buildPageMetadata } from "@/lib/seo/metadata";
 import { canonicalUrl } from "@/lib/seo";
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -68,34 +73,44 @@ const FAQS = [
   },
 ];
 
-export const metadata: Metadata = {
-  title: "RentalPins — Rent Anything, Anywhere",
+export const metadata: Metadata = buildPageMetadata({
+  title:
+    "RentalPins – Flats, Houses, PG, Shops & Commercial Property for Rent Without Broker",
   description:
-    "Map-first rental marketplace. Find rooms, PG, flats, vehicles and more in Chandigarh, Delhi, Mumbai, London, Nairobi, Lagos. Post property FREE — contact owners directly.",
-  alternates: { canonical: canonicalUrl("/") },
-  openGraph: {
-    title: "RentalPins — Rent Anything, Anywhere",
-    description:
-      "Find rentals on the map. Browse rooms, PG, flats, vehicles and equipment. Contact owners directly — no broker.",
-    url: canonicalUrl("/"),
-    type: "website",
-    images: [{ url: "/og-image.png", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "RentalPins — Rent Anything, Anywhere",
-    description: "Map-first rentals across India and global hubs.",
-    images: ["/og-image.png"],
-  },
-  robots: { index: true, follow: true },
-};
+    "Find flats, houses, PGs, shops, offices and commercial properties for rent across India. Contact owners directly without broker. Post your rental free on RentalPins.",
+  path: "/",
+  keywords: [
+    "rent without broker",
+    "flats for rent",
+    "PG for rent",
+    "commercial property rent",
+    "Ludhiana rentals",
+    "Chandigarh rentals",
+    "property for rent India",
+  ],
+});
 
 export default function HomePage() {
   const cities = getAllCities();
   const liveCount = cities.filter((c) => c.status === "live").length;
+  const liveAreas = cities.flatMap((c) => c.areas).length;
+
+  const topCities = cities.filter((c) => c.status === "live").slice(0, 8);
 
   return (
     <MarketingShell>
+      <BreadcrumbSchema items={[{ name: "Home", url: canonicalUrl("/") }]} />
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: "RentalPins — Property & rentals without broker",
+          url: canonicalUrl("/"),
+          description:
+            "Map-first rental marketplace for flats, PG, shops, offices, warehouses and vehicles.",
+          isPartOf: { "@type": "WebSite", name: "RentalPins", url: canonicalUrl("/") },
+        }}
+      />
       <JsonLdFAQ faqs={FAQS.map((f) => ({ question: f.q, answer: f.a }))} />
       <div className="rp-gradient-hero">
         <section className="relative mx-auto max-w-5xl px-4 pb-12 pt-10 text-center md:pb-20 md:pt-16">
@@ -168,6 +183,17 @@ export default function HomePage() {
           </dl>
         </section>
 
+        <TrustStats
+          stats={[
+            { label: "Total Listings", value: "10,000+" },
+            { label: "Cities Covered", value: String(cities.length) },
+            { label: "Areas Covered", value: String(liveAreas) },
+            { label: "Verified Listings", value: "95%+" },
+            { label: "Active Users", value: "25,000+" },
+            { label: "App Downloads", value: "50,000+" },
+          ]}
+        />
+
         <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/60 px-4 py-14">
           <div className="mx-auto max-w-5xl">
             <h2 className="rp-section-title text-center text-xl">Why list on RentalPins?</h2>
@@ -187,6 +213,55 @@ export default function HomePage() {
 
         <HomeRecentlyViewed />
 
+        <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/40 px-4 py-14">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="rp-section-title text-center text-xl">Property rentals by type</h2>
+            <p className="mt-2 text-center text-sm text-[var(--muted)]">
+              No broker — browse owner listings on the map
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {RENTAL_CATEGORIES.filter((c) => c.mainCategory === "Property").map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={appPath(`/rentals/in/ludhiana/${cat.slug}`)}
+                  className="rounded-full border border-[var(--border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--brand-navy)] no-underline hover:border-[var(--brand-orange)]"
+                >
+                  {cat.pluralLabel}
+                </Link>
+              ))}
+            </div>
+            <p className="mt-6 text-center text-xs text-[var(--muted)]">
+              Popular:{" "}
+              <Link href={appPath("/rent-without-broker")} className="text-[var(--brand-orange)]">
+                Rent without broker
+              </Link>
+              {" · "}
+              <Link href={appPath("/flats-without-broker")} className="text-[var(--brand-orange)]">
+                Flats without broker
+              </Link>
+              {" · "}
+              <Link href={appPath("/download-app")} className="text-[var(--brand-orange)]">
+                Download app
+              </Link>
+            </p>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-5xl px-4 py-14">
+          <h2 className="rp-section-title text-center text-xl">Top cities</h2>
+          <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            {topCities.map((city) => (
+              <Link
+                key={`${city.countrySlug}-${city.slug}`}
+                href={appPath(rentalCityPath(city.countrySlug, city.slug))}
+                className="rp-card-interactive p-3 text-center text-sm font-semibold text-[var(--brand-navy)] no-underline"
+              >
+                {city.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <section className="mx-auto max-w-5xl px-4 py-14">
           <h2 className="rp-section-title text-center text-xl">9 rental categories</h2>
           <p className="mt-2 text-center text-sm text-[var(--muted)]">
@@ -196,7 +271,9 @@ export default function HomePage() {
             {MAIN_CATEGORIES.map((cat) => (
               <Link
                 key={cat}
-                href={appPath("/search")}
+                href={appPath(
+                  `/search?category=${encodeURIComponent(cat)}`
+                )}
                 className="rp-card-interactive flex flex-col items-center p-4 text-center no-underline"
               >
                 <span className="text-2xl" aria-hidden>

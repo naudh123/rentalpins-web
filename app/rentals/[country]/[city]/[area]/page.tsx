@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import {
   getAreaBySlug,
   getAllAreas,
+  getAllCities,
   getSiblingAreas,
   rentalCityPath,
   rentalAreaPath,
@@ -13,8 +14,15 @@ import {
 import { fetchAreaListings } from "@/lib/seo-listings";
 import { getAreaConfig } from "@/lib/area-config";
 import { canonicalUrl } from "@/lib/seo";
+import { isRentalCategorySlug } from "@/lib/seo/categories";
+import {
+  categoryHubMetadata,
+  resolveCategoryHub,
+} from "@/lib/seo/render-category-hub";
+import CategoryHubPage from "@/components/seo/CategoryHubPage";
 import ListingsGrid from "@/components/ListingsGrid";
 import AreaClient from "../../../../rentals-shared/AreaClient";
+import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 
 const OG_LOCALE: Record<string, string> = {
   in: "en_IN",
@@ -24,11 +32,19 @@ const OG_LOCALE: Record<string, string> = {
 };
 
 export function generateStaticParams() {
-  return getAllAreas().map((area) => ({
+  const areaParams = getAllAreas().map((area) => ({
     country: area.parentCountrySlug,
     city: area.parentSlug,
     area: area.slug,
   }));
+  const cityCategoryParams = getAllCities().flatMap((city) =>
+    RENTAL_CATEGORIES.map((cat) => ({
+      country: city.countrySlug,
+      city: city.slug,
+      area: cat.slug,
+    }))
+  );
+  return [...areaParams, ...cityCategoryParams];
 }
 
 export async function generateMetadata({
@@ -41,6 +57,17 @@ export async function generateMetadata({
   const resolvedParams = await Promise.resolve(params);
   if (!RENTAL_COUNTRY_SLUGS.includes(resolvedParams.country as (typeof RENTAL_COUNTRY_SLUGS)[number])) {
     return { title: "Not Found" };
+  }
+  if (isRentalCategorySlug(resolvedParams.area)) {
+    const ctx = await resolveCategoryHub(
+      resolvedParams.country,
+      resolvedParams.city,
+      resolvedParams.area
+    );
+    return categoryHubMetadata(
+      ctx,
+      `/rentals/${resolvedParams.country}/${resolvedParams.city}/${resolvedParams.area}`
+    );
   }
   const result = getAreaBySlug(
     resolvedParams.country,
@@ -101,6 +128,22 @@ export default async function AreaPage({
 
   if (!RENTAL_COUNTRY_SLUGS.includes(resolvedParams.country as (typeof RENTAL_COUNTRY_SLUGS)[number])) {
     notFound();
+  }
+
+  if (isRentalCategorySlug(resolvedParams.area)) {
+    const ctx = await resolveCategoryHub(
+      resolvedParams.country,
+      resolvedParams.city,
+      resolvedParams.area
+    );
+    return (
+      <CategoryHubPage
+        city={ctx.city}
+        category={ctx.category}
+        listings={ctx.listings}
+        mapHref={ctx.mapHref}
+      />
+    );
   }
 
   const result = getAreaBySlug(

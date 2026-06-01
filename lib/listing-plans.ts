@@ -228,6 +228,15 @@ export function resolveListingPlansFromDocs(
   };
 }
 
+function matchesFreeHistoryDoc(
+  data: Record<string, unknown>,
+  tier: ListingPlanTier
+): boolean {
+  if (Number(data.activationFeePaid ?? 0) !== 0) return false;
+  const docTier = String(data.resolvedTier ?? "global").trim().toLowerCase();
+  return docTier === tier;
+}
+
 async function safeHistoryQuery(
   db: Firestore,
   collectionName: string,
@@ -244,49 +253,87 @@ async function safeHistoryQuery(
       )
     );
     return snap.docs;
-  } catch {
-    return [];
+  } catch (primaryErr) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        `[listing-plans] ${collectionName} composite history query failed; using ownerUid fallback`,
+        primaryErr
+      );
+    }
+    try {
+      const snap = await getDocs(
+        query(collection(db, collectionName), where("ownerUid", "==", ownerUid))
+      );
+      return snap.docs.filter((d) =>
+        matchesFreeHistoryDoc(d.data() as Record<string, unknown>, tier)
+      );
+    } catch (fallbackErr) {
+      console.error(`[listing-plans] ${collectionName} history fallback failed`, fallbackErr);
+      return [];
+    }
   }
 }
 
-/** Client-side free eligibility estimate — mirrors Flutter `_checkFreeEligibility`. */
-export async function checkFreePlanEligibility(
+export type FreePlanEligibilityResult =
+  | { eligible: true }
+  | {
+      eligible: false;
+      code: "policy_unavailable" | "cooldown_active";
+      message: string;
+    };
+
+async function loadListingPolicy(
+  db: Firestore,
+  tier: ListingPlanTier,
+  targetIso: string | null,
+  cityCode?: string | null
+): Promise<Record<string, unknown> | null> {
+  const docId = resolvePolicyDocId(tier, targetIso, cityCode ?? null);
+
+  const policyRef = doc(db, "settings", "listing_policy", "rules", docId);
+  const policyDoc = await getDoc(policyRef);
+  if (policyDoc.exists()) {
+    return policyDoc.data() as Record<string, unknown>;
+  }
+  if (tier === "city" && targetIso) {
+    const countryDoc = await getDoc(
+      doc(db, "settings", "listing_policy", "rules", `country_${targetIso}`)
+    );
+    if (countryDoc.exists()) return countryDoc.data() as Record<string, unknown>;
+  }
+  const globalDoc = await getDoc(
+    doc(db, "settings", "listing_policy", "rules", "global")
+  );
+  if (globalDoc.exists()) return globalDoc.data() as Record<string, unknown>;
+  return null;
+}
+
+/** Client-side free eligibility — mirrors Flutter `_checkFreeEligibility` + server `activateFreePlan`. */
+export async function resolveFreePlanEligibility(
   db: Firestore,
   ownerUid: string,
   tier: ListingPlanTier,
   targetIso: string | null,
   cityCode?: string | null
-): Promise<boolean> {
-  const docId = resolvePolicyDocId(tier, targetIso, cityCode ?? null);
-
-  let data: Record<string, unknown> | null = null;
-  const policyRef = doc(
-    db,
-    "settings",
-    "listing_policy",
-    "rules",
-    docId
-  );
-  const policyDoc = await getDoc(policyRef);
-  if (policyDoc.exists()) {
-    data = policyDoc.data() as Record<string, unknown>;
-  } else if (tier === "city" && targetIso) {
-    const countryDoc = await getDoc(
-      doc(db, "settings", "listing_policy", "rules", `country_${targetIso}`)
-    );
-    if (countryDoc.exists()) data = countryDoc.data() as Record<string, unknown>;
-  }
+): Promise<FreePlanEligibilityResult> {
+  const data = await loadListingPolicy(db, tier, targetIso, cityCode);
   if (!data) {
-    const globalDoc = await getDoc(
-      doc(db, "settings", "listing_policy", "rules", "global")
-    );
-    if (globalDoc.exists()) data = globalDoc.data() as Record<string, unknown>;
+    return {
+      eligible: false,
+      code: "policy_unavailable",
+      message: "Free plan is not available for this market.",
+    };
   }
-  if (!data) return false;
 
   const limit = Number(data.freeLimit ?? 0);
-  const cooldown = Number(data.cooldownDays ?? 90);
-  if (limit <= 0) return false;
+  const cooldownDays = Number(data.cooldownDays ?? 90);
+  if (limit <= 0) {
+    return {
+      eligible: false,
+      code: "policy_unavailable",
+      message: "Free plan is not available for this market.",
+    };
+  }
 
   const historySnaps = await Promise.all([
     safeHistoryQuery(db, "listings", ownerUid, tier),
@@ -302,13 +349,32 @@ export async function checkFreePlanEligibility(
     }
   );
 
-  if (docs.length < limit) return true;
+  if (docs.length < limit) return { eligible: true };
 
   const lastMs = scheduledStartMs(docs[0]!.data().createdAt);
-  if (lastMs == null) return true;
+  if (lastMs == null) return { eligible: true };
 
-  const cooldownEnd = lastMs + cooldown * 24 * 60 * 60 * 1000;
-  return Date.now() > cooldownEnd;
+  const cooldownEnd = lastMs + cooldownDays * 24 * 60 * 60 * 1000;
+  if (Date.now() > cooldownEnd) return { eligible: true };
+
+  const nextEligibleAt = new Date(cooldownEnd);
+  return {
+    eligible: false,
+    code: "cooldown_active",
+    message: `Free plan cooldown active. You can use a free plan again after ${nextEligibleAt.toLocaleDateString()}.`,
+  };
+}
+
+/** Client-side free eligibility estimate — mirrors Flutter `_checkFreeEligibility`. */
+export async function checkFreePlanEligibility(
+  db: Firestore,
+  ownerUid: string,
+  tier: ListingPlanTier,
+  targetIso: string | null,
+  cityCode?: string | null
+): Promise<boolean> {
+  const result = await resolveFreePlanEligibility(db, ownerUid, tier, targetIso, cityCode);
+  return result.eligible;
 }
 
 export async function fetchResolvedListingPlans(

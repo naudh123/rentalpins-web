@@ -104,6 +104,8 @@ In Vercel → Project → Settings → Environment Variables → **Production**:
 | `FIREBASE_PRIVATE_KEY` | service account key |
 | `CRON_SECRET` | strong random secret (saved-search cron) |
 
+**Vercel Hobby:** `vercel.json` cron is **once per day** (`0 0 * * *`). Hourly (`0 * * * *`) requires Pro. Use an external cron (e.g. cron-job.org) hitting `/api/cron/saved-search-alerts` hourly if needed on Hobby.
+
 **Maps:** enable **Maps JavaScript API** + **Places API**; restrict key to production domain.
 
 **Auth:** Firebase Console → Authentication → Authorized domains → add `www.rentalpins.com` (and `rentalpins.com` if used).

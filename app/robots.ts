@@ -11,19 +11,32 @@ export default function robots(): MetadataRoute.Robots {
     };
   }
 
+  const disallow = ["/api/", "/chat/", "/profile/", "/auth/", "/post/", "/saved-listings/", "/saved-searches/"];
+
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: "/api/" },
-      { userAgent: "Googlebot", allow: "/", disallow: "/api/" },
-      { userAgent: "GPTBot", allow: "/", disallow: "/api/" },
-      { userAgent: "ChatGPT-User", allow: "/", disallow: "/api/" },
-      { userAgent: "OAI-SearchBot", allow: "/", disallow: "/api/" },
-      { userAgent: "Google-Extended", allow: "/", disallow: "/api/" },
-      { userAgent: "PerplexityBot", allow: "/", disallow: "/api/" },
-      { userAgent: "anthropic-ai", allow: "/", disallow: "/api/" },
-      { userAgent: "ClaudeBot", allow: "/", disallow: "/api/" },
-      { userAgent: "Amazonbot", allow: "/", disallow: "/api/" },
+      { userAgent: "*", allow: "/", disallow },
+      { userAgent: "Googlebot", allow: "/", disallow },
+      { userAgent: "GPTBot", allow: "/", disallow },
+      { userAgent: "ChatGPT-User", allow: "/", disallow },
+      { userAgent: "OAI-SearchBot", allow: "/", disallow },
+      { userAgent: "Google-Extended", allow: "/", disallow },
+      { userAgent: "PerplexityBot", allow: "/", disallow },
+      { userAgent: "anthropic-ai", allow: "/", disallow },
+      { userAgent: "ClaudeBot", allow: "/", disallow },
+      { userAgent: "Amazonbot", allow: "/", disallow },
     ],
-    sitemap,
+    sitemap: [
+      sitemap,
+      `${siteUrl}${appPath("/city-sitemap.xml")}`,
+      `${siteUrl}${appPath("/locality-sitemap.xml")}`,
+      `${siteUrl}${appPath("/listing-sitemap.xml")}`,
+      `${siteUrl}${appPath("/blog-sitemap.xml")}`,
+      `${siteUrl}${appPath("/category-sitemap.xml")}`,
+      `${siteUrl}${appPath("/sitemap-cities.xml")}`,
+      `${siteUrl}${appPath("/sitemap-localities.xml")}`,
+      `${siteUrl}${appPath("/sitemap-listings.xml")}`,
+      `${siteUrl}${appPath("/sitemap-blog.xml")}`,
+    ],
   };
 }

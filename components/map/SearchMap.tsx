@@ -381,6 +381,13 @@ export default function SearchMap({
 
   const { isLoaded, loadError } = useRentalPinsMapsLoader();
 
+  useEffect(() => {
+    if (!loadError) return;
+    trackEvent("search_map_loader_failed", {
+      message: loadError.message || "maps_loader_error",
+    });
+  }, [loadError]);
+
   const canResetView = useMemo(
     () =>
       mapViewCanReset({

@@ -10,6 +10,7 @@ import {
 import type { PersistedMapView } from "@/lib/map-last-view";
 import { flushPersistedMapView } from "@/lib/map-last-view";
 import { trackEvent } from "@/lib/ga4";
+import { isGoogleMapsReady } from "@/lib/google-maps-guard";
 
 interface Options {
   mapRef: MutableRefObject<google.maps.Map | null>;
@@ -54,7 +55,7 @@ export function useMapPlaceSearch({
   const flyToPlace = useCallback(
     (result: PlaceSearchResult) => {
       const map = mapRef.current;
-      if (!map) return;
+      if (!map || !isGoogleMapsReady()) return;
 
       setPlaceQuery(result.label);
       placeQueryRef.current = result.label;
