@@ -18,6 +18,7 @@ import MapsApiKeyMissingNotice, {
   isGoogleMapsConfigured,
 } from "@/components/MapsApiKeyMissingNotice";
 import LocationPicker, { type PickedLocation } from "@/components/post/LocationPicker";
+import AccountUnavailable from "@/components/auth/AccountUnavailable";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
   MAIN_CATEGORIES,
@@ -68,7 +69,7 @@ interface Props {
 
 export default function PostListingForm({ listingId = null }: Props) {
   const router = useRouter();
-  const { user, profile, canPostListing, needsPhoneLink, profileError, isBlocked } =
+  const { user, profile, canPostListing, needsPhoneLink, profileError, isBlocked, refreshProfile } =
     useAuth();
   const isEditMode = Boolean(listingId);
 
@@ -508,14 +509,11 @@ export default function PostListingForm({ listingId = null }: Props) {
 
   if (user && profileError) {
     return (
-      <div className="mx-auto max-w-md px-4 py-12 text-center">
-        <h1 className="font-serif text-2xl text-[var(--brand-navy)]">Account unavailable</h1>
-        <p className="mt-2 text-sm text-red-700">{profileError}</p>
-        <p className="mt-2 text-sm text-[var(--muted)]">Refresh the page or sign in again.</p>
-        <Link href={appPath("/auth/login?next=/post")} className="mt-6 text-[var(--accent)]">
-          Sign in
-        </Link>
-      </div>
+      <AccountUnavailable
+        message={profileError}
+        onRetry={refreshProfile}
+        signInHref="/auth/login?next=/post"
+      />
     );
   }
 

@@ -1,3 +1,5 @@
+import { isFirestoreOfflineError } from "@/lib/firestore-fetch";
+
 /** Map Firebase Auth errors to user-friendly copy. */
 
 function isLocalDevHost(): boolean {
@@ -87,6 +89,10 @@ export function mapCallableError(err: unknown): string {
 }
 
 export function mapAuthError(err: unknown): string {
+  if (isFirestoreOfflineError(err)) {
+    return "You appear to be offline. Check mobile data or Wi‑Fi, then tap Retry.";
+  }
+
   const code = getAuthCode(err);
 
   switch (code) {

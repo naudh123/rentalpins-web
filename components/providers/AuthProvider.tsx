@@ -20,9 +20,10 @@ import {
   type ConfirmationResult,
   type User,
 } from "firebase/auth";
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { getClientAuth, getClientDb } from "@/lib/firebase-client";
 import { mapAuthError } from "@/lib/auth-errors";
+import { getDocResilient, isFirestoreOfflineError } from "@/lib/firestore-fetch";
 import { normalizePhoneForAuth } from "@/lib/phone-auth";
 import { requirePhoneVerification } from "@/lib/config";
 import { currencyForIso, resolveIsoFromPhone } from "@/lib/phone-iso";
@@ -56,6 +57,7 @@ interface AuthContextValue {
   signOut: () => Promise<void>;
   cancelOtp: () => void;
   updateDisplayName: (displayName: string) => Promise<void>;
+  refreshProfile: () => Promise<void>;
   confirmation: ConfirmationResult | null;
   linkMode: boolean;
 }
@@ -99,6 +101,25 @@ function getRecaptcha(auth: ReturnType<typeof getClientAuth>, containerId: strin
   return win.recaptchaVerifier;
 }
 
+function profileFromDoc(
+  user: User,
+  data: Record<string, unknown>,
+  resolvedPhone: string,
+  homeIso: string,
+  billingCurrency: string
+): AuthProfile {
+  return {
+    uid: user.uid,
+    phone: (data.phone as string) || resolvedPhone,
+    homeIso: (data.homeIso as string) || homeIso,
+    billingCurrency: (data.billingCurrency as string) || billingCurrency,
+    role: (data.role as string) || "user",
+    isBlocked: isUserBlocked(data),
+    displayName: (data.displayName as string) || user.displayName || undefined,
+    email: (data.email as string) || user.email || undefined,
+  };
+}
+
 async function syncUserDoc(
   user: User,
   phone: string,
@@ -106,7 +127,7 @@ async function syncUserDoc(
 ): Promise<AuthProfile> {
   const db = getClientDb();
   const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
+  const snap = await getDocResilient(ref);
   const resolvedPhone =
     phone || user.phoneNumber || (snap.data()?.phone as string) || "";
   const homeIso = resolvedPhone
@@ -123,33 +144,42 @@ async function syncUserDoc(
   if (extras?.displayName) payload.displayName = extras.displayName;
   if (extras?.email || user.email) payload.email = extras?.email || user.email;
 
-  if (!snap.exists()) {
-    await setDoc(ref, {
-      ...payload,
-      homeIso,
-      billingCurrency,
-      role: "user",
-      isBlocked: false,
-      freeTokens: 0,
-      premiumTokens: 0,
-      createdAt: serverTimestamp(),
-      verifiedLevel: 1,
-    });
-  } else {
-    await setDoc(ref, payload, { merge: true });
+  const writeProfile = async () => {
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        ...payload,
+        homeIso,
+        billingCurrency,
+        role: "user",
+        isBlocked: false,
+        freeTokens: 0,
+        premiumTokens: 0,
+        createdAt: serverTimestamp(),
+        verifiedLevel: 1,
+      });
+    } else {
+      await setDoc(ref, payload, { merge: true });
+    }
+  };
+
+  try {
+    await writeProfile();
+  } catch (err) {
+    if (isFirestoreOfflineError(err) && snap.exists()) {
+      return profileFromDoc(
+        user,
+        snap.data() as Record<string, unknown>,
+        resolvedPhone,
+        homeIso,
+        billingCurrency
+      );
+    }
+    throw err;
   }
 
-  const data = (await getDoc(ref)).data()!;
-  return {
-    uid: user.uid,
-    phone: (data.phone as string) || resolvedPhone,
-    homeIso: (data.homeIso as string) || homeIso,
-    billingCurrency: (data.billingCurrency as string) || billingCurrency,
-    role: (data.role as string) || "user",
-    isBlocked: isUserBlocked(data),
-    displayName: (data.displayName as string) || user.displayName || undefined,
-    email: (data.email as string) || user.email || undefined,
-  };
+  const fresh = await getDocResilient(ref);
+  const data = fresh.data() as Record<string, unknown>;
+  return profileFromDoc(user, data, resolvedPhone, homeIso, billingCurrency);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -161,6 +191,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useState<ConfirmationResult | null>(null);
   const [pendingPhone, setPendingPhone] = useState("");
   const [linkMode, setLinkMode] = useState(false);
+  const refreshProfile = useCallback(async () => {
+    const auth = getClientAuth();
+    const u = auth.currentUser;
+    if (!u) return;
+    setProfileError(null);
+    try {
+      const p = await syncUserDoc(u, u.phoneNumber || pendingPhone || "", {
+        displayName: u.displayName || undefined,
+        email: u.email || undefined,
+      });
+      setProfile(p);
+    } catch (e) {
+      console.error("refreshProfile", e);
+      setProfile(null);
+      setProfileError(mapAuthError(e));
+    }
+  }, [pendingPhone]);
 
   useEffect(() => {
     const auth = getClientAuth();
@@ -333,6 +380,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut,
       cancelOtp,
       updateDisplayName,
+      refreshProfile,
       confirmation,
       linkMode,
     }),
@@ -351,6 +399,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut,
       cancelOtp,
       updateDisplayName,
+      refreshProfile,
       confirmation,
       linkMode,
     ]

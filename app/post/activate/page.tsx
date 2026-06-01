@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { doc, onSnapshot } from "firebase/firestore";
+import AccountUnavailable from "@/components/auth/AccountUnavailable";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { appPath } from "@/lib/config";
 import { parseActivateListing, type ActivateListing } from "@/lib/activate-listing";
@@ -82,7 +83,8 @@ function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const listingIdParam = searchParams.get("listingId") || "";
-  const { user, profile, loading: authLoading, profileError, isBlocked } = useAuth();
+  const { user, profile, loading: authLoading, profileError, isBlocked, refreshProfile } =
+    useAuth();
 
   const [listing, setListing] = useState<ActivateListing | null>(null);
   const [listingStatus, setListingStatus] = useState<
@@ -1041,14 +1043,7 @@ function ActivateContent() {
 
   if (user && profileError) {
     return (
-      <div className="mx-auto max-w-md px-4 py-12 text-center">
-        <h1 className="font-serif text-2xl text-[var(--brand-navy)]">Account unavailable</h1>
-        <p className="mt-2 text-sm text-red-700">{profileError}</p>
-        <p className="mt-2 text-sm text-[var(--muted)]">Refresh the page or sign in again.</p>
-        <Link href={appPath("/auth/login")} className="mt-6 inline-block text-[var(--accent)]">
-          Sign in
-        </Link>
-      </div>
+      <AccountUnavailable message={profileError} onRetry={refreshProfile} />
     );
   }
 
