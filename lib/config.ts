@@ -43,17 +43,28 @@ function isLocalDevSiteUrl(url: string): boolean {
   }
 }
 
-export const siteUrl = readSiteUrlFromEnv();
-
-/** Public URL for share/copy/WhatsApp — never localhost so recipients can open links. */
-export function publicSiteUrl(): string {
-  const override = process.env.NEXT_PUBLIC_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  if (override && !isLocalDevSiteUrl(override)) {
-    return normalizeSiteUrl(override);
+/**
+ * Resolved public origin for canonicals, sitemaps, robots, JSON-LD, and metadataBase.
+ * Local dev may use localhost; production builds must never bake localhost into static SEO output.
+ */
+function resolveSiteUrl(): string {
+  const publicOverride = process.env.NEXT_PUBLIC_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (publicOverride && !isLocalDevSiteUrl(publicOverride)) {
+    return normalizeSiteUrl(publicOverride);
   }
   const configured = readSiteUrlFromEnv();
-  if (isLocalDevSiteUrl(configured)) return DEFAULT_PUBLIC_SITE;
+  if (isLocalDevSiteUrl(configured)) {
+    if (process.env.NODE_ENV === "development") return configured;
+    return DEFAULT_PUBLIC_SITE;
+  }
   return configured;
+}
+
+export const siteUrl = resolveSiteUrl();
+
+/** Public URL for share/copy/WhatsApp — same origin as siteUrl. */
+export function publicSiteUrl(): string {
+  return siteUrl;
 }
 
 /** Production defaults to required unless explicitly set to "false". */
