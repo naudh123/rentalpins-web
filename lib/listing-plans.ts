@@ -7,7 +7,6 @@
 import {
   collection,
   doc,
-  getDoc,
   getDocs,
   query,
   where,
@@ -15,6 +14,7 @@ import {
   type QueryDocumentSnapshot,
   Timestamp,
 } from "firebase/firestore";
+import { getDocResilient } from "@/lib/firestore-fetch";
 
 export type ListingPlanTier = "city" | "country" | "global";
 
@@ -291,17 +291,17 @@ async function loadListingPolicy(
   const docId = resolvePolicyDocId(tier, targetIso, cityCode ?? null);
 
   const policyRef = doc(db, "settings", "listing_policy", "rules", docId);
-  const policyDoc = await getDoc(policyRef);
+  const policyDoc = await getDocResilient(policyRef);
   if (policyDoc.exists()) {
     return policyDoc.data() as Record<string, unknown>;
   }
   if (tier === "city" && targetIso) {
-    const countryDoc = await getDoc(
+    const countryDoc = await getDocResilient(
       doc(db, "settings", "listing_policy", "rules", `country_${targetIso}`)
     );
     if (countryDoc.exists()) return countryDoc.data() as Record<string, unknown>;
   }
-  const globalDoc = await getDoc(
+  const globalDoc = await getDocResilient(
     doc(db, "settings", "listing_policy", "rules", "global")
   );
   if (globalDoc.exists()) return globalDoc.data() as Record<string, unknown>;

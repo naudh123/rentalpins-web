@@ -1,12 +1,12 @@
 import {
   doc,
-  getDoc,
   setDoc,
   serverTimestamp,
   increment,
   updateDoc,
 } from "firebase/firestore";
 import { getClientDb } from "./firebase-client";
+import { getDocResilient } from "./firestore-fetch";
 
 export interface ChatRoomMeta {
   id: string;
@@ -62,7 +62,7 @@ export async function ensureChatRoom(input: EnsureChatRoomInput): Promise<string
 }
 
 export async function fetchListingForChat(listingId: string) {
-  const snap = await getDoc(doc(getClientDb(), "listings", listingId));
+  const snap = await getDocResilient(doc(getClientDb(), "listings", listingId));
   if (!snap.exists()) return null;
   const d = snap.data();
   if (d.isActive !== true) return null;

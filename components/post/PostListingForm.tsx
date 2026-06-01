@@ -7,7 +7,6 @@ import {
   collection,
   addDoc,
   doc,
-  getDoc,
   serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -31,6 +30,7 @@ import {
 } from "@/lib/categories";
 import { parseListingAttributes } from "@/lib/listing-attributes";
 import { getClientDb } from "@/lib/firebase-client";
+import { getDocResilient } from "@/lib/firestore-fetch";
 import {
   buildFetchToken,
   buildPosition,
@@ -365,7 +365,7 @@ export default function PostListingForm({ listingId = null }: Props) {
 
     void (async () => {
       try {
-        const snap = await getDoc(doc(getClientDb(), "listings", listingId));
+        const snap = await getDocResilient(doc(getClientDb(), "listings", listingId));
         if (cancelled) return;
 
         if (!snap.exists()) {

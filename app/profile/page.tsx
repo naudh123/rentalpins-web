@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import AccountUnavailable from "@/components/auth/AccountUnavailable";
 import MyListingRow from "@/components/profile/MyListingRow";
 import EmptyState from "@/components/ui/EmptyState";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { mapAuthError } from "@/lib/auth-errors";
 import { getClientDb } from "@/lib/firebase-client";
 import { parseOwnerListing, type OwnerListing } from "@/lib/my-listings";
 import { appPath, requirePhoneVerification } from "@/lib/config";
@@ -19,6 +21,8 @@ export default function ProfilePage() {
     loading,
     phoneVerified,
     canPostListing,
+    profileError,
+    refreshProfile,
     signOut,
     updateDisplayName,
   } = useAuth();
@@ -57,9 +61,7 @@ export default function ProfilePage() {
       },
       (err) => {
         console.error("my listings", err);
-        setListingsError(
-          err instanceof Error ? err.message : "Could not load your listings"
-        );
+        setListingsError(mapAuthError(err));
         setListingsLoading(false);
       }
     );
@@ -89,6 +91,16 @@ export default function ProfilePage() {
   }
 
   if (!user) return null;
+
+  if (profileError) {
+    return (
+      <AccountUnavailable
+        message={profileError}
+        onRetry={refreshProfile}
+        signInHref="/auth/login?next=/profile"
+      />
+    );
+  }
 
   const liveCount = listings.filter((l) => l.isActive).length;
   const draftCount = listings.length - liveCount;
