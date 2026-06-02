@@ -9,6 +9,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
 import { listingDetailHref } from "@/lib/listing-links";
+import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
 
@@ -37,7 +38,7 @@ export default function MapListingPreview({ listing, onClose }: Props) {
     const qs = p.toString();
     return `${pathname}${qs ? `?${qs}` : ""}`;
   })();
-  const href = listingDetailHref(listing.id, returnPath);
+  const href = listingDetailHref(listingToSlugInput(listing), returnPath);
 
   const motionProps = reduceMotion
     ? {}

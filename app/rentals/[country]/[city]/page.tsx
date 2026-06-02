@@ -11,6 +11,7 @@ import {
 import { fetchAreaListings } from "@/lib/seo-listings";
 import { getAreaConfig } from "@/lib/area-config";
 import { canonicalUrl } from "@/lib/seo";
+import { canonicalForCity, robotsForCity } from "@/lib/seo/indexing-policy";
 import ListingsGrid from "@/components/ListingsGrid";
 import AreaClient from "../../../rentals-shared/AreaClient";
 
@@ -41,7 +42,7 @@ export async function generateMetadata({
   if (!city) return { title: "Not Found" };
 
   const areaNames = city.popularAreas.slice(0, 5).join(", ");
-  const base = canonicalUrl(`/rentals/${city.countrySlug}/${city.slug}`);
+  const base = canonicalForCity(city);
 
   return {
     title: `Rentals in ${city.name} — ${areaNames} & More`,
@@ -74,6 +75,7 @@ export async function generateMetadata({
     alternates: {
       canonical: base,
     },
+    robots: robotsForCity(city),
   };
 }
 

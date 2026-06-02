@@ -1,0 +1,758 @@
+[
+  {
+    "slug": "chandigarh",
+    "name": "Chandigarh Tricity",
+    "center": {
+      "lat": 30.7333,
+      "lng": 76.7794
+    },
+    "radiusKm": 30
+  },
+  {
+    "slug": "mohali",
+    "name": "Mohali",
+    "center": {
+      "lat": 30.7046,
+      "lng": 76.7179
+    },
+    "radiusKm": 8
+  },
+  {
+    "slug": "kharar",
+    "name": "Kharar",
+    "center": {
+      "lat": 30.746,
+      "lng": 76.6486
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "panchkula",
+    "name": "Panchkula",
+    "center": {
+      "lat": 30.6942,
+      "lng": 76.8606
+    },
+    "radiusKm": 8
+  },
+  {
+    "slug": "zirakpur",
+    "name": "Zirakpur",
+    "center": {
+      "lat": 30.6434,
+      "lng": 76.8085
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "landran",
+    "name": "Landran",
+    "center": {
+      "lat": 30.6649,
+      "lng": 76.7652
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "ludhiana",
+    "name": "Ludhiana",
+    "center": {
+      "lat": 30.901,
+      "lng": 75.8573
+    },
+    "radiusKm": 15
+  },
+  {
+    "slug": "sarabha-nagar",
+    "name": "Sarabha Nagar",
+    "center": {
+      "lat": 30.8967,
+      "lng": 75.8283
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "model-town",
+    "name": "Model Town",
+    "center": {
+      "lat": 30.911,
+      "lng": 75.8481
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "pakhowal-road",
+    "name": "Pakhowal Road",
+    "center": {
+      "lat": 30.889,
+      "lng": 75.832
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "brs-nagar",
+    "name": "BRS Nagar",
+    "center": {
+      "lat": 30.9012,
+      "lng": 75.8178
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "focal-point",
+    "name": "Focal Point",
+    "center": {
+      "lat": 30.885,
+      "lng": 75.889
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "delhi",
+    "name": "Delhi",
+    "center": {
+      "lat": 28.6139,
+      "lng": 77.209
+    },
+    "radiusKm": 30
+  },
+  {
+    "slug": "mukherjee-nagar",
+    "name": "Mukherjee Nagar",
+    "center": {
+      "lat": 28.7007,
+      "lng": 77.2059
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "gtb-nagar",
+    "name": "GTB Nagar",
+    "center": {
+      "lat": 28.6982,
+      "lng": 77.2058
+    },
+    "radiusKm": 2.5
+  },
+  {
+    "slug": "hudson-lane",
+    "name": "Hudson Lane",
+    "center": {
+      "lat": 28.6964,
+      "lng": 77.205
+    },
+    "radiusKm": 2
+  },
+  {
+    "slug": "dwarka",
+    "name": "Dwarka",
+    "center": {
+      "lat": 28.5921,
+      "lng": 77.046
+    },
+    "radiusKm": 8
+  },
+  {
+    "slug": "rohini",
+    "name": "Rohini",
+    "center": {
+      "lat": 28.7494,
+      "lng": 77.0562
+    },
+    "radiusKm": 7
+  },
+  {
+    "slug": "jasola",
+    "name": "Jasola",
+    "center": {
+      "lat": 28.545,
+      "lng": 77.291
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "sarita-vihar",
+    "name": "Sarita Vihar",
+    "center": {
+      "lat": 28.5315,
+      "lng": 77.2913
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "jaipur-metro",
+    "name": "Jaipur Metro",
+    "center": {
+      "lat": 26.9124,
+      "lng": 75.7873
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "vaishali-nagar",
+    "name": "Vaishali Nagar",
+    "center": {
+      "lat": 26.8829,
+      "lng": 75.7885
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "malviya-nagar",
+    "name": "Malviya Nagar",
+    "center": {
+      "lat": 26.8554,
+      "lng": 75.8094
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "mansarovar",
+    "name": "Mansarovar",
+    "center": {
+      "lat": 26.8908,
+      "lng": 75.7671
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "jagatpura",
+    "name": "Jagatpura",
+    "center": {
+      "lat": 26.8267,
+      "lng": 75.8777
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "c-scheme",
+    "name": "C-Scheme",
+    "center": {
+      "lat": 26.9155,
+      "lng": 75.8069
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "raja-park",
+    "name": "Raja Park",
+    "center": {
+      "lat": 26.9059,
+      "lng": 75.8192
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "sitapura",
+    "name": "Sitapura",
+    "center": {
+      "lat": 26.7758,
+      "lng": 75.8456
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "tonk-road",
+    "name": "Tonk Road",
+    "center": {
+      "lat": 26.8434,
+      "lng": 75.7936
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "bani-park",
+    "name": "Bani Park",
+    "center": {
+      "lat": 26.9319,
+      "lng": 75.7897
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "lucknow-metro",
+    "name": "Lucknow Metro",
+    "center": {
+      "lat": 26.8467,
+      "lng": 80.9462
+    },
+    "radiusKm": 22
+  },
+  {
+    "slug": "gomti-nagar",
+    "name": "Gomti Nagar",
+    "center": {
+      "lat": 26.8486,
+      "lng": 80.9975
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "indira-nagar-lucknow",
+    "name": "Indira Nagar",
+    "center": {
+      "lat": 26.8856,
+      "lng": 80.9778
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "aliganj",
+    "name": "Aliganj",
+    "center": {
+      "lat": 26.9319,
+      "lng": 80.9463
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "hazratganj",
+    "name": "Hazratganj",
+    "center": {
+      "lat": 26.8543,
+      "lng": 80.948
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "aashiana",
+    "name": "Aashiana",
+    "center": {
+      "lat": 26.7896,
+      "lng": 80.8964
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "mahanagar",
+    "name": "Mahanagar",
+    "center": {
+      "lat": 26.888,
+      "lng": 80.962
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "kapoorthala",
+    "name": "Kapoorthala",
+    "center": {
+      "lat": 26.8712,
+      "lng": 80.978
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "vikas-nagar",
+    "name": "Vikas Nagar",
+    "center": {
+      "lat": 26.8761,
+      "lng": 80.964
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "jankipuram",
+    "name": "Jankipuram",
+    "center": {
+      "lat": 26.9319,
+      "lng": 80.936
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "mumbai-metro",
+    "name": "Mumbai Metropolitan",
+    "center": {
+      "lat": 19.076,
+      "lng": 72.8777
+    },
+    "radiusKm": 35
+  },
+  {
+    "slug": "powai",
+    "name": "Powai",
+    "center": {
+      "lat": 19.1174,
+      "lng": 72.9097
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "andheri-west",
+    "name": "Andheri West",
+    "center": {
+      "lat": 19.1364,
+      "lng": 72.8296
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "bandra-west",
+    "name": "Bandra West",
+    "center": {
+      "lat": 19.0596,
+      "lng": 72.8295
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "goregaon",
+    "name": "Goregaon",
+    "center": {
+      "lat": 19.1642,
+      "lng": 72.8497
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "chembur",
+    "name": "Chembur",
+    "center": {
+      "lat": 19.0522,
+      "lng": 72.8994
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "vashi",
+    "name": "Vashi",
+    "center": {
+      "lat": 19.0803,
+      "lng": 72.9947
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "borivali",
+    "name": "Borivali",
+    "center": {
+      "lat": 19.2324,
+      "lng": 72.8565
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "mulund",
+    "name": "Mulund",
+    "center": {
+      "lat": 19.1723,
+      "lng": 72.9565
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "thane-west",
+    "name": "Thane West",
+    "center": {
+      "lat": 19.2183,
+      "lng": 72.9781
+    },
+    "radiusKm": 7
+  },
+  {
+    "slug": "worli",
+    "name": "Worli",
+    "center": {
+      "lat": 19.0059,
+      "lng": 72.8176
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "greater-london",
+    "name": "Greater London",
+    "center": {
+      "lat": 51.5074,
+      "lng": -0.1278
+    },
+    "radiusKm": 35
+  },
+  {
+    "slug": "camden",
+    "name": "Camden",
+    "center": {
+      "lat": 51.539,
+      "lng": -0.1426
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "islington",
+    "name": "Islington",
+    "center": {
+      "lat": 51.541,
+      "lng": -0.104
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "hackney",
+    "name": "Hackney",
+    "center": {
+      "lat": 51.545,
+      "lng": -0.055
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "tower-hamlets",
+    "name": "Tower Hamlets",
+    "center": {
+      "lat": 51.509,
+      "lng": -0.006
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "southwark",
+    "name": "Southwark",
+    "center": {
+      "lat": 51.503,
+      "lng": -0.089
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "lambeth",
+    "name": "Lambeth",
+    "center": {
+      "lat": 51.498,
+      "lng": -0.12
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "westminster",
+    "name": "Westminster",
+    "center": {
+      "lat": 51.497,
+      "lng": -0.135
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "kensington-chelsea",
+    "name": "Kensington & Chelsea",
+    "center": {
+      "lat": 51.501,
+      "lng": -0.194
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "shoreditch",
+    "name": "Shoreditch",
+    "center": {
+      "lat": 51.5232,
+      "lng": -0.0872
+    },
+    "radiusKm": 2
+  },
+  {
+    "slug": "canary-wharf",
+    "name": "Canary Wharf",
+    "center": {
+      "lat": 51.505,
+      "lng": -0.023
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "nairobi-metro",
+    "name": "Nairobi Metro",
+    "center": {
+      "lat": -1.286389,
+      "lng": 36.817223
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "westlands",
+    "name": "Westlands",
+    "center": {
+      "lat": -1.267,
+      "lng": 36.81
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "kilimani",
+    "name": "Kilimani",
+    "center": {
+      "lat": -1.292,
+      "lng": 36.787
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "karen",
+    "name": "Karen",
+    "center": {
+      "lat": -1.32,
+      "lng": 36.71
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "eastleigh",
+    "name": "Eastleigh",
+    "center": {
+      "lat": -1.283,
+      "lng": 36.85
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "south-b",
+    "name": "South B",
+    "center": {
+      "lat": -1.31,
+      "lng": 36.83
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "upper-hill",
+    "name": "Upper Hill",
+    "center": {
+      "lat": -1.3,
+      "lng": 36.81
+    },
+    "radiusKm": 2
+  },
+  {
+    "slug": "parklands",
+    "name": "Parklands",
+    "center": {
+      "lat": -1.26,
+      "lng": 36.82
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "kasarani",
+    "name": "Kasarani",
+    "center": {
+      "lat": -1.22,
+      "lng": 36.9
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "mombasa-road",
+    "name": "Mombasa Road",
+    "center": {
+      "lat": -1.32,
+      "lng": 36.88
+    },
+    "radiusKm": 8
+  },
+  {
+    "slug": "ngong-road",
+    "name": "Ngong Road",
+    "center": {
+      "lat": -1.32,
+      "lng": 36.745
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "lagos-metro",
+    "name": "Lagos Metro",
+    "center": {
+      "lat": 6.5244,
+      "lng": 3.3792
+    },
+    "radiusKm": 40
+  },
+  {
+    "slug": "lekki",
+    "name": "Lekki",
+    "center": {
+      "lat": 6.4698,
+      "lng": 3.5851
+    },
+    "radiusKm": 12
+  },
+  {
+    "slug": "ikeja",
+    "name": "Ikeja",
+    "center": {
+      "lat": 6.6018,
+      "lng": 3.3515
+    },
+    "radiusKm": 6
+  },
+  {
+    "slug": "victoria-island",
+    "name": "Victoria Island",
+    "center": {
+      "lat": 6.4281,
+      "lng": 3.4219
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "yaba",
+    "name": "Yaba",
+    "center": {
+      "lat": 6.5097,
+      "lng": 3.3717
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "surulere",
+    "name": "Surulere",
+    "center": {
+      "lat": 6.5005,
+      "lng": 3.3581
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "gbagada",
+    "name": "Gbagada",
+    "center": {
+      "lat": 6.5712,
+      "lng": 3.3915
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "ajah",
+    "name": "Ajah",
+    "center": {
+      "lat": 6.4683,
+      "lng": 3.6012
+    },
+    "radiusKm": 8
+  },
+  {
+    "slug": "ikoyi",
+    "name": "Ikoyi",
+    "center": {
+      "lat": 6.4531,
+      "lng": 3.4224
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "maryland",
+    "name": "Maryland",
+    "center": {
+      "lat": 6.5767,
+      "lng": 3.3656
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "festac",
+    "name": "Festac",
+    "center": {
+      "lat": 6.4709,
+      "lng": 3.2068
+    },
+    "radiusKm": 5
+  }
+]

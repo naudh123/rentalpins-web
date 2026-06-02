@@ -671,6 +671,31 @@ export function getAllCities(): CityConfig[] {
   return CITIES;
 }
 
+/** Cities with live inventory — eligible for indexation and sitemaps. */
+export function getLiveCities(): CityConfig[] {
+  return CITIES.filter((c) => c.status === "live");
+}
+
+export function isCityIndexable(city: CityConfig | undefined): boolean {
+  return Boolean(city && city.status === "live");
+}
+
+/** Locality pages under live cities only (sitemap / crawl budget). */
+export function getIndexableAreas(): (AreaConfig & {
+  parentSlug: string;
+  parentName: string;
+  parentCountrySlug: string;
+})[] {
+  return getLiveCities().flatMap((city) =>
+    city.areas.map((area) => ({
+      ...area,
+      parentSlug: city.slug,
+      parentName: city.name,
+      parentCountrySlug: city.countrySlug,
+    }))
+  );
+}
+
 /** All area pages across all cities (for sitemap) */
 export function getAllAreas(): (AreaConfig & {
   parentSlug: string;

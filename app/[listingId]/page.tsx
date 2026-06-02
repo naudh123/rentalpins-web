@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { fetchListingById } from "@/lib/listings";
 import { appPath } from "@/lib/config";
 import {
@@ -7,6 +7,7 @@ import {
   listingOgImagePath,
   listingShareDescription,
 } from "@/lib/listing-share";
+import { listingPublicPathFromCard } from "@/lib/listing-path";
 
 interface Props {
   params: Promise<{ listingId: string }>;
@@ -16,7 +17,9 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { listingId } = await params;
   const listing = await fetchListingById(listingId);
-  const canonical = listingCanonicalUrl(listingId);
+  const canonical = listing
+    ? listingCanonicalUrl(listing)
+    : listingCanonicalUrl(listingId);
 
   if (!listing) {
     return {
@@ -29,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = listing.title;
   const description = listingShareDescription(listing);
-  const ogImage = listingOgImagePath(listingId);
+  const ogImage = listingOgImagePath(listing);
 
   return {
     title,
@@ -53,14 +56,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Preserve production URL shape /{listingId} → native listing detail. */
+/** Preserve production URL shape /{listingId} → canonical SEO slug detail. */
 export default async function LegacyListingPage({ params, searchParams }: Props) {
   const { listingId } = await params;
+  const listing = await fetchListingById(listingId);
+  if (!listing) notFound();
+
   const sp = await searchParams;
   const qs = new URLSearchParams();
   for (const [key, value] of Object.entries(sp)) {
     if (typeof value === "string") qs.set(key, value);
   }
   const suffix = qs.toString() ? `?${qs.toString()}` : "";
-  redirect(appPath(`/listings/${listingId}${suffix}`));
+  permanentRedirect(appPath(`${listingPublicPathFromCard(listing)}${suffix}`));
 }

@@ -11,6 +11,9 @@ export interface ActivateListing {
   isActive: boolean;
   lat: number | null;
   lng: number | null;
+  category: string;
+  subCategory: string;
+  urlSlug?: string;
 }
 
 function str(v: unknown, fallback = ""): string {
@@ -39,6 +42,7 @@ export function parseActivateListing(
   );
 
   const coords = readGeopointFromPosition(data.position);
+  const urlSlug = str(data.urlSlug).trim();
 
   return {
     id,
@@ -49,5 +53,8 @@ export function parseActivateListing(
     isActive: data.isActive === true,
     lat: coords?.lat ?? null,
     lng: coords?.lng ?? null,
+    category: str(data.category),
+    subCategory: str(data.subCategory),
+    urlSlug: urlSlug || undefined,
   };
 }

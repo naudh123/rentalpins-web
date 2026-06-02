@@ -122,6 +122,7 @@ function docToCard(id: string, d: Record<string, unknown>): ListingCard | null {
     ownerPhone: str(d.ownerPhone),
     homeIso: str(d.homeIso) || str(d.iso) || undefined,
     attributes: parseListingAttributes(d),
+    urlSlug: str(d.urlSlug) || undefined,
     createdAt:
       (d.createdAt as { toDate?: () => Date })?.toDate?.()?.toISOString?.() ||
       new Date().toISOString(),

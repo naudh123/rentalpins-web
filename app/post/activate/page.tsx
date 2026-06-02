@@ -8,6 +8,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import AccountUnavailable from "@/components/auth/AccountUnavailable";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { appPath } from "@/lib/config";
+import { listingPublicPathFromActivateListing } from "@/lib/listing-path";
 import { parseActivateListing, type ActivateListing } from "@/lib/activate-listing";
 import { mapCallableError } from "@/lib/auth-errors";
 import {
@@ -516,7 +517,9 @@ function ActivateContent() {
             ...checkoutMeta,
             ...getDwellMeta(),
           });
-          router.push(appPath(`/listings/${activeListingId}`));
+          router.push(
+            appPath(listingPublicPathFromActivateListing(parsed))
+          );
         }
       },
       () => setListingStatus("missing")
@@ -940,7 +943,7 @@ function ActivateContent() {
         ...checkoutStateMeta(),
         ...getDwellMeta(),
       });
-      router.push(appPath(`/listings/${listingIdForApi}`));
+      router.push(appPath(listingPublicPathFromActivateListing(listing)));
     } catch (err) {
       const message = mapCallableError(err);
       setError(message);
@@ -1104,8 +1107,13 @@ function ActivateContent() {
         <h1 className="font-serif text-2xl text-[var(--brand-navy)]">Listing is live</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">{listing.title}</p>
         <Link
-          href={appPath(`/listings/${activeListingId}`)}
-          onClick={() => trackActivateExitClick(`/listings/${activeListingId}`, "already_live")}
+          href={appPath(listingPublicPathFromActivateListing(listing))}
+          onClick={() =>
+            trackActivateExitClick(
+              listingPublicPathFromActivateListing(listing),
+              "already_live"
+            )
+          }
           className="rp-btn rp-btn-primary mt-6 inline-flex px-6"
         >
           View listing

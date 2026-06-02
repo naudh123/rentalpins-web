@@ -25,7 +25,28 @@ function decodePath(pathname: string): string {
  * - /privacy, /refunds → legal pages
  * - /blog/{old-slug} → canonical blog slug
  */
+function hostName(request: NextRequest): string {
+  return (request.headers.get("host") ?? "").replace(/:\d+$/, "").toLowerCase();
+}
+
 export function middleware(request: NextRequest) {
+  const host = hostName(request);
+
+  if (host === "rentalpins.com") {
+    const url = request.nextUrl.clone();
+    url.hostname = "www.rentalpins.com";
+    return NextResponse.redirect(url, 301);
+  }
+
+  if (host === "app.rentalpins.com") {
+    const url = request.nextUrl.clone();
+    url.hostname = "www.rentalpins.com";
+    const listing = url.searchParams.get("listing");
+    url.search = "";
+    url.pathname = listing ? `/listings/${listing}` : "/";
+    return NextResponse.redirect(url, 301);
+  }
+
   const { pathname } = request.nextUrl;
   const decoded = decodePath(pathname);
 
@@ -82,13 +103,6 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/staging",
-    "/staging/:path*",
-    "/rentals/:path*",
-    "/blog/:path*",
-    "/privacy",
-    "/refunds",
-    "/refund",
-    "/terms-of-service",
+    "/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
   ],
 };

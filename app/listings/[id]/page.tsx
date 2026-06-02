@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { JsonLdBreadcrumb } from "@/components/JsonLd";
+import { notFound, permanentRedirect } from "next/navigation";import { JsonLdBreadcrumb } from "@/components/JsonLd";
 import ListingDetailNav from "@/components/listings/ListingDetailNav";
 import ListingDetailJumpLinks from "@/components/listings/ListingDetailJumpLinks";
 import ListingHashFocusRestorer from "@/components/listings/ListingHashFocusRestorer";
@@ -34,33 +33,53 @@ import { appPath, siteUrl } from "@/lib/config";
 import { mapSearchUrl } from "@/lib/map-search-url";
 import { formatPrice } from "@/lib/format";
 import { listingCanonicalUrl, listingShareMetadata } from "@/lib/listing-share";
-import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
+import {
+  buildListingSlugSegment,
+  extractListingIdFromSlugParam,
+} from "@/lib/listing-slug";
+import { listingToSlugInput } from "@/lib/listing-path";import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
 import ListingActions from "./ListingActions";
 
 interface Props {
   params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const listing = await fetchListingById(id);
+  const { id: slugParam } = await params;
+  const listingId = extractListingIdFromSlugParam(slugParam);
+  if (!listingId) return { title: "Listing not found" };
+  const listing = await fetchListingById(listingId);
   if (!listing) return { title: "Listing not found" };
-  return listingShareMetadata(listing, id);
+  return listingShareMetadata(listing);
 }
 
-export default async function ListingDetailPage({ params }: Props) {
-  const { id } = await params;
-  const listing = await fetchListingById(id);
+export default async function ListingDetailPage({ params, searchParams }: Props) {
+  const { id: slugParam } = await params;
+  const listingId = extractListingIdFromSlugParam(slugParam);
+  if (!listingId) notFound();
+
+  const listing = await fetchListingById(listingId);
   if (!listing) notFound();
 
+  const canonicalSegment = buildListingSlugSegment(listingToSlugInput(listing));
+  if (slugParam !== canonicalSegment) {
+    const sp = await searchParams;
+    const qs = new URLSearchParams();
+    for (const [key, value] of Object.entries(sp)) {
+      if (typeof value === "string") qs.set(key, value);
+    }
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    permanentRedirect(appPath(`/listings/${canonicalSegment}${suffix}`));
+  }
   const [ownerTrust, similarListings, ownerListings, reviewSummary] =
     await Promise.all([
       listing.ownerUid ? fetchOwnerTrust(listing.ownerUid) : Promise.resolve(null),
       fetchSimilarListingsNearby(listing, 4),
       listing.ownerUid
-        ? fetchMoreFromOwner(listing.ownerUid, id, 4)
+        ? fetchMoreFromOwner(listing.ownerUid, listingId, 4)
         : Promise.resolve([]),
-      fetchListingReviewSummary(id),
+      fetchListingReviewSummary(listingId),
     ]);
 
   const photoCount =
@@ -70,7 +89,7 @@ export default async function ListingDetailPage({ params }: Props) {
         ? 1
         : 0;
 
-  const listingUrl = listingCanonicalUrl(id);
+  const listingUrl = listingCanonicalUrl(listing);
   const whatsAppHref = listing.ownerPhone
     ? whatsappUrl(listing.ownerPhone, listingWhatsAppMessage(listing.title, listingUrl))
     : "";
@@ -99,8 +118,7 @@ export default async function ListingDetailPage({ params }: Props) {
     description: listing.description.slice(0, 500),
     image: productImages,
     url: listingUrl,
-    sku: id,
-    category: listing.category,
+    sku: listingId,    category: listing.category,
     ...(hasGeo
       ? {
           contentLocation: {
@@ -148,10 +166,9 @@ export default async function ListingDetailPage({ params }: Props) {
       />
       <JsonLdBreadcrumb items={breadcrumbItems} />
       <ListingHashFocusRestorer />
-      <RecentlyViewedRecorder listingId={id} />
+      <RecentlyViewedRecorder listingId={listingId} />
       <ListingDetailViewTracker
-        listingId={id}
-        category={listing.category}
+        listingId={listingId}        category={listing.category}
         subCategory={listing.subCategory}
         isPromoted={listing.isPromoted}
         hasOwnerPhone={Boolean(listing.ownerPhone)}
@@ -173,9 +190,9 @@ export default async function ListingDetailPage({ params }: Props) {
           },
         ]}
       />
-      <ListingDetailNav listingId={id} title={listing.title} listingUrl={listingUrl} />
+      <ListingDetailNav listingId={listingId} title={listing.title} listingUrl={listingUrl} />
       <ListingStickyBar
-        listingId={id}
+        listingId={listingId}
         title={listing.title}
         priceLabel={priceLabel}
         whatsAppHref={whatsAppHref}
@@ -190,7 +207,7 @@ export default async function ListingDetailPage({ params }: Props) {
         <ListingGallery
           images={listing.imageUrls}
           title={listing.title}
-          listingId={id}
+          listingId={listingId}
         />
       </div>
 
@@ -227,13 +244,13 @@ export default async function ListingDetailPage({ params }: Props) {
         })()}
         <h1 className="mt-3 font-serif text-3xl leading-tight tracking-tight">{listing.title}</h1>
         <ListingDetailJumpLinks
-          listingId={id}
+          listingId={listingId}
           hasGeo={hasGeo}
           hasDescription={Boolean(listing.description?.trim())}
           hasContact={Boolean(listing.ownerPhone || listing.ownerUid)}
           hasOwnerRail={ownerListings.length > 0}
           hasSimilarRail={similarListings.length > 0}
-          excludeListingId={id}
+          excludeListingId={listingId}
         />
         {listing.locationName && (
           <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[var(--muted)]">
@@ -241,8 +258,8 @@ export default async function ListingDetailPage({ params }: Props) {
               <span aria-hidden>📍</span> {listing.locationName}
             </span>
             <ListingMapLink
-              href={appPath(mapSearchUrl(listing.lat, listing.lng, 14, id))}
-              listingId={id}
+              href={appPath(mapSearchUrl(listing.lat, listing.lng, 14, listingId))}
+              listingId={listingId}
               linkSource="location_header"
               className="text-xs font-semibold text-[var(--brand-orange)] hover:underline"
             >
@@ -254,23 +271,23 @@ export default async function ListingDetailPage({ params }: Props) {
           <p className="font-serif text-2xl text-[var(--brand-orange)]">
             {priceLabel}
           </p>
-          <ListingSaveButton listingId={id} size="md" />
+          <ListingSaveButton listingId={listingId} size="md" />
         </div>
         <ListingEngagement
-          listingId={id}
+          listingId={listingId}
           listedAt={listing.createdAt}
           initialViews={listing.viewsCount}
           inquiryCount={listing.inquiryCount}
         />
         <ListingOwnerTrust
-          listingId={id}
+          listingId={listingId}
           ownerTrust={ownerTrust}
           ownerPhone={listing.ownerPhone}
           ownerUid={listing.ownerUid}
         />
         <div className="mt-4 flex justify-end border-t border-[var(--border-subtle)] pt-3">
           <ReportListingButton
-            listingId={id}
+            listingId={listingId}
             listingTitle={listing.title}
             ownerUid={listing.ownerUid}
           />
@@ -288,20 +305,20 @@ export default async function ListingDetailPage({ params }: Props) {
       )}
 
       <ListingReviews
-        listingId={id}
+        listingId={listingId}
         ownerUid={listing.ownerUid}
         initialReviewCount={reviewSummary?.count ?? 0}
         initialAvgRating={reviewSummary?.avgRating ?? 0}
       />
 
       <ListingMapSnippet
-        listingId={id}
+        listingId={listingId}
         lat={listing.lat}
         lng={listing.lng}
         locationName={listing.locationName}
       />
 
-      <RecentlyViewedRail excludeId={id} className="mt-6" />
+      <RecentlyViewedRail excludeId={listingId} className="mt-6" />
 
       {ownerListings.length > 0 && (
         <section
@@ -310,7 +327,7 @@ export default async function ListingDetailPage({ params }: Props) {
           aria-labelledby="listing-owner-rail-heading"
         >
           <ListingRailImpressionTracker
-            listingId={id}
+            listingId={listingId}
             rail="owner"
             listingCount={ownerListings.length}
           />
@@ -332,7 +349,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 <ListingOwnerProfileLink
                   ownerUid={listing.ownerUid}
                   displayName={ownerTrust?.displayName ?? "Lister"}
-                  listingId={id}
+                  listingId={listingId}
                   linkSource="owner_rail"
                   className="text-xs font-semibold text-[var(--brand-orange)] hover:underline"
                 >
@@ -347,7 +364,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 key={item.id}
                 listing={item}
                 section="owner"
-                sourceListingId={id}
+                sourceListingId={listingId}
               />
             ))}
           </div>
@@ -361,7 +378,7 @@ export default async function ListingDetailPage({ params }: Props) {
           aria-labelledby="listing-similar-rail-heading"
         >
           <ListingRailImpressionTracker
-            listingId={id}
+            listingId={listingId}
             rail="similar"
             listingCount={similarListings.length}
           />
@@ -377,7 +394,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 href={appPath(
                   mapSearchUrl(listing.lat, listing.lng, 13, undefined, listing.category)
                 )}
-                listingId={id}
+                listingId={listingId}
                 linkSource="similar_rail"
                 className="text-xs font-semibold text-[var(--brand-orange)] hover:underline"
               >
@@ -391,7 +408,7 @@ export default async function ListingDetailPage({ params }: Props) {
                 key={item.id}
                 listing={item}
                 section="similar"
-                sourceListingId={id}
+                sourceListingId={listingId}
               />
             ))}
           </div>
@@ -399,7 +416,7 @@ export default async function ListingDetailPage({ params }: Props) {
       )}
 
       <ListingActions
-        listingId={id}
+        listingId={listingId}
         title={listing.title}
         ownerPhone={listing.ownerPhone}
         ownerUid={listing.ownerUid}

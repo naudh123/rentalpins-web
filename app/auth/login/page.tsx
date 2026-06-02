@@ -9,6 +9,7 @@ import { appPath, basePath } from "@/lib/config";
 import { getClientAuth } from "@/lib/firebase-client";
 import { trackEvent } from "@/lib/ga4";
 import { isValidPhoneForAuth, normalizePhoneForAuth } from "@/lib/phone-auth";
+import InAppBrowserNotice from "@/components/auth/InAppBrowserNotice";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
@@ -687,6 +688,7 @@ function LoginContent() {
     <div className="rp-gradient-hero flex min-h-[calc(100dvh-3.5rem)] items-center justify-center px-4 py-12">
       <div className="rp-card w-full max-w-md p-6 sm:p-8">
         <p className="rp-badge">Secure sign-in</p>
+        <InAppBrowserNotice context="login" />
         <h1 className="mt-4 font-serif text-3xl tracking-tight">
           {showPhoneOnly ? "Verify mobile" : "Welcome back"}
         </h1>

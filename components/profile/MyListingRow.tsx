@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { OwnerListing } from "@/lib/my-listings";
 import { appPath } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
+import { listingPublicPath } from "@/lib/listing-path";
 
 interface Props {
   listing: OwnerListing;
@@ -11,7 +12,14 @@ interface Props {
 export default function MyListingRow({ listing }: Props) {
   const priceLabel = formatPrice(listing.price, listing.priceUnit, listing.homeIso);
   const href = listing.isActive
-    ? appPath(`/listings/${listing.id}`)
+    ? listingPublicPath({
+        id: listing.id,
+        title: listing.title,
+        locationName: listing.locationName,
+        lat: 0,
+        lng: 0,
+        category: listing.category,
+      })
     : appPath(`/post?listingId=${listing.id}`);
 
   return (

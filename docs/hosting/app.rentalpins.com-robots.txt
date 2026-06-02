@@ -1,0 +1,8 @@
+# Deploy this file at the ROOT of app.rentalpins.com (Flutter / Firebase Hosting).
+# Blocks Google from indexing embed and deep-link URLs that duplicate www.rentalpins.com/listings/{id}.
+#
+# Firebase Hosting: add to public/robots.txt for the app site target, or firebase.json headers.
+# Do NOT deploy this on www.rentalpins.com — use app/robots.ts there instead.
+
+User-agent: *
+Disallow: /

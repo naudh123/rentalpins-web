@@ -1,4 +1,4 @@
-import { getAllCities } from "@/lib/cities-config";
+import { getLiveCities } from "@/lib/cities-config";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 
@@ -6,15 +6,16 @@ export const revalidate = 86400;
 
 export async function GET() {
   const now = new Date().toISOString();
+  const cities = getLiveCities();
   const urls = [
-    ...getAllCities().map((city) =>
+    ...cities.map((city) =>
       toSitemapEntry(`/rentals/${city.countrySlug}/${city.slug}`, {
         lastmod: now,
         changefreq: "daily",
-        priority: city.status === "live" ? 0.9 : 0.4,
+        priority: 0.9,
       })
     ),
-    ...getAllCities().flatMap((city) =>
+    ...cities.flatMap((city) =>
       RENTAL_CATEGORIES.map((cat) =>
         toSitemapEntry(`/rentals/${city.countrySlug}/${city.slug}/${cat.slug}`, {
           lastmod: now,

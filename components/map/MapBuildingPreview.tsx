@@ -7,6 +7,7 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard } from "@/lib/types/listing";
 import { listingDetailHref } from "@/lib/listing-links";
+import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import { primaryListingInGroup, unitPriceChips } from "@/lib/map-building-groups";
 
@@ -82,7 +83,10 @@ export default function MapBuildingPreview({
           <div className="mt-3 flex flex-wrap gap-1.5">
             {chips.map((chip) => {
               const listing = listings.find((l) => l.id === chip.listingId);
-              const href = listingDetailHref(chip.listingId, returnPathFor(chip.listingId));
+              const href = listingDetailHref(
+                listing ? listingToSlugInput(listing) : chip.listingId,
+                returnPathFor(chip.listingId)
+              );
               return (
                 <button
                   key={chip.listingId}
@@ -99,7 +103,10 @@ export default function MapBuildingPreview({
             })}
           </div>
           <Link
-            href={listingDetailHref(primary.id, returnPathFor(primary.id))}
+            href={listingDetailHref(
+              listingToSlugInput(primary),
+              returnPathFor(primary.id)
+            )}
             onClick={() => trackListingClick(primary.id, "map")}
             className="rp-btn rp-btn-primary mt-3 w-full py-2.5 text-sm no-underline"
           >

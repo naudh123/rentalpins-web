@@ -1,4 +1,4 @@
-import { getAllAreas } from "@/lib/cities-config";
+import { getIndexableAreas } from "@/lib/cities-config";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 
@@ -6,7 +6,7 @@ export const revalidate = 86400;
 
 export async function GET() {
   const now = new Date().toISOString();
-  const areas = getAllAreas();
+  const areas = getIndexableAreas();
   const urls = [
     ...areas.map((area) =>
       toSitemapEntry(

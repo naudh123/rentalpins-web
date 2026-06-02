@@ -50,6 +50,9 @@ export interface ListingDocument {
   attributes?: ListingAttributes;
   currentPlanName?: string;
   listingExpiresAt?: string;
+  /** SEO path segment set on activation (includes listing id suffix). */
+  urlSlug?: string;
+  searchableTitle?: string;
 }
 
 export interface ListingCard {
@@ -72,6 +75,7 @@ export interface ListingCard {
   createdAt: string;
   updatedAt: string;
   attributes?: ListingAttributes;
+  urlSlug?: string;
 }
 
 export interface ListingDetail extends ListingCard {

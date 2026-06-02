@@ -7,6 +7,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
 import { listingDetailHref } from "@/lib/listing-links";
+import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
 
@@ -44,7 +45,7 @@ export default function ListingCard({
           return `${pathname}${qs ? `?${qs}` : ""}`;
         })()
       : undefined);
-  const href = listingDetailHref(listing.id, returnPath);
+  const href = listingDetailHref(listingToSlugInput(listing), returnPath);
   const [twoTapPreview, setTwoTapPreview] = useState(false);
 
   useEffect(() => {

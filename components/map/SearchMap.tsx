@@ -58,6 +58,7 @@ import type { MapBounds } from "@/lib/types/saved-search";
 import {
   trackEvent,
 } from "@/lib/ga4";
+import InAppBrowserNotice from "@/components/auth/InAppBrowserNotice";
 import MapCanvas from "@/components/map/MapCanvas";
 import MapResultsPanel from "@/components/map/MapResultsPanel";
 import type { DrawMode } from "@/components/map/MapDrawAreaController";
@@ -727,6 +728,7 @@ export default function SearchMap({
 
   return (
     <div className="relative flex rp-map-layout flex-col md:flex-row">
+      <InAppBrowserNotice context="search" variant="compact" />
       <MapCanvas {...canvasProps} />
 
       <MapResultsPanel {...resultsPanelProps} />

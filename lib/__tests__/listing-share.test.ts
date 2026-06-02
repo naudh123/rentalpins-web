@@ -4,6 +4,7 @@ import {
   listingOgImagePath,
   listingShareDescription,
 } from "@/lib/listing-share";
+import { buildListingSlugSegment } from "@/lib/listing-slug";
 import type { ListingDetail } from "@/lib/types/listing";
 
 const baseListing: ListingDetail = {
@@ -34,7 +35,14 @@ describe("listing-share", () => {
     vi.stubEnv("NEXT_PUBLIC_BASE_PATH", "");
   });
 
-  it("uses www.rentalpins.com canonical listing URL", () => {
+  it("uses slug canonical URL when listing object is provided", () => {
+    const slug = buildListingSlugSegment(baseListing);
+    expect(listingCanonicalUrl(baseListing)).toBe(
+      `https://www.rentalpins.com/listings/${slug}`
+    );
+  });
+
+  it("falls back to id-only URL when only id string is provided", () => {
     expect(listingCanonicalUrl("abc123")).toBe(
       "https://www.rentalpins.com/listings/abc123"
     );
@@ -47,9 +55,10 @@ describe("listing-share", () => {
     );
   });
 
-  it("points OG image at dynamic opengraph-image route", () => {
-    expect(listingOgImagePath("abc123")).toBe(
-      "/listings/abc123/opengraph-image"
+  it("points OG image at slug opengraph-image route", () => {
+    const slug = buildListingSlugSegment(baseListing);
+    expect(listingOgImagePath(baseListing)).toBe(
+      `/listings/${slug}/opengraph-image`
     );
   });
 

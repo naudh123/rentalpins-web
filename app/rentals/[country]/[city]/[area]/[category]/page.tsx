@@ -4,6 +4,7 @@ import {
   categoryHubMetadata,
   resolveCategoryHub,
 } from "@/lib/seo/render-category-hub";
+import { robotsForCity } from "@/lib/seo/indexing-policy";
 import { getAllAreas, RENTAL_COUNTRY_SLUGS } from "@/lib/cities-config";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import { isRentalCategorySlug } from "@/lib/seo/categories";
@@ -34,10 +35,11 @@ export async function generateMetadata({
     resolved.category,
     resolved.area
   );
-  return categoryHubMetadata(
+  const meta = categoryHubMetadata(
     ctx,
     `/rentals/${resolved.country}/${resolved.city}/${resolved.area}/${resolved.category}`
   );
+  return { ...meta, robots: robotsForCity(ctx.city) };
 }
 
 export const revalidate = 7200;

@@ -36,8 +36,8 @@ export function buildLlmsTxt(): string {
 
 ## Listing URLs
 
-- Preferred detail URL: ${siteUrl}/listings/{listingId}
-- Legacy production shape /{listingId} redirects to /listings/{listingId}
+- Preferred detail URL: ${siteUrl}/listings/{seo-slug}-{listingId}
+- Legacy /listings/{listingId} and /{listingId} redirect to the slug URL
 
 ## Legacy URL redirects (308 permanent)
 

@@ -4,10 +4,9 @@ import { currencyForIso } from "@/lib/phone-iso";
 
 /** JSON-LD for listing detail — RealEstateListing / Residence / Apartment by sub-category. */
 export function buildListingStructuredData(
-  listing: ListingDetail,
-  listingId: string
+  listing: ListingDetail
 ): Record<string, unknown> {
-  const url = listingCanonicalUrl(listingId);
+  const url = listingCanonicalUrl(listing);
   const sub = (listing.subCategory || "").toLowerCase();
   let type = "RealEstateListing";
   if (sub.includes("flat") || sub.includes("apartment") || sub.includes("room")) {

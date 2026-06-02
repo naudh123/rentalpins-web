@@ -11,6 +11,8 @@ export interface SeoListingCard {
   subCategory: string;
   locationName: string;
   imageUrl: string;
+  lat: number;
+  lng: number;
   isPromoted: boolean;
   viewsCount: number;
   inquiryCount: number;
@@ -99,6 +101,8 @@ export async function fetchAreaListings(
           subCategory: d.subCategory || "",
           locationName: d.locationName || "",
           imageUrl,
+          lat: listingLat,
+          lng: listingLng,
           isPromoted: d.isPromoted === true,
           viewsCount: d.viewsCount || 0,
           inquiryCount: d.inquiryCount || 0,

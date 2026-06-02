@@ -2,8 +2,9 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import { BRAND, UI } from "@/lib/brand";
+import { listingPublicPath } from "@/lib/listing-path";
 
-// ─── Listing cards link to www /:listingId → top-level redirect to app.rentalpins.com ─
+// ─── Listing cards link to canonical SEO slug URLs (never app.rentalpins.com) ─
 
 // Internal CTAs (like "Post Free Listing") go to our homepage map handoff
 const HOMEPAGE_URL = "/";
@@ -70,7 +71,15 @@ function ListingCardItem({
   const showUnitSuffix = !priceLine.startsWith("See ");
   // Link directly to Flutter app with listing ID as query param.
   // Same tab (no target="_blank"). Flutter reads ?listing= and opens detail.
-  const detailUrl = `/listings/${listing.id}?from=${encodeURIComponent(fromUrl)}`;
+  const detailUrl = `${listingPublicPath({
+    id: listing.id,
+    title: listing.title,
+    locationName: listing.locationName,
+    lat: 0,
+    lng: 0,
+    category: listing.category,
+    subCategory: listing.subCategory,
+  })}?from=${encodeURIComponent(fromUrl)}`;
 
   return (
     <a

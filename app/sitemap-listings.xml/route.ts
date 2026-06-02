@@ -1,12 +1,14 @@
 import { fetchListingSitemapEntries } from "@/lib/seo/fetch-sitemap-listings";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
+import { buildListingSlugSegment } from "@/lib/listing-slug";
+import { appPath } from "@/lib/config";
 
 export const revalidate = 86400;
 
 export async function GET() {
   const entries = await fetchListingSitemapEntries();
   const urls = entries.map((e) =>
-    toSitemapEntry(`/listings/${e.id}`, {
+    toSitemapEntry(appPath(`/listings/${buildListingSlugSegment(e)}`), {
       lastmod: e.updatedAt,
       changefreq: "weekly",
       priority: 0.65,

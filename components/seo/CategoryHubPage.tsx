@@ -14,6 +14,8 @@ import {
   buildCategorySpokeLinks,
 } from "@/lib/seo/content-templates";
 import { canonicalUrl } from "@/lib/seo";
+import { buildListingSlugSegment } from "@/lib/listing-slug";
+import { listingToSlugInput } from "@/lib/listing-path";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import type { SeoListingCard } from "@/lib/seo-listings";
 
@@ -78,7 +80,7 @@ export default function CategoryHubPage({
     itemListElement: listings.slice(0, 10).map((l, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `${siteUrl}${appPath(`/listings/${l.id}`)}`,
+      url: `${siteUrl}${appPath(`/listings/${buildListingSlugSegment(listingToSlugInput(l))}`)}`,
       name: l.title,
     })),
   };

@@ -6,6 +6,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
 import { listingDetailHref } from "@/lib/listing-links";
+import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import { primaryListingInGroup, unitPriceChips } from "@/lib/map-building-groups";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
@@ -88,7 +89,11 @@ export default function MapBuildingListingCard({
         {chips.length > 1 && (
           <div className="flex flex-wrap gap-1.5">
             {chips.map((chip) => {
-              const href = listingDetailHref(chip.listingId, returnPathFor(chip.listingId));
+              const unit = listings.find((l) => l.id === chip.listingId);
+              const href = listingDetailHref(
+                unit ? listingToSlugInput(unit) : chip.listingId,
+                returnPathFor(chip.listingId)
+              );
               return (
                 <Link
                   key={chip.listingId}
@@ -103,7 +108,10 @@ export default function MapBuildingListingCard({
           </div>
         )}
         <Link
-          href={listingDetailHref(primary.id, returnPathFor(primary.id))}
+          href={listingDetailHref(
+            listingToSlugInput(primary),
+            returnPathFor(primary.id)
+          )}
           onClick={() => trackListingClick(primary.id, source)}
           className="rp-btn rp-btn-primary mt-1 w-full py-2.5 text-sm no-underline"
         >

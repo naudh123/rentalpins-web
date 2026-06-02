@@ -1,4 +1,6 @@
 import { appPath } from "./config";
+import { listingPublicPath } from "./listing-path";
+import type { ListingSlugInput } from "./listing-slug";
 
 /** Only allow same-origin relative return paths. */
 export function safeReturnPath(from: string | null, fallback = "/search"): string {
@@ -14,8 +16,14 @@ export function safeReturnPath(from: string | null, fallback = "/search"): strin
   }
 }
 
-export function listingDetailHref(listingId: string, returnPath?: string): string {
-  const base = appPath(`/listings/${listingId}`);
+export function listingDetailHref(
+  listing: ListingSlugInput | string,
+  returnPath?: string
+): string {
+  const base =
+    typeof listing === "string"
+      ? appPath(`/listings/${listing}`)
+      : listingPublicPath(listing);
   if (!returnPath || !returnPath.startsWith("/") || returnPath.startsWith("//")) {
     return base;
   }

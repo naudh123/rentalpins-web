@@ -73,36 +73,64 @@ export function buildAreaSeoSections(
   area: CityAreaConfig
 ): SeoContentSection[] {
   const near = area.popularAreas.slice(0, 8).join(", ");
+  const faqBullets = area.faqs.map((f) => `${f.q} — ${f.a}`);
   return [
     {
-      id: "guide",
-      title: `${area.name} area guide`,
+      id: "overview",
+      title: `${area.name} rental overview`,
       paragraphs: [
         area.heroDescription,
-        `${area.name} is part of the ${city.name} hub on RentalPins. Primary focus: ${area.primaryFocus}.`,
+        `${area.name} is a locality hub under ${city.name} on RentalPins. Primary focus: ${area.primaryFocus}.`,
+        `Use this page to compare live map listings, category shortcuts, and nearby localities before contacting owners directly (no broker commission to browse).`,
       ],
     },
     {
-      id: "facilities",
-      title: `Nearby facilities & connectivity`,
+      id: "connectivity",
+      title: `Connectivity & commute in ${area.name}`,
       paragraphs: [
-        `Renters typically evaluate ${area.name} against commute to colleges, offices, markets, and highways. Sub-areas such as ${near} each have distinct price bands and inventory mix.`,
-        `Open the live map to see exact pin locations — more reliable than text-only classified posts.`,
+        `Renters shortlist ${area.name} based on commute to offices, colleges, hospitals, and wholesale markets. Sub-pockets such as ${near} often have different price bands despite sharing the same locality name.`,
+        `Map-first search shows exact pin placement so you can judge road access and travel corridors versus ${city.name}-wide classified posts.`,
       ],
     },
     {
-      id: "demand",
-      title: `Rental demand in ${area.name}`,
+      id: "landmarks",
+      title: `Landmarks, facilities & daily life`,
       paragraphs: [
-        `Search demand on RentalPins includes queries like ${area.popularSearches.slice(0, 4).join("; ")}.`,
-        `High-intent categories in this zone often align with ${area.topCategories.map((c) => c.name).join(", ")}.`,
+        `Family renters weigh school access, safety, and parking; students prioritize PG/room stock near transit; businesses look at visibility and logistics.`,
+        `Exploring ${area.name} on RentalPins lets you validate surrounding infrastructure using locality context instead of generic city averages.`,
       ],
+      bullets: area.popularAreas.slice(0, 6),
+    },
+    {
+      id: "rent-trends",
+      title: `Rent trends in ${area.name}`,
+      paragraphs: [
+        `Rents vary by furnishing, floor, building age, and distance from demand anchors. Compare multiple active pins in the same category before setting a budget.`,
+        `Owners who align pricing with nearby live inventory typically receive faster inquiries than listings priced against outdated portal averages.`,
+      ],
+    },
+    {
+      id: "faqs",
+      title: `FAQs — renting in ${area.name}`,
+      paragraphs: [
+        `Common questions from renters and owners exploring ${area.name} on RentalPins:`,
+      ],
+      bullets: faqBullets.length > 0 ? faqBullets : undefined,
+    },
+    {
+      id: "nearby",
+      title: `Nearby localities to compare`,
+      paragraphs: [
+        `Before committing, compare ${area.name} with adjacent pockets in ${city.name}: ${near}.`,
+        `Use sibling area links on this page, then open the map to filter by category and budget for side-by-side evaluation.`,
+      ],
+      bullets: area.popularSearches.slice(0, 6),
     },
     {
       id: "types",
-      title: `Popular property types`,
+      title: `Popular rental categories`,
       paragraphs: [
-        `Browse category hubs for flats, PG, shops, offices, and warehouses directly from this area page, or filter on the map for precise matches.`,
+        `Browse category hubs for flats, PG, shops, offices, and warehouses from this area page, or jump to the live map for precise matches.`,
       ],
       bullets: area.topCategories.map((c) => `${c.icon} ${c.name} — ${c.desc}`),
     },

@@ -14,6 +14,7 @@ import {
 import { fetchAreaListings } from "@/lib/seo-listings";
 import { getAreaConfig } from "@/lib/area-config";
 import { canonicalUrl } from "@/lib/seo";
+import { robotsForCity } from "@/lib/seo/indexing-policy";
 import { isRentalCategorySlug } from "@/lib/seo/categories";
 import {
   categoryHubMetadata,
@@ -64,10 +65,11 @@ export async function generateMetadata({
       resolvedParams.city,
       resolvedParams.area
     );
-    return categoryHubMetadata(
+    const meta = categoryHubMetadata(
       ctx,
       `/rentals/${resolvedParams.country}/${resolvedParams.city}/${resolvedParams.area}`
     );
+    return { ...meta, robots: robotsForCity(ctx.city) };
   }
   const result = getAreaBySlug(
     resolvedParams.country,
@@ -112,6 +114,7 @@ export async function generateMetadata({
     alternates: {
       canonical: base,
     },
+    robots: robotsForCity(city),
   };
 }
 

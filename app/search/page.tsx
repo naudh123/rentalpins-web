@@ -5,23 +5,39 @@ import { appPath, siteUrl } from "@/lib/config";
 import { fetchListingsInBounds } from "@/lib/listings";
 import { boundsAroundCenter } from "@/lib/map-bounds";
 import { parseSearchUrlState } from "@/lib/search-url";
+import { robotsForSearchPage } from "@/lib/seo/indexing-policy";
 
 const canonical = `${siteUrl}${appPath("/search")}`;
 
-export const metadata: Metadata = {
-  title: "Map search — find rentals near you",
-  description:
-    "Browse rooms, PG, flats, vehicles and more on the RentalPins map. Filter by category and price, save searches, and contact owners directly.",
-  alternates: { canonical },
-  openGraph: {
-    title: "RentalPins map search",
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const urlState = parseSearchUrlState(params);
+  const hasViewportQuery =
+    urlState.bounds != null ||
+    urlState.centerLat != null ||
+    urlState.centerLng != null ||
+    Boolean(params.lat || params.lng || params.north);
+
+  return {
+    title: "Map search — find rentals near you",
     description:
-      "Interactive map of live rental listings across India, UK, Kenya and Nigeria.",
-    url: canonical,
-    siteName: "RentalPins",
-    type: "website",
-  },
-};
+      "Browse rooms, PG, flats, vehicles and more on the RentalPins map. Filter by category and price, save searches, and contact owners directly.",
+    alternates: { canonical },
+    robots: robotsForSearchPage(hasViewportQuery),
+    openGraph: {
+      title: "RentalPins map search",
+      description:
+        "Interactive map of live rental listings across India, UK, Kenya and Nigeria.",
+      url: canonical,
+      siteName: "RentalPins",
+      type: "website",
+    },
+  };
+}
 
 function SearchFallback() {
   return (
