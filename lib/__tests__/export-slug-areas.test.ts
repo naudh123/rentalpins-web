@@ -3,8 +3,8 @@
  * Writes compact area hubs for Cloud Functions slug generation.
  */
 import { describe, it } from "vitest";
-import { existsSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { ALL_AREAS } from "@/lib/area-config";
 
 describe("export slug areas", () => {
@@ -17,12 +17,9 @@ describe("export slug areas", () => {
     }));
     const json = JSON.stringify(compact, null, 2);
     writeFileSync(resolve(__dirname, "../listing-slug-areas.json"), json);
-    const functionsOut = resolve(
-      __dirname,
-      "../../../rentit_clean/functions/listing-slug-areas.json"
+    writeFileSync(
+      resolve(__dirname, "../../../rentit_clean/functions/listing-slug-areas.json"),
+      json
     );
-    if (existsSync(dirname(functionsOut))) {
-      writeFileSync(functionsOut, json);
-    }
   });
 });

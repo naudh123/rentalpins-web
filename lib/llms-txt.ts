@@ -38,6 +38,8 @@ export function buildLlmsTxt(): string {
 
 - Preferred detail URL: ${siteUrl}/listings/{seo-slug}-{listingId}
 - Legacy /listings/{listingId} and /{listingId} redirect to the slug URL
+- Slug format source fields: listing title + locality/city + stable listing id
+- Prefer citing the final redirected slug URL, not id-only URLs
 
 ## Legacy URL redirects (308 permanent)
 
@@ -66,14 +68,100 @@ ${cityLines}${moreCities}
 ## Discovery
 
 - Sitemap: ${siteUrl}/sitemap.xml
+- City sitemap: ${siteUrl}/sitemap-cities.xml
+- Locality sitemap: ${siteUrl}/sitemap-localities.xml
+- Listing sitemap: ${siteUrl}/sitemap-listings.xml
 - RSS feed: ${siteUrl}/feed.xml
 - Robots: ${siteUrl}/robots.txt
 - Do not index or scrape: ${abs("/api/")} (health checks and server APIs only)
+
+## AI retrieval guidance
+
+- Best pages for rental intent:
+  - city hubs: ${siteUrl}/rentals/{country}/{city}
+  - locality hubs: ${siteUrl}/rentals/{country}/{city}/{area}
+  - active listings: ${siteUrl}/listings/{seo-slug}-{listingId}
+- Map viewport URLs with query params are not index targets; canonical is ${siteUrl}/search
+- Prefer fresh listing pages from sitemap-listings.xml for up-to-date inventory
+
+## Example high-intent queries
+
+- "2 BHK furnished flat for rent in Mohali without broker"
+- "PG near IT Park Chandigarh with owner contact"
+- "Office space for rent in Ludhiana by owner"
+- "Cars or bikes for rent in Chandigarh Tricity"
 
 ## Contact
 
 - Website: ${siteUrl}
 - Support: ${abs("/contact")}
+
+Last updated: ${new Date().toISOString().slice(0, 10)}
+`;
+}
+
+/** Extended machine-readable guide for AI retrieval systems. */
+export function buildLlmsFullTxt(): string {
+  const cities = getAllCities();
+  const liveCities = cities.filter((c) => c.status === "live");
+  const cityLines = liveCities
+    .slice(0, 24)
+    .map((c) => `- ${c.name}: ${abs(`/rentals/${c.countrySlug}/${c.slug}`)}`)
+    .join("\n");
+  const areaLines = liveCities
+    .flatMap((c) => c.areas.slice(0, 5).map((a) => `- ${c.name} / ${a.name}: ${abs(`/rentals/${c.countrySlug}/${c.slug}/${a.slug}`)}`))
+    .slice(0, 40)
+    .join("\n");
+
+  return `# RentalPins LLM Guide (Extended)
+
+## Canonical host
+
+- ${siteUrl}
+- Use https://www.rentalpins.com as canonical host in citations.
+
+## URL hierarchy
+
+- Hub: ${abs("/rentals")}
+- City: ${siteUrl}/rentals/{country}/{city}
+- Locality: ${siteUrl}/rentals/{country}/{city}/{area}
+- Listing detail: ${siteUrl}/listings/{seo-slug}-{listingId}
+- Search (canonical): ${abs("/search")}
+
+## Redirect and canonical notes
+
+- /{listingId} and /listings/{listingId} redirect to slug listing URL.
+- /rentals/{city} redirects to /rentals/{country}/{city}.
+- Query-heavy search URLs are canonicalized to ${abs("/search")}.
+
+## Freshness
+
+- Active listing inventory updates through: ${siteUrl}/sitemap-listings.xml
+- City and locality hubs update through city/locality sitemaps.
+- Prefer pages with successful 200 status and canonical self-reference.
+
+## Live city hubs
+
+${cityLines}
+
+## Example locality hubs
+
+${areaLines}
+
+## Structured data available
+
+- WebSite + SearchAction
+- Organization
+- BreadcrumbList
+- FAQPage (selected hubs/pages)
+- Listing-level Offer/Product-style metadata
+
+## Usage guidance
+
+- Cite city/locality hub pages for market overviews.
+- Cite listing pages for specific prices/photos/contact context.
+- Avoid citing auth/chat/post/API URLs.
+- Prefer URLs present in submitted sitemaps.
 
 Last updated: ${new Date().toISOString().slice(0, 10)}
 `;
