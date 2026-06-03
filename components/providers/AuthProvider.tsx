@@ -25,7 +25,7 @@ import { getClientAuth, getClientDb } from "@/lib/firebase-client";
 import { mapAuthError } from "@/lib/auth-errors";
 import { getDocResilient, isFirestoreOfflineError } from "@/lib/firestore-fetch";
 import { normalizePhoneForAuth } from "@/lib/phone-auth";
-import { requirePhoneVerification } from "@/lib/config";
+import { allowUnverifiedOwnerContact, requirePhoneVerification } from "@/lib/config";
 import { currencyForIso, resolveIsoFromPhone } from "@/lib/phone-iso";
 import { isUserBlocked } from "@/lib/user-blocked";
 
@@ -243,7 +243,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const needsPhoneLink = Boolean(
-    user && requirePhoneVerification && !user.phoneNumber
+    user &&
+      requirePhoneVerification &&
+      !allowUnverifiedOwnerContact &&
+      !user.phoneNumber
   );
 
   const isBlocked = Boolean(profile?.isBlocked);
@@ -252,7 +255,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user &&
       profile &&
       !isBlocked &&
-      (!requirePhoneVerification || user.phoneNumber)
+      (allowUnverifiedOwnerContact ||
+        !requirePhoneVerification ||
+        user.phoneNumber)
   );
 
   const sendOtp = useCallback(

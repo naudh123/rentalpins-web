@@ -120,6 +120,12 @@ function docToCard(id: string, d: Record<string, unknown>): ListingCard | null {
     viewsCount: num(d.viewsCount),
     inquiryCount: num(d.inquiryCount),
     ownerPhone: str(d.ownerPhone),
+    ownerPhoneVerified:
+      d.ownerPhoneVerified === true
+        ? true
+        : d.ownerPhoneVerified === false
+          ? false
+          : undefined,
     homeIso: str(d.homeIso) || str(d.iso) || undefined,
     attributes: parseListingAttributes(d),
     urlSlug: str(d.urlSlug) || undefined,

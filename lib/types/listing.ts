@@ -37,6 +37,8 @@ export interface ListingDocument {
   videoUrl?: string;
   ownerUid?: string;
   ownerPhone?: string;
+  /** False when contact mobile was typed on web without OTP; true after verified link. */
+  ownerPhoneVerified?: boolean;
   iso?: string;
   homeIso?: string;
   billingCurrency?: string;
@@ -71,6 +73,7 @@ export interface ListingCard {
   viewsCount: number;
   inquiryCount: number;
   ownerPhone: string;
+  ownerPhoneVerified?: boolean;
   homeIso?: string;
   createdAt: string;
   updatedAt: string;

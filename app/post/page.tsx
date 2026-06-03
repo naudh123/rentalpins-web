@@ -1,36 +1,28 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import PostListingForm from "@/components/post/PostListingForm";
+import PostAuthGate from "@/components/post/PostAuthGate";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { appPath } from "@/lib/config";
+import { allowUnverifiedOwnerContact } from "@/lib/config";
 
 function PostPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const listingId = searchParams.get("listingId");
   const { user, loading, needsPhoneLink } = useAuth();
 
-  useEffect(() => {
-    if (loading) return;
-    const next = listingId ? `/post?listingId=${listingId}` : "/post";
-    if (!user) {
-      router.replace(appPath(`/auth/login?next=${encodeURIComponent(next)}`));
-      return;
-    }
-    if (needsPhoneLink) {
-      router.replace(
-        appPath(`/auth/login?link=1&next=${encodeURIComponent(next)}`)
-      );
-    }
-  }, [user, loading, needsPhoneLink, router, listingId]);
-
-  if (loading || needsPhoneLink) {
+  if (loading) {
     return <p className="p-8 text-center text-[var(--muted)]">Loading…</p>;
   }
 
-  if (!user) return null;
+  if (!user) {
+    return <PostAuthGate listingId={listingId} />;
+  }
+
+  if (needsPhoneLink && !allowUnverifiedOwnerContact) {
+    return <PostAuthGate listingId={listingId} />;
+  }
 
   return <PostListingForm listingId={listingId} />;
 }

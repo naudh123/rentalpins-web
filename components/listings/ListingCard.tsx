@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
@@ -10,13 +9,14 @@ import { listingDetailHref } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
+import ContactNotVerifiedBadge from "@/components/listings/ContactNotVerifiedBadge";
+import { showContactNotVerifiedBadge } from "@/lib/listing-contact";
 
 interface Props {
   listing: ListingCardType;
   source?: "map" | "list";
   selected?: boolean;
   highlighted?: boolean;
-  onSelect?: () => void;
   /** Overrides return `from` query (e.g. current listing detail path). */
   returnPath?: string;
   /** Vertical card for two-column map grid (Zillow-style). */
@@ -28,7 +28,6 @@ export default function ListingCard({
   source = "list",
   selected = false,
   highlighted = false,
-  onSelect,
   returnPath: returnPathOverride,
   layout = "row",
 }: Props) {
@@ -46,27 +45,12 @@ export default function ListingCard({
         })()
       : undefined);
   const href = listingDetailHref(listingToSlugInput(listing), returnPath);
-  const [twoTapPreview, setTwoTapPreview] = useState(false);
-
-  useEffect(() => {
-    if (source !== "map") return;
-    setTwoTapPreview(window.matchMedia("(pointer: coarse)").matches);
-  }, [source]);
-
   const isStack = layout === "stack";
 
   return (
     <Link
       href={href}
-      onClick={(e) => {
-        if (twoTapPreview && onSelect && !selected) {
-          e.preventDefault();
-          onSelect();
-          return;
-        }
-        trackListingClick(listing.id, source);
-      }}
-      onMouseEnter={source === "map" ? undefined : onSelect}
+      onClick={() => trackListingClick(listing.id, source)}
       aria-current={source === "map" && selected ? "true" : undefined}
       className={`group relative rounded-[var(--radius-lg)] border p-3 transition-all duration-200 motion-reduce:transition-none ${
         isStack ? "flex flex-col gap-2" : "flex gap-3"
@@ -135,6 +119,9 @@ export default function ListingCard({
           >
             <span aria-hidden>₹</span>No brokerage
           </span>
+          {showContactNotVerifiedBadge(listing) && (
+            <ContactNotVerifiedBadge />
+          )}
         </div>
       </div>
     </Link>

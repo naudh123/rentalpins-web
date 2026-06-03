@@ -148,7 +148,11 @@ export default function ProfilePage() {
             <div>
               <p className="text-xs font-medium text-[var(--muted)]">Phone verified</p>
               <p className="mt-1 text-[var(--text)]">
-                {phoneVerified ? "Yes" : requirePhoneVerification ? "Required to post" : "Optional"}
+                {phoneVerified
+                  ? "Yes"
+                  : requirePhoneVerification
+                    ? "Required to post"
+                    : "Optional — add on listing form"}
               </p>
             </div>
           </div>

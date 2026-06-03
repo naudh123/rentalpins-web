@@ -3,6 +3,7 @@ import {
   deployEnv,
   gaMeasurementId,
   googleMapsApiKey,
+  allowUnverifiedOwnerContact,
   requirePhoneVerification,
 } from "@/lib/config";
 import {
@@ -23,6 +24,7 @@ export async function GET() {
     deployEnv,
     basePath: process.env.NEXT_PUBLIC_BASE_PATH || "",
     requirePhoneVerification,
+    allowUnverifiedOwnerContact,
     firebaseClient: hasFirebaseClient,
     firebaseAdmin: hasAdmin,
     googleMaps: hasMapsKey,

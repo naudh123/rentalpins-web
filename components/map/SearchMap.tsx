@@ -678,7 +678,6 @@ export default function SearchMap({
     onFitAll: fitAllListings,
     onResetView: resetMapView,
     onHighlight: highlightListing,
-    onSelectListing: (l) => focusListingOnPage(l, "list"),
     ...panelEmpty,
   });
 

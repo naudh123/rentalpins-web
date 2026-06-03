@@ -31,4 +31,14 @@ describe("auth-guards phone gate", () => {
     const user = { phoneNumber: null } as { phoneNumber: string | null };
     expect(mustVerifyPhone(user)).toBe(true);
   });
+
+  it("skips phone gate when unverified owner contact is allowed", async () => {
+    vi.stubEnv("NEXT_PUBLIC_REQUIRE_PHONE_VERIFICATION", "true");
+    vi.stubEnv("NEXT_PUBLIC_ALLOW_UNVERIFIED_OWNER_CONTACT", "true");
+    vi.stubEnv("NEXT_PUBLIC_DEPLOY_ENV", "production");
+    const { mustVerifyPhone, canLeaveLogin } = await import("@/lib/auth-guards");
+    const user = { phoneNumber: null } as { phoneNumber: string | null };
+    expect(mustVerifyPhone(user)).toBe(false);
+    expect(canLeaveLogin(user)).toBe(true);
+  });
 });

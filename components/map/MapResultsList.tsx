@@ -11,7 +11,6 @@ interface Props {
   selectedId: string | null;
   highlightedId: string | null;
   onHover: (listing: ListingCardData) => void;
-  onSelect: (listing: ListingCardData) => void;
 }
 
 /** Paginated map results — two columns on desktop (Zillow-style stack cards). */
@@ -20,7 +19,6 @@ export default function MapResultsList({
   selectedId,
   highlightedId,
   onHover,
-  onSelect,
 }: Props) {
   const safeItems = items ?? [];
 
@@ -61,7 +59,6 @@ export default function MapResultsList({
               layout="stack"
               selected={item.listing.id === selectedId}
               highlighted={item.listing.id === highlightedId && item.listing.id !== selectedId}
-              onSelect={() => onSelect(item.listing)}
             />
           </div>
         );

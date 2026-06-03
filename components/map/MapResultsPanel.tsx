@@ -57,7 +57,6 @@ export interface MapResultsPanelProps extends MapEmptyPanelProps {
   onFitAll: () => void;
   onResetView: () => void;
   onHighlight: (listing: ListingCardData) => void;
-  onSelectListing: (listing: ListingCardData) => void;
 }
 
 export default function MapResultsPanel({
@@ -110,7 +109,6 @@ export default function MapResultsPanel({
   mapEmptyDrawnAreaActive = false,
   mapEmptyKeywordPreview,
   onHighlight,
-  onSelectListing,
 }: MapResultsPanelProps) {
   return (
     <aside
@@ -200,7 +198,7 @@ export default function MapResultsPanel({
           Tip: / search · M map · ↑↓ browse · Enter open · F fit all · L cycle view · Esc clear
         </span>
         <span className="md:hidden">
-          Tip: swipe map for list · tap card for preview · L cycle Map/Both/List
+          Tip: swipe map for list · tap card to open listing · L cycle Map/List
         </span>
       </div>
       <span className="sr-only" aria-live="polite">
@@ -234,7 +232,6 @@ export default function MapResultsPanel({
             selectedId={selectedId}
             highlightedId={highlightedId}
             onHover={onHighlight}
-            onSelect={onSelectListing}
           />
         )}
         {fetchError && listings.length > 0 && (

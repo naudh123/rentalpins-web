@@ -10,6 +10,8 @@ import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import { primaryListingInGroup, unitPriceChips } from "@/lib/map-building-groups";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
+import ContactNotVerifiedBadge from "@/components/listings/ContactNotVerifiedBadge";
+import { showContactNotVerifiedBadge } from "@/lib/listing-contact";
 
 interface Props {
   listings: ListingCardType[];
@@ -82,10 +84,13 @@ export default function MapBuildingListingCard({
             <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{subtitle}</p>
           )}
         </div>
-        <p className="font-serif text-lg leading-none text-[var(--brand-orange)]">
-          {priceLabel}
-          {listings.length > 1 ? "+" : ""}
-        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-serif text-lg leading-none text-[var(--brand-orange)]">
+            {priceLabel}
+            {listings.length > 1 ? "+" : ""}
+          </p>
+          {showContactNotVerifiedBadge(primary) && <ContactNotVerifiedBadge />}
+        </div>
         {chips.length > 1 && (
           <div className="flex flex-wrap gap-1.5">
             {chips.map((chip) => {

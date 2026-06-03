@@ -73,6 +73,14 @@ export const requirePhoneVerification =
   (deployEnv === "production" &&
     process.env.NEXT_PUBLIC_REQUIRE_PHONE_VERIFICATION !== "false");
 
+/**
+ * Web rollout: post, activate, and owner chat without Firebase phone OTP.
+ * Contact mobile is collected on the post form (`listing.ownerPhone`, `ownerPhoneVerified: false`).
+ */
+export const allowUnverifiedOwnerContact =
+  process.env.NEXT_PUBLIC_ALLOW_UNVERIFIED_OWNER_CONTACT === "true" ||
+  !requirePhoneVerification;
+
 export const gaMeasurementId =
   process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || "G-VGVQGGL24W";
 

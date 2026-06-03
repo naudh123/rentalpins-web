@@ -38,7 +38,9 @@ import {
   extractSearchKeywords,
   generateRankingKey,
 } from "@/lib/listing-publish";
-import { appPath, requirePhoneVerification } from "@/lib/config";
+import { allowUnverifiedOwnerContact, appPath } from "@/lib/config";
+import { isValidPhoneForAuth, normalizePhoneForAuth } from "@/lib/phone-auth";
+import { resolveIsoFromPhone } from "@/lib/phone-iso";
 import { parsePostDraftListing } from "@/lib/draft-listing";
 import { uploadListingImages } from "@/lib/storage-upload";
 import { mapCallableError } from "@/lib/auth-errors";
@@ -89,6 +91,7 @@ export default function PostListingForm({ listingId = null }: Props) {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [priceUnit, setPriceUnit] = useState("per month");
+  const [contactMobile, setContactMobile] = useState("+91 ");
   const [location, setLocation] = useState<PickedLocation | null>(null);
   const [photoSlots, setPhotoSlots] = useState<ListingPhotoSlot[]>([]);
   const [draftLoadStatus, setDraftLoadStatus] = useState<
@@ -399,6 +402,9 @@ export default function PostListingForm({ listingId = null }: Props) {
         setDescription(draft.description);
         setPrice(String(draft.price || ""));
         setPriceUnit(draft.priceUnit);
+        const savedPhone =
+          typeof snap.data().ownerPhone === "string" ? snap.data().ownerPhone : "";
+        setContactMobile(savedPhone || "+91 ");
         setLocation({
           lat: draft.lat,
           lng: draft.lng,
@@ -437,7 +443,7 @@ export default function PostListingForm({ listingId = null }: Props) {
     };
   }, [listingId, user]);
 
-  if (needsPhoneLink) {
+  if (needsPhoneLink && !allowUnverifiedOwnerContact) {
     const postNext = listingId ? `/post?listingId=${listingId}` : "/post";
     return (
       <div className="mx-auto max-w-md px-4 py-12 text-center">
@@ -619,22 +625,17 @@ export default function PostListingForm({ listingId = null }: Props) {
       return;
     }
 
-    const ownerPhone = user.phoneNumber || profile.phone || "";
-    const phoneDigits = ownerPhone.replace(/\D/g, "");
-    if (requirePhoneVerification && !user.phoneNumber) {
+    const ownerPhone = normalizePhoneForAuth(contactMobile);
+    if (!isValidPhoneForAuth(ownerPhone)) {
       failValidation(
-        "phone_not_verified",
-        "Verify your mobile number before posting (needed for WhatsApp contact)."
+        "invalid_contact_phone",
+        "Enter a valid WhatsApp contact number (e.g. +91 98765 43210)."
       );
       return;
     }
-    if (phoneDigits.length < 8) {
-      failValidation(
-        "phone_missing",
-        "A valid mobile number is required so renters can reach you on WhatsApp."
-      );
-      return;
-    }
+    const listingHomeIso =
+      resolveIsoFromPhone(ownerPhone) || profile.homeIso || "IN";
+    const ownerPhoneVerified = allowUnverifiedOwnerContact ? false : Boolean(user.phoneNumber);
 
     setAiNotice(null);
     setError("");
@@ -735,7 +736,13 @@ export default function PostListingForm({ listingId = null }: Props) {
 
       if (isEditMode && listingId) {
         setProgress("Saving changes…");
-        await updateDoc(doc(db, "listings", listingId), fields);
+        await updateDoc(doc(db, "listings", listingId), {
+          ...fields,
+          ownerPhone,
+          ownerPhoneVerified,
+          iso: listingHomeIso,
+          homeIso: listingHomeIso,
+        });
         savedListingId = listingId;
         trackEvent("listing_draft_updated", {
           listing_id: listingId,
@@ -747,8 +754,9 @@ export default function PostListingForm({ listingId = null }: Props) {
           ...fields,
           ownerUid: user.uid,
           ownerPhone,
-          iso: profile.homeIso,
-          homeIso: profile.homeIso,
+          ownerPhoneVerified,
+          iso: listingHomeIso,
+          homeIso: listingHomeIso,
           billingCurrency: profile.billingCurrency,
           rankingKey: generateRankingKey(),
           isActive: false,
@@ -809,7 +817,9 @@ export default function PostListingForm({ listingId = null }: Props) {
       <p className="mt-2 text-sm text-[var(--muted)]">
         {isEditMode
           ? "Update your draft, then continue to activation and payment."
-          : "Step 1: save draft · Step 2: choose plan & pay to go live (same as the app)."}
+          : allowUnverifiedOwnerContact
+            ? "Step 1: save draft with your WhatsApp number · Step 2: activate to go live. OTP verification is optional."
+            : "Step 1: save draft · Step 2: choose plan & pay to go live (same as the app)."}
       </p>
 
       {!isGoogleMapsConfigured() && (
@@ -845,6 +855,25 @@ export default function PostListingForm({ listingId = null }: Props) {
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="rp-label">
+            WhatsApp contact number <span className="text-[var(--accent)]">*</span>
+          </label>
+          <p className="mb-2 text-xs text-[var(--muted)]">
+            Renters will call or message you on this number. It does not need to match your Google
+            account. OTP verification is optional for now.
+          </p>
+          <input
+            type="tel"
+            value={contactMobile}
+            onChange={(e) => setContactMobile(e.target.value)}
+            placeholder="+91 98765 43210"
+            autoComplete="tel"
+            required
+            className="rp-input"
+          />
         </div>
 
         <div>
