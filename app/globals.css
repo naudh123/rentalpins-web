@@ -282,3 +282,17 @@ button {
     font-size: 16px;
   }
 }
+
+/* Google Places dropdown is appended to <body> and can block taps on fields above it. */
+.pac-container {
+  z-index: 40 !important;
+}
+
+.rp-post-form .rp-category-field {
+  position: relative;
+  z-index: 50;
+}
+
+.rp-post-form .rp-category-field select {
+  touch-action: manipulation;
+}

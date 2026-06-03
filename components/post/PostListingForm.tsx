@@ -81,6 +81,11 @@ export default function PostListingForm({ listingId = null }: Props) {
     [mainCategory]
   );
   const [subCategory, setSubCategory] = useState("Room");
+
+  useEffect(() => {
+    if (subCategories.includes(subCategory)) return;
+    setSubCategory(subCategories[0] ?? "Others");
+  }, [subCategories, subCategory]);
   const [bhk, setBhk] = useState("");
   const [furnishing, setFurnishing] = useState("");
   const [tenantPreference, setTenantPreference] = useState("");
@@ -826,8 +831,8 @@ export default function PostListingForm({ listingId = null }: Props) {
         <MapsApiKeyMissingNotice className="mt-4" />
       )}
 
-      <form onSubmit={onSubmit} className="rp-card mt-6 space-y-5 p-5 sm:p-6">
-        <div>
+      <form onSubmit={onSubmit} className="rp-post-form rp-card mt-6 space-y-5 p-5 sm:p-6">
+        <div className="rp-category-field">
           <label className="rp-label">Category</label>
           <select
             value={mainCategory}
@@ -842,7 +847,7 @@ export default function PostListingForm({ listingId = null }: Props) {
           </select>
         </div>
 
-        <div>
+        <div className="rp-category-field">
           <label className="rp-label">Subcategory</label>
           <select
             value={subCategory}

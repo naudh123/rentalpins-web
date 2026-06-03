@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
 import { listingDetailHref } from "@/lib/listing-links";
@@ -31,6 +31,7 @@ export default function ListingCard({
   returnPath: returnPathOverride,
   layout = "row",
 }: Props) {
+  const router = useRouter();
   const priceLabel = formatPrice(listing.price, listing.priceUnit, listing.homeIso);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -47,10 +48,28 @@ export default function ListingCard({
   const href = listingDetailHref(listingToSlugInput(listing), returnPath);
   const isStack = layout === "stack";
 
+  function openListing(e: React.MouseEvent<HTMLAnchorElement>) {
+    trackListingClick(listing.id, source);
+    if (
+      e.defaultPrevented ||
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey ||
+      e.button !== 0
+    ) {
+      return;
+    }
+    const target = e.target as HTMLElement;
+    if (target.closest("button")) return;
+    e.preventDefault();
+    router.push(href);
+  }
+
   return (
     <Link
       href={href}
-      onClick={() => trackListingClick(listing.id, source)}
+      onClick={openListing}
       aria-current={source === "map" && selected ? "true" : undefined}
       className={`group relative rounded-[var(--radius-lg)] border p-3 transition-all duration-200 motion-reduce:transition-none ${
         isStack ? "flex flex-col gap-2" : "flex gap-3"

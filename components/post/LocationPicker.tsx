@@ -221,6 +221,16 @@ export default function LocationPicker({
           placeholder="Search address or place…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onBlur={() => {
+            document.querySelectorAll(".pac-container").forEach((el) => {
+              (el as HTMLElement).style.display = "none";
+            });
+          }}
+          onFocus={() => {
+            document.querySelectorAll(".pac-container").forEach((el) => {
+              (el as HTMLElement).style.display = "";
+            });
+          }}
           className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 py-2.5 text-sm"
         />
       </Autocomplete>

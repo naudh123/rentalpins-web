@@ -45,6 +45,11 @@ export default function MapBuildingListingCard({
     return `${pathname}${qs ? `?${qs}` : ""}`;
   }
 
+  const primaryHref = listingDetailHref(
+    listingToSlugInput(primary),
+    returnPathFor(primary.id)
+  );
+
   return (
     <article
       id={`map-listing-${primary.id}`}
@@ -61,7 +66,11 @@ export default function MapBuildingListingCard({
       <div className="absolute right-3 top-3 z-10">
         <ListingSaveButton listingId={primary.id} size="sm" />
       </div>
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--bg-elevated)]">
+      <Link
+        href={primaryHref}
+        onClick={() => trackListingClick(primary.id, source)}
+        className="relative block aspect-[16/10] w-full overflow-hidden bg-[var(--bg-elevated)] no-underline"
+      >
         {primary.imageUrl ? (
           <Image
             src={primary.imageUrl}
@@ -76,14 +85,18 @@ export default function MapBuildingListingCard({
         <span className="absolute left-3 top-3 rounded-md bg-[var(--brand-navy)] px-2 py-1 text-[11px] font-bold text-white shadow-sm">
           {listings.length} listings here
         </span>
-      </div>
+      </Link>
       <div className="space-y-2 p-3">
-        <div>
+        <Link
+          href={primaryHref}
+          onClick={() => trackListingClick(primary.id, source)}
+          className="block no-underline"
+        >
           <p className="truncate font-semibold leading-snug text-[var(--brand-navy)]">{title}</p>
           {subtitle && (
             <p className="mt-0.5 truncate text-xs text-[var(--muted)]">{subtitle}</p>
           )}
-        </div>
+        </Link>
         <div className="flex flex-wrap items-center gap-2">
           <p className="font-serif text-lg leading-none text-[var(--brand-orange)]">
             {priceLabel}
@@ -113,10 +126,7 @@ export default function MapBuildingListingCard({
           </div>
         )}
         <Link
-          href={listingDetailHref(
-            listingToSlugInput(primary),
-            returnPathFor(primary.id)
-          )}
+          href={primaryHref}
           onClick={() => trackListingClick(primary.id, source)}
           className="rp-btn rp-btn-primary mt-1 w-full py-2.5 text-sm no-underline"
         >
