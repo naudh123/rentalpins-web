@@ -138,7 +138,7 @@ export default function SearchFilters({
   }
 
   return (
-    <div className="shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]/80">
+    <div className="relative z-[1] shrink-0 border-b border-[var(--border-subtle)] bg-[var(--bg-elevated)]/80 pointer-events-auto">
       <div className="flex items-center justify-between gap-3 px-4 py-3">
         <div>
           <h2 className="rp-section-title">
@@ -186,7 +186,6 @@ export default function SearchFilters({
             onClick={() => update({ category: cat })}
             className={`rp-chip snap-start shrink-0 px-4 py-2 text-sm ${filters.category === cat ? "rp-chip-active" : ""}`}
             aria-pressed={filters.category === cat}
-            disabled={loading}
           >
             {cat === "All" ? "All" : cat.split(" ")[0]}
           </button>

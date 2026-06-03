@@ -1,6 +1,10 @@
 "use client";
 
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
+import { listingDetailHref } from "@/lib/listing-links";
+import { listingToSlugInput } from "@/lib/listing-path";
+import { trackListingClick } from "@/lib/ga4";
 import type { MapListingDisplayItem } from "@/lib/map-building-groups";
 import ListingCard from "@/components/listings/ListingCard";
 import MapBuildingListingCard from "@/components/map/MapBuildingListingCard";
@@ -21,6 +25,23 @@ export default function MapResultsList({
   onHover,
 }: Props) {
   const safeItems = items ?? [];
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  function returnPathFor(listingId: string) {
+    const p = new URLSearchParams(searchParams.toString());
+    p.set("selected", listingId);
+    const qs = p.toString();
+    return `${pathname}${qs ? `?${qs}` : ""}`;
+  }
+
+  function openListing(listing: ListingCardData) {
+    trackListingClick(listing.id, "map");
+    router.push(
+      listingDetailHref(listingToSlugInput(listing), returnPathFor(listing.id))
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
@@ -33,8 +54,13 @@ export default function MapResultsList({
               id={`map-listing-${primary.id}`}
               data-listing-id={primary.id}
               role="listitem"
-              className="col-span-1 md:col-span-2"
+              className="col-span-1 md:col-span-2 cursor-pointer"
               onMouseEnter={() => onHover(primary)}
+              onClick={(e) => {
+                const el = e.target as HTMLElement;
+                if (el.closest("button, a")) return;
+                openListing(primary);
+              }}
             >
               <MapBuildingListingCard
                 listings={item.listings}
@@ -52,6 +78,17 @@ export default function MapResultsList({
             data-listing-id={item.listing.id}
             role="listitem"
             onMouseEnter={() => onHover(item.listing)}
+            onClick={(e) => {
+              const el = e.target as HTMLElement;
+              if (el.closest("button, a")) return;
+              openListing(item.listing);
+            }}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return;
+              e.preventDefault();
+              openListing(item.listing);
+            }}
+            className="cursor-pointer"
           >
             <ListingCard
               listing={item.listing}

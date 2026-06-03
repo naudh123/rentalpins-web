@@ -224,6 +224,16 @@ export default function MapLocationSearch({
             value={query}
             disabled={disabled || geoBusy}
             onChange={(e) => setQuery(e.target.value)}
+            onBlur={() => {
+              document.querySelectorAll(".pac-container").forEach((el) => {
+                (el as HTMLElement).style.display = "none";
+              });
+            }}
+            onFocus={() => {
+              document.querySelectorAll(".pac-container").forEach((el) => {
+                (el as HTMLElement).style.display = "";
+              });
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();

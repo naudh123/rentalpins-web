@@ -727,8 +727,10 @@ export default function SearchMap({
 
   return (
     <div className="relative flex rp-map-layout flex-col md:flex-row">
-      <InAppBrowserNotice context="search" variant="compact" />
-      <MapCanvas {...canvasProps} />
+      <div className="rp-map-canvas-wrap">
+        <InAppBrowserNotice context="search" variant="compact" />
+        <MapCanvas {...canvasProps} />
+      </div>
 
       <MapResultsPanel {...resultsPanelProps} />
     </div>
