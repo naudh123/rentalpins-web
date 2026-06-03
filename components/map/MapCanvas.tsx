@@ -184,7 +184,7 @@ export default function MapCanvas({
       role="application"
       aria-label="Interactive rental map"
       aria-describedby="map-keyboard-help"
-      className="relative min-h-[60vh] flex-1 overflow-hidden border-[var(--border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)] focus-visible:ring-offset-2 md:min-h-0 md:border-r"
+      className="relative flex h-full min-h-0 flex-1 flex-col overflow-hidden border-[var(--border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)] focus-visible:ring-offset-2 max-md:min-h-[50vh] md:border-r"
       style={{ backgroundColor: MAP_ROADMAP_BACKGROUND }}
     >
       <p id="map-keyboard-help" className="sr-only">
@@ -195,6 +195,7 @@ export default function MapCanvas({
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {mapPinStatusText}
       </span>
+      <div className="relative min-h-0 flex-1 w-full">
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={initialMapView.center}
@@ -236,6 +237,7 @@ export default function MapCanvas({
         onIdle={onMapIdle}
         onClick={onMapClick}
       />
+      </div>
 
       <MapDrawAreaController
         map={mapInstance}
