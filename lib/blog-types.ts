@@ -11,6 +11,9 @@ export interface BlogPostSummary {
   authorId?: string;
   published?: boolean;
   updatedAt?: string;
+  tags?: string[];
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 export interface BlogPost extends BlogPostSummary {

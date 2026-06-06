@@ -25,6 +25,9 @@ function parseMdxFile(filename: string): BlogPost | null {
   if (data.published === false) return null;
 
   const slug = resolveMdxSlug(filename, data as Record<string, unknown>);
+  const tags = Array.isArray(data.tags)
+    ? (data.tags as string[]).filter((t) => typeof t === "string")
+    : undefined;
   return {
     slug,
     title: (data.title as string) ?? "",
@@ -37,6 +40,9 @@ function parseMdxFile(filename: string): BlogPost | null {
     content,
     source: "mdx",
     published: true,
+    tags,
+    metaTitle: (data.metaTitle as string) ?? undefined,
+    metaDescription: (data.metaDescription as string) ?? undefined,
   };
 }
 
@@ -86,6 +92,10 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   const firestore = await getFirestorePostBySlug(canonical);
   if (firestore?.published !== false) return firestore;
   return null;
+}
+
+export function isMdxSlugTaken(slug: string): boolean {
+  return getMdxPosts().some((p) => p.slug === slug);
 }
 
 export function getStaticBlogSlugs(): string[] {

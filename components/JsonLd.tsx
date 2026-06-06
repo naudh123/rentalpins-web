@@ -235,6 +235,8 @@ interface BlogPostingInfo {
   dateModified?: string;
   authorName: string;
   image?: string;
+  tags?: string[];
+  articleSection?: string;
 }
 
 export function JsonLdBlogPosting({ post }: { post: BlogPostingInfo }) {
@@ -268,6 +270,8 @@ export function JsonLdBlogPosting({ post }: { post: BlogPostingInfo }) {
           "@type": "WebPage",
           "@id": post.url,
         },
+        ...(post.articleSection ? { articleSection: post.articleSection } : {}),
+        ...(post.tags?.length ? { keywords: post.tags.join(", ") } : {}),
       }}
     />
   );

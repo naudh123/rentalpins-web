@@ -1,4 +1,5 @@
 import { getAllPosts } from "@/lib/blog";
+import { resolveMetaDescription } from "@/lib/blog-validation";
 import { canonicalUrl } from "@/lib/seo";
 
 function escapeXml(text: string): string {
@@ -19,7 +20,7 @@ export async function GET() {
       <title>${escapeXml(post.title)}</title>
       <link>${canonicalUrl(`/blog/${post.slug}`)}</link>
       <guid isPermaLink="true">${canonicalUrl(`/blog/${post.slug}`)}</guid>
-      <description>${escapeXml(post.excerpt)}</description>
+      <description>${escapeXml(resolveMetaDescription(post.excerpt, post.metaDescription ?? ""))}</description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
     </item>`
     )

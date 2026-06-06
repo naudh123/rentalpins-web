@@ -6,13 +6,60 @@ import {
   isAdminRole,
   verifyAuthToken,
 } from "@/lib/firebase-auth-server";
-import { getFirestorePostBySlug, slugExists } from "@/lib/blog-firestore";
-import { estimateReadTime, slugify } from "@/lib/seo";
+import { isMdxSlugTaken } from "@/lib/blog";
+import {
+  getFirestorePostBySlug,
+  getFirestorePostDocId,
+  slugExists,
+} from "@/lib/blog-firestore";
+import {
+  blogReadTimeLabel,
+  normalizeBlogPostBody,
+} from "@/lib/blog-validation";
 
 const COLLECTION = "blog_posts";
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
+}
+
+async function authorizePostAccess(slug: string, uid: string) {
+  const existing = await getFirestorePostBySlug(slug);
+  if (!existing?.authorId) {
+    return { error: "Post not found.", status: 404 as const, existing: null };
+  }
+  const role = await getUserRole(uid);
+  if (existing.authorId !== uid && !isAdminRole(role)) {
+    return { error: "Forbidden.", status: 403 as const, existing: null };
+  }
+  return { existing, error: null, status: null };
+}
+
+export async function GET(request: Request, { params }: RouteParams) {
+  const { slug } = await params;
+  const decoded = await verifyAuthToken(request);
+  if (!decoded) {
+    return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  }
+
+  const access = await authorizePostAccess(slug, decoded.uid);
+  if (!access.existing) {
+    return NextResponse.json({ error: access.error }, { status: access.status ?? 404 });
+  }
+
+  const post = access.existing;
+  return NextResponse.json({
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.content,
+    category: post.category,
+    coverImage: post.coverImage ?? "",
+    tags: post.tags ?? [],
+    metaTitle: post.metaTitle ?? "",
+    metaDescription: post.metaDescription ?? "",
+    published: post.published !== false,
+  });
 }
 
 export async function PUT(request: Request, { params }: RouteParams) {
@@ -22,15 +69,11 @@ export async function PUT(request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  const existing = await getFirestorePostBySlug(slug);
-  if (!existing?.authorId) {
-    return NextResponse.json({ error: "Post not found." }, { status: 404 });
+  const access = await authorizePostAccess(slug, decoded.uid);
+  if (!access.existing) {
+    return NextResponse.json({ error: access.error }, { status: access.status ?? 404 });
   }
-
-  const role = await getUserRole(decoded.uid);
-  if (existing.authorId !== decoded.uid && !isAdminRole(role)) {
-    return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-  }
+  const existing = access.existing;
 
   let body: Record<string, unknown>;
   try {
@@ -39,25 +82,38 @@ export async function PUT(request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
   }
 
-  const title = typeof body.title === "string" ? body.title.trim() : existing.title;
-  const excerpt =
-    typeof body.excerpt === "string" ? body.excerpt.trim() : existing.excerpt;
-  const content =
-    typeof body.content === "string" ? body.content.trim() : existing.content;
-  const category =
-    typeof body.category === "string" ? body.category.trim() : existing.category;
-  const coverImage =
-    typeof body.coverImage === "string" ? body.coverImage.trim() : existing.coverImage ?? "";
-  const published =
-    typeof body.published === "boolean" ? body.published : existing.published !== false;
+  const merged = {
+    title: typeof body.title === "string" ? body.title : existing.title,
+    excerpt: typeof body.excerpt === "string" ? body.excerpt : existing.excerpt,
+    content: typeof body.content === "string" ? body.content : existing.content,
+    category: typeof body.category === "string" ? body.category : existing.category,
+    coverImage:
+      typeof body.coverImage === "string" ? body.coverImage : existing.coverImage ?? "",
+    slug: typeof body.slug === "string" ? body.slug : existing.slug,
+    tags: body.tags ?? existing.tags ?? [],
+    metaTitle: typeof body.metaTitle === "string" ? body.metaTitle : existing.metaTitle ?? "",
+    metaDescription:
+      typeof body.metaDescription === "string"
+        ? body.metaDescription
+        : existing.metaDescription ?? "",
+    published:
+      typeof body.published === "boolean" ? body.published : existing.published !== false,
+  };
 
-  const newSlug =
-    typeof body.slug === "string" && body.slug.trim()
-      ? slugify(body.slug)
-      : existing.slug;
+  const validated = normalizeBlogPostBody(merged);
+  if (!validated.ok) {
+    return NextResponse.json({ error: validated.errors[0] }, { status: 400 });
+  }
 
-  if (newSlug !== existing.slug && (await slugExists(newSlug))) {
-    return NextResponse.json({ error: "Slug already taken." }, { status: 409 });
+  const data = validated.data;
+  if (data.slug !== existing.slug) {
+    const docId = await getFirestorePostDocId(existing.slug);
+    if (await slugExists(data.slug, docId ?? undefined)) {
+      return NextResponse.json({ error: "Slug already taken." }, { status: 409 });
+    }
+    if (isMdxSlugTaken(data.slug)) {
+      return NextResponse.json({ error: "Slug already taken." }, { status: 409 });
+    }
   }
 
   const snap = await adminDb
@@ -70,18 +126,21 @@ export async function PUT(request: Request, { params }: RouteParams) {
   }
 
   await snap.docs[0].ref.update({
-    slug: newSlug,
-    title,
-    excerpt,
-    content,
-    category,
-    coverImage: coverImage || null,
-    published,
-    readTime: estimateReadTime(content),
+    slug: data.slug,
+    title: data.title,
+    excerpt: data.excerpt,
+    content: data.content,
+    category: data.category,
+    coverImage: data.coverImage || null,
+    tags: data.tags,
+    metaTitle: data.metaTitle || null,
+    metaDescription: data.metaDescription || null,
+    published: data.published,
+    readTime: blogReadTimeLabel(data.content),
     updatedAt: FieldValue.serverTimestamp(),
   });
 
-  return NextResponse.json({ ok: true, slug: newSlug });
+  return NextResponse.json({ ok: true, slug: data.slug, published: data.published });
 }
 
 export async function DELETE(_request: Request, { params }: RouteParams) {
@@ -91,14 +150,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   }
 
-  const existing = await getFirestorePostBySlug(slug);
-  if (!existing?.authorId) {
-    return NextResponse.json({ error: "Post not found." }, { status: 404 });
-  }
-
-  const role = await getUserRole(decoded.uid);
-  if (existing.authorId !== decoded.uid && !isAdminRole(role)) {
-    return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+  const access = await authorizePostAccess(slug, decoded.uid);
+  if (!access.existing) {
+    return NextResponse.json({ error: access.error }, { status: access.status ?? 404 });
   }
 
   const snap = await adminDb

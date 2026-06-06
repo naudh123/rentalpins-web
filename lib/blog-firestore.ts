@@ -1,4 +1,5 @@
 import { adminDb } from "./firebase-admin";
+import { parseBlogTags } from "./blog-validation";
 import { estimateReadTime } from "./seo";
 import type { BlogPost, BlogPostSummary } from "./blog-types";
 
@@ -35,6 +36,9 @@ function mapDoc(id: string, data: Record<string, unknown>): BlogPost {
     authorId: data.authorId as string | undefined,
     published: data.published !== false,
     updatedAt: updated,
+    tags: parseBlogTags(data.tags),
+    metaTitle: (data.metaTitle as string) || undefined,
+    metaDescription: (data.metaDescription as string) || undefined,
   };
 }
 
@@ -82,6 +86,16 @@ export async function getFirestorePostBySlug(
     console.error("getFirestorePostBySlug:", err);
     return null;
   }
+}
+
+export async function getFirestorePostDocId(slug: string): Promise<string | null> {
+  const snap = await adminDb
+    .collection(COLLECTION)
+    .where("slug", "==", slug)
+    .limit(1)
+    .get();
+  if (snap.empty) return null;
+  return snap.docs[0].id;
 }
 
 export async function slugExists(slug: string, excludeId?: string): Promise<boolean> {
