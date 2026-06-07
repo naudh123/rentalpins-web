@@ -26,4 +26,7 @@ export const BLOG_LIMITS = {
   slugMax: 80,
   tagsMax: 8,
   tagMaxLength: 40,
+  faqsMax: 8,
+  faqQuestionMax: 200,
+  faqAnswerMax: 500,
 } as const;

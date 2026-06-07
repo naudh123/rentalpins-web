@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/providers/AuthProvider";
 import MarketingShell from "@/components/MarketingShell";
 import BlogSeoPanel from "@/components/blog/BlogSeoPanel";
+import BlogFaqEditor from "@/components/blog/BlogFaqEditor";
 import { BLOG_CATEGORIES, BLOG_DRAFT_STORAGE_KEY, BLOG_LIMITS } from "@/lib/blog-config";
+import type { BlogFaqItem } from "@/lib/blog-types";
 import {
   analyzeBlogSeo,
   blogReadTimeLabel,
@@ -34,6 +36,7 @@ interface BlogDraft {
   metaTitle: string;
   metaDescription: string;
   published: boolean;
+  faqs: BlogFaqItem[];
   savedAt: string;
 }
 
@@ -47,6 +50,7 @@ interface EditorInitial {
   metaTitle?: string;
   metaDescription?: string;
   published?: boolean;
+  faqs?: BlogFaqItem[];
 }
 
 interface Props {
@@ -261,6 +265,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
   const [metaTitle, setMetaTitle] = useState(initial?.metaTitle ?? "");
   const [metaDescription, setMetaDescription] = useState(initial?.metaDescription ?? "");
   const [tagsInput, setTagsInput] = useState(initial?.tags?.join(", ") ?? "");
+  const [faqs, setFaqs] = useState<BlogFaqItem[]>(initial?.faqs ?? []);
   const [published, setPublished] = useState(initial?.published ?? true);
   const [slug, setSlug] = useState(editSlug ?? "");
   const [saving, setSaving] = useState(false);
@@ -288,6 +293,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
       metaTitle,
       metaDescription,
       published,
+      faqs,
     }),
     [
       title,
@@ -300,6 +306,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
       metaTitle,
       metaDescription,
       published,
+      faqs,
     ]
   );
 
@@ -352,6 +359,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
     setMetaTitle(draft.metaTitle);
     setMetaDescription(draft.metaDescription);
     setPublished(draft.published);
+    setFaqs(draft.faqs ?? []);
     setDraftRestored(true);
     setDirty(false);
   }, [editSlug, initial, loading]);
@@ -371,6 +379,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         metaTitle,
         metaDescription,
         published,
+        faqs,
         savedAt: new Date().toISOString(),
       };
       localStorage.setItem(BLOG_DRAFT_STORAGE_KEY, JSON.stringify(draft));
@@ -391,6 +400,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
     metaTitle,
     metaDescription,
     published,
+    faqs,
   ]);
 
   useEffect(() => {
@@ -428,6 +438,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         setTagsInput(Array.isArray(data.tags) ? data.tags.join(", ") : "");
         setMetaTitle(data.metaTitle ?? "");
         setMetaDescription(data.metaDescription ?? "");
+        setFaqs(Array.isArray(data.faqs) ? data.faqs : []);
         setPublished(data.published !== false);
         setSlug(data.slug ?? editSlug);
         setDirty(false);
@@ -475,6 +486,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         tags: tagsInput,
         metaTitle,
         metaDescription,
+        faqs,
         authorName: profile?.displayName || user?.displayName || undefined,
       };
 
@@ -627,6 +639,8 @@ export default function BlogEditor({ editSlug, initial }: Props) {
             onMetaDescriptionChange={wrapSetter(setMetaDescription)}
             onTagsChange={wrapSetter(setTagsInput)}
           />
+
+          <BlogFaqEditor faqs={faqs} onChange={wrapSetter(setFaqs)} />
 
           <fieldset className="rounded-xl border border-slate-200 p-4">
             <legend className="px-1 text-sm font-semibold text-slate-700">Visibility</legend>

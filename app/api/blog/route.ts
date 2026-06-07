@@ -52,6 +52,7 @@ export async function POST(request: Request) {
     category: data.category,
     coverImage: data.coverImage || null,
     tags: data.tags,
+    faqs: data.faqs,
     metaTitle: data.metaTitle || null,
     metaDescription: data.metaDescription || null,
     authorId: decoded.uid,

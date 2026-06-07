@@ -1,4 +1,5 @@
-import { getPostBySlug, getStaticBlogSlugs } from "@/lib/blog";
+import { getAllPosts, getPostBySlug, getStaticBlogSlugs } from "@/lib/blog";
+import { pickRelatedPosts } from "@/lib/blog-related";
 import type { BlogPost } from "@/lib/blog-types";
 import { resolveMetaDescription, resolveMetaTitle } from "@/lib/blog-validation";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -8,9 +9,17 @@ import { JsonLdBlogPosting } from "@/components/JsonLd";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import StructuredData from "@/components/seo/StructuredData";
 import type { Metadata } from "next";
-import { appPath, siteUrl } from "@/lib/config";
 import { canonicalUrl } from "@/lib/seo";
+import FAQSchema from "@/components/seo/FAQSchema";
+import BlogAuthorBox from "@/components/blog/BlogAuthorBox";
+import BlogFaqSection from "@/components/blog/BlogFaqSection";
+import BlogRelatedListings from "@/components/blog/BlogRelatedListings";
+import BlogRelatedPosts from "@/components/blog/BlogRelatedPosts";
 import BlogPostAuthorActions from "@/components/blog/BlogPostAuthorActions";
+import BlogTableOfContents from "@/components/blog/BlogTableOfContents";
+import { createBlogMdxComponents } from "@/components/blog/blog-mdx-components";
+import { extractBlogToc } from "@/lib/blog-toc";
+import { fetchBlogRelatedListings } from "@/lib/blog-related-listings";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -31,11 +40,6 @@ function postSeoDescription(post: BlogPost): string {
   return resolveMetaDescription(post.excerpt, post.metaDescription ?? "");
 }
 
-function postOgImage(post: BlogPost): string {
-  const image = post.coverImage || "/og-image.png";
-  return image.startsWith("http") ? image : `${siteUrl}${appPath(image.startsWith("/") ? image : `/${image}`)}`;
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
@@ -44,7 +48,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const postUrl = canonicalUrl(`/blog/${post.slug}`);
   const seoTitle = postSeoTitle(post);
   const seoDescription = postSeoDescription(post);
-  const ogImage = postOgImage(post);
 
   return {
     title: `${seoTitle} — Blog`,
@@ -64,13 +67,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       authors: [post.author ?? "RentalPins"],
       section: post.category,
       tags: post.tags,
-      images: [{ url: ogImage, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title: seoTitle,
       description: seoDescription,
-      images: [ogImage],
     },
   };
 }
@@ -80,9 +81,15 @@ export default async function BlogPostPage({ params }: Props) {
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
+  const allPosts = await getAllPosts();
+  const relatedPosts = pickRelatedPosts(post, allPosts, 3);
+  const relatedListings = await fetchBlogRelatedListings(post.tags, 6);
+
   const postUrl = canonicalUrl(`/blog/${post.slug}`);
   const seoDescription = postSeoDescription(post);
   const authorName = post.author ?? "RentalPins";
+  const toc = extractBlogToc(post.content);
+  const mdxComponents = createBlogMdxComponents(toc);
 
   return (
     <MarketingShell>
@@ -114,6 +121,11 @@ export default async function BlogPostPage({ params }: Props) {
           articleSection: post.category,
         }}
       />
+      {post.faqs?.length ? (
+        <FAQSchema
+          faqs={post.faqs.map((faq) => ({ question: faq.q, answer: faq.a }))}
+        />
+      ) : null}
       <article className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
         <div className="mb-6 flex flex-wrap items-center gap-3 text-sm text-slate-600">
           <span className="rounded-full bg-[#1E3A6E]/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#1E3A6E]">
@@ -153,16 +165,28 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </div>
         ) : null}
+        <BlogTableOfContents entries={toc} />
         <div className="prose prose-lg prose-slate mt-10 max-w-none prose-headings:font-serif prose-headings:text-[#1E3A6E] prose-a:text-[#E8501A] prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
-          <MDXRemote source={post.content} />
+          <MDXRemote source={post.content} components={mdxComponents} />
         </div>
-        <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200 pt-8 text-sm text-slate-500">
-          <p>
-            Written by{" "}
-            <span className="font-medium text-slate-800">{post.author}</span>
-          </p>
-          <BlogPostAuthorActions slug={post.slug} authorId={post.authorId} />
+        {relatedListings ? (
+          <BlogRelatedListings
+            hub={relatedListings.hub}
+            listings={relatedListings.listings}
+          />
+        ) : null}
+        <div className="mt-14 border-t border-slate-200 pt-8">
+          <div className="mb-4 flex justify-end">
+            <BlogPostAuthorActions slug={post.slug} authorId={post.authorId} />
+          </div>
+          <BlogAuthorBox
+            authorName={authorName}
+            category={post.category}
+            readTime={post.readTime}
+          />
         </div>
+        <BlogFaqSection faqs={post.faqs ?? []} />
+        <BlogRelatedPosts posts={relatedPosts} />
       </article>
     </MarketingShell>
   );

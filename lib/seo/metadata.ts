@@ -1,6 +1,19 @@
 import type { Metadata } from "next";
 import { canonicalUrl } from "@/lib/seo";
 
+export const SEO_BRAND_SUFFIX = " | RentalPins";
+
+/** Remove a trailing "| RentalPins" so the root layout title template does not duplicate it. */
+export function stripBrandSuffix(title: string): string {
+  return title.replace(/\s*\|\s*RentalPins\s*$/i, "").trim();
+}
+
+/** Full title for Open Graph, Twitter, and absolute metadata. */
+export function withBrandSuffix(title: string): string {
+  const base = stripBrandSuffix(title);
+  return base ? `${base}${SEO_BRAND_SUFFIX}` : "RentalPins";
+}
+
 export interface PageSeoInput {
   title: string;
   description: string;
@@ -17,9 +30,11 @@ export interface PageSeoInput {
 export function buildPageMetadata(input: PageSeoInput): Metadata {
   const canonical = canonicalUrl(input.path);
   const image = input.ogImage ?? "/og-image.png";
+  const pageTitle = stripBrandSuffix(input.title);
+  const fullTitle = withBrandSuffix(pageTitle);
 
   return {
-    title: input.title,
+    title: pageTitle,
     description: input.description,
     keywords: input.keywords,
     alternates: { canonical },
@@ -27,7 +42,7 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
       ? { index: false, follow: true }
       : (input.robots ?? { index: true, follow: true }),
     openGraph: {
-      title: input.title,
+      title: fullTitle,
       description: input.description,
       url: canonical,
       siteName: "RentalPins",
@@ -37,7 +52,7 @@ export function buildPageMetadata(input: PageSeoInput): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: input.title,
+      title: fullTitle,
       description: input.description,
       images: [image],
     },

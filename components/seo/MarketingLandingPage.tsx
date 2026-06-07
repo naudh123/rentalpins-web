@@ -4,16 +4,19 @@ import MarketingShell from "@/components/MarketingShell";
 import FAQSchema from "@/components/seo/FAQSchema";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import TrustStats from "@/components/seo/TrustStats";
+import NationalFunnelCityGrid from "@/components/seo/NationalFunnelCityGrid";
 import { appPath } from "@/lib/config";
 import { canonicalUrl } from "@/lib/seo";
 import { PLAY_STORE_URL } from "@/lib/site-links";
 import type { MarketingPageConfig } from "@/lib/seo/marketing-pages";
+import type { NationalFunnelKind } from "@/lib/seo/national-funnel-cities";
 
 interface Props {
   config: MarketingPageConfig;
   showAppCta?: boolean;
   comparisonRows?: { feature: string; rentalpins: string; other: string }[];
   competitorName?: string;
+  funnelKind?: NationalFunnelKind;
 }
 
 export default function MarketingLandingPage({
@@ -21,6 +24,7 @@ export default function MarketingLandingPage({
   showAppCta = false,
   comparisonRows,
   competitorName,
+  funnelKind,
 }: Props) {
   const pageUrl = canonicalUrl(`/${config.slug}`);
   const breadcrumbs = [
@@ -57,6 +61,8 @@ export default function MarketingLandingPage({
           </div>
         </div>
       </article>
+
+      {funnelKind ? <NationalFunnelCityGrid kind={funnelKind} /> : null}
 
       <TrustStats
         stats={[

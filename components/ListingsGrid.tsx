@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BRAND, UI } from "@/lib/brand";
 import { listingPublicPath } from "@/lib/listing-path";
@@ -115,15 +116,12 @@ function ListingCardItem({
         overflow: "hidden",
       }}>
         {listing.imageUrl ? (
-          <img
+          <Image
             src={listing.imageUrl}
             alt={listing.title}
-            loading="lazy"
-            style={{
-              position: "absolute", top: 0, left: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover",
-            }}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 260px"
+            style={{ objectFit: "cover" }}
           />
         ) : (
           <div style={{

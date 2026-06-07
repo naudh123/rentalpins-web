@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, permanentRedirect } from "next/navigation";import { JsonLdBreadcrumb } from "@/components/JsonLd";
+import { notFound, permanentRedirect } from "next/navigation";
+import { JsonLdBreadcrumb } from "@/components/JsonLd";
 import ListingDetailNav from "@/components/listings/ListingDetailNav";
 import ListingDetailJumpLinks from "@/components/listings/ListingDetailJumpLinks";
 import ListingHashFocusRestorer from "@/components/listings/ListingHashFocusRestorer";
@@ -29,7 +30,7 @@ import {
 import { fetchListingReviewSummary } from "@/lib/listing-review-summary";
 import { fetchOwnerTrust } from "@/lib/owner-trust";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
-import { appPath, siteUrl } from "@/lib/config";
+import { appPath } from "@/lib/config";
 import { mapSearchUrl } from "@/lib/map-search-url";
 import { formatPrice } from "@/lib/format";
 import { listingCanonicalUrl, listingShareMetadata } from "@/lib/listing-share";
@@ -37,7 +38,9 @@ import {
   buildListingSlugSegment,
   extractListingIdFromSlugParam,
 } from "@/lib/listing-slug";
-import { listingToSlugInput } from "@/lib/listing-path";import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
+import { listingToSlugInput } from "@/lib/listing-path";
+import { buildListingBreadcrumbs } from "@/lib/listing-breadcrumbs";
+import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
 import ListingActions from "./ListingActions";
 
 interface Props {
@@ -152,11 +155,7 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
       : {}),
   };
 
-  const breadcrumbItems = [
-    { name: "Home", url: `${siteUrl}${appPath("/")}` },
-    { name: "Search map", url: `${siteUrl}${appPath("/search")}` },
-    { name: listing.title, url: listingUrl },
-  ];
+  const breadcrumbItems = buildListingBreadcrumbs(listing, listingUrl);
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-6 pb-28 sm:py-8 sm:pb-8">
@@ -164,7 +163,7 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <JsonLdBreadcrumb items={breadcrumbItems} />
+      <JsonLdBreadcrumb items={breadcrumbItems.schema} />
       <ListingHashFocusRestorer />
       <RecentlyViewedRecorder listingId={listingId} />
       <ListingDetailViewTracker
@@ -177,19 +176,7 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
         hasDescription={Boolean(listing.description?.trim())}
         reviewCount={reviewSummary?.count ?? 0}
       />
-      <Breadcrumbs
-        className="mb-3"
-        items={[
-          { label: "Home", href: appPath("/") },
-          { label: "Map", href: appPath("/search") },
-          {
-            label:
-              listing.title.length > 52
-                ? `${listing.title.slice(0, 52)}…`
-                : listing.title,
-          },
-        ]}
-      />
+      <Breadcrumbs className="mb-3" items={breadcrumbItems.ui} />
       <ListingDetailNav listingId={listingId} title={listing.title} listingUrl={listingUrl} />
       <ListingStickyBar
         listingId={listingId}

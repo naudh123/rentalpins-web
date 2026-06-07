@@ -56,6 +56,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     category: post.category,
     coverImage: post.coverImage ?? "",
     tags: post.tags ?? [],
+    faqs: post.faqs ?? [],
     metaTitle: post.metaTitle ?? "",
     metaDescription: post.metaDescription ?? "",
     published: post.published !== false,
@@ -91,6 +92,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
       typeof body.coverImage === "string" ? body.coverImage : existing.coverImage ?? "",
     slug: typeof body.slug === "string" ? body.slug : existing.slug,
     tags: body.tags ?? existing.tags ?? [],
+    faqs: body.faqs ?? existing.faqs ?? [],
     metaTitle: typeof body.metaTitle === "string" ? body.metaTitle : existing.metaTitle ?? "",
     metaDescription:
       typeof body.metaDescription === "string"
@@ -133,6 +135,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     category: data.category,
     coverImage: data.coverImage || null,
     tags: data.tags,
+    faqs: data.faqs,
     metaTitle: data.metaTitle || null,
     metaDescription: data.metaDescription || null,
     published: data.published,

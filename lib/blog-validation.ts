@@ -1,5 +1,8 @@
 import { BLOG_CATEGORIES, BLOG_LIMITS } from "./blog-config";
+import type { BlogFaqItem } from "./blog-types";
 import { estimateReadTime, slugify } from "./seo";
+
+export type { BlogFaqItem } from "./blog-types";
 
 export interface BlogPostInput {
   title: string;
@@ -12,6 +15,7 @@ export interface BlogPostInput {
   metaTitle: string;
   metaDescription: string;
   published: boolean;
+  faqs: BlogFaqItem[];
 }
 
 export interface BlogSeoCheck {
@@ -55,6 +59,28 @@ function dedupeTags(tags: string[]): string[] {
     out.push(cleaned.slice(0, BLOG_LIMITS.tagMaxLength));
     if (out.length >= BLOG_LIMITS.tagsMax) break;
   }
+  return out;
+}
+
+/** Parse FAQ pairs from API/editor payloads (supports q/a or question/answer keys). */
+export function parseBlogFaqs(raw: unknown): BlogFaqItem[] {
+  if (!Array.isArray(raw)) return [];
+  const out: BlogFaqItem[] = [];
+
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const record = item as Record<string, unknown>;
+    const q = trimString(record.q ?? record.question);
+    const a = trimString(record.a ?? record.answer);
+    if (!q || !a) continue;
+
+    out.push({
+      q: q.slice(0, BLOG_LIMITS.faqQuestionMax),
+      a: a.slice(0, BLOG_LIMITS.faqAnswerMax),
+    });
+    if (out.length >= BLOG_LIMITS.faqsMax) break;
+  }
+
   return out;
 }
 
@@ -168,6 +194,12 @@ export function analyzeBlogSeo(input: BlogPostInput): BlogSeoCheck[] {
       pass: input.tags.length >= 2,
       hint: `${input.tags.length} tag(s)`,
     },
+    {
+      id: "faqs",
+      label: "5–8 manual FAQs (recommended for rich results)",
+      pass: input.faqs.length >= 5 && input.faqs.length <= BLOG_LIMITS.faqsMax,
+      hint: `${input.faqs.length} FAQ(s)`,
+    },
   ];
 }
 
@@ -193,6 +225,7 @@ export function normalizeBlogPostBody(
   const metaTitle = trimString(body.metaTitle);
   const metaDescription = trimString(body.metaDescription);
   const tags = parseBlogTags(body.tags);
+  const faqs = parseBlogFaqs(body.faqs);
   const rawSlug = trimString(body.slug);
   const slug = rawSlug ? slugify(rawSlug) : slugify(title);
 
@@ -289,6 +322,7 @@ export function normalizeBlogPostBody(
       metaTitle,
       metaDescription,
       published,
+      faqs,
     },
   };
 }

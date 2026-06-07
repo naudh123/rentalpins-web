@@ -90,7 +90,7 @@ export async function resolveCategoryHub(
 export function categoryHubMetadata(ctx: CategoryHubContext, path: string): Metadata {
   const place = ctx.areaContent?.name ?? ctx.city.name;
   return buildPageMetadata({
-    title: `${ctx.category.pluralLabel} for Rent in ${place} — No Broker | RentalPins`,
+    title: `${ctx.category.pluralLabel} for Rent in ${place} — No Broker`,
     description: `Find ${ctx.category.pluralLabel.toLowerCase()} in ${place} on RentalPins. Browse owner listings on the map, compare prices, and contact directly without broker fees.`,
     path,
     keywords: [

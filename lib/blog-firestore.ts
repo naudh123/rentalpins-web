@@ -1,5 +1,5 @@
 import { adminDb } from "./firebase-admin";
-import { parseBlogTags } from "./blog-validation";
+import { parseBlogTags, parseBlogFaqs } from "./blog-validation";
 import { estimateReadTime } from "./seo";
 import type { BlogPost, BlogPostSummary } from "./blog-types";
 
@@ -39,6 +39,7 @@ function mapDoc(id: string, data: Record<string, unknown>): BlogPost {
     tags: parseBlogTags(data.tags),
     metaTitle: (data.metaTitle as string) || undefined,
     metaDescription: (data.metaDescription as string) || undefined,
+    faqs: parseBlogFaqs(data.faqs),
   };
 }
 

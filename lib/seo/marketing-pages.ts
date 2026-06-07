@@ -172,7 +172,11 @@ export const WITHOUT_BROKER_PAGES: Record<string, MarketingPageConfig> = {
       { title: "City-locality coverage", desc: "Deep pages for key Indian hubs." },
     ],
     faqs: [{ q: "Is this only for residential rentals?", a: "No, commercial and industrial categories are included too." }],
-    relatedLinks: [{ label: "Commercial property", href: appPath("/commercial-property-for-rent") }],
+    relatedLinks: [
+      { label: "Chandigarh property", href: appPath("/property-without-broker-chandigarh") },
+      { label: "Delhi property", href: appPath("/property-without-broker-delhi") },
+      { label: "All rentals", href: appPath("/rentals") },
+    ],
   },
   "houses-without-broker": {
     slug: "houses-without-broker",
@@ -351,9 +355,9 @@ export const COMPETITOR_PAGES: Record<string, MarketingPageConfig & { competitor
 export const CATEGORY_LANDING_PAGES: Record<string, MarketingPageConfig> = {
   "flats-for-rent": {
     slug: "flats-for-rent",
-    title: "Flats for Rent Without Broker | RentalPins",
+    title: "Flats for Rent in India | RentalPins",
     description: "Find 1BHK, 2BHK and furnished flats for rent across top Indian cities without broker commission.",
-    h1: "Flats for rent without broker",
+    h1: "Flats for rent in India",
     intro: "Browse owner-listed flats on the RentalPins map and contact directly via WhatsApp or chat.",
     benefits: [
       { title: "BHK + budget filters", desc: "Compare 1BHK/2BHK with transparent pricing." },
@@ -361,7 +365,11 @@ export const CATEGORY_LANDING_PAGES: Record<string, MarketingPageConfig> = {
       { title: "No broker middleman", desc: "Talk to owners directly." },
     ],
     faqs: [{ q: "Can I search furnished flats only?", a: "Yes, use furnishing filters in map search." }],
-    relatedLinks: [{ label: "Rentals map", href: appPath("/search") }, { label: "Rent without broker", href: appPath("/rent-without-broker") }],
+    relatedLinks: [
+      { label: "Flats in Chandigarh", href: appPath("/rentals/in/chandigarh/flats") },
+      { label: "Flats in Ludhiana", href: appPath("/rentals/in/ludhiana/flats") },
+      { label: "Rent without broker", href: appPath("/rent-without-broker") },
+    ],
   },
   "houses-for-rent": {
     slug: "houses-for-rent",
@@ -371,7 +379,11 @@ export const CATEGORY_LANDING_PAGES: Record<string, MarketingPageConfig> = {
     intro: "Discover house rentals across city and locality hubs on RentalPins.",
     benefits: [{ title: "Family-friendly areas", desc: "Browse locality pages with neighborhood context." }],
     faqs: [{ q: "Are villas listed too?", a: "Yes, villas and independent houses are available under Property." }],
-    relatedLinks: [{ label: "House without broker", href: appPath("/houses-without-broker") }],
+    relatedLinks: [
+      { label: "Houses in Chandigarh", href: appPath("/rentals/in/chandigarh/houses") },
+      { label: "Houses in Mohali", href: appPath("/rentals/in/chandigarh/mohali/houses") },
+      { label: "House without broker", href: appPath("/houses-without-broker") },
+    ],
   },
   "pg-for-rent": {
     slug: "pg-for-rent",

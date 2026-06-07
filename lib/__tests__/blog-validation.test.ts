@@ -3,6 +3,7 @@ import {
   analyzeBlogSeo,
   generateExcerptFromContent,
   normalizeBlogPostBody,
+  parseBlogFaqs,
   parseBlogTags,
   resolveMetaDescription,
 } from "@/lib/blog-validation";
@@ -17,6 +18,21 @@ describe("parseBlogTags", () => {
       "a, b, c, d, e, f, g, h, i, j"
     );
     expect(tags.length).toBeLessThanOrEqual(8);
+  });
+});
+
+describe("parseBlogFaqs", () => {
+  it("parses q/a pairs and skips incomplete items", () => {
+    expect(
+      parseBlogFaqs([
+        { q: "Is PG better?", a: "Often yes for first-year students." },
+        { q: "Missing answer" },
+        { question: "Shared flat?", answer: "Cheaper with friends." },
+      ])
+    ).toEqual([
+      { q: "Is PG better?", a: "Often yes for first-year students." },
+      { q: "Shared flat?", a: "Cheaper with friends." },
+    ]);
   });
 });
 
@@ -83,6 +99,7 @@ describe("analyzeBlogSeo", () => {
       metaTitle: "",
       metaDescription,
       published: true,
+      faqs: [],
     });
     const metaCheck = checks.find((c) => c.id === "meta-description");
     expect(metaCheck?.pass).toBe(true);

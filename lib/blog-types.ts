@@ -14,6 +14,12 @@ export interface BlogPostSummary {
   tags?: string[];
   metaTitle?: string;
   metaDescription?: string;
+  faqs?: BlogFaqItem[];
+}
+
+export interface BlogFaqItem {
+  q: string;
+  a: string;
 }
 
 export interface BlogPost extends BlogPostSummary {

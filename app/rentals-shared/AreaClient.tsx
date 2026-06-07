@@ -1510,9 +1510,8 @@ export default function AreaClient({
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
         .desktop-nav { display: flex !important; }
         .mobile-menu-btn { display: none !important; }
         @media (max-width: 768px) {

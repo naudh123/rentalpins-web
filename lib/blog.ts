@@ -28,6 +28,11 @@ function parseMdxFile(filename: string): BlogPost | null {
   const tags = Array.isArray(data.tags)
     ? (data.tags as string[]).filter((t) => typeof t === "string")
     : undefined;
+  const faqs = Array.isArray(data.faqs)
+    ? (data.faqs as { q?: string; a?: string }[])
+        .filter((item) => item?.q && item?.a)
+        .map((item) => ({ q: item.q!, a: item.a! }))
+    : undefined;
   return {
     slug,
     title: (data.title as string) ?? "",
@@ -43,6 +48,7 @@ function parseMdxFile(filename: string): BlogPost | null {
     tags,
     metaTitle: (data.metaTitle as string) ?? undefined,
     metaDescription: (data.metaDescription as string) ?? undefined,
+    faqs,
   };
 }
 

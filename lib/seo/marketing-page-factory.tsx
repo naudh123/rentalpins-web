@@ -10,6 +10,13 @@ import {
   WITHOUT_BROKER_PAGES,
   type MarketingPageConfig,
 } from "@/lib/seo/marketing-pages";
+import type { NationalFunnelKind } from "@/lib/seo/national-funnel-cities";
+
+const NATIONAL_FUNNEL_SLUGS: Record<string, NationalFunnelKind> = {
+  "flats-for-rent": "flats",
+  "houses-for-rent": "houses",
+  "property-without-broker": "property",
+};
 
 const ALL: Record<string, MarketingPageConfig> = {
   ...WITHOUT_BROKER_PAGES,
@@ -41,6 +48,7 @@ export function marketingPageExports(slug: string) {
         showAppCta={Boolean(APP_DOWNLOAD_PAGES[slug])}
         comparisonRows={competitor?.rows}
         competitorName={competitor?.competitor}
+        funnelKind={NATIONAL_FUNNEL_SLUGS[slug]}
       />
     );
   }

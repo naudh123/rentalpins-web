@@ -22,6 +22,9 @@ import {
 } from "@/lib/seo/render-category-hub";
 import CategoryHubPage from "@/components/seo/CategoryHubPage";
 import ListingsGrid from "@/components/ListingsGrid";
+import FAQSchema from "@/components/seo/FAQSchema";
+import CitySeoContent from "@/components/seo/CitySeoContent";
+import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
 import AreaClient from "../../../../rentals-shared/AreaClient";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 
@@ -160,6 +163,13 @@ export default async function AreaPage({
 
   const { city, area } = result;
 
+  const seoConfig = getCitySeoConfig(
+    resolvedParams.country,
+    resolvedParams.city,
+    resolvedParams.area
+  );
+  const pageFaqs = seoConfig?.faq.length ? seoConfig.faq : area.faqs;
+
   let listings: any[] = [];
   try {
     const areaConfig = getAreaConfig(resolvedParams.city, resolvedParams.area);
@@ -192,7 +202,7 @@ export default async function AreaPage({
     topCategories: area.topCategories,
     popularSearches: area.popularSearches,
     spokeLinks,
-    faqs: area.faqs,
+    faqs: pageFaqs,
     ctaHeading: area.ctaHeading,
     ctaBody: area.ctaBody,
   };
@@ -241,7 +251,13 @@ export default async function AreaPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {pageFaqs.length > 0 ? (
+        <FAQSchema
+          faqs={pageFaqs.map((faq) => ({ question: faq.q, answer: faq.a }))}
+        />
+      ) : null}
       <ListingsGrid listings={listings} areaName={area.name} />
+      {seoConfig ? <CitySeoContent config={seoConfig} /> : null}
       <AreaClient area={areaData} listingsCount={listings.length} />
     </>
   );

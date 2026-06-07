@@ -13,6 +13,9 @@ import { getAreaConfig } from "@/lib/area-config";
 import { canonicalUrl } from "@/lib/seo";
 import { canonicalForCity, robotsForCity } from "@/lib/seo/indexing-policy";
 import ListingsGrid from "@/components/ListingsGrid";
+import FAQSchema from "@/components/seo/FAQSchema";
+import CitySeoContent from "@/components/seo/CitySeoContent";
+import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
 import AreaClient from "../../../rentals-shared/AreaClient";
 
 const OG_LOCALE: Record<string, string> = {
@@ -97,6 +100,9 @@ export default async function CityPage({
     notFound();
   }
 
+  const seoConfig = getCitySeoConfig(resolvedParams.country, resolvedParams.city);
+  const pageFaqs = seoConfig?.faq.length ? seoConfig.faq : city.faqs;
+
   let listings: any[] = [];
   try {
     const area = getAreaConfig(resolvedParams.city);
@@ -128,7 +134,7 @@ export default async function CityPage({
     topCategories: city.topCategories,
     popularSearches: city.popularSearches,
     spokeLinks,
-    faqs: city.faqs,
+    faqs: pageFaqs,
     ctaHeading: city.ctaHeading,
     ctaBody: city.ctaBody,
   };
@@ -170,7 +176,13 @@ export default async function CityPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+      {pageFaqs.length > 0 ? (
+        <FAQSchema
+          faqs={pageFaqs.map((faq) => ({ question: faq.q, answer: faq.a }))}
+        />
+      ) : null}
       <ListingsGrid listings={listings} areaName={city.name} />
+      {seoConfig ? <CitySeoContent config={seoConfig} /> : null}
       <AreaClient area={areaData} listingsCount={listings.length} />
     </>
   );
