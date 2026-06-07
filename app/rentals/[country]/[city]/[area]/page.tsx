@@ -25,6 +25,8 @@ import ListingsGrid from "@/components/ListingsGrid";
 import FAQSchema from "@/components/seo/FAQSchema";
 import CitySeoContent from "@/components/seo/CitySeoContent";
 import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
+import { pickCitySeoBlogPosts } from "@/lib/seo/city-seo-blog-links";
+import { getMdxPosts } from "@/lib/blog";
 import AreaClient from "../../../../rentals-shared/AreaClient";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 
@@ -168,6 +170,9 @@ export default async function AreaPage({
     resolvedParams.city,
     resolvedParams.area
   );
+  const relatedGuides = seoConfig
+    ? pickCitySeoBlogPosts(seoConfig.key, getMdxPosts())
+    : [];
   const pageFaqs = seoConfig?.faq.length ? seoConfig.faq : area.faqs;
 
   let listings: any[] = [];
@@ -257,7 +262,9 @@ export default async function AreaPage({
         />
       ) : null}
       <ListingsGrid listings={listings} areaName={area.name} />
-      {seoConfig ? <CitySeoContent config={seoConfig} /> : null}
+      {seoConfig ? (
+        <CitySeoContent config={seoConfig} relatedGuides={relatedGuides} />
+      ) : null}
       <AreaClient area={areaData} listingsCount={listings.length} />
     </>
   );

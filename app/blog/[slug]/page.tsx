@@ -15,11 +15,15 @@ import BlogAuthorBox from "@/components/blog/BlogAuthorBox";
 import BlogFaqSection from "@/components/blog/BlogFaqSection";
 import BlogRelatedListings from "@/components/blog/BlogRelatedListings";
 import BlogRelatedPosts from "@/components/blog/BlogRelatedPosts";
+import BlogRentalHubLink from "@/components/blog/BlogRentalHubLink";
 import BlogPostAuthorActions from "@/components/blog/BlogPostAuthorActions";
 import BlogTableOfContents from "@/components/blog/BlogTableOfContents";
 import { createBlogMdxComponents } from "@/components/blog/blog-mdx-components";
 import { extractBlogToc } from "@/lib/blog-toc";
-import { fetchBlogRelatedListings } from "@/lib/blog-related-listings";
+import {
+  fetchBlogRelatedListings,
+  resolveBlogListingHub,
+} from "@/lib/blog-related-listings";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -84,6 +88,7 @@ export default async function BlogPostPage({ params }: Props) {
   const allPosts = await getAllPosts();
   const relatedPosts = pickRelatedPosts(post, allPosts, 3);
   const relatedListings = await fetchBlogRelatedListings(post.tags, 6);
+  const rentalHub = resolveBlogListingHub(post.tags);
 
   const postUrl = canonicalUrl(`/blog/${post.slug}`);
   const seoDescription = postSeoDescription(post);
@@ -165,6 +170,7 @@ export default async function BlogPostPage({ params }: Props) {
             />
           </div>
         ) : null}
+        {rentalHub ? <BlogRentalHubLink hub={rentalHub} /> : null}
         <BlogTableOfContents entries={toc} />
         <div className="prose prose-lg prose-slate mt-10 max-w-none prose-headings:font-serif prose-headings:text-[#1E3A6E] prose-a:text-[#E8501A] prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
           <MDXRemote source={post.content} components={mdxComponents} />

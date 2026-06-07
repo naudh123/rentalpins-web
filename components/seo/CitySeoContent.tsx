@@ -1,8 +1,16 @@
 import Link from "next/link";
+import type { BlogPostSummary } from "@/lib/blog-types";
 import type { CitySEOConfig } from "@/lib/seo/city-seo-config";
 import { appPath } from "@/lib/config";
+import CitySeoBlogLinks from "@/components/seo/CitySeoBlogLinks";
 
-export default function CitySeoContent({ config }: { config: CitySEOConfig }) {
+export default function CitySeoContent({
+  config,
+  relatedGuides = [],
+}: {
+  config: CitySEOConfig;
+  relatedGuides?: BlogPostSummary[];
+}) {
   return (
     <section
       aria-labelledby="city-seo-content-heading"
@@ -128,6 +136,8 @@ export default function CitySeoContent({ config }: { config: CitySEOConfig }) {
             </div>
           </div>
         ))}
+
+        <CitySeoBlogLinks placeName={config.placeName} posts={relatedGuides} />
       </div>
     </section>
   );
