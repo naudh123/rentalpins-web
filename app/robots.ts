@@ -1,8 +1,9 @@
 import type { MetadataRoute } from "next";
-import { appPath, deployEnv, siteUrl } from "@/lib/config";
+import { deployEnv } from "@/lib/config";
+import { getPublicSitemapUrls } from "@/lib/seo/sitemap-config";
 
 export default function robots(): MetadataRoute.Robots {
-  const sitemap = `${siteUrl}${appPath("/sitemap.xml")}`;
+  const sitemap = getPublicSitemapUrls();
 
   if (deployEnv === "staging") {
     return {
@@ -26,17 +27,6 @@ export default function robots(): MetadataRoute.Robots {
       { userAgent: "ClaudeBot", allow: "/", disallow },
       { userAgent: "Amazonbot", allow: "/", disallow },
     ],
-    sitemap: [
-      sitemap,
-      `${siteUrl}${appPath("/city-sitemap.xml")}`,
-      `${siteUrl}${appPath("/locality-sitemap.xml")}`,
-      `${siteUrl}${appPath("/listing-sitemap.xml")}`,
-      `${siteUrl}${appPath("/blog-sitemap.xml")}`,
-      `${siteUrl}${appPath("/category-sitemap.xml")}`,
-      `${siteUrl}${appPath("/sitemap-cities.xml")}`,
-      `${siteUrl}${appPath("/sitemap-localities.xml")}`,
-      `${siteUrl}${appPath("/sitemap-listings.xml")}`,
-      `${siteUrl}${appPath("/sitemap-blog.xml")}`,
-    ],
+    sitemap,
   };
 }

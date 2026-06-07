@@ -6,10 +6,16 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import TrustStats from "@/components/seo/TrustStats";
 import NationalFunnelCityGrid from "@/components/seo/NationalFunnelCityGrid";
 import NationalFunnelGuides from "@/components/seo/NationalFunnelGuides";
+import CitySeoBlogLinks from "@/components/seo/CitySeoBlogLinks";
+import { getMdxPosts } from "@/lib/blog";
 import { appPath } from "@/lib/config";
 import { canonicalUrl } from "@/lib/seo";
 import { PLAY_STORE_URL } from "@/lib/site-links";
 import type { MarketingPageConfig } from "@/lib/seo/marketing-pages";
+import {
+  marketingLandingPlaceName,
+  pickMarketingLandingBlogPosts,
+} from "@/lib/seo/marketing-broker-blog-links";
 import type { NationalFunnelKind } from "@/lib/seo/national-funnel-cities";
 
 interface Props {
@@ -32,6 +38,10 @@ export default function MarketingLandingPage({
     { name: "Home", url: canonicalUrl("/") },
     { name: config.h1, url: pageUrl },
   ];
+  const guidePlaceName = marketingLandingPlaceName(config.slug);
+  const guideBlogPosts = guidePlaceName
+    ? pickMarketingLandingBlogPosts(config.slug, getMdxPosts(), 3)
+    : [];
 
   return (
     <MarketingShell>
@@ -87,6 +97,40 @@ export default function MarketingLandingPage({
                 <p className="mt-2 text-sm text-[var(--muted)]">{b.desc}</p>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {config.sections && config.sections.length > 0 && (
+        <section
+          aria-labelledby="marketing-seo-content-heading"
+          className="mx-auto max-w-4xl px-4 py-12"
+        >
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#E8501A]">
+              No-broker rental guide
+            </p>
+            <h2
+              id="marketing-seo-content-heading"
+              className="mt-2 font-serif text-2xl font-bold text-[#1E3A6E] sm:text-3xl"
+            >
+              {config.h1} — search tips
+            </h2>
+            {config.sections.map((section) => (
+              <div key={section.title} className="mt-10">
+                <h3 className="font-serif text-xl font-bold text-[#1E3A6E]">
+                  {section.title}
+                </h3>
+                <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700">
+                  {section.paragraphs.map((paragraph) => (
+                    <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {guidePlaceName && guideBlogPosts.length > 0 ? (
+              <CitySeoBlogLinks placeName={guidePlaceName} posts={guideBlogPosts} />
+            ) : null}
           </div>
         </section>
       )}

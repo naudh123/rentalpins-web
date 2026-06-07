@@ -1,28 +1,12 @@
 import type { MetadataRoute } from "next";
 import { canonicalUrl } from "@/lib/seo";
-import {
-  APP_DOWNLOAD_PAGES,
-  CATEGORY_LANDING_PAGES,
-  COMPETITOR_PAGES,
-  INDUSTRIAL_PAGES,
-  NEAR_ME_PAGES,
-  STUDENT_RENTAL_PAGES,
-  WITHOUT_BROKER_PAGES,
-} from "@/lib/seo/marketing-pages";
+import { getCoreMarketingSitemapSlugs } from "@/lib/seo/sitemap-config";
 
 /** Core sitemap — city/locality/listing/blog URLs live in dedicated XML routes (daily revalidate). */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date().toISOString();
 
-  const marketingSlugs = [
-    ...Object.keys(WITHOUT_BROKER_PAGES),
-    ...Object.keys(APP_DOWNLOAD_PAGES),
-    ...Object.keys(CATEGORY_LANDING_PAGES),
-    ...Object.keys(INDUSTRIAL_PAGES),
-    ...Object.keys(STUDENT_RENTAL_PAGES),
-    ...Object.keys(NEAR_ME_PAGES),
-    ...Object.keys(COMPETITOR_PAGES),
-  ];
+  const marketingSlugs = getCoreMarketingSitemapSlugs();
 
   const core: MetadataRoute.Sitemap = [
     { url: canonicalUrl("/"), lastModified: now, changeFrequency: "daily", priority: 1 },

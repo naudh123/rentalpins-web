@@ -10,6 +10,7 @@ import {
   WITHOUT_BROKER_PAGES,
   type MarketingPageConfig,
 } from "@/lib/seo/marketing-pages";
+import { enrichMarketingPageConfig } from "@/lib/seo/marketing-page-content";
 import type { NationalFunnelKind } from "@/lib/seo/national-funnel-cities";
 
 const NATIONAL_FUNNEL_SLUGS: Record<string, NationalFunnelKind> = {
@@ -38,7 +39,7 @@ export function marketingPageExports(slug: string) {
   if (!config) {
     throw new Error(`Unknown marketing page slug: ${slug}`);
   }
-  const resolvedConfig: MarketingPageConfig = config;
+  const resolvedConfig: MarketingPageConfig = enrichMarketingPageConfig(config);
   const competitor = COMPETITOR_PAGES[slug];
   const metadata = marketingMetadata(resolvedConfig);
   function Page() {
