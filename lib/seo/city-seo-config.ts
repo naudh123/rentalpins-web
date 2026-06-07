@@ -237,6 +237,10 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "How do I list property in Mohali?",
         a: "Post on RentalPins web or app; your pin goes live on the Mohali map for tenants searching by locality.",
       },
+      {
+        q: "Should I rent in Mohali or Chandigarh sectors?",
+        a: "Compare both on the Tricity map — Mohali phases often offer larger flats at lower rent, while Chandigarh sectors suit tenants who prioritize central civic amenities.",
+      },
     ],
   },
 
@@ -248,6 +252,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Demand concentrates on PG, shared rooms, and budget flats along Kharar town, Kharar–Landran road, Sunny Enclave, and Gillco Valley.",
       "RentalPins Kharar listings show exact map locations so you can compare walk-to-campus options versus highway-linked flats.",
       "If you are comparing CU-area PG with Mohali or Chandigarh sectors, open all three area maps and evaluate total monthly cost including food, commute, and furnishing.",
+      "Kharar landlords who list exact distance to Chandigarh University gates and meal plans tend to receive fewer mismatched inquiries from parents and students.",
     ],
     bestAreas: [
       {
@@ -313,6 +318,10 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "Can owners list PG in Kharar for free?",
         a: "Yes — post on RentalPins; student-facing inventory in Kharar converts quickly when priced and located accurately on the map.",
       },
+      {
+        q: "How do I compare Kharar PG options before session start?",
+        a: "Filter PG pins on the Kharar map, save three to five options, and message owners with your move-in date — compare food plans and walk time to CU before visiting.",
+      },
     ],
   },
 
@@ -324,6 +333,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "RentalPins Ludhiana hub maps owner-direct property, vehicles, and equipment so tenants can compare localities before contacting — without paying brokerage to search.",
       "Use area pages such as Model Town for premium residential intent and Focal Point for warehouse and industrial searches.",
       "Ludhiana tenants searching without brokers benefit from filtering map pins by locality first — Model Town, BRS Nagar, and Pakhowal Road rents differ even for similar BHK sizes.",
+      "Industrial tenants should compare Focal Point pins against Pakhowal Road commercial stock when highway access matters more than central city address.",
     ],
     bestAreas: [
       {
@@ -402,6 +412,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "RentalPins Delhi hub links city-wide search to locality pages so you can compare PG, flats, houses, shops, and offices with map context — not generic NCR feeds.",
       "Start here, then open the locality that matches your commute, budget, and property type.",
       "Delhi listings span PG rooms, builder floors, society flats, and commercial units — category filters prevent wasting time on irrelevant property types while you explore each locality map.",
+      "Tenants comparing Dwarka and Rohini should open both locality maps on RentalPins and save pins in each belt before committing to a broker-led shortlist.",
     ],
     bestAreas: [
       {
@@ -464,6 +475,10 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       {
         q: "Can I list a flat in Delhi on RentalPins?",
         a: "Yes — owners post via web or app; listings appear on the Delhi map for tenants searching by area and category.",
+      },
+      {
+        q: "How do I avoid broker markup in Delhi rentals?",
+        a: "Use RentalPins locality maps to contact owners directly — the same units brokers show often appear as owner-posted pins without commission or duplicate listing fees.",
       },
     ],
   },

@@ -37,7 +37,7 @@ describe("getCitySeoConfig", () => {
       const parts = lookupKey.split("/");
       const config = getCitySeoConfig(parts[0], parts[1], parts[2]);
       expect(config?.sections?.length).toBeGreaterThanOrEqual(4);
-      expect(countCitySeoWords(config!)).toBeGreaterThanOrEqual(650);
+      expect(countCitySeoWords(config!)).toBeGreaterThanOrEqual(950);
     }
   });
 });
