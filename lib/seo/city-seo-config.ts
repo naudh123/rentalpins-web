@@ -3,6 +3,7 @@
  * Edit entries here — target 1,000–1,500 words total per page over time.
  */
 import { rentalAreaPath, rentalCityPath } from "@/lib/cities-config";
+import { CITY_SEO_EXTRA_SECTIONS } from "@/lib/seo/city-seo-expanded-sections";
 
 export interface CitySeoFaq {
   q: string;
@@ -26,6 +27,11 @@ export interface CitySeoUniversity {
   description: string;
 }
 
+export interface CitySeoSection {
+  title: string;
+  paragraphs: string[];
+}
+
 export interface CitySEOConfig {
   /** Lookup key, e.g. in/chandigarh or in/chandigarh/mohali */
   key: string;
@@ -35,7 +41,29 @@ export interface CitySEOConfig {
   averageRent: CitySeoAverageRent[];
   universities: CitySeoUniversity[];
   transport: string[];
+  sections?: CitySeoSection[];
   faq: CitySeoFaq[];
+}
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+/** Approximate visible word count for a money-page SEO config. */
+export function countCitySeoWords(config: CitySEOConfig): number {
+  const chunks = [
+    ...config.intro,
+    ...config.bestAreas.flatMap((area) => [area.name, area.description]),
+    ...config.averageRent.flatMap((row) => [row.label, row.range, row.note ?? ""]),
+    ...config.universities.flatMap((uni) => [uni.name, uni.description]),
+    ...config.transport,
+    ...(config.sections ?? []).flatMap((section) => [
+      section.title,
+      ...section.paragraphs,
+    ]),
+    ...config.faq.flatMap((item) => [item.q, item.a]),
+  ];
+  return chunks.reduce((total, text) => total + wordCount(text), 0);
 }
 
 function key(country: string, city: string, area?: string): string {
@@ -50,6 +78,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Chandigarh Tricity is one of India's most searched rental markets — spanning Chandigarh sectors, Mohali phases, Panchkula blocks, Zirakpur, Kharar, and Landran. Tenants move across city boundaries daily for work, study, and lifestyle, so map-led discovery beats generic city-wide classifieds.",
       "RentalPins organizes Tricity inventory by locality and category. Browse rooms, PG, flats, houses, shops, offices, vehicles, and more on one live map — contact owners directly with no brokerage to search.",
       "This hub is the starting point for comparing micro-markets before you drill into Mohali, Kharar, or category pages such as flats and houses in Chandigarh.",
+      "Whether you need a PG near Panjab University, a 2 BHK in Mohali Phase 11, or a shop in Sector 35, map-first search lets you compare owner-posted pins side by side — then message only the listings that match your commute and budget.",
     ],
     bestAreas: [
       {
@@ -142,23 +171,28 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Mohali is the fastest-growing Tricity market — driven by the IT Park, international airport, Aerocity, and phase-based residential societies. Professionals and students compare Phase 7, Phase 9, Phase 11, and IT-adjacent pockets before committing.",
       "RentalPins Mohali pages combine live listings, category shortcuts, and locality FAQs so you can evaluate apartments, PG, and office space on the map — not through broker-led feeds.",
       "Use this page when your search intent is specifically Mohali rather than broader Chandigarh sectors.",
+      "Category pages for Mohali flats, houses, PG, and offices link back to live inventory here — useful when you already know property type and want locality-level depth.",
     ],
     bestAreas: [
       {
         name: "Phase 7 & Phase 9",
-        description: "Established residential phases with strong flat inventory and family-friendly societies.",
+        description:
+          "Established residential phases with strong flat inventory, family-friendly societies, and steady resale tenant demand.",
       },
       {
         name: "Phase 11 & Aerocity",
-        description: "Newer developments popular with IT professionals and airport-linked commuters.",
+        description:
+          "Newer developments popular with IT professionals, airport-linked commuters, and furnished corporate rentals.",
       },
       {
         name: "IT Park & Airport Road",
-        description: "PG, co-working, and furnished flats for short commutes to major employment hubs.",
+        description:
+          "PG, co-working, and furnished flats for short commutes to major employment hubs and logistics corridors.",
       },
       {
         name: "Sunny Enclave & New Chandigarh",
-        description: "Gated-community flats and houses with modern amenities at mid-to-premium rents.",
+        description:
+          "Gated-community flats and houses with modern amenities at mid-to-premium rents compared with inner phases.",
       },
     ],
     averageRent: [
@@ -213,23 +247,28 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Kharar is one of the most affordable Tricity belts — especially for Chandigarh University students and young professionals who want lower rents while staying connected to Mohali and Chandigarh.",
       "Demand concentrates on PG, shared rooms, and budget flats along Kharar town, Kharar–Landran road, Sunny Enclave, and Gillco Valley.",
       "RentalPins Kharar listings show exact map locations so you can compare walk-to-campus options versus highway-linked flats.",
+      "If you are comparing CU-area PG with Mohali or Chandigarh sectors, open all three area maps and evaluate total monthly cost including food, commute, and furnishing.",
     ],
     bestAreas: [
       {
         name: "Kharar town core",
-        description: "Dense PG and room inventory with markets and daily needs nearby.",
+        description:
+          "Dense PG and room inventory with markets and daily needs nearby — strongest walk-to-amenity options for budget renters.",
       },
       {
         name: "Kharar–Landran road",
-        description: "Student corridor with hostels and flats serving CU and nearby institutes.",
+        description:
+          "Student corridor with hostels and flats serving CU and nearby institutes — highest turnover at session start.",
       },
       {
         name: "Sunny Enclave",
-        description: "Gated flats and houses — popular for slightly higher budgets than town PG.",
+        description:
+          "Gated flats and houses popular when groups want more space than town PG while staying CU-adjacent.",
       },
       {
         name: "Gillco Valley",
-        description: "Residential projects with family and shared-flat demand.",
+        description:
+          "Residential projects with family and shared-flat demand — slightly quieter layouts than main road PG belts.",
       },
     ],
     averageRent: [
@@ -284,6 +323,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Ludhiana combines strong residential demand with active commercial and industrial leasing — from Model Town and BRS Nagar to Focal Point and Pakhowal Road.",
       "RentalPins Ludhiana hub maps owner-direct property, vehicles, and equipment so tenants can compare localities before contacting — without paying brokerage to search.",
       "Use area pages such as Model Town for premium residential intent and Focal Point for warehouse and industrial searches.",
+      "Ludhiana tenants searching without brokers benefit from filtering map pins by locality first — Model Town, BRS Nagar, and Pakhowal Road rents differ even for similar BHK sizes.",
     ],
     bestAreas: [
       {
@@ -347,6 +387,10 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "Can I list my Ludhiana property for free?",
         a: "Yes — owners publish on RentalPins web or app; listings sync to the same map used by local tenants.",
       },
+      {
+        q: "How do I compare Ludhiana localities before visiting?",
+        a: "Open the Ludhiana hub map, filter by property type, and save pins in Model Town, Sarabha Nagar, or Focal Point — then message owners to confirm furnishing, parking, and deposit before site visits.",
+      },
     ],
   },
 
@@ -357,6 +401,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Delhi rental demand is highly locality-segmented — student zones like Mukherjee Nagar and GTB Nagar behave differently from family belts like Dwarka and Rohini, and from mixed hubs like Jasola and Saket.",
       "RentalPins Delhi hub links city-wide search to locality pages so you can compare PG, flats, houses, shops, and offices with map context — not generic NCR feeds.",
       "Start here, then open the locality that matches your commute, budget, and property type.",
+      "Delhi listings span PG rooms, builder floors, society flats, and commercial units — category filters prevent wasting time on irrelevant property types while you explore each locality map.",
     ],
     bestAreas: [
       {
@@ -432,7 +477,11 @@ export function getCitySeoConfig(
   const lookup = areaSlug
     ? key(countrySlug, citySlug, areaSlug)
     : key(countrySlug, citySlug);
-  return CITY_SEO_CONFIGS[lookup] ?? null;
+  const base = CITY_SEO_CONFIGS[lookup];
+  if (!base) return null;
+
+  const sections = CITY_SEO_EXTRA_SECTIONS[lookup];
+  return sections ? { ...base, sections } : base;
 }
 
 export function listCitySeoConfigKeys(): string[] {

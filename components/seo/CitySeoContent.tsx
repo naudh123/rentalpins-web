@@ -115,6 +115,19 @@ export default function CitySeoContent({ config }: { config: CitySEOConfig }) {
             </ul>
           </div>
         ) : null}
+
+        {config.sections?.map((section) => (
+          <div key={section.title} className="mt-10">
+            <h3 className="font-serif text-xl font-bold text-[#1E3A6E]">
+              {section.title}
+            </h3>
+            <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-700">
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

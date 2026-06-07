@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getCitySeoConfig, listCitySeoConfigKeys } from "@/lib/seo/city-seo-config";
+import {
+  countCitySeoWords,
+  getCitySeoConfig,
+  listCitySeoConfigKeys,
+} from "@/lib/seo/city-seo-config";
 
 describe("getCitySeoConfig", () => {
   it("returns priority city configs", () => {
@@ -26,5 +30,14 @@ describe("getCitySeoConfig", () => {
       "in/ludhiana",
       "in/delhi",
     ]);
+  });
+
+  it("merges long-form sections and meets content depth targets", () => {
+    for (const lookupKey of listCitySeoConfigKeys()) {
+      const parts = lookupKey.split("/");
+      const config = getCitySeoConfig(parts[0], parts[1], parts[2]);
+      expect(config?.sections?.length).toBeGreaterThanOrEqual(4);
+      expect(countCitySeoWords(config!)).toBeGreaterThanOrEqual(650);
+    }
   });
 });
