@@ -79,6 +79,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "RentalPins organizes Tricity inventory by locality and category. Browse rooms, PG, flats, houses, shops, offices, vehicles, and more on one live map — contact owners directly with no brokerage to search.",
       "This hub is the starting point for comparing micro-markets before you drill into Mohali, Kharar, or category pages such as flats and houses in Chandigarh.",
       "Whether you need a PG near Panjab University, a 2 BHK in Mohali Phase 11, or a shop in Sector 35, map-first search lets you compare owner-posted pins side by side — then message only the listings that match your commute and budget.",
+      "Peak demand hits before university sessions and corporate transfer windows — saved searches on RentalPins help you monitor new Tricity pins in your target sector or phase without daily manual scrolling.",
     ],
     bestAreas: [
       {
@@ -139,6 +140,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Chandigarh has strong sector planning with quick access to inter-state bus terminals and the Tricity road network linking Mohali and Panchkula.",
       "Mohali IT Park and airport road corridors attract professionals who compare commute times across phases before signing rent.",
       "Kharar–Landran road and the Chandigarh–Ambala highway connect budget student hubs to central Tricity employment zones.",
+      "Zirakpur VIP Road and Panchkula sectors attract families who work in Chandigarh or Mohali — compare commute on the map before choosing lowest headline rent alone.",
     ],
     faq: [
       {
@@ -161,6 +163,14 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "What categories are available besides property?",
         a: "Vehicles, electronics, furniture, appliances, and equipment rentals are listed alongside property on the Tricity map.",
       },
+      {
+        q: "How do I compare Mohali and Chandigarh on one search?",
+        a: "Open the Tricity hub map and pan between Mohali phases and Chandigarh sectors — use area pages and category filters to keep PG, flats, and commercial searches separated while you shortlist.",
+      },
+      {
+        q: "When should I start searching for Tricity PG or flats?",
+        a: "Begin two to four weeks before move-in or session start — peak weeks fill popular PG and furnished flats quickly across Kharar, Mohali, and central sectors.",
+      },
     ],
   },
 
@@ -172,6 +182,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "RentalPins Mohali pages combine live listings, category shortcuts, and locality FAQs so you can evaluate apartments, PG, and office space on the map — not through broker-led feeds.",
       "Use this page when your search intent is specifically Mohali rather than broader Chandigarh sectors.",
       "Category pages for Mohali flats, houses, PG, and offices link back to live inventory here — useful when you already know property type and want locality-level depth.",
+      "Corporate tenants and CU commuters both use this hub — filter PG versus society flats early so your shortlist matches house rules, food plans, and lease length you actually need.",
     ],
     bestAreas: [
       {
@@ -215,6 +226,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Mohali phases connect to Chandigarh via Madhya Marg, airport road, and the Tricity bridge network.",
       "IT Park and Aerocity listings should be evaluated against peak-hour commute to your office, not just straight-line distance.",
       "Public transport and cab availability are strongest along Phase 5–11 spines and major market roads.",
+      "Airport road traffic peaks during morning and evening office hours — weight peak-hour commute from your shortlisted phase before signing rent based on mid-day map distance alone.",
     ],
     faq: [
       {
@@ -241,6 +253,18 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "Should I rent in Mohali or Chandigarh sectors?",
         a: "Compare both on the Tricity map — Mohali phases often offer larger flats at lower rent, while Chandigarh sectors suit tenants who prioritize central civic amenities.",
       },
+      {
+        q: "What should I verify before paying deposit in Mohali?",
+        a: "Confirm maintenance, parking, power backup, society visitor rules, and deposit return terms — photograph existing damage at handover and share timestamped images with the owner on WhatsApp.",
+      },
+      {
+        q: "Are furnished flats common near IT Park?",
+        a: "Yes — furnished 1 BHK and corporate-friendly inventory is active near Aerocity and Phase 11; confirm lease minimums and what furniture is included before token payment.",
+      },
+      {
+        q: "How do Mohali category pages help my search?",
+        a: "Mohali flats, PG, houses, and office category hubs link to live map inventory filtered by property type — use them after you pick a phase on the area map.",
+      },
     ],
   },
 
@@ -253,6 +277,8 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "RentalPins Kharar listings show exact map locations so you can compare walk-to-campus options versus highway-linked flats.",
       "If you are comparing CU-area PG with Mohali or Chandigarh sectors, open all three area maps and evaluate total monthly cost including food, commute, and furnishing.",
       "Kharar landlords who list exact distance to Chandigarh University gates and meal plans tend to receive fewer mismatched inquiries from parents and students.",
+      "Girls PG and boys PG are separate search intents — use listing descriptions and map clusters to compare suitability, food plans, and security before paying session-start deposit.",
+      "Landran road PG clusters fill quickly each July — start RentalPins map search early and message owners with confirmed CU admission dates.",
     ],
     bestAreas: [
       {
@@ -296,6 +322,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Kharar connects to Mohali and Chandigarh via Kharar–Landran road and the Ambala highway.",
       "Students often use bikes or shared cabs — factor commute time when choosing PG off the main road.",
       "Bus and auto connectivity is strongest through Kharar town and major junctions toward Landran.",
+      "Many CU students split 2 BHK flats in Sunny Enclave or Gillco Valley — confirm owner occupancy limits and utility sharing rules before coordinating a group inquiry.",
     ],
     faq: [
       {
@@ -322,6 +349,18 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "How do I compare Kharar PG options before session start?",
         a: "Filter PG pins on the Kharar map, save three to five options, and message owners with your move-in date — compare food plans and walk time to CU before visiting.",
       },
+      {
+        q: "Is a shared flat cheaper than PG for CU students?",
+        a: "Groups of three or four friends often lower per-person cost in 2 BHK flats — but budget for furnishing, utilities, and cooking; compare both paths on the Kharar map for your group size.",
+      },
+      {
+        q: "What hidden costs should CU students watch in Kharar PG?",
+        a: "Ask whether electricity, Wi‑Fi, laundry, and AC are included — effective monthly rent can exceed the advertised figure when add-ons are billed separately.",
+      },
+      {
+        q: "Can parents compare Kharar PG on the map before visiting?",
+        a: "Yes — save three to five PG pins near CU on RentalPins, message owners with your child's move-in date, and visit shortlisted options in one trip during admission week.",
+      },
     ],
   },
 
@@ -334,6 +373,8 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Use area pages such as Model Town for premium residential intent and Focal Point for warehouse and industrial searches.",
       "Ludhiana tenants searching without brokers benefit from filtering map pins by locality first — Model Town, BRS Nagar, and Pakhowal Road rents differ even for similar BHK sizes.",
       "Industrial tenants should compare Focal Point pins against Pakhowal Road commercial stock when highway access matters more than central city address.",
+      "Wholesale and manufacturing employers often house staff near Focal Point while managers choose Model Town or Sarabha Nagar — map pins help both groups shortlist without broker markup.",
+      "Saved searches on the Ludhiana hub help tenants track new owner posts in Model Town or Focal Point during peak leasing weeks without daily classified scrolling.",
     ],
     bestAreas: [
       {
@@ -375,6 +416,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Ferozepur Road, GT Road, and Pakhowal Road are major rental corridors — commute and market access define pricing.",
       "Industrial tenants prioritize highway and logistics access in Focal Point and surrounding belts.",
       "City bus and auto networks radiate from central markets — map pins help validate exact street-level convenience.",
+      "PAU session start fills PG belts quickly — message Ludhiana owners with move-in date and budget band rather than passive browsing during peak weeks.",
     ],
     faq: [
       {
@@ -401,6 +443,18 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         q: "How do I compare Ludhiana localities before visiting?",
         a: "Open the Ludhiana hub map, filter by property type, and save pins in Model Town, Sarabha Nagar, or Focal Point — then message owners to confirm furnishing, parking, and deposit before site visits.",
       },
+      {
+        q: "Where should industrial tenants search in Ludhiana?",
+        a: "Start with Focal Point and Pakhowal Road map pins — confirm ceiling height, power load, loading access, and highway proximity with owners before paying commercial token money.",
+      },
+      {
+        q: "Are PAU-area PG and family flats mixed in search results?",
+        a: "Use PG/Hostels versus flats filters on the Ludhiana map — mixing categories wastes time when student PG and family housing needs are clearly different.",
+      },
+      {
+        q: "Does RentalPins link warehouse pages to Ludhiana inventory?",
+        a: "Yes — warehouse, factory shed, and industrial landing pages connect back to live commercial pins on the Ludhiana map for owner-direct inquiries.",
+      },
     ],
   },
 
@@ -413,6 +467,8 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Start here, then open the locality that matches your commute, budget, and property type.",
       "Delhi listings span PG rooms, builder floors, society flats, and commercial units — category filters prevent wasting time on irrelevant property types while you explore each locality map.",
       "Tenants comparing Dwarka and Rohini should open both locality maps on RentalPins and save pins in each belt before committing to a broker-led shortlist.",
+      "Coaching-hub PG and family flats should never share one unfiltered shortlist — category separation on the Delhi map saves hours during peak admission and transfer seasons.",
+      "Saved searches on locality maps help you catch new Dwarka or Rohini owner posts during peak transfer season without repeating NCR-wide keyword searches.",
     ],
     bestAreas: [
       {
@@ -454,6 +510,7 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       "Delhi Metro remains the primary commute anchor — prioritize listings within practical station access for your daily route.",
       "Outer areas like Dwarka and Rohini offer better rent-to-space ratios with metro and road connectivity.",
       "Coaching belts trade lower room rents for higher density — inspect listings on the map for exact block context.",
+      "Summer heat and monsoon traffic amplify Delhi commute pain — evaluate pins along your actual daily route, not straight-line distance from office or campus.",
     ],
     faq: [
       {
@@ -479,6 +536,18 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
       {
         q: "How do I avoid broker markup in Delhi rentals?",
         a: "Use RentalPins locality maps to contact owners directly — the same units brokers show often appear as owner-posted pins without commission or duplicate listing fees.",
+      },
+      {
+        q: "What deposit norms should I expect in Delhi?",
+        a: "Many owners ask for one to three months' rent as security plus advance — confirm refund rules, painting charges, and notice period before transferring token money.",
+      },
+      {
+        q: "Is Dwarka or Rohini better for metro-linked family flats?",
+        a: "Both offer strong family inventory with metro access — open each locality map, save three to five pins per belt, and compare commute to your workplace before deciding on headline rent alone.",
+      },
+      {
+        q: "Should coaching students use PG filters only in Delhi?",
+        a: "Yes — when you need Mukherjee Nagar or GTB Nagar PG, filter PG/Hostels on the Delhi map so independent flats and commercial pins do not clutter your shortlist.",
       },
     ],
   },
