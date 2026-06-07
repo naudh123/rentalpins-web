@@ -5,6 +5,7 @@ import {
   nationalFunnelSectionTitle,
   type NationalFunnelKind,
 } from "@/lib/seo/national-funnel-cities";
+import { blogPostHref } from "@/lib/seo/national-funnel-guides";
 
 export default function NationalFunnelCityGrid({ kind }: { kind: NationalFunnelKind }) {
   const cities = getNationalFunnelCities(kind);
@@ -50,6 +51,22 @@ export default function NationalFunnelCityGrid({ kind }: { kind: NationalFunnelK
                 >
                   City hub
                 </Link>
+                {city.seoGuideHref ? (
+                  <Link
+                    href={city.seoGuideHref}
+                    className="rp-btn rp-btn-secondary px-4 py-2 text-xs sm:text-sm"
+                  >
+                    Rental guide
+                  </Link>
+                ) : null}
+                {city.topBlogSlug ? (
+                  <Link
+                    href={blogPostHref(city.topBlogSlug)}
+                    className="inline-flex items-center px-2 py-2 text-xs font-medium text-[var(--brand-orange)] hover:underline sm:text-sm"
+                  >
+                    Blog tips
+                  </Link>
+                ) : null}
               </div>
             </article>
           ))}

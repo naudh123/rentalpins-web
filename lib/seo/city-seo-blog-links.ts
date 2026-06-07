@@ -1,7 +1,7 @@
 import type { BlogPostSummary } from "@/lib/blog-types";
 
 /** Priority blog slugs per money-page key — shown first when published. */
-const FEATURED_BLOG_SLUGS: Record<string, string[]> = {
+export const CITY_SEO_FEATURED_BLOG_SLUGS: Record<string, string[]> = {
   "in/chandigarh": [
     "pg-vs-flat-chandigarh-students",
     "vehicle-rental-chandigarh-guide",
@@ -70,7 +70,7 @@ export function pickCitySeoBlogPosts(
   const picked: BlogPostSummary[] = [];
   const seen = new Set<string>();
 
-  for (const slug of FEATURED_BLOG_SLUGS[configKey] ?? []) {
+  for (const slug of CITY_SEO_FEATURED_BLOG_SLUGS[configKey] ?? []) {
     const post = bySlug.get(slug);
     if (!post || seen.has(post.slug)) continue;
     picked.push(post);

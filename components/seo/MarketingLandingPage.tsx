@@ -5,6 +5,7 @@ import FAQSchema from "@/components/seo/FAQSchema";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import TrustStats from "@/components/seo/TrustStats";
 import NationalFunnelCityGrid from "@/components/seo/NationalFunnelCityGrid";
+import NationalFunnelGuides from "@/components/seo/NationalFunnelGuides";
 import { appPath } from "@/lib/config";
 import { canonicalUrl } from "@/lib/seo";
 import { PLAY_STORE_URL } from "@/lib/site-links";
@@ -63,6 +64,7 @@ export default function MarketingLandingPage({
       </article>
 
       {funnelKind ? <NationalFunnelCityGrid kind={funnelKind} /> : null}
+      {funnelKind ? <NationalFunnelGuides kind={funnelKind} /> : null}
 
       <TrustStats
         stats={[

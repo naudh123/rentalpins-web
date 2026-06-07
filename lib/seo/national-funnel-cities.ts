@@ -5,6 +5,9 @@ import {
 } from "@/lib/cities-config";
 import { appPath } from "@/lib/config";
 import { rentalAreaCategoryPath, rentalCategoryPath } from "@/lib/seo/categories";
+import { CITY_SEO_FEATURED_BLOG_SLUGS } from "@/lib/seo/city-seo-blog-links";
+
+const SEO_GUIDE_ANCHOR = "#city-seo-content-heading";
 
 export type NationalFunnelKind = "flats" | "houses" | "property";
 
@@ -14,6 +17,10 @@ export interface NationalFunnelCity {
   hubHref: string;
   primaryHref: string;
   primaryLabel: string;
+  /** Anchor link to structured SEO guide on priority money pages. */
+  seoGuideHref?: string;
+  /** First featured blog slug for this priority market. */
+  topBlogSlug?: string;
 }
 
 interface FunnelCitySeed {
@@ -23,6 +30,7 @@ interface FunnelCitySeed {
   citySlug: string;
   areaSlug?: string;
   brokerLandingSlug?: string;
+  seoConfigKey?: string;
 }
 
 const PRIORITY_FUNNEL_CITIES: FunnelCitySeed[] = [
@@ -32,6 +40,7 @@ const PRIORITY_FUNNEL_CITIES: FunnelCitySeed[] = [
     countrySlug: "in",
     citySlug: "chandigarh",
     brokerLandingSlug: "property-without-broker-chandigarh",
+    seoConfigKey: "in/chandigarh",
   },
   {
     name: "Mohali",
@@ -40,6 +49,7 @@ const PRIORITY_FUNNEL_CITIES: FunnelCitySeed[] = [
     citySlug: "chandigarh",
     areaSlug: "mohali",
     brokerLandingSlug: "property-without-broker-mohali",
+    seoConfigKey: "in/chandigarh/mohali",
   },
   {
     name: "Kharar",
@@ -47,6 +57,7 @@ const PRIORITY_FUNNEL_CITIES: FunnelCitySeed[] = [
     countrySlug: "in",
     citySlug: "chandigarh",
     areaSlug: "kharar",
+    seoConfigKey: "in/chandigarh/kharar",
   },
   {
     name: "Ludhiana",
@@ -54,6 +65,7 @@ const PRIORITY_FUNNEL_CITIES: FunnelCitySeed[] = [
     countrySlug: "in",
     citySlug: "ludhiana",
     brokerLandingSlug: "property-without-broker-ludhiana",
+    seoConfigKey: "in/ludhiana",
   },
   {
     name: "Delhi NCR",
@@ -61,6 +73,7 @@ const PRIORITY_FUNNEL_CITIES: FunnelCitySeed[] = [
     countrySlug: "in",
     citySlug: "delhi",
     brokerLandingSlug: "property-without-broker-delhi",
+    seoConfigKey: "in/delhi",
   },
 ];
 
@@ -83,6 +96,12 @@ function categoryPath(seed: FunnelCitySeed, category: "flats" | "houses"): strin
 
 function seedToFunnelCity(seed: FunnelCitySeed, kind: NationalFunnelKind): NationalFunnelCity {
   const hubHref = appPath(hubPath(seed));
+  const seoGuideHref = seed.seoConfigKey
+    ? `${hubHref}${SEO_GUIDE_ANCHOR}`
+    : undefined;
+  const topBlogSlug = seed.seoConfigKey
+    ? CITY_SEO_FEATURED_BLOG_SLUGS[seed.seoConfigKey]?.[0]
+    : undefined;
 
   if (kind === "property") {
     const primaryHref = seed.brokerLandingSlug
@@ -96,6 +115,8 @@ function seedToFunnelCity(seed: FunnelCitySeed, kind: NationalFunnelKind): Natio
       primaryLabel: seed.brokerLandingSlug
         ? `Property in ${seed.name.split(" ")[0]}`
         : `Browse ${seed.name}`,
+      seoGuideHref,
+      topBlogSlug,
     };
   }
 
@@ -108,6 +129,8 @@ function seedToFunnelCity(seed: FunnelCitySeed, kind: NationalFunnelKind): Natio
     hubHref,
     primaryHref: appPath(categoryPath(seed, category)),
     primaryLabel: `${label} in ${seed.name.split(" ")[0]}`,
+    seoGuideHref,
+    topBlogSlug,
   };
 }
 
