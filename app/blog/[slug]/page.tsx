@@ -24,6 +24,13 @@ import {
   fetchBlogRelatedListings,
   resolveBlogListingHub,
 } from "@/lib/blog-related-listings";
+import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
+import StickySeoCTA from "@/components/seo/StickySeoCTA";
+import {
+  getBrowseHref,
+  getListPropertyHref,
+  slugsFromRentalHubHref,
+} from "@/lib/seo-links";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -95,6 +102,23 @@ export default async function BlogPostPage({ params }: Props) {
   const authorName = post.author ?? "RentalPins";
   const toc = extractBlogToc(post.content);
   const mdxComponents = createBlogMdxComponents(toc);
+  const hubSlugs = rentalHub ? slugsFromRentalHubHref(rentalHub.hubHref) : {};
+  const blogCityName = rentalHub?.areaConfig.city ?? rentalHub?.placeName;
+  const blogAreaName =
+    rentalHub && hubSlugs.areaSlug ? rentalHub.placeName : undefined;
+  const blogBrowseHref = rentalHub
+    ? getBrowseHref({
+        citySlug: hubSlugs.citySlug,
+        areaSlug: hubSlugs.areaSlug,
+        lat: rentalHub.areaConfig.center.lat,
+        lng: rentalHub.areaConfig.center.lng,
+        placeQuery: rentalHub.placeName,
+      })
+    : undefined;
+  const blogListHref = getListPropertyHref({
+    citySlug: hubSlugs.citySlug,
+    areaSlug: hubSlugs.areaSlug,
+  });
 
   return (
     <MarketingShell>
@@ -171,6 +195,15 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
         ) : null}
         {rentalHub ? <BlogRentalHubLink hub={rentalHub} /> : null}
+        <ListPropertyCTA
+          variant="blog"
+          cityName={blogCityName}
+          areaName={blogAreaName}
+          browseHref={blogBrowseHref}
+          listHref={blogListHref}
+          citySlug={hubSlugs.citySlug}
+          areaSlug={hubSlugs.areaSlug}
+        />
         <BlogTableOfContents entries={toc} />
         <div className="prose prose-lg prose-slate mt-10 max-w-none prose-headings:font-serif prose-headings:text-[#1E3A6E] prose-a:text-[#E8501A] prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
           <MDXRemote source={post.content} components={mdxComponents} />
@@ -192,8 +225,24 @@ export default async function BlogPostPage({ params }: Props) {
           />
         </div>
         <BlogFaqSection faqs={post.faqs ?? []} />
+        <ListPropertyCTA
+          variant="bottom"
+          cityName={blogCityName}
+          areaName={blogAreaName}
+          browseHref={blogBrowseHref}
+          listHref={blogListHref}
+          citySlug={hubSlugs.citySlug}
+          areaSlug={hubSlugs.areaSlug}
+        />
         <BlogRelatedPosts posts={relatedPosts} />
       </article>
+      <StickySeoCTA
+        browseHref={blogBrowseHref}
+        listHref={blogListHref}
+        citySlug={hubSlugs.citySlug}
+        areaSlug={hubSlugs.areaSlug}
+        placeQuery={rentalHub?.placeName}
+      />
     </MarketingShell>
   );
 }

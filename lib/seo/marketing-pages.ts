@@ -208,10 +208,11 @@ export const WITHOUT_BROKER_PAGES: Record<string, MarketingPageConfig> = {
       { q: "Are furnished flats listed by owners?", a: "Yes — confirm AC, appliances, and deposit terms with the owner before token payment." },
     ],
     relatedLinks: [
-      { label: "Mohali area page", href: appPath("/rentals/in/chandigarh/mohali") },
-      { label: "Mohali rental guide", href: appPath("/rentals/in/chandigarh/mohali#city-seo-content-heading") },
-      { label: "Chandigarh Tricity", href: appPath(rentalCityPath("in", "chandigarh")) },
-      { label: "Tricity without broker", href: appPath("/property-without-broker-chandigarh") },
+      { label: "Mohali rentals hub", href: appPath("/rentals/mohali") },
+      { label: "Sector 70 Mohali", href: appPath("/rentals/mohali/sector-70") },
+      { label: "Phase 7 Mohali", href: appPath("/rentals/mohali/phase-7") },
+      { label: "Mohali flats on map", href: appPath("/rentals/in/chandigarh/mohali/flats") },
+      { label: "PG near CU", href: appPath("/pg-near-chandigarh-university") },
     ],
   },
   "property-without-broker": {
@@ -793,9 +794,9 @@ export const CATEGORY_LANDING_PAGES: Record<string, MarketingPageConfig> = {
 export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
   "pg-near-chandigarh-university": {
     slug: "pg-near-chandigarh-university",
-    title: "PG Near Chandigarh University | RentalPins",
+    title: "PG Near Chandigarh University — Map Search, List PG Free | RentalPins",
     description:
-      "PG, hostels, and student flats near Chandigarh University in Kharar — owner-direct map search without broker fees.",
+      "PG and hostels near Chandigarh University in Kharar — browse owner pins on the map or list your PG free. No broker search fee for students.",
     h1: "PG near Chandigarh University",
     intro:
       "Explore boys PG, girls PG, shared rooms, and student flats around CU on the Kharar map — compare Kharar town, Kharar–Landran road, and Sunny Enclave pins with direct owner contact on RentalPins.",
@@ -814,10 +815,11 @@ export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
       { q: "Which areas are closest to CU?", a: "Kharar town, Kharar–Landran road, Sunny Enclave, and Gillco Valley — see the Kharar area page." },
     ],
     relatedLinks: [
-      { label: "Kharar area hub", href: appPath("/rentals/in/chandigarh/kharar") },
-      { label: "Kharar rental guide", href: appPath("/rentals/in/chandigarh/kharar#city-seo-content-heading") },
+      { label: "Rentals near CU", href: appPath("/rentals/chandigarh-university") },
+      { label: "Kharar near CU", href: appPath("/rentals/kharar/chandigarh-university") },
+      { label: "Kharar area hub", href: appPath("/rentals/kharar") },
+      { label: "Mohali Phase 7", href: appPath("/rentals/mohali/phase-7") },
       { label: "PG for rent India", href: appPath("/pg-for-rent") },
-      { label: "Mohali rentals", href: appPath("/rentals/in/chandigarh/mohali") },
     ],
   },
   "pg-near-cgc-landran": {

@@ -30,6 +30,8 @@ export interface CallHttpsFunctionOptions {
   timeoutMs?: number;
   /** Refresh Firebase ID token before the request (use for long / slow callables). */
   refreshAuthToken?: boolean;
+  /** Skip sign-in check and omit Authorization (for public callables like parseSearchQuery). */
+  allowAnonymous?: boolean;
 }
 
 export async function callHttpsFunction<TResult>(
@@ -40,7 +42,7 @@ export async function callHttpsFunction<TResult>(
 ): Promise<TResult> {
   const auth = getClientAuth();
   const user = auth.currentUser;
-  if (!user) {
+  if (!user && options?.allowAnonymous !== true) {
     throw new CallableError("functions/unauthenticated", "Sign in required.");
   }
 
@@ -59,7 +61,10 @@ export async function callHttpsFunction<TResult>(
     );
   }
 
-  const token = await user.getIdToken(options?.refreshAuthToken === true);
+  const token =
+    user != null
+      ? await user.getIdToken(options?.refreshAuthToken === true)
+      : null;
   const url = `https://${region}-${PROJECT_ID}.cloudfunctions.net/${functionName}`;
 
   const timeoutMs = options?.timeoutMs;
@@ -73,12 +78,14 @@ export async function callHttpsFunction<TResult>(
 
   let res: Response;
   try {
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
     res = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers,
       body: JSON.stringify({ data }),
       signal: controller?.signal,
     });

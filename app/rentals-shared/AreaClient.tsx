@@ -4,6 +4,11 @@ import Image from "next/image";
 import { BRAND, UI } from "@/lib/brand";
 import { appPath } from "@/lib/config";
 import { mapSearchUrl } from "@/lib/map-search-url";
+import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
+import SupplyAudienceSection from "@/components/seo/SupplyAudienceSection";
+import AreaSupplyDemandSection from "@/components/seo/AreaSupplyDemandSection";
+import StickySeoCTA from "@/components/seo/StickySeoCTA";
+import MohaliGscHubLinks from "@/components/seo/MohaliGscHubLinks";
 
 // ─── URLs (SINGLE SOURCE — change here, changes everywhere) ──────────────────
 const PLAY_URL =
@@ -1402,6 +1407,20 @@ export default function AreaClient({
 
   const cityOrArea = area.name;
   const parentCityName = isSubArea ? area.parentCity : area.name;
+  const supplyCitySlug = isSubArea ? area.parentSlug : area.slug;
+  const supplyAreaSlug = isSubArea ? area.slug : undefined;
+  const supplyBrowseHref = appPath(
+    mapSearchUrl(
+      area.coordinates.lat,
+      area.coordinates.lng,
+      isSubArea ? 13 : 12,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      area.name
+    )
+  );
   const focusKey = isSubArea ? `${area.parentSlug}/${area.slug}` : area.slug;
   const focusedSections = FOCUSED_LONGFORM_OVERRIDES[focusKey] ?? [];
   const longFormSections = isSubArea
@@ -1598,6 +1617,16 @@ export default function AreaClient({
         </div>
       </section>
 
+      <ListPropertyCTA
+        variant="hero"
+        cityName={parentCityName}
+        areaName={isSubArea ? area.name : undefined}
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+        browseHref={supplyBrowseHref}
+        listHref={PATHS.post}
+      />
+
       {/* ── Stats ──────────────────────────────────────────────────────── */}
       <section style={{ padding: "32px 24px", background: BRAND.surface }}>
         <div style={{ maxWidth: 800, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, textAlign: "center" }} className="stats-grid">
@@ -1614,6 +1643,16 @@ export default function AreaClient({
           ))}
         </div>
       </section>
+
+      <SupplyAudienceSection
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+        listHref={PATHS.post}
+      />
+
+      {focusKey === "chandigarh/mohali" ? (
+        <MohaliGscHubLinks title="Mohali sector guides" />
+      ) : null}
 
       {/* ── Popular Areas ──────────────────────────────────────────────── */}
       <section style={{ padding: "40px 24px", background: "#fff" }}>
@@ -1760,6 +1799,18 @@ export default function AreaClient({
         </div>
       </section>
 
+      <AreaSupplyDemandSection
+        cityName={parentCityName}
+        areaName={isSubArea ? area.name : area.name}
+        nearbyAreas={area.spokeLinks.slice(0, 6).map((s) => s.label)}
+        rentalTypes={area.topCategories.map((c) => c.name)}
+        lowListings={listingsCount < 3}
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+        browseHref={supplyBrowseHref}
+        listHref={PATHS.post}
+      />
+
       {/* ── FAQs ──────────────────────────────────────────────────────── */}
       {area.faqs.length > 0 && (
         <section style={{ padding: "48px 24px", background: "#fff" }}>
@@ -1815,6 +1866,14 @@ export default function AreaClient({
           </div>
         </div>
       </section>
+
+      <StickySeoCTA
+        browseHref={supplyBrowseHref}
+        listHref={PATHS.post}
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+        placeQuery={area.name}
+      />
 
       <Footer />
     </>

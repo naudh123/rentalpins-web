@@ -17,6 +17,11 @@ import {
   pickMarketingLandingBlogPosts,
 } from "@/lib/seo/marketing-broker-blog-links";
 import type { NationalFunnelKind } from "@/lib/seo/national-funnel-cities";
+import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
+import SeoSupplyBlocks from "@/components/seo/SeoSupplyBlocks";
+import StickySeoCTA from "@/components/seo/StickySeoCTA";
+import { intentFromMarketingSlug } from "@/lib/seo-links";
+import PgCuOwnerSupplyBlock from "@/components/seo/PgCuOwnerSupplyBlock";
 
 interface Props {
   config: MarketingPageConfig;
@@ -42,6 +47,7 @@ export default function MarketingLandingPage({
   const guideBlogPosts = guidePlaceName
     ? pickMarketingLandingBlogPosts(config.slug, getMdxPosts(), 3)
     : [];
+  const supplyIntent = intentFromMarketingSlug(config.slug);
 
   return (
     <MarketingShell>
@@ -73,6 +79,14 @@ export default function MarketingLandingPage({
         </div>
       </article>
 
+      {config.slug !== "pg-near-chandigarh-university" ? (
+        <ListPropertyCTA
+          variant="hero"
+          cityName={guidePlaceName ?? undefined}
+          intent={supplyIntent}
+        />
+      ) : null}
+
       {funnelKind ? <NationalFunnelCityGrid kind={funnelKind} /> : null}
       {funnelKind ? <NationalFunnelGuides kind={funnelKind} /> : null}
 
@@ -86,6 +100,10 @@ export default function MarketingLandingPage({
           { label: "App Downloads", value: "50,000+" },
         ]}
       />
+
+      {config.slug === "pg-near-chandigarh-university" ? (
+        <PgCuOwnerSupplyBlock />
+      ) : null}
 
       {config.benefits.length > 0 && (
         <section className="mx-auto max-w-4xl px-4 py-12">
@@ -178,6 +196,13 @@ export default function MarketingLandingPage({
         </section>
       )}
 
+      <SeoSupplyBlocks
+        cityName={guidePlaceName ?? undefined}
+        intent={supplyIntent}
+        showHero={false}
+        showSticky={false}
+      />
+
       <section className="mx-auto max-w-3xl px-4 py-12">
         <h2 className="rp-section-title text-center text-lg">FAQs</h2>
         <dl className="mt-6 space-y-4">
@@ -202,6 +227,8 @@ export default function MarketingLandingPage({
           ))}
         </ul>
       </section>
+
+      <StickySeoCTA intent={supplyIntent} placeQuery={guidePlaceName ?? undefined} />
     </MarketingShell>
   );
 }

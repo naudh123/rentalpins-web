@@ -2,7 +2,7 @@
 
 import { useCallback, type MutableRefObject } from "react";
 import type { ListingFilters } from "@/lib/listing-filters";
-import { parseSearchQuery } from "@/lib/ai-search";
+import { aiSearchErrorCode, parseSearchQuery } from "@/lib/ai-search";
 import {
   geocoderResultToSearchResult,
   type PlaceSearchResult,
@@ -161,8 +161,9 @@ export function useMapPlaceSearch({
           });
         }
       } catch (err) {
-        trackEvent("ai_search_failed", {});
+        trackEvent("ai_search_failed", { error_code: aiSearchErrorCode(err) });
         console.error("AI search failed", err);
+        throw err;
       }
     },
     [

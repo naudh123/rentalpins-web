@@ -26,6 +26,50 @@ export interface ParsedSearch {
 
 const SORTS: ListingSort[] = ["recommended", "price_asc", "price_desc", "newest"];
 
+/** GA4-safe error bucket for ai_search_failed. */
+export function aiSearchErrorCode(err: unknown): string {
+  if (err instanceof CallableError) {
+    switch (err.code) {
+      case "functions/deadline-exceeded":
+        return "timeout";
+      case "functions/unauthenticated":
+        return "unauthenticated";
+      case "functions/resource-exhausted":
+        return "rate_limited";
+      case "functions/unavailable":
+        return "unavailable";
+      case "functions/internal":
+        return "internal";
+      case "functions/invalid-argument":
+        return "invalid_argument";
+      default:
+        return err.code.replace(/^functions\//, "").replace(/-/g, "_") || "unknown";
+    }
+  }
+  if (err instanceof Error && err.name === "AbortError") return "timeout";
+  return "unknown";
+}
+
+export function mapAiSearchError(err: unknown): string {
+  if (err instanceof CallableError) {
+    if (err.code === "functions/deadline-exceeded") {
+      return "AI search took too long. Check your connection and try again.";
+    }
+    if (err.code === "functions/internal") {
+      return "AI search is temporarily unavailable. Use filters or the location bar.";
+    }
+    if (err.code === "functions/resource-exhausted") {
+      return "Too many AI searches. Wait a moment and try again.";
+    }
+    if (err.code === "functions/unauthenticated") {
+      return "Sign in to use AI search, or use the location bar and filters.";
+    }
+    return mapCallableError(err);
+  }
+  if (err instanceof Error && err.message) return err.message;
+  return "AI search failed. Try filters or the location bar.";
+}
+
 function allSubCategories(): string[] {
   const set = new Set<string>();
   for (const c of MAIN_CATEGORIES) {
@@ -40,27 +84,19 @@ function allSubCategories(): string[] {
  * The result is re-validated against the canonical option lists.
  */
 export async function parseSearchQuery(query: string): Promise<ParsedSearch> {
-  let data: {
+  const data = (await parseSearchQueryCallable({
+    query,
+    categories: MAIN_CATEGORIES,
+    subCategories: allSubCategories(),
+    bhkOptions: BHK_OPTIONS,
+    furnishingOptions: FURNISHING_OPTIONS,
+    tenantOptions: TENANT_PREFERENCE_OPTIONS,
+    currency: "INR",
+  })) as {
     filters?: Partial<ListingFilters>;
     placeText?: string;
     keywords?: string;
   };
-  try {
-    data = (await parseSearchQueryCallable({
-      query,
-      categories: MAIN_CATEGORIES,
-      subCategories: allSubCategories(),
-      bhkOptions: BHK_OPTIONS,
-      furnishingOptions: FURNISHING_OPTIONS,
-      tenantOptions: TENANT_PREFERENCE_OPTIONS,
-      currency: "INR",
-    })) as typeof data;
-  } catch (err) {
-    if (err instanceof CallableError) {
-      throw new Error(mapCallableError(err));
-    }
-    throw err;
-  }
 
   const f = data.filters ?? {};
 

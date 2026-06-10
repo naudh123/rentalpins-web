@@ -11,6 +11,7 @@ import {
   type RentalCategoryConfig,
 } from "@/lib/seo/categories";
 import { buildPageMetadata } from "@/lib/seo/metadata";
+import { buildMohaliCategoryMetadata } from "@/lib/seo/mohali-seo-overrides";
 import { mapSearchUrl } from "@/lib/map-search-url";
 import { appPath } from "@/lib/config";
 import type { Metadata } from "next";
@@ -88,6 +89,15 @@ export async function resolveCategoryHub(
 }
 
 export function categoryHubMetadata(ctx: CategoryHubContext, path: string): Metadata {
+  if (
+    ctx.city.countrySlug === "in" &&
+    ctx.city.slug === "chandigarh" &&
+    ctx.areaContent?.slug === "mohali"
+  ) {
+    const mohaliMeta = buildMohaliCategoryMetadata(ctx.category.slug, path);
+    if (mohaliMeta) return mohaliMeta;
+  }
+
   const place = ctx.areaContent?.name ?? ctx.city.name;
   return buildPageMetadata({
     title: `${ctx.category.pluralLabel} for Rent in ${place} — No Broker`,

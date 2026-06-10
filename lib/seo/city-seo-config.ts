@@ -189,11 +189,13 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
         name: "Phase 7 & Phase 9",
         description:
           "Established residential phases with strong flat inventory, family-friendly societies, and steady resale tenant demand.",
+        href: "/rentals/mohali/phase-7",
       },
       {
-        name: "Phase 11 & Aerocity",
+        name: "Sector 70",
         description:
-          "Newer developments popular with IT professionals, airport-linked commuters, and furnished corporate rentals.",
+          "Mid-budget flats and PG with strong connectivity toward Zirakpur and central Mohali corridors.",
+        href: "/rentals/mohali/sector-70",
       },
       {
         name: "IT Park & Airport Road",
@@ -201,9 +203,10 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
           "PG, co-working, and furnished flats for short commutes to major employment hubs and logistics corridors.",
       },
       {
-        name: "Sunny Enclave & New Chandigarh",
+        name: "Sector 67",
         description:
-          "Gated-community flats and houses with modern amenities at mid-to-premium rents compared with inner phases.",
+          "Affordable flats and shared rooms close to Zirakpur — popular with budget-conscious tenants comparing Sector 67 pins on the map.",
+        href: "/rentals/mohali/sector-67",
       },
     ],
     averageRent: [

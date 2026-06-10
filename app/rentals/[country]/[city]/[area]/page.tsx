@@ -29,6 +29,10 @@ import { pickCitySeoBlogPosts } from "@/lib/seo/city-seo-blog-links";
 import { getMdxPosts } from "@/lib/blog";
 import AreaClient from "../../../../rentals-shared/AreaClient";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
+import {
+  buildMohaliCanonicalAreaMetadata,
+  isMohaliCanonicalArea,
+} from "@/lib/seo/mohali-seo-overrides";
 
 const OG_LOCALE: Record<string, string> = {
   in: "en_IN",
@@ -88,6 +92,12 @@ export async function generateMetadata({
   const base = canonicalUrl(
     rentalAreaPath(city.countrySlug, city.slug, area.slug)
   );
+
+  if (isMohaliCanonicalArea(city.countrySlug, city.slug, area.slug)) {
+    return buildMohaliCanonicalAreaMetadata(
+      rentalAreaPath(city.countrySlug, city.slug, area.slug)
+    );
+  }
 
   return {
     title: `Rentals in ${area.name} — ${areaNames} & More`,

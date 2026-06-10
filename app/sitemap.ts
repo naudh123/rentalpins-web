@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { getCommercialLondonSitemapPaths } from "@/lib/commercial-london-config";
+import { getIndianGscSitemapPaths } from "@/lib/rental-area-config";
 import { canonicalUrl } from "@/lib/seo";
 import { getCoreMarketingSitemapSlugs } from "@/lib/seo/sitemap-config";
 
@@ -23,6 +25,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.75,
+    })),
+    ...getCommercialLondonSitemapPaths().map((path) => ({
+      url: canonicalUrl(path),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+    ...getIndianGscSitemapPaths().map((path) => ({
+      url: canonicalUrl(path),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.82,
     })),
   ];
 

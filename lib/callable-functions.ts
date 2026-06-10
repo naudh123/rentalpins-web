@@ -13,6 +13,7 @@ const PAYMENT_OPTS: CallHttpsFunctionOptions = {
 const AI_SEARCH_OPTS: CallHttpsFunctionOptions = {
   timeoutMs: 35_000,
   refreshAuthToken: true,
+  allowAnonymous: true,
 };
 
 export interface RazorpayOrderResult {

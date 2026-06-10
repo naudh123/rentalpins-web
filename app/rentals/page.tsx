@@ -4,6 +4,7 @@ import { getAllCities } from "@/lib/cities-config";
 import MarketingShell from "@/components/MarketingShell";
 import { appPath } from "@/lib/config";
 import { canonicalUrl } from "@/lib/seo";
+import MohaliGscHubLinks from "@/components/seo/MohaliGscHubLinks";
 
 export const metadata: Metadata = {
   title: "Rentals by City",
@@ -70,6 +71,11 @@ export default function RentalsIndexPage() {
             </Link>
           ))}
         </div>
+
+        <MohaliGscHubLinks
+          title="Popular Mohali rental pages"
+          className="mt-12 border-t border-slate-200 pt-10"
+        />
       </div>
     </MarketingShell>
   );

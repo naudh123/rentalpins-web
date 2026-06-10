@@ -18,6 +18,10 @@ import { buildListingSlugSegment } from "@/lib/listing-slug";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import type { SeoListingCard } from "@/lib/seo-listings";
+import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
+import SeoSupplyBlocks from "@/components/seo/SeoSupplyBlocks";
+import StickySeoCTA from "@/components/seo/StickySeoCTA";
+import { intentFromCategorySlug } from "@/lib/seo-links";
 
 interface Props {
   city: CityConfig;
@@ -35,6 +39,9 @@ export default function CategoryHubPage({
   mapHref,
 }: Props) {
   const placeName = area?.name ?? city.name;
+  const supplyIntent = intentFromCategorySlug(category.slug);
+  const supplyCitySlug = city.slug;
+  const supplyAreaSlug = area?.slug;
   const path = area
     ? `/rentals/${city.countrySlug}/${city.slug}/${area.slug}/${category.slug}`
     : `/rentals/${city.countrySlug}/${city.slug}/${category.slug}`;
@@ -160,6 +167,17 @@ export default function CategoryHubPage({
         </div>
       </div>
 
+      <ListPropertyCTA
+        variant="hero"
+        cityName={city.name}
+        areaName={area?.name}
+        categoryName={category.pluralLabel}
+        intent={supplyIntent}
+        browseHref={mapHref}
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+      />
+
       {listings.length > 0 && (
         <section className="mx-auto max-w-5xl px-4 py-10">
           <h2 className="rp-section-title text-lg">Live listings</h2>
@@ -214,6 +232,21 @@ export default function CategoryHubPage({
         </section>
       )}
 
+      <SeoSupplyBlocks
+        cityName={city.name}
+        areaName={area?.name ?? city.name}
+        categoryName={category.pluralLabel}
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+        intent={supplyIntent}
+        nearbyAreaLabels={city.popularAreas.slice(0, 6)}
+        rentalTypes={category.subCategories.length ? category.subCategories : [category.pluralLabel]}
+        lowListings={listings.length < 3}
+        browseHref={mapHref}
+        showHero={false}
+        showSticky={false}
+      />
+
       <section className="mx-auto max-w-3xl px-4 py-10">
         <h2 className="rp-section-title text-center text-lg">FAQs</h2>
         <dl className="mt-6 space-y-4">
@@ -238,6 +271,14 @@ export default function CategoryHubPage({
           ))}
         </ul>
       </section>
+
+      <StickySeoCTA
+        browseHref={mapHref}
+        citySlug={supplyCitySlug}
+        areaSlug={supplyAreaSlug}
+        intent={supplyIntent}
+        placeQuery={placeName}
+      />
     </MarketingShell>
   );
 }

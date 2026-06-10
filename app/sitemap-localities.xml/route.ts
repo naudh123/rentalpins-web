@@ -1,4 +1,5 @@
 import { getIndexableAreas } from "@/lib/cities-config";
+import { getIndianGscSitemapPaths } from "@/lib/rental-area-config";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 
@@ -21,6 +22,9 @@ export async function GET() {
           { lastmod: now, changefreq: "daily", priority: 0.7 }
         )
       )
+    ),
+    ...getIndianGscSitemapPaths().map((path) =>
+      toSitemapEntry(path, { lastmod: now, changefreq: "weekly", priority: 0.82 })
     ),
   ];
   return new Response(buildSitemapXml(urls), {
