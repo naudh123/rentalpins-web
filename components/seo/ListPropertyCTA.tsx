@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   getBrowseHref,
   getListPropertyHref,
+  getSupplyLandingHref,
   type SupplyIntent,
 } from "@/lib/seo-links";
 
@@ -17,10 +18,14 @@ interface Props {
   listHref?: string;
   citySlug?: string;
   areaSlug?: string;
+  categorySlug?: string;
+  headlineOverride?: string;
+  bodyOverride?: string;
+  supplyLandingHref?: string;
 }
 
 const TRUST_POINTS = [
-  "Free listing for owners",
+  "Free listing",
   "Direct renter inquiries",
   "Map-based discovery",
   "Flats, PGs, houses, shops, offices and warehouses supported",
@@ -35,6 +40,21 @@ function headline({
 }: Pick<Props, "cityName" | "areaName" | "intent" | "variant">): string {
   if (variant === "blog") {
     return "Have a property in this area?";
+  }
+  if (intent === "pg" || intent === "hostel") {
+    if (areaName?.toLowerCase().includes("chandigarh university")) {
+      return "Own a PG near Chandigarh University?";
+    }
+    if (areaName && areaName !== cityName) {
+      return `Own a PG in ${areaName}?`;
+    }
+    if (cityName) {
+      return `Own a PG in ${cityName}?`;
+    }
+    return "Own a PG or hostel?";
+  }
+  if (intent === "flat" && cityName) {
+    return `Own a flat in ${cityName}?`;
   }
   if (intent === "commercial" && cityName) {
     return `Own a shop, office, warehouse or commercial space in ${cityName}?`;
@@ -56,16 +76,28 @@ function bodyCopy({
   variant,
 }: Pick<Props, "cityName" | "areaName" | "categoryName" | "intent" | "variant">): string {
   if (variant === "blog") {
-    return "List it on RentalPins and connect directly with renters browsing the map — no tenant search commission.";
+    return "List it on RentalPins and connect directly with tenants.";
   }
 
   const place = areaName && cityName && areaName !== cityName ? areaName : cityName ?? "your area";
 
+  if (intent === "pg" || intent === "hostel") {
+    if (areaName?.toLowerCase().includes("chandigarh university")) {
+      return "List your PG free on RentalPins and reach students searching nearby.";
+    }
+    return `List your PG or hostel in ${place} on RentalPins. Students and professionals browse map pins and contact owners directly.`;
+  }
+  if (intent === "flat" && cityName) {
+    if (cityName === "Delhi") {
+      return "List your flat free and connect directly with renters.";
+    }
+    if (cityName === "Mohali") {
+      return "List your flat free on RentalPins. Flats, apartments, houses and PGs are welcome.";
+    }
+    return `List your rental property free and connect with local renters in ${cityName}.`;
+  }
   if (intent === "commercial") {
     return `List your shop, office, warehouse or commercial unit in ${place} free on RentalPins. Renters discover your pin on the map and message you directly.`;
-  }
-  if (intent === "pg" || intent === "hostel") {
-    return `List your PG or hostel in ${place} on RentalPins. Students and professionals browse map pins and contact owners without broker search fees.`;
   }
   if (categoryName) {
     return `List your ${categoryName.toLowerCase()} in ${place} free on RentalPins. Reach renters already searching this category on the map.`;
@@ -91,12 +123,30 @@ export default function ListPropertyCTA({
   listHref,
   citySlug,
   areaSlug,
+  categorySlug,
+  headlineOverride,
+  bodyOverride,
+  supplyLandingHref: supplyLandingHrefProp,
 }: Props) {
   const browse = browseHref ?? getBrowseHref({ placeQuery: areaName ?? cityName });
   const list = listHref ?? getListPropertyHref({ citySlug, areaSlug, intent });
+  const supplyLanding =
+    supplyLandingHrefProp ??
+    getSupplyLandingHref({
+      citySlug,
+      areaSlug,
+      categorySlug,
+      intent,
+    });
   const locationAttr = variant === "blog" ? "blog" : variant;
 
   const isCompact = variant === "blog" || variant === "bottom";
+  const resolvedHeadline =
+    headlineOverride ??
+    headline({ cityName, areaName, intent, variant });
+  const resolvedBody =
+    bodyOverride ??
+    bodyCopy({ cityName, areaName, categoryName, intent, variant });
 
   return (
     <section
@@ -121,10 +171,10 @@ export default function ListPropertyCTA({
             isCompact ? "text-xl" : "text-2xl sm:text-3xl"
           }`}
         >
-          {headline({ cityName, areaName, intent, variant })}
+          {resolvedHeadline}
         </h2>
         <p className="mt-3 text-sm leading-relaxed text-[var(--muted)] sm:text-base">
-          {bodyCopy({ cityName, areaName, categoryName, intent, variant })}
+          {resolvedBody}
         </p>
 
         {!isCompact ? (
@@ -167,6 +217,22 @@ export default function ListPropertyCTA({
             Browse Rentals on Map
           </Link>
         </div>
+
+        {variant !== "blog" && cityName ? (
+          <p className="mt-4 text-sm text-[var(--muted)]">
+            <Link
+              href={supplyLanding}
+              data-cta="supply-landing-link"
+              data-cta-location={locationAttr}
+              data-city={citySlug ?? ""}
+              data-area={areaSlug ?? ""}
+              data-intent={intent}
+              className="font-medium text-[var(--brand-orange)] hover:underline"
+            >
+              Owner? Learn how to list in {cityName} free →
+            </Link>
+          </p>
+        ) : null}
       </div>
     </section>
   );

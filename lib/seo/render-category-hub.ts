@@ -12,6 +12,7 @@ import {
 } from "@/lib/seo/categories";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildMohaliCategoryMetadata } from "@/lib/seo/mohali-seo-overrides";
+import { buildGscCityCategoryMetadata } from "@/lib/seo/gsc-city-seo-overrides";
 import { mapSearchUrl } from "@/lib/map-search-url";
 import { appPath } from "@/lib/config";
 import type { Metadata } from "next";
@@ -89,10 +90,20 @@ export async function resolveCategoryHub(
 }
 
 export function categoryHubMetadata(ctx: CategoryHubContext, path: string): Metadata {
+  const areaSlug = ctx.areaContent?.slug;
+
+  const gscMeta = buildGscCityCategoryMetadata(
+    ctx.city.slug,
+    ctx.category.slug,
+    path,
+    areaSlug
+  );
+  if (gscMeta) return gscMeta;
+
   if (
     ctx.city.countrySlug === "in" &&
     ctx.city.slug === "chandigarh" &&
-    ctx.areaContent?.slug === "mohali"
+    areaSlug === "mohali"
   ) {
     const mohaliMeta = buildMohaliCategoryMetadata(ctx.category.slug, path);
     if (mohaliMeta) return mohaliMeta;

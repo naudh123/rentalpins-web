@@ -148,6 +148,26 @@ export default function IndiaRentalLandingPage({ config }: Props) {
 
       <IndiaRentalFAQ faqs={config.faqs} />
 
+      <ListPropertyCTA
+        variant="inline"
+        cityName={config.cityLabel}
+        areaName={isAreaPage ? config.areaName : undefined}
+        citySlug={config.citySlug}
+        areaSlug={ctaArea}
+        browseHref={browseHref}
+        listHref={listHref}
+      />
+
+      <ListPropertyCTA
+        variant="bottom"
+        cityName={config.cityLabel}
+        areaName={isAreaPage ? config.areaName : undefined}
+        citySlug={config.citySlug}
+        areaSlug={ctaArea}
+        browseHref={browseHref}
+        listHref={listHref}
+      />
+
       <section className="mx-auto max-w-3xl px-4 pb-16">
         <div className="rounded-2xl border border-[var(--border)] bg-white p-6 text-center shadow-sm">
           <h2 className="font-serif text-xl text-[var(--brand-navy)]">

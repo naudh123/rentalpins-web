@@ -152,6 +152,28 @@ export default function CommercialLandingPage({ config }: Props) {
 
       <CommercialFAQ faqs={config.faqs} />
 
+      <ListPropertyCTA
+        variant="inline"
+        cityName="London"
+        areaName={config.locationName}
+        intent="commercial"
+        citySlug="london"
+        areaSlug={areaSlug}
+        browseHref={browseHref}
+        listHref={postHref}
+      />
+
+      <ListPropertyCTA
+        variant="bottom"
+        cityName="London"
+        areaName={config.locationName}
+        intent="commercial"
+        citySlug="london"
+        areaSlug={areaSlug}
+        browseHref={browseHref}
+        listHref={postHref}
+      />
+
       <section className="mx-auto max-w-3xl px-4 pb-16">
         <div className="rounded-2xl border border-[var(--border)] bg-white p-6 text-center shadow-sm">
           <h2 className="font-serif text-xl text-[var(--brand-navy)]">

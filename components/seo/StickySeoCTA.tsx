@@ -37,6 +37,7 @@ export default function StickySeoCTA({
           <Link
             href={browse}
             data-cta="sticky-browse-rentals"
+            data-cta-location="sticky"
             data-city={citySlug ?? ""}
             data-area={areaSlug ?? ""}
             data-intent={intent}
@@ -47,6 +48,7 @@ export default function StickySeoCTA({
           <Link
             href={list}
             data-cta="sticky-list-property"
+            data-cta-location="sticky"
             data-city={citySlug ?? ""}
             data-area={areaSlug ?? ""}
             data-intent={intent}

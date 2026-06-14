@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Logo from "@/components/brand/Logo";
 import SiteFooter from "@/components/marketing/SiteFooter";
+import SeoCtaTracker from "@/components/seo/SeoCtaTracker";
 import { appPath } from "@/lib/config";
 import { PLAY_STORE_URL } from "@/lib/site-links";
 
@@ -124,6 +125,7 @@ export default function MarketingShell({
       <main className="flex-1">{children}</main>
 
       <SiteFooter />
+      <SeoCtaTracker />
     </div>
   );
 }

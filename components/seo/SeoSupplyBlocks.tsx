@@ -30,9 +30,13 @@ interface Props {
   browseHref?: string;
   listHref?: string;
   showHero?: boolean;
+  showInline?: boolean;
   showAudience?: boolean;
   showAreaSupply?: boolean;
+  showBottom?: boolean;
   showSticky?: boolean;
+  headlineOverride?: string;
+  bodyOverride?: string;
 }
 
 export default function SeoSupplyBlocks({
@@ -55,9 +59,13 @@ export default function SeoSupplyBlocks({
   browseHref: browseHrefProp,
   listHref: listHrefProp,
   showHero = true,
+  showInline = true,
   showAudience = true,
   showAreaSupply = true,
+  showBottom = true,
   showSticky = true,
+  headlineOverride,
+  bodyOverride,
 }: Props) {
   const browseHref = browseHrefProp ?? getBrowseHref({
     citySlug,
@@ -83,6 +91,8 @@ export default function SeoSupplyBlocks({
           listHref={listHref}
           citySlug={citySlug}
           areaSlug={areaSlug}
+          headlineOverride={headlineOverride}
+          bodyOverride={bodyOverride}
         />
         <ListPropertyCTA
           variant="bottom"
@@ -93,6 +103,8 @@ export default function SeoSupplyBlocks({
           listHref={listHref}
           citySlug={citySlug}
           areaSlug={areaSlug}
+          headlineOverride={headlineOverride}
+          bodyOverride={bodyOverride}
         />
         {showSticky ? (
           <StickySeoCTA
@@ -123,6 +135,23 @@ export default function SeoSupplyBlocks({
           listHref={listHref}
           citySlug={citySlug}
           areaSlug={areaSlug}
+          headlineOverride={headlineOverride}
+          bodyOverride={bodyOverride}
+        />
+      ) : null}
+      {showInline ? (
+        <ListPropertyCTA
+          variant="inline"
+          cityName={cityName}
+          areaName={areaName}
+          categoryName={categoryName}
+          intent={resolvedIntent}
+          browseHref={browseHref}
+          listHref={listHref}
+          citySlug={citySlug}
+          areaSlug={areaSlug}
+          headlineOverride={headlineOverride}
+          bodyOverride={bodyOverride}
         />
       ) : null}
       {showAudience ? (
@@ -145,6 +174,21 @@ export default function SeoSupplyBlocks({
           areaSlug={areaSlug}
           browseHref={browseHref}
           listHref={listHref}
+        />
+      ) : null}
+      {showBottom ? (
+        <ListPropertyCTA
+          variant="bottom"
+          cityName={cityName}
+          areaName={areaName}
+          categoryName={categoryName}
+          intent={resolvedIntent}
+          browseHref={browseHref}
+          listHref={listHref}
+          citySlug={citySlug}
+          areaSlug={areaSlug}
+          headlineOverride={headlineOverride}
+          bodyOverride={bodyOverride}
         />
       ) : null}
       {showSticky ? (

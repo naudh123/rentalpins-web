@@ -21,7 +21,9 @@ import type { SeoListingCard } from "@/lib/seo-listings";
 import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
 import SeoSupplyBlocks from "@/components/seo/SeoSupplyBlocks";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
-import { intentFromCategorySlug } from "@/lib/seo-links";
+import { intentFromCategorySlug, getSupplyLandingHref } from "@/lib/seo-links";
+import { resolveSupplyCtaOverride } from "@/lib/supply-pages-config";
+import { resolveGscCityHeroDescription } from "@/lib/seo/gsc-city-seo-overrides";
 
 interface Props {
   city: CityConfig;
@@ -39,13 +41,34 @@ export default function CategoryHubPage({
   mapHref,
 }: Props) {
   const placeName = area?.name ?? city.name;
-  const supplyIntent = intentFromCategorySlug(category.slug);
-  const supplyCitySlug = city.slug;
-  const supplyAreaSlug = area?.slug;
   const path = area
     ? `/rentals/${city.countrySlug}/${city.slug}/${area.slug}/${category.slug}`
     : `/rentals/${city.countrySlug}/${city.slug}/${category.slug}`;
+  const supplyIntent = intentFromCategorySlug(category.slug);
+  const supplyCitySlug = city.slug;
+  const supplyAreaSlug = area?.slug;
+  const ctaOverride = resolveSupplyCtaOverride(path);
+  const ctaIntent = ctaOverride?.intent ?? supplyIntent;
+  const ctaCityName = ctaOverride?.cityName ?? city.name;
+  const ctaAreaName = ctaOverride?.areaName ?? area?.name;
+  const ctaCitySlug = ctaOverride?.citySlug ?? supplyCitySlug;
+  const ctaAreaSlug = ctaOverride?.areaSlug ?? supplyAreaSlug;
   const pageUrl = canonicalUrl(path);
+  const heroDescription =
+    resolveGscCityHeroDescription(city.slug, category.slug, area?.slug) ??
+    `Direct owner listings on the map — no broker. Browse ${category.pluralLabel.toLowerCase()} across ${placeName} and contact instantly.`;
+  const supplyLandingHref = getSupplyLandingHref({
+    citySlug: ctaCitySlug,
+    areaSlug: ctaAreaSlug,
+    categorySlug: category.slug,
+    intent: ctaIntent,
+  });
+  const supplyLinkLabel =
+    category.slug === "flats"
+      ? `List your flat in ${ctaCityName} free →`
+      : category.slug === "pg"
+        ? `List your PG in ${ctaAreaName ?? ctaCityName} free →`
+        : `List property in ${ctaCityName} free →`;
 
   const breadcrumbs = [
     { name: "Home", url: canonicalUrl("/") },
@@ -153,8 +176,7 @@ export default function CategoryHubPage({
             {category.pluralLabel} for rent in {placeName}
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-base">
-            Direct owner listings on the map — no broker. Browse {category.pluralLabel.toLowerCase()}{" "}
-            across {placeName} and contact instantly.
+            {heroDescription}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href={mapHref} className="rp-btn rp-btn-primary px-6 py-2.5">
@@ -169,13 +191,17 @@ export default function CategoryHubPage({
 
       <ListPropertyCTA
         variant="hero"
-        cityName={city.name}
-        areaName={area?.name}
+        cityName={ctaCityName}
+        areaName={ctaAreaName}
         categoryName={category.pluralLabel}
-        intent={supplyIntent}
+        intent={ctaIntent}
         browseHref={mapHref}
-        citySlug={supplyCitySlug}
-        areaSlug={supplyAreaSlug}
+        citySlug={ctaCitySlug}
+        areaSlug={ctaAreaSlug}
+        categorySlug={category.slug}
+        headlineOverride={ctaOverride?.headline}
+        bodyOverride={ctaOverride?.body}
+        supplyLandingHref={supplyLandingHref}
       />
 
       {listings.length > 0 && (
@@ -186,6 +212,21 @@ export default function CategoryHubPage({
       )}
 
       <SeoContentSections sections={sections} />
+
+      <ListPropertyCTA
+        variant="inline"
+        cityName={ctaCityName}
+        areaName={ctaAreaName}
+        categoryName={category.pluralLabel}
+        intent={ctaIntent}
+        browseHref={mapHref}
+        citySlug={ctaCitySlug}
+        areaSlug={ctaAreaSlug}
+        categorySlug={category.slug}
+        headlineOverride={ctaOverride?.headline}
+        bodyOverride={ctaOverride?.body}
+        supplyLandingHref={supplyLandingHref}
+      />
 
       <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/60 px-4 py-12">
         <div className="mx-auto max-w-4xl">
@@ -233,18 +274,37 @@ export default function CategoryHubPage({
       )}
 
       <SeoSupplyBlocks
-        cityName={city.name}
-        areaName={area?.name ?? city.name}
+        cityName={ctaCityName}
+        areaName={ctaAreaName ?? city.name}
         categoryName={category.pluralLabel}
-        citySlug={supplyCitySlug}
-        areaSlug={supplyAreaSlug}
-        intent={supplyIntent}
+        citySlug={ctaCitySlug}
+        areaSlug={ctaAreaSlug}
+        intent={ctaIntent}
         nearbyAreaLabels={city.popularAreas.slice(0, 6)}
         rentalTypes={category.subCategories.length ? category.subCategories : [category.pluralLabel]}
         lowListings={listings.length < 3}
         browseHref={mapHref}
         showHero={false}
+        showInline={false}
+        showBottom={false}
         showSticky={false}
+        headlineOverride={ctaOverride?.headline}
+        bodyOverride={ctaOverride?.body}
+      />
+
+      <ListPropertyCTA
+        variant="bottom"
+        cityName={ctaCityName}
+        areaName={ctaAreaName}
+        categoryName={category.pluralLabel}
+        intent={ctaIntent}
+        browseHref={mapHref}
+        citySlug={ctaCitySlug}
+        areaSlug={ctaAreaSlug}
+        categorySlug={category.slug}
+        headlineOverride={ctaOverride?.headline}
+        bodyOverride={ctaOverride?.body}
+        supplyLandingHref={supplyLandingHref}
       />
 
       <section className="mx-auto max-w-3xl px-4 py-10">
@@ -262,6 +322,19 @@ export default function CategoryHubPage({
       <section className="mx-auto max-w-4xl px-4 pb-16">
         <h2 className="text-sm font-semibold text-[var(--brand-navy)]">Related links</h2>
         <ul className="mt-3 flex flex-wrap gap-3">
+          <li>
+            <Link
+              href={supplyLandingHref}
+              data-cta="supply-landing-link"
+              data-cta-location="category-related"
+              data-city={ctaCitySlug}
+              data-area={ctaAreaSlug ?? ""}
+              data-intent={ctaIntent}
+              className="text-sm font-medium text-[var(--brand-orange)] hover:underline"
+            >
+              {supplyLinkLabel}
+            </Link>
+          </li>
           {spokes.map((s) => (
             <li key={s.href}>
               <Link href={s.href} className="text-sm text-[var(--brand-orange)] hover:underline">
@@ -274,9 +347,9 @@ export default function CategoryHubPage({
 
       <StickySeoCTA
         browseHref={mapHref}
-        citySlug={supplyCitySlug}
-        areaSlug={supplyAreaSlug}
-        intent={supplyIntent}
+        citySlug={ctaCitySlug}
+        areaSlug={ctaAreaSlug}
+        intent={ctaIntent}
         placeQuery={placeName}
       />
     </MarketingShell>

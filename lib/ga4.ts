@@ -125,4 +125,22 @@ export function trackListingShared(
   trackEvent("listing_shared", { listing_id: listingId, method });
 }
 
+export function trackSeoCtaClick(input: {
+  cta: string;
+  location?: string;
+  city?: string;
+  area?: string;
+  intent?: string;
+  href?: string;
+}): void {
+  trackEvent("seo_cta_click", {
+    cta_name: input.cta,
+    cta_location: input.location ?? input.cta,
+    ...(input.city ? { city_slug: input.city } : {}),
+    ...(input.area ? { area_slug: input.area } : {}),
+    ...(input.intent ? { supply_intent: input.intent } : {}),
+    ...(input.href ? { link_url: input.href } : {}),
+  });
+}
+
 export { gaMeasurementId };

@@ -5,6 +5,7 @@ export type SupplyIntent =
   | "property"
   | "pg"
   | "hostel"
+  | "flat"
   | "commercial"
   | "office"
   | "shop"
@@ -75,7 +76,7 @@ export function intentFromCategorySlug(slug: string): SupplyIntent {
     warehouses: "warehouse",
     commercial: "commercial",
     vehicles: "vehicle",
-    flats: "property",
+    flats: "flat",
     houses: "property",
   };
   return map[slug] ?? "property";
@@ -110,4 +111,44 @@ export function slugsFromRentalHubHref(hubHref: string): {
   if (rest.length === 1) return { citySlug: rest[0] };
   if (rest.length === 2) return { citySlug: rest[1] };
   return { citySlug: rest[1], areaSlug: rest[2] };
+}
+
+/** Owner supply landing page for a rental hub — used for internal links from SEO pages. */
+export function getSupplyLandingHref(options: {
+  citySlug?: string;
+  areaSlug?: string;
+  categorySlug?: string;
+  intent?: SupplyIntent;
+}): string {
+  const { citySlug, areaSlug, categorySlug, intent } = options;
+  const flatIntent = categorySlug === "flats" || intent === "flat";
+  const pgIntent = categorySlug === "pg" || intent === "pg" || intent === "hostel";
+
+  if (flatIntent) {
+    if (citySlug === "mohali" || areaSlug === "mohali") return appPath("/list-flat/mohali");
+    if (citySlug === "delhi") return appPath("/list-flat/delhi");
+    if (citySlug === "ludhiana") return appPath("/list-flat/ludhiana");
+  }
+
+  if (pgIntent) {
+    if (areaSlug === "chandigarh-university" || areaSlug === "kharar") {
+      return appPath("/list-pg/chandigarh-university");
+    }
+    if (citySlug === "mohali" || areaSlug === "mohali") return appPath("/list-pg/mohali");
+  }
+
+  if (categorySlug === "commercial" || intent === "commercial") {
+    return appPath("/list-commercial-property");
+  }
+  if (categorySlug === "offices" || intent === "office") return appPath("/list-office");
+  if (categorySlug === "shops" || intent === "shop") return appPath("/list-shop");
+  if (categorySlug === "warehouses" || intent === "warehouse") {
+    return appPath("/list-warehouse");
+  }
+
+  if (citySlug && ["mohali", "kharar", "delhi", "ludhiana"].includes(citySlug)) {
+    return appPath(`/list-property/${citySlug}`);
+  }
+
+  return appPath("/list-property");
 }

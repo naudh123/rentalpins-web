@@ -31,6 +31,7 @@ import {
   getListPropertyHref,
   slugsFromRentalHubHref,
 } from "@/lib/seo-links";
+import { resolveSupplyCtaOverride } from "@/lib/supply-pages-config";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -118,7 +119,10 @@ export default async function BlogPostPage({ params }: Props) {
   const blogListHref = getListPropertyHref({
     citySlug: hubSlugs.citySlug,
     areaSlug: hubSlugs.areaSlug,
+    intent: "pg",
   });
+  const blogCtaOverride = resolveSupplyCtaOverride(`/blog/${post.slug}`);
+  const blogIntent = blogCtaOverride?.intent ?? "pg";
 
   return (
     <MarketingShell>
@@ -197,12 +201,15 @@ export default async function BlogPostPage({ params }: Props) {
         {rentalHub ? <BlogRentalHubLink hub={rentalHub} /> : null}
         <ListPropertyCTA
           variant="blog"
-          cityName={blogCityName}
-          areaName={blogAreaName}
+          cityName={blogCtaOverride?.cityName ?? blogCityName}
+          areaName={blogCtaOverride?.areaName ?? blogAreaName}
+          intent={blogIntent}
           browseHref={blogBrowseHref}
           listHref={blogListHref}
-          citySlug={hubSlugs.citySlug}
-          areaSlug={hubSlugs.areaSlug}
+          citySlug={blogCtaOverride?.citySlug ?? hubSlugs.citySlug}
+          areaSlug={blogCtaOverride?.areaSlug ?? hubSlugs.areaSlug}
+          headlineOverride={blogCtaOverride?.headline}
+          bodyOverride={blogCtaOverride?.body}
         />
         <BlogTableOfContents entries={toc} />
         <div className="prose prose-lg prose-slate mt-10 max-w-none prose-headings:font-serif prose-headings:text-[#1E3A6E] prose-a:text-[#E8501A] prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-img:rounded-xl">
@@ -227,20 +234,24 @@ export default async function BlogPostPage({ params }: Props) {
         <BlogFaqSection faqs={post.faqs ?? []} />
         <ListPropertyCTA
           variant="bottom"
-          cityName={blogCityName}
-          areaName={blogAreaName}
+          cityName={blogCtaOverride?.cityName ?? blogCityName}
+          areaName={blogCtaOverride?.areaName ?? blogAreaName}
+          intent={blogIntent}
           browseHref={blogBrowseHref}
           listHref={blogListHref}
-          citySlug={hubSlugs.citySlug}
-          areaSlug={hubSlugs.areaSlug}
+          citySlug={blogCtaOverride?.citySlug ?? hubSlugs.citySlug}
+          areaSlug={blogCtaOverride?.areaSlug ?? hubSlugs.areaSlug}
+          headlineOverride={blogCtaOverride?.headline}
+          bodyOverride={blogCtaOverride?.body}
         />
         <BlogRelatedPosts posts={relatedPosts} />
       </article>
       <StickySeoCTA
         browseHref={blogBrowseHref}
         listHref={blogListHref}
-        citySlug={hubSlugs.citySlug}
-        areaSlug={hubSlugs.areaSlug}
+        citySlug={blogCtaOverride?.citySlug ?? hubSlugs.citySlug}
+        areaSlug={blogCtaOverride?.areaSlug ?? hubSlugs.areaSlug}
+        intent={blogIntent}
         placeQuery={rentalHub?.placeName}
       />
     </MarketingShell>

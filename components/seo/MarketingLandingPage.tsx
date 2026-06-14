@@ -119,6 +119,14 @@ export default function MarketingLandingPage({
         </section>
       )}
 
+      {config.benefits.length > 0 ? (
+        <ListPropertyCTA
+          variant="inline"
+          cityName={guidePlaceName ?? undefined}
+          intent={supplyIntent}
+        />
+      ) : null}
+
       {config.sections && config.sections.length > 0 && (
         <section
           aria-labelledby="marketing-seo-content-heading"
@@ -200,8 +208,11 @@ export default function MarketingLandingPage({
         cityName={guidePlaceName ?? undefined}
         intent={supplyIntent}
         showHero={false}
+        showInline={false}
         showSticky={false}
       />
+
+      <ListPropertyCTA variant="bottom" cityName={guidePlaceName ?? undefined} intent={supplyIntent} />
 
       <section className="mx-auto max-w-3xl px-4 py-12">
         <h2 className="rp-section-title text-center text-lg">FAQs</h2>
