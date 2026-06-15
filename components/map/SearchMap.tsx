@@ -81,6 +81,7 @@ export default function SearchMap({
   initialPrefixCapActive,
 }: Props) {
   const searchParams = useSearchParams();
+  const isSaleMode = searchParams.get("transaction") === "sale";
   const urlState = useMemo(
     () => parseSearchUrlState(searchParams),
     [searchParams]
@@ -613,6 +614,7 @@ export default function SearchMap({
     listPage,
     listTotalPages,
     ...placeSearchProps,
+    saleMode: isSaleMode,
     loading,
     refreshing,
     fetchError,
@@ -726,7 +728,10 @@ export default function SearchMap({
   }
 
   return (
-    <div className="relative flex rp-map-layout flex-col md:flex-row">
+    <div
+      className={`relative flex rp-map-layout flex-col md:flex-row${isSaleMode ? " sale-theme" : ""}`}
+      data-transaction={isSaleMode ? "sale" : undefined}
+    >
       <InAppBrowserNotice context="search" variant="compact" />
       <MapCanvas {...canvasProps} />
 

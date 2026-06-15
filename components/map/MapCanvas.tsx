@@ -86,6 +86,7 @@ export interface MapCanvasProps extends MapEmptySurfaceProps {
   onUseCurrentLocation: (result: PlaceSearchResult) => void;
   onAiSearch: (query: string) => void;
   onClearKeywords: () => void;
+  saleMode?: boolean;
   loading: boolean;
   refreshing?: boolean;
   fetchError: string;
@@ -161,6 +162,7 @@ export default function MapCanvas({
   onUseCurrentLocation,
   onAiSearch,
   onClearKeywords,
+  saleMode = false,
   loading,
   refreshing = false,
   fetchError,
@@ -347,7 +349,11 @@ export default function MapCanvas({
           onUseCurrentLocation={onUseCurrentLocation}
           disabled={loading}
         />
-        <AiSearchBar onSearch={onAiSearch} disabled={loading} />
+        <AiSearchBar
+          onSearch={onAiSearch}
+          disabled={loading}
+          variant={saleMode ? "sale" : "rent"}
+        />
         <MapKeywordChip keywords={textQuery} onClear={onClearKeywords} />
       </div>
 

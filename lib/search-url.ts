@@ -3,6 +3,7 @@ import {
   type ListingFilters,
   type ListingSort,
 } from "./listing-filters";
+import type { TransactionType } from "./transaction-type";
 import type { MapBounds } from "./types/saved-search";
 import { decodeMapArea, encodeMapArea, type MapAreaShape } from "./map-area";
 
@@ -37,6 +38,10 @@ export function parseSearchUrlState(
     return raw ?? null;
   };
 
+  const transactionRaw = get("transaction");
+  const transactionType: TransactionType =
+    transactionRaw === "sale" ? "sale" : DEFAULT_LISTING_FILTERS.transactionType;
+
   const category = get("category") || DEFAULT_LISTING_FILTERS.category;
   const sort = (get("sort") as ListingSort) || DEFAULT_LISTING_FILTERS.sort;
   const priceMin = parseNum(get("priceMin"));
@@ -67,6 +72,7 @@ export function parseSearchUrlState(
 
   return {
     filters: {
+      transactionType,
       category,
       subCategory,
       priceMin,
@@ -105,6 +111,9 @@ export function searchUrlQueryString(state: SearchUrlState): string {
   const { filters, centerLat, centerLng, zoom, bounds, placeQuery, keywords, selectedId, drawnArea } =
     state;
 
+  if (filters.transactionType && filters.transactionType !== "rent") {
+    p.set("transaction", filters.transactionType);
+  }
   if (filters.category && filters.category !== "All") {
     p.set("category", filters.category);
   }

@@ -1,4 +1,9 @@
 import type { ListingCard } from "./types/listing";
+import {
+  DEFAULT_TRANSACTION_TYPE,
+  listingMatchesTransaction,
+  type TransactionType,
+} from "./transaction-type";
 
 export type ListingSort =
   | "recommended"
@@ -7,6 +12,7 @@ export type ListingSort =
   | "newest";
 
 export interface ListingFilters {
+  transactionType: TransactionType;
   category: string;
   /** Optional subcategory refinement (e.g. "Apartments / Flats"). "" = any. */
   subCategory?: string;
@@ -22,6 +28,7 @@ export interface ListingFilters {
 }
 
 export const DEFAULT_LISTING_FILTERS: ListingFilters = {
+  transactionType: DEFAULT_TRANSACTION_TYPE,
   category: "All",
   subCategory: "",
   priceMin: null,
@@ -39,6 +46,10 @@ export function applyListingFilters(
   filters: ListingFilters
 ): ListingCard[] {
   let result = [...listings];
+
+  result = result.filter((l) =>
+    listingMatchesTransaction(l.transactionType, filters.transactionType)
+  );
 
   if (filters.category && filters.category !== "All") {
     result = result.filter(
@@ -129,6 +140,9 @@ export function appendListingFiltersToParams(
   params: URLSearchParams,
   filters: ListingFilters
 ): void {
+  if (filters.transactionType && filters.transactionType !== "rent") {
+    params.set("transaction", filters.transactionType);
+  }
   if (filters.category && filters.category !== "All") {
     params.set("category", filters.category);
   }
@@ -173,7 +187,12 @@ export function parseListingFiltersFromParams(
     return Number.isFinite(n) ? n : null;
   };
 
+  const transactionRaw = searchParams.get("transaction");
+  const transactionType: TransactionType =
+    transactionRaw === "sale" ? "sale" : DEFAULT_TRANSACTION_TYPE;
+
   return {
+    transactionType,
     category,
     subCategory: searchParams.get("sub") || "",
     priceMin: parseNum("priceMin"),
@@ -189,6 +208,7 @@ export function parseListingFiltersFromParams(
 
 export function countActiveFilters(filters: ListingFilters): number {
   let n = 0;
+  if (filters.transactionType !== "rent") n++;
   if (filters.category !== "All") n++;
   if (filters.subCategory) n++;
   if (filters.priceMin != null && filters.priceMin > 0) n++;

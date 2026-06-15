@@ -105,6 +105,21 @@ export const PRICE_UNITS = [
   "per year",
 ] as const;
 
+/** Sale listing price units — luxury buy vertical. */
+export const SALE_PRICE_UNITS = ["total", "per sqft", "per acre"] as const;
+
+/** Property subcategories offered when listing for sale. */
+export const SALE_PROPERTY_SUBCATEGORIES = [
+  "Apartments / Flats",
+  "House",
+  "Villas",
+  "Land",
+  "Shops",
+  "Showroom",
+  "Office Space",
+  "Warehouse",
+] as const;
+
 export function getSubCategories(main: string): string[] {
   return SUB_CATEGORIES[main] ?? ["Others"];
 }

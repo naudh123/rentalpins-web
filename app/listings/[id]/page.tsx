@@ -22,11 +22,13 @@ import RecentlyViewedRecorder from "@/components/listings/RecentlyViewedRecorder
 import ListingDetailViewTracker from "@/components/listings/ListingDetailViewTracker";
 import ListingMapLink from "@/components/listings/ListingMapLink";
 import RecentlyViewedRail from "@/components/listings/RecentlyViewedRail";
+import ListingIntelligencePanel from "@/components/listings/ListingIntelligencePanel";
 import {
   fetchListingById,
   fetchMoreFromOwner,
   fetchSimilarListingsNearby,
 } from "@/lib/listings";
+import { fetchSaleListingIntelligence } from "@/lib/sale/listing-comps";
 import { fetchListingReviewSummary } from "@/lib/listing-review-summary";
 import { fetchOwnerTrust } from "@/lib/owner-trust";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
@@ -75,7 +77,8 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
     const suffix = buildListingNavigationQuery(sp);
     permanentRedirect(appPath(`/listings/${canonicalSegment}${suffix}`));
   }
-  const [ownerTrust, similarListings, ownerListings, reviewSummary] =
+  const isSale = listing.transactionType === "sale";
+  const [ownerTrust, similarListings, ownerListings, reviewSummary, saleIntel] =
     await Promise.all([
       listing.ownerUid ? fetchOwnerTrust(listing.ownerUid) : Promise.resolve(null),
       fetchSimilarListingsNearby(listing, 4),
@@ -83,6 +86,7 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
         ? fetchMoreFromOwner(listing.ownerUid, listingId, 4)
         : Promise.resolve([]),
       fetchListingReviewSummary(listingId),
+      isSale ? fetchSaleListingIntelligence(listing, 4) : Promise.resolve(null),
     ]);
 
   const photoCount =
@@ -266,6 +270,17 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
           initialViews={listing.viewsCount}
           inquiryCount={listing.inquiryCount}
         />
+        {isSale && saleIntel && (saleIntel.band || saleIntel.comparables.length > 0) && (
+          <ListingIntelligencePanel
+            listingId={listingId}
+            listingPrice={listing.price}
+            priceUnit={listing.priceUnit}
+            homeIso={listing.homeIso}
+            band={saleIntel.band}
+            comparables={saleIntel.comparables}
+            areaName={listing.locationName}
+          />
+        )}
         <ListingOwnerTrust
           listingId={listingId}
           ownerTrust={ownerTrust}

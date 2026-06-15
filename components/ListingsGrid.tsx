@@ -18,16 +18,20 @@ const UNIT_SHORT: Record<string, string> = {
   "per week":  "/wk",
   "per month": "/mo",
   "per year":  "/yr",
+  total:       "",
+  "per sqft":  "/sqft",
+  "per acre":  "/acre",
 };
 
 interface ListingCard extends SeoListingCard {}
 
 /** Avoid misleading teasers when Firestore has bad/test values (e.g. ₹1/mo). */
-function formatPrice(price: number, priceUnit: string): string {
+function formatPrice(price: number, priceUnit: string, sale = false): string {
   const unit = (priceUnit || "").toLowerCase();
-  // Only flag implausible long-term rents; keep hourly/daily prices untouched
+  // Only flag implausible long-term rents; keep hourly/daily/sale prices untouched
   const longTerm =
-    unit.includes("month") || unit.includes("year") || unit.includes("week");
+    !sale &&
+    (unit.includes("month") || unit.includes("year") || unit.includes("week"));
   if (price > 0 && price < 500 && longTerm) {
     return "See price in app";
   }
@@ -51,12 +55,14 @@ function timeAgo(iso: string): string {
 function ListingCardItem({
   listing,
   fromUrl,
+  sale = false,
 }: {
   listing: ListingCard;
   fromUrl: string;
+  sale?: boolean;
 }) {
-  const unitSuffix = UNIT_SHORT[listing.priceUnit] || "";
-  const priceLine = formatPrice(listing.price, listing.priceUnit);
+  const unitSuffix = UNIT_SHORT[listing.priceUnit] ?? "";
+  const priceLine = formatPrice(listing.price, listing.priceUnit, sale);
   const showUnitSuffix = !priceLine.startsWith("See ");
   // Link directly to Flutter app with listing ID as query param.
   // Same tab (no target="_blank"). Flutter reads ?listing= and opens detail.
@@ -191,39 +197,49 @@ function ListingCardItem({
 export default function ListingsGrid({
   listings,
   areaName,
+  transactionType = "rent",
+  hideHeader = false,
 }: {
   listings: ListingCard[];
   areaName: string;
+  transactionType?: "rent" | "sale";
+  hideHeader?: boolean;
 }) {
   const pathname = usePathname();
   const fromUrl = pathname;
+  const sale = transactionType === "sale";
+  const listingLabel = sale ? "Properties for sale" : "Latest Rentals";
 
   if (!listings || listings.length === 0) {
     return (
       <section style={{
         maxWidth: 1200, margin: "0 auto",
-        padding: "48px 24px", textAlign: "center",
+        padding: hideHeader ? "0" : "48px 24px", textAlign: "center",
       }}>
-        <h2 style={{
-          fontFamily: "'Playfair Display', Georgia, serif",
-          fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 700,
-          color: BRAND.primary, marginBottom: 16,
-        }}>
-          Latest Rentals in {areaName}
-        </h2>
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif", fontSize: 15,
-          color: BRAND.muted, marginBottom: 24,
-        }}>
-          No listings yet in this area. Be the first to post!
-        </p>
+        {!hideHeader && (
+          <>
+            <h2 style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 700,
+              color: BRAND.primary, marginBottom: 16,
+            }}>
+              {listingLabel} in {areaName}
+            </h2>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontSize: 15,
+              color: BRAND.muted, marginBottom: 24,
+            }}>
+              No listings yet in this area. Be the first to post!
+            </p>
+          </>
+        )}
         <a href={HOMEPAGE_URL} style={{
           display: "inline-block",
           background: BRAND.accent, color: "#fff",
           padding: "12px 28px", borderRadius: 10,
           fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700,
           textDecoration: "none",
-        }}>Post Free Listing →</a>
+        }}>{sale ? "List for sale →" : "Post Free Listing →"}</a>
       </section>
     );
   }
@@ -231,29 +247,31 @@ export default function ListingsGrid({
   return (
     <section style={{
       maxWidth: 1200, margin: "0 auto",
-      padding: "48px 24px",
+      padding: hideHeader ? "0" : "48px 24px",
     }}>
-      <div style={{
-        display: "flex", justifyContent: "space-between",
-        alignItems: "center", marginBottom: 28,
-        flexWrap: "wrap" as const, gap: 12,
-      }}>
-        <h2 style={{
-          fontFamily: "'Playfair Display', Georgia, serif",
-          fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 700,
-          color: BRAND.primary,
+      {!hideHeader && (
+        <div style={{
+          display: "flex", justifyContent: "space-between",
+          alignItems: "center", marginBottom: 28,
+          flexWrap: "wrap" as const, gap: 12,
         }}>
-          Latest Rentals in {areaName}
-        </h2>
-        <a href={HOMEPAGE_URL} style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: 13, fontWeight: 600,
-          color: BRAND.accent, textDecoration: "none",
-          display: "flex", alignItems: "center", gap: 4,
-        }}>
-          View all on map →
-        </a>
-      </div>
+          <h2 style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            fontSize: "clamp(22px, 4vw, 32px)", fontWeight: 700,
+            color: BRAND.primary,
+          }}>
+            {listingLabel} in {areaName}
+          </h2>
+          <a href={HOMEPAGE_URL} style={{
+            fontFamily: "'DM Sans', sans-serif",
+            fontSize: 13, fontWeight: 600,
+            color: BRAND.accent, textDecoration: "none",
+            display: "flex", alignItems: "center", gap: 4,
+          }}>
+            View all on map →
+          </a>
+        </div>
+      )}
 
       <div style={{
         display: "grid",
@@ -261,33 +279,35 @@ export default function ListingsGrid({
         gap: 20,
       }}>
         {listings.map(listing => (
-          <ListingCardItem key={listing.id} listing={listing} fromUrl={fromUrl} />
+          <ListingCardItem key={listing.id} listing={listing} fromUrl={fromUrl} sale={sale} />
         ))}
       </div>
 
-      <div style={{
-        textAlign: "center", marginTop: 40,
-        padding: "32px 24px",
-        background: BRAND.surface,
-        borderRadius: 18,
-        border: `1px solid ${BRAND.border}`,
-        boxShadow: UI.shadowSoft,
-      }}>
-        <p style={{
-          fontFamily: "'DM Sans', sans-serif", fontSize: 15,
-          color: BRAND.text, marginBottom: 16,
+      {!hideHeader && (
+        <div style={{
+          textAlign: "center", marginTop: 40,
+          padding: "32px 24px",
+          background: BRAND.surface,
+          borderRadius: 18,
+          border: `1px solid ${BRAND.border}`,
+          boxShadow: UI.shadowSoft,
         }}>
-          Want to see more? Browse all {areaName} listings on the live map.
-        </p>
-        <a href={HOMEPAGE_URL} style={{
-          display: "inline-block",
-          background: BRAND.accent, color: "#fff",
-          padding: "12px 28px", borderRadius: 10,
-          fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700,
-          textDecoration: "none",
-          boxShadow: `0 4px 12px ${BRAND.accent}44`,
-        }}>🗺️ Browse Live Map</a>
-      </div>
+          <p style={{
+            fontFamily: "'DM Sans', sans-serif", fontSize: 15,
+            color: BRAND.text, marginBottom: 16,
+          }}>
+            Want to see more? Browse all {areaName} listings on the live map.
+          </p>
+          <a href={HOMEPAGE_URL} style={{
+            display: "inline-block",
+            background: BRAND.accent, color: "#fff",
+            padding: "12px 28px", borderRadius: 10,
+            fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 700,
+            textDecoration: "none",
+            boxShadow: `0 4px 12px ${BRAND.accent}44`,
+          }}>🗺️ Browse Live Map</a>
+        </div>
+      )}
     </section>
   );
 }

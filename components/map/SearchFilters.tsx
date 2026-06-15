@@ -10,11 +10,11 @@ import {
   TENANT_PREFERENCE_OPTIONS,
 } from "@/lib/categories";
 import {
-  DEFAULT_LISTING_FILTERS,
   countActiveFilters,
   type ListingFilters,
   type ListingSort,
 } from "@/lib/listing-filters";
+import { resetListingFilters } from "@/lib/listing-filter-reset";
 import { buildMapResultsCountInfo, type MapResultsCountInfo } from "@/lib/map-list-count";
 import { trackEvent } from "@/lib/ga4";
 
@@ -129,7 +129,7 @@ export default function SearchFilters({
       setExpanded(false);
       return;
     }
-    onChange(DEFAULT_LISTING_FILTERS);
+    onChange(resetListingFilters(filters.transactionType));
     setExpanded(false);
     trackEvent("filter_applied", {
       filter_name: "reset_all",
@@ -142,7 +142,13 @@ export default function SearchFilters({
       <div className="flex items-center justify-between gap-3 px-4 py-3">
         <div>
           <h2 className="rp-section-title">
-            {resultCount > 0 ? "Rental Listings" : "Listings"}
+            {filters.transactionType === "sale"
+              ? resultCount > 0
+                ? "Properties for sale"
+                : "Sale listings"
+              : resultCount > 0
+                ? "Rental Listings"
+                : "Listings"}
           </h2>
           <p className="text-xs text-[var(--muted)]" aria-live="off">
             {countInfo.headline}
@@ -267,6 +273,7 @@ export default function SearchFilters({
                     ))}
                   </select>
                 </div>
+                {filters.transactionType !== "sale" && (
                 <div>
                   <label className="rp-label">Tenant</label>
                   <select
@@ -282,6 +289,7 @@ export default function SearchFilters({
                     ))}
                   </select>
                 </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">

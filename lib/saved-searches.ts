@@ -14,6 +14,7 @@ import {
 } from "firebase/firestore";
 import { getClientDb } from "./firebase-client";
 import type { ListingSort } from "./listing-filters";
+import { DEFAULT_LISTING_FILTERS } from "./listing-filters";
 import type { SearchUrlState } from "./search-url";
 import { decodeMapArea, encodeMapArea } from "./map-area";
 import type { MapBounds, SaveSearchInput, SavedSearch } from "./types/saved-search";
@@ -278,6 +279,7 @@ export function subscribeSavedSearches(
 export function savedSearchToUrlState(search: SavedSearch): SearchUrlState {
   return {
     filters: {
+      transactionType: DEFAULT_LISTING_FILTERS.transactionType,
       category: search.category,
       subCategory: search.subCategory ?? "",
       priceMin: search.priceMin,

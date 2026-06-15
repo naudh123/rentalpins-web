@@ -19,6 +19,8 @@ export interface PriceMarkerStyle {
   selected?: boolean;
   highlighted?: boolean;
   promoted?: boolean;
+  /** Gold palette for sale listings on map. */
+  sale?: boolean;
 }
 
 const PIN_SHADOW_FILTER = `<filter id="pinShadow" x="-30%" y="-20%" width="160%" height="160%">
@@ -56,22 +58,34 @@ export function buildPriceMarkerIcon(
   style: PriceMarkerStyle,
   googleMaps: typeof google.maps
 ): google.maps.Icon {
-  const { selected = false, highlighted = false, promoted = false } = style;
+  const { selected = false, highlighted = false, promoted = false, sale = false } = style;
 
   const bg = selected
-    ? "#E8501A"
+    ? sale
+      ? "#C9A227"
+      : "#E8501A"
     : highlighted
-      ? "#2A4F8F"
+      ? sale
+        ? "#1E3A6E"
+        : "#2A4F8F"
       : promoted
         ? "#ffffff"
         : "#1E3A6E";
   const stroke = selected
-    ? "#D34415"
+    ? sale
+      ? "#B8922A"
+      : "#D34415"
     : highlighted
-      ? "#E8501A"
+      ? sale
+        ? "#C9A227"
+        : "#E8501A"
       : promoted
-        ? "#E8501A"
-        : "#0F2554";
+        ? sale
+          ? "#C9A227"
+          : "#E8501A"
+        : sale
+          ? "#C9A227"
+          : "#0F2554";
   const text = selected || highlighted ? "#ffffff" : promoted ? "#1E3A6E" : "#ffffff";
   const strokeWidth = selected ? 2.5 : highlighted || promoted ? 2 : 1.5;
   const baseW = Math.min(88, Math.max(44, priceLabel.length * 7 + 20));

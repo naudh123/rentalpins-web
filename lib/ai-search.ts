@@ -11,10 +11,11 @@ import {
   getSubCategories,
 } from "./categories";
 import {
-  DEFAULT_LISTING_FILTERS,
   type ListingFilters,
   type ListingSort,
 } from "./listing-filters";
+import type { TransactionType } from "./transaction-type";
+import { resetListingFilters } from "./listing-filter-reset";
 
 export interface ParsedSearch {
   filters: ListingFilters;
@@ -79,13 +80,54 @@ function allSubCategories(): string[] {
 }
 
 /**
+ * Merge Cloud Function filter output with the active transaction context.
+ * Sale mode always keeps transactionType=sale and Property category baseline.
+ */
+export function mergeAiSearchFilters(
+  partial: Partial<ListingFilters>,
+  transactionType: TransactionType = "rent"
+): ListingFilters {
+  const base = resetListingFilters(transactionType);
+  const f = partial;
+
+  return {
+    ...base,
+    category:
+      transactionType === "sale"
+        ? "Property"
+        : typeof f.category === "string"
+          ? f.category
+          : base.category,
+    subCategory: typeof f.subCategory === "string" ? f.subCategory : "",
+    priceMin: typeof f.priceMin === "number" ? f.priceMin : null,
+    priceMax: typeof f.priceMax === "number" ? f.priceMax : null,
+    sort: SORTS.includes(f.sort as ListingSort) ? (f.sort as ListingSort) : "recommended",
+    bhk: typeof f.bhk === "string" ? f.bhk : "",
+    furnishing: typeof f.furnishing === "string" ? f.furnishing : "",
+    tenantPreference:
+      transactionType === "sale"
+        ? ""
+        : typeof f.tenantPreference === "string"
+          ? f.tenantPreference
+          : "",
+    areaMin: typeof f.areaMin === "number" ? f.areaMin : null,
+    areaMax: typeof f.areaMax === "number" ? f.areaMax : null,
+    transactionType,
+  };
+}
+
+/**
  * Calls the `parseSearchQuery` Cloud Function (asia-south1) to turn a
  * natural-language query into structured listing filters + a place phrase.
  * The result is re-validated against the canonical option lists.
  */
-export async function parseSearchQuery(query: string): Promise<ParsedSearch> {
+export async function parseSearchQuery(
+  query: string,
+  transactionType: TransactionType = "rent"
+): Promise<ParsedSearch> {
   const data = (await parseSearchQueryCallable({
     query,
+    transactionType,
     categories: MAIN_CATEGORIES,
     subCategories: allSubCategories(),
     bhkOptions: BHK_OPTIONS,
@@ -98,21 +140,7 @@ export async function parseSearchQuery(query: string): Promise<ParsedSearch> {
     keywords?: string;
   };
 
-  const f = data.filters ?? {};
-
-  const filters: ListingFilters = {
-    ...DEFAULT_LISTING_FILTERS,
-    category: typeof f.category === "string" ? f.category : "All",
-    subCategory: typeof f.subCategory === "string" ? f.subCategory : "",
-    priceMin: typeof f.priceMin === "number" ? f.priceMin : null,
-    priceMax: typeof f.priceMax === "number" ? f.priceMax : null,
-    sort: SORTS.includes(f.sort as ListingSort) ? (f.sort as ListingSort) : "recommended",
-    bhk: typeof f.bhk === "string" ? f.bhk : "",
-    furnishing: typeof f.furnishing === "string" ? f.furnishing : "",
-    tenantPreference: typeof f.tenantPreference === "string" ? f.tenantPreference : "",
-    areaMin: typeof f.areaMin === "number" ? f.areaMin : null,
-    areaMax: typeof f.areaMax === "number" ? f.areaMax : null,
-  };
+  const filters = mergeAiSearchFilters(data.filters ?? {}, transactionType);
 
   return {
     filters,

@@ -4,6 +4,7 @@ import { isLikelyGeohashPrefixCapped } from "@/lib/geohash-bounds";
 import type { SavedSearch, MapBounds } from "@/lib/types/saved-search";
 import type { SearchAlert } from "@/lib/types/search-alert";
 import type { SearchUrlState } from "@/lib/search-url";
+import { DEFAULT_LISTING_FILTERS } from "@/lib/listing-filters";
 
 /** Minimum zoom for fuller geohash coverage on saved-search alerts. */
 export const SAVED_SEARCH_COVERAGE_ZOOM = 15;
@@ -47,6 +48,7 @@ export function savedSearchZoomInUrlState(search: SavedSearch): SearchUrlState {
   const zoom = Math.max(baseZoom, SAVED_SEARCH_COVERAGE_ZOOM);
   return {
     filters: {
+      transactionType: DEFAULT_LISTING_FILTERS.transactionType,
       category: search.category,
       subCategory: search.subCategory ?? "",
       priceMin: search.priceMin,

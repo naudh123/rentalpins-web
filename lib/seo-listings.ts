@@ -1,5 +1,6 @@
 import { adminDb } from "./firebase-admin";
 import type { AreaConfig } from "./area-config";
+import { listingMatchesTransaction, parseTransactionType } from "./transaction-type";
 
 export interface SeoListingCard {
   id: string;
@@ -51,7 +52,8 @@ function distanceKm(
 /** Active listings near an SEO area hub (geohash queries, same as production site). */
 export async function fetchAreaListings(
   area: AreaConfig,
-  limit = 20
+  limit = 20,
+  opts?: { transactionType?: "rent" | "sale" }
 ): Promise<SeoListingCard[]> {
   try {
     const listingsRef = adminDb.collection("listings");
@@ -75,6 +77,13 @@ export async function fetchAreaListings(
         if (seen.has(doc.id)) continue;
         seen.add(doc.id);
         const d = doc.data();
+        const tx = parseTransactionType(d.transactionType);
+        if (
+          opts?.transactionType &&
+          !listingMatchesTransaction(tx, opts.transactionType)
+        ) {
+          continue;
+        }
         const imageUrl = sanitizeListingImageUrl(
           d.imageThumbnails?.[0] ||
             d.imageIcons?.[0] ||

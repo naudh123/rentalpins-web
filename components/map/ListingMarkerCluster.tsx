@@ -82,6 +82,7 @@ function markerIcon(
       selected: listing.id === selectedId,
       highlighted: listing.id === highlightedId && listing.id !== selectedId,
       promoted: listing.isPromoted,
+      sale: listing.transactionType === "sale",
     },
     google.maps
   );

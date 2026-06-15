@@ -7,6 +7,7 @@ import {
 } from "./listing-filters";
 import type { ListingCard, ListingDetail, MapBounds } from "./types/listing";
 import { parseListingAttributes } from "./listing-attributes";
+import { parseTransactionType } from "./transaction-type";
 import {
   bonusLimitPerPrefix,
   capGeohashPrefixesNearCenter,
@@ -129,6 +130,7 @@ function docToCard(id: string, d: Record<string, unknown>): ListingCard | null {
     homeIso: str(d.homeIso) || str(d.iso) || undefined,
     attributes: parseListingAttributes(d),
     urlSlug: str(d.urlSlug) || undefined,
+    transactionType: parseTransactionType(d.transactionType),
     createdAt:
       (d.createdAt as { toDate?: () => Date })?.toDate?.()?.toISOString?.() ||
       new Date().toISOString(),
@@ -303,7 +305,11 @@ export async function fetchSimilarListingsNearby(
     west: listing.lng - lngRadius,
   };
 
-  const { listings } = await fetchListingsInBounds(bounds, DEFAULT_LISTING_FILTERS, {
+  const { listings } = await fetchListingsInBounds(bounds, {
+    ...DEFAULT_LISTING_FILTERS,
+    transactionType: listing.transactionType ?? "rent",
+    category: listing.category || DEFAULT_LISTING_FILTERS.category,
+  }, {
     limitPerPrefix: 20,
   });
   const candidates = listings

@@ -11,6 +11,7 @@ import { PLAY_STORE_URL } from "@/lib/site-links";
 
 const NAV = [
   { label: "Map search", href: appPath("/search") },
+  { label: "Buy", href: appPath("/buy") },
   { label: "Cities", href: appPath("/rentals") },
   { label: "Blog", href: appPath("/blog") },
   { label: "About", href: appPath("/about") },

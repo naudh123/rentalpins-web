@@ -2,9 +2,9 @@
 
 import { useCallback, type MutableRefObject } from "react";
 import {
-  DEFAULT_LISTING_FILTERS,
   type ListingFilters,
 } from "@/lib/listing-filters";
+import { resetListingFilters } from "@/lib/listing-filter-reset";
 import type { MapAreaShape } from "@/lib/map-area";
 import { trackEvent } from "@/lib/ga4";
 
@@ -56,9 +56,9 @@ export function useMapFilterActions({
 
   const clearFiltersOnly = useCallback(() => {
     if (activeFilterCount === 0) return;
-    handleFiltersChange(DEFAULT_LISTING_FILTERS);
+    handleFiltersChange(resetListingFilters(filtersRef.current.transactionType));
     trackEvent("map_filters_cleared", { source: "empty_state" });
-  }, [activeFilterCount, handleFiltersChange]);
+  }, [activeFilterCount, filtersRef, handleFiltersChange]);
 
   const clearKeywordsFromEmpty = useCallback(() => {
     if (!keywordsActive) return;

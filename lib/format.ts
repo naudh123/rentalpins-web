@@ -29,5 +29,10 @@ export function formatPrice(
       : { maximumFractionDigits: 0 }
   ).format(amount);
 
+  const unit = priceUnit.trim().toLowerCase();
+  if (unit === "total") return formatted;
+  if (unit === "per sqft") return `${formatted} / sq.ft`;
+  if (unit === "per acre") return `${formatted} / acre`;
+
   return `${formatted} ${priceUnit}`.trim();
 }

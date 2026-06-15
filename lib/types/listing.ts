@@ -1,3 +1,5 @@
+import type { TransactionType } from "@/lib/transaction-type";
+
 /** Firestore listing fields used by web (aligned with Android app — read-only contract). */
 
 export interface ListingGeoPoint {
@@ -55,6 +57,8 @@ export interface ListingDocument {
   /** SEO path segment set on activation (includes listing id suffix). */
   urlSlug?: string;
   searchableTitle?: string;
+  /** `rent` (default) or `sale` — add-only; omit on legacy rental docs. */
+  transactionType?: TransactionType;
 }
 
 export interface ListingCard {
@@ -79,6 +83,7 @@ export interface ListingCard {
   updatedAt: string;
   attributes?: ListingAttributes;
   urlSlug?: string;
+  transactionType?: TransactionType;
 }
 
 export interface ListingDetail extends ListingCard {

@@ -37,6 +37,7 @@ export function useMapPlaceSearch({
   mapRef,
   skipMapSyncRef,
   skipNextIdleFetchRef,
+  filtersRef,
   placeQueryRef,
   textQueryRef,
   selectedIdRef,
@@ -136,12 +137,14 @@ export function useMapPlaceSearch({
   const handleAiSearch = useCallback(
     async (query: string) => {
       try {
-        const parsed = await parseSearchQuery(query);
+        const transactionType = filtersRef.current.transactionType;
+        const parsed = await parseSearchQuery(query, transactionType);
         handleFiltersChange(parsed.filters);
         trackEvent("ai_search_applied", {
           category: parsed.filters.category,
           has_place: Boolean(parsed.placeText),
           has_keywords: Boolean(parsed.keywords),
+          transaction_type: transactionType,
         });
         setTextQuery(parsed.keywords);
         textQueryRef.current = parsed.keywords;
@@ -167,6 +170,7 @@ export function useMapPlaceSearch({
       }
     },
     [
+      filtersRef,
       flyToPlace,
       handleFiltersChange,
       lastKeywordSyncedRef,

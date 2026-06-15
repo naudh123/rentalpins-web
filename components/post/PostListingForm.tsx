@@ -22,12 +22,16 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import {
   MAIN_CATEGORIES,
   PRICE_UNITS,
+  SALE_PRICE_UNITS,
+  SALE_PROPERTY_SUBCATEGORIES,
   getSubCategories,
   isResidentialProperty,
   BHK_OPTIONS,
   FURNISHING_OPTIONS,
   TENANT_PREFERENCE_OPTIONS,
+  PROPERTY_CATEGORY,
 } from "@/lib/categories";
+import type { TransactionType } from "@/lib/transaction-type";
 import { parseListingAttributes } from "@/lib/listing-attributes";
 import { getClientDb } from "@/lib/firebase-client";
 import { getDocResilient } from "@/lib/firestore-fetch";
@@ -67,20 +71,38 @@ const POST_DATA_SOURCE = "client_live";
 
 interface Props {
   listingId?: string | null;
+  transactionType?: TransactionType;
 }
 
-export default function PostListingForm({ listingId = null }: Props) {
+export default function PostListingForm({
+  listingId = null,
+  transactionType = "rent",
+}: Props) {
+  const isSale = transactionType === "sale";
   const router = useRouter();
   const { user, profile, canPostListing, needsPhoneLink, profileError, isBlocked, refreshProfile } =
     useAuth();
   const isEditMode = Boolean(listingId);
 
   const [mainCategory, setMainCategory] = useState("Property");
-  const subCategories = useMemo(
-    () => getSubCategories(mainCategory),
-    [mainCategory]
+  const subCategories = useMemo(() => {
+    if (isSale && mainCategory === PROPERTY_CATEGORY) {
+      return [...SALE_PROPERTY_SUBCATEGORIES];
+    }
+    return getSubCategories(mainCategory);
+  }, [mainCategory, isSale]);
+  const [subCategory, setSubCategory] = useState(
+    isSale ? "Apartments / Flats" : "Room"
   );
-  const [subCategory, setSubCategory] = useState("Room");
+
+  useEffect(() => {
+    if (!isSale) return;
+    setMainCategory(PROPERTY_CATEGORY);
+    if (!SALE_PROPERTY_SUBCATEGORIES.includes(subCategory as (typeof SALE_PROPERTY_SUBCATEGORIES)[number])) {
+      setSubCategory("Apartments / Flats");
+    }
+    setPriceUnit("total");
+  }, [isSale, subCategory]);
 
   useEffect(() => {
     if (subCategories.includes(subCategory)) return;
@@ -95,7 +117,7 @@ export default function PostListingForm({ listingId = null }: Props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [priceUnit, setPriceUnit] = useState("per month");
+  const [priceUnit, setPriceUnit] = useState(isSale ? "total" : "per month");
   const [contactMobile, setContactMobile] = useState("+91 ");
   const [location, setLocation] = useState<PickedLocation | null>(null);
   const [photoSlots, setPhotoSlots] = useState<ListingPhotoSlot[]>([]);
@@ -720,6 +742,7 @@ export default function PostListingForm({ listingId = null }: Props) {
         originalDescription: preAiDescRef.current ?? trimmedDesc,
         price: parseFloat(price),
         priceUnit,
+        transactionType,
         category: mainCategory,
         subCategory,
         attributes,
@@ -817,10 +840,12 @@ export default function PostListingForm({ listingId = null }: Props) {
     <div className="mx-auto max-w-lg px-4 py-8 pb-24 md:pb-8">
       <p className="rp-badge">List on the map</p>
       <h1 className="mt-2 font-serif text-3xl text-[var(--brand-navy)]">
-        {isEditMode ? "Edit draft" : "Post a listing"}
+        {isEditMode ? "Edit draft" : isSale ? "List property for sale" : "Post a listing"}
       </h1>
       <p className="mt-2 text-sm text-[var(--muted)]">
-        {isEditMode
+        {isSale
+          ? "Curated owner-direct sale listing — add photos, location, and asking price. Buyers discover you on the RentalPins Buy map."
+          : isEditMode
           ? "Update your draft, then continue to activation and payment."
           : allowUnverifiedOwnerContact
             ? "Step 1: save draft with your WhatsApp number · Step 2: activate to go live. OTP verification is optional."
@@ -838,8 +863,9 @@ export default function PostListingForm({ listingId = null }: Props) {
             value={mainCategory}
             onChange={(e) => handleMainCategoryChange(e.target.value)}
             className="rp-input"
+            disabled={isSale}
           >
-            {MAIN_CATEGORIES.map((c) => (
+            {(isSale ? [PROPERTY_CATEGORY] : MAIN_CATEGORIES).map((c) => (
               <option key={c} value={c}>
                 {c}
               </option>
@@ -953,7 +979,7 @@ export default function PostListingForm({ listingId = null }: Props) {
               onChange={(e) => setPriceUnit(e.target.value)}
               className="rp-input !px-2 text-sm"
             >
-              {PRICE_UNITS.map((u) => (
+              {(isSale ? SALE_PRICE_UNITS : PRICE_UNITS).map((u) => (
                 <option key={u} value={u}>
                   {u}
                 </option>
@@ -1010,6 +1036,7 @@ export default function PostListingForm({ listingId = null }: Props) {
                   ))}
                 </select>
               </div>
+              {!isSale ? (
               <div>
                 <label className="rp-label">Tenant preference</label>
                 <select
@@ -1025,6 +1052,7 @@ export default function PostListingForm({ listingId = null }: Props) {
                   ))}
                 </select>
               </div>
+              ) : null}
             </div>
 
             <div className="grid grid-cols-2 gap-3">

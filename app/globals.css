@@ -31,6 +31,15 @@
   --radius-xl: 1.25rem;
   --shadow-card: 0 8px 32px -8px rgba(30, 58, 110, 0.1);
   --shadow-glow: 0 8px 28px -6px rgba(232, 80, 26, 0.35);
+
+  /* Sale / Buy luxury palette (champagne + ivory) */
+  --sale-gold: #c9a227;
+  --sale-gold-hover: #b8922a;
+  --sale-gold-muted: #e8dcc0;
+  --sale-ivory: #faf8f5;
+  --sale-ivory-elevated: #f5f2ec;
+  --sale-border: #e8e2d6;
+  --sale-muted: #7a6f5c;
 }
 
 @theme inline {
@@ -65,6 +74,49 @@ body {
     radial-gradient(ellipse 80% 60% at 50% -20%, rgba(30, 58, 110, 0.08), transparent),
     radial-gradient(ellipse 50% 40% at 100% 0%, rgba(232, 80, 26, 0.06), transparent),
     var(--bg);
+}
+
+/* ── RentalPins Buy — luxury sale theme ───────────────────── */
+.sale-theme,
+[data-transaction="sale"] {
+  --bg: var(--sale-ivory);
+  --bg-elevated: var(--sale-ivory-elevated);
+  --surface: #fffefb;
+  --surface-hover: var(--sale-ivory-elevated);
+  --border: var(--sale-border);
+  --border-subtle: #efe9df;
+  --muted: var(--sale-muted);
+  --brand-orange: var(--sale-gold);
+  --brand-orange-hover: var(--sale-gold-hover);
+  --accent: var(--sale-gold);
+  --accent-dim: var(--sale-gold-hover);
+  --accent-fg: var(--brand-navy);
+  --shadow-glow: 0 10px 32px -8px rgba(201, 162, 39, 0.45);
+}
+
+.sale-theme .rp-gradient-hero,
+[data-transaction="sale"] .rp-gradient-hero {
+  background:
+    radial-gradient(ellipse 85% 55% at 50% -15%, rgba(30, 58, 110, 0.1), transparent),
+    radial-gradient(ellipse 45% 35% at 100% 0%, rgba(201, 162, 39, 0.12), transparent),
+    var(--bg);
+}
+
+.sale-theme .rp-btn-primary,
+[data-transaction="sale"] .rp-btn-primary {
+  background: linear-gradient(135deg, var(--sale-gold) 0%, var(--sale-gold-hover) 100%);
+  color: var(--brand-navy);
+  box-shadow: var(--shadow-glow);
+}
+
+.sale-theme .rp-card-interactive:hover,
+[data-transaction="sale"] .rp-card-interactive:hover {
+  border-color: color-mix(in srgb, var(--sale-gold) 40%, var(--border));
+}
+
+.sale-theme ::selection,
+[data-transaction="sale"] ::selection {
+  background: color-mix(in srgb, var(--sale-gold) 28%, transparent);
 }
 
 .rp-glass {

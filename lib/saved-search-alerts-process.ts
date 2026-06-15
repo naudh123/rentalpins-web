@@ -127,6 +127,7 @@ function boundsForSavedSearch(search: SavedSearchRecord): MapBounds | null {
 
 function filtersForSavedSearch(search: SavedSearchRecord): ListingFilters {
   return {
+    transactionType: DEFAULT_LISTING_FILTERS.transactionType,
     category: search.category || DEFAULT_LISTING_FILTERS.category,
     subCategory: search.subCategory ?? "",
     priceMin: search.priceMin,
