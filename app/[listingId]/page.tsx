@@ -8,6 +8,7 @@ import {
   listingShareDescription,
 } from "@/lib/listing-share";
 import { listingPublicPathFromCard } from "@/lib/listing-path";
+import { buildListingNavigationQuery } from "@/lib/listing-canonical";
 
 interface Props {
   params: Promise<{ listingId: string }>;
@@ -63,10 +64,6 @@ export default async function LegacyListingPage({ params, searchParams }: Props)
   if (!listing) notFound();
 
   const sp = await searchParams;
-  const qs = new URLSearchParams();
-  for (const [key, value] of Object.entries(sp)) {
-    if (typeof value === "string") qs.set(key, value);
-  }
-  const suffix = qs.toString() ? `?${qs.toString()}` : "";
+  const suffix = buildListingNavigationQuery(sp);
   permanentRedirect(appPath(`${listingPublicPathFromCard(listing)}${suffix}`));
 }

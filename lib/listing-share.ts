@@ -6,6 +6,7 @@ import {
   listingPublicPath,
   listingPublicPathFromCard,
 } from "@/lib/listing-path";
+import { listingCanonicalAbsoluteUrl } from "@/lib/listing-canonical";
 import type { ListingSlugInput } from "@/lib/listing-slug";
 
 export const LISTING_OG_WIDTH = 1200;
@@ -17,14 +18,14 @@ function listingPath(listing: ListingSlugInput | ListingDetail): string {
     : listingPublicPath(listing);
 }
 
-/** Public listing URL — absolute, slug path when listing fields are available. */
+/** Absolute canonical listing URL — full SEO slug when listing object is provided. */
 export function listingCanonicalUrl(
   listingOrId: string | ListingSlugInput | ListingDetail
 ): string {
   if (typeof listingOrId === "string") {
     return `${publicSiteUrl()}${appPath(`/listings/${listingOrId}`)}`;
   }
-  return `${publicSiteUrl()}${listingPath(listingOrId)}`;
+  return listingCanonicalAbsoluteUrl(listingOrId);
 }
 
 /** Path to dynamic OG image (resolved via metadataBase). */
@@ -55,6 +56,7 @@ export function listingShareMetadata(listing: ListingDetail): Metadata {
     title,
     description,
     alternates: { canonical },
+    robots: { index: true, follow: true },
     openGraph: {
       title,
       description,

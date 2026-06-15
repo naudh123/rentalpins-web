@@ -19,12 +19,7 @@ export default function ListingRelatedListingCard({
 }: Props) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const returnPath = sourceListingId
-    ? appPath(`/listings/${sourceListingId}`)
-    : (() => {
-        const qs = searchParams.toString();
-        return `${pathname}${qs ? `?${qs}` : ""}`;
-      })();
+  const returnPath = pathname;
 
   return (
     <div

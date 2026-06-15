@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { getCityBySlug, RENTAL_COUNTRY_SLUGS } from "@/lib/cities-config";
 import { LEGACY_BLOG_SLUGS } from "@/lib/blog-legacy";
 import { isIndianGscRentalPath } from "@/lib/rental-area-config";
+import { normalizeListingRequestUrl } from "@/lib/listing-url-normalize";
 
 /** Indexed legacy paths → canonical (308 permanent). */
 const LEGACY_PATH_REDIRECTS: Record<string, string> = {
@@ -51,6 +52,21 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const decoded = decodePath(pathname);
 
+  const listingNorm = normalizeListingRequestUrl(request);
+  if (listingNorm) {
+    const url = request.nextUrl.clone();
+    url.pathname = listingNorm.pathname;
+    url.search = listingNorm.search;
+    return NextResponse.redirect(url, 301);
+  }
+
+  const legacyTarget = LEGACY_PATH_REDIRECTS[decoded];
+  if (legacyTarget) {
+    const url = request.nextUrl.clone();
+    url.pathname = legacyTarget;
+    return NextResponse.redirect(url, 308);
+  }
+
   const configuredBase =
     process.env.NEXT_PUBLIC_BASE_PATH?.replace(/\/$/, "") || "";
 
@@ -59,13 +75,6 @@ export function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = decoded.slice("/staging".length) || "/";
     return NextResponse.redirect(url);
-  }
-
-  const legacyTarget = LEGACY_PATH_REDIRECTS[decoded];
-  if (legacyTarget) {
-    const url = request.nextUrl.clone();
-    url.pathname = legacyTarget;
-    return NextResponse.redirect(url, 308);
   }
 
   if (decoded.startsWith("/blog/")) {

@@ -38,7 +38,7 @@ describe("intentFromCategorySlug", () => {
     expect(intentFromCategorySlug("shops")).toBe("shop");
     expect(intentFromCategorySlug("offices")).toBe("office");
     expect(intentFromCategorySlug("warehouses")).toBe("warehouse");
-    expect(intentFromCategorySlug("flats")).toBe("property");
+    expect(intentFromCategorySlug("flats")).toBe("flat");
   });
 
   it("defaults to property", () => {

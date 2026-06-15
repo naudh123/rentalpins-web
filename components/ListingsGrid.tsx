@@ -4,6 +4,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BRAND, UI } from "@/lib/brand";
 import { listingPublicPath } from "@/lib/listing-path";
+import { listingToSlugInput } from "@/lib/listing-path";
+import type { SeoListingCard } from "@/lib/seo-listings";
 
 // ─── Listing cards link to canonical SEO slug URLs (never app.rentalpins.com) ─
 
@@ -18,21 +20,7 @@ const UNIT_SHORT: Record<string, string> = {
   "per year":  "/yr",
 };
 
-interface ListingCard {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  priceUnit: string;
-  category: string;
-  subCategory: string;
-  locationName: string;
-  imageUrl: string;
-  isPromoted: boolean;
-  viewsCount: number;
-  inquiryCount: number;
-  createdAt: string;
-}
+interface ListingCard extends SeoListingCard {}
 
 /** Avoid misleading teasers when Firestore has bad/test values (e.g. ₹1/mo). */
 function formatPrice(price: number, priceUnit: string): string {
@@ -72,15 +60,7 @@ function ListingCardItem({
   const showUnitSuffix = !priceLine.startsWith("See ");
   // Link directly to Flutter app with listing ID as query param.
   // Same tab (no target="_blank"). Flutter reads ?listing= and opens detail.
-  const detailUrl = `${listingPublicPath({
-    id: listing.id,
-    title: listing.title,
-    locationName: listing.locationName,
-    lat: 0,
-    lng: 0,
-    category: listing.category,
-    subCategory: listing.subCategory,
-  })}?from=${encodeURIComponent(fromUrl)}`;
+  const detailUrl = `${listingPublicPath(listingToSlugInput(listing))}?from=${encodeURIComponent(fromUrl)}`;
 
   return (
     <a

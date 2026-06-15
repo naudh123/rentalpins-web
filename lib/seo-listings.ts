@@ -17,6 +17,7 @@ export interface SeoListingCard {
   viewsCount: number;
   inquiryCount: number;
   createdAt: string;
+  urlSlug?: string;
 }
 
 function sanitizeListingImageUrl(raw: unknown): string {
@@ -108,6 +109,7 @@ export async function fetchAreaListings(
           inquiryCount: d.inquiryCount || 0,
           createdAt:
             d.createdAt?.toDate?.()?.toISOString?.() || new Date().toISOString(),
+          urlSlug: typeof d.urlSlug === "string" ? d.urlSlug : undefined,
           _distance: distance,
         });
       }

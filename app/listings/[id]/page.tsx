@@ -39,6 +39,10 @@ import {
   extractListingIdFromSlugParam,
 } from "@/lib/listing-slug";
 import { listingToSlugInput } from "@/lib/listing-path";
+import {
+  buildListingNavigationQuery,
+  listingCanonicalSegment,
+} from "@/lib/listing-canonical";
 import { buildListingBreadcrumbs } from "@/lib/listing-breadcrumbs";
 import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
 import ListingActions from "./ListingActions";
@@ -65,14 +69,10 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
   const listing = await fetchListingById(listingId);
   if (!listing) notFound();
 
-  const canonicalSegment = buildListingSlugSegment(listingToSlugInput(listing));
+  const canonicalSegment = listingCanonicalSegment(listingToSlugInput(listing));
   if (slugParam !== canonicalSegment) {
     const sp = await searchParams;
-    const qs = new URLSearchParams();
-    for (const [key, value] of Object.entries(sp)) {
-      if (typeof value === "string") qs.set(key, value);
-    }
-    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    const suffix = buildListingNavigationQuery(sp);
     permanentRedirect(appPath(`/listings/${canonicalSegment}${suffix}`));
   }
   const [ownerTrust, similarListings, ownerListings, reviewSummary] =

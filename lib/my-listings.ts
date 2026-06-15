@@ -14,6 +14,9 @@ export interface OwnerListing {
   inquiryCount: number;
   homeIso?: string;
   createdAtMs: number;
+  lat?: number;
+  lng?: number;
+  urlSlug?: string;
 }
 
 function str(v: unknown, fallback = ""): string {
@@ -58,6 +61,10 @@ export function parseOwnerListing(
       ? data.createdAtMs
       : createdAt?.toMillis?.() ?? 0;
 
+  const geopoint = data.position as { geopoint?: { latitude?: number; longitude?: number } } | undefined;
+  const lat = geopoint?.geopoint?.latitude ?? 0;
+  const lng = geopoint?.geopoint?.longitude ?? 0;
+
   return {
     id,
     title,
@@ -72,5 +79,8 @@ export function parseOwnerListing(
     inquiryCount: num(data.inquiryCount),
     homeIso: str(data.homeIso) || str(data.iso) || undefined,
     createdAtMs,
+    lat,
+    lng,
+    urlSlug: str(data.urlSlug) || undefined,
   };
 }
