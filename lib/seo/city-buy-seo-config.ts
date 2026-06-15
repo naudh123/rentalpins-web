@@ -56,13 +56,23 @@ const BUY_SEO: Record<string, CityBuySEOConfig> = {
         href: appPath(buyAreaPath("in", "chandigarh", "mohali")),
       },
       {
+        name: "Aerocity & GMADA sectors (82, 88)",
+        description: "Fast-growing airport-road and New Chandigarh corridors — newer inventory.",
+        href: appPath(buyPagePath("mohali", "aerocity")),
+      },
+      {
+        name: "New Chandigarh (Mullanpur)",
+        description: "GMADA Sectors 105–120 — premium plotted and villa inventory.",
+        href: appPath(buyPagePath("mohali", "new-chandigarh")),
+      },
+      {
         name: "Kharar & CU belt",
         description: "Affordable flats and plots near Chandigarh University — investor and end-user demand.",
         href: appPath(buyAreaPath("in", "chandigarh", "kharar")),
       },
       {
         name: "Zirakpur border belt",
-        description: "Larger homes and builder floors for families commuting to Chandigarh.",
+        description: "Dhakoli and Gazipur — larger homes for Chandigarh commuters.",
         href: appPath(buyAreaPath("in", "chandigarh", "zirakpur")),
       },
       {
@@ -103,18 +113,34 @@ const BUY_SEO: Record<string, CityBuySEOConfig> = {
     ],
     bestAreas: [
       {
+        name: "Aerocity & IT City",
+        description: "Fastest-growing employment corridor — newer flats near airport road.",
+        href: appPath(buyPagePath("mohali", "aerocity")),
+      },
+      {
         name: "Phase 7 & Phase 9",
         description: "Established societies with strong family flat and villa inventory.",
         href: appPath(buyPagePath("mohali", "phase-7")),
       },
       {
+        name: "Phase 11",
+        description: "Developing society belt with newer inventory vs inner phases.",
+        href: appPath(buyPagePath("mohali", "phase-11")),
+      },
+      {
+        name: "Sector 82 & 88 (GMADA)",
+        description: "New GMADA sectors linking Aerocity to New Chandigarh.",
+        href: appPath(buyPagePath("mohali", "sector-82")),
+      },
+      {
+        name: "New Chandigarh (Mullanpur)",
+        description: "GMADA Sectors 105–120 — browse sector pages or the New Chandigarh hub.",
+        href: appPath(buyPagePath("mohali", "new-chandigarh")),
+      },
+      {
         name: "Sector 70",
         description: "Mid-budget 2–3 BHK flats with Zirakpur connectivity.",
         href: appPath(buyPagePath("mohali", "sector-70")),
-      },
-      {
-        name: "IT Park & Aerocity",
-        description: "Professional buyer demand near major employment hubs.",
       },
       {
         name: "Sector 67",
@@ -158,15 +184,51 @@ const BUY_SEO: Record<string, CityBuySEOConfig> = {
     key: k("in", "chandigarh", "kharar"),
     placeName: "Kharar",
     intro: [
-      "Kharar offers Tricity's most affordable entry points — flats and plots along the CU belt and Kharar town. First-time buyers and investors compare pins before site visits.",
-      "RentalPins Buy Kharar maps owner-direct sale listings with campus-adjacent shortcuts.",
+      "Kharar offers Tricity's most affordable entry points — flats and plots along the CU belt, Kharar town, and the fast-growing Kharar–Banur Road GMADA corridor.",
+      "RentalPins Buy Kharar maps owner-direct sale listings with corridor shortcuts — Kharar to CU, Kharar to Kurali, Kurali to Siswan, and the Kharar–Banur GMADA belt.",
     ],
     bestAreas: [
+      {
+        name: "Kharar to Chandigarh University",
+        description: "Kharar town to CU campus — flats and plots on the main student corridor.",
+        href: appPath(buyPagePath("kharar", "kharar-to-cu")),
+      },
+      {
+        name: "Kharar to Kurali",
+        description: "Northwest corridor from Kharar — affordable plots and builder floors.",
+        href: appPath(buyPagePath("kharar", "kharar-to-kurali")),
+      },
+      {
+        name: "Kurali to Siswan",
+        description: "Fringe belt beyond Kurali — larger plots and farmhouse inventory.",
+        href: appPath(buyPagePath("kharar", "kurali-to-siswan")),
+      },
+      {
+        name: "Kharar–Banur Road (GMADA belt)",
+        description: "Sector 112–119 and 125–127 — Tricity's fastest-growing sale corridor east of Kharar.",
+        href: appPath(buyPagePath("kharar", "kharar-banur-road")),
+      },
+      {
+        name: "Sector 117 & 119",
+        description: "High-demand mid-corridor sectors on the Banur road belt.",
+        href: appPath(buyPagePath("kharar", "sector-117")),
+      },
+      {
+        name: "Sector 126 & 125",
+        description: "Kharar-gateway GMADA sectors where town meets the Banur road belt.",
+        href: appPath(buyPagePath("kharar", "sector-126")),
+      },
       {
         name: "Chandigarh University belt",
         description: "Campus-adjacent flats and plots — see dedicated CU buy page.",
         href: appPath(buyPagePath("kharar", "chandigarh-university")),
       },
+      {
+        name: "Landran & Sector 112",
+        description: "College and industrial belt junction on Kharar–Banur Road.",
+        href: appPath(buyPagePath("kharar", "sector-112")),
+      },
+      { name: "Banur", description: "Eastern corridor end — plots and independent homes.", href: appPath(buyPagePath("kharar", "banur")) },
       { name: "Kharar town", description: "Mixed flat and plot inventory near bus stand and markets." },
     ],
     averagePrice: [
@@ -247,4 +309,14 @@ export function getBuyMoneyPageSitemapPaths(): string[] {
     if (parts.length === 2) return `/buy/${parts[0]}/${parts[1]}`;
     return `/buy/${parts[0]}/${parts[1]}/${parts[2]}`;
   });
+}
+
+/** Params for /buy/{country}/{city} routed via [hub]/[area]. */
+export function getBuyCityMoneyPageParams(): { hub: string; area: string }[] {
+  return listCityBuySeoConfigKeys()
+    .filter((key) => key.split("/").length === 2)
+    .map((key) => {
+      const [hub, area] = key.split("/");
+      return { hub: hub!, area: area! };
+    });
 }

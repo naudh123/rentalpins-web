@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import ListingsGrid from "@/components/ListingsGrid";
 import FAQSchema from "@/components/seo/FAQSchema";
 import CityBuySeoContent from "@/components/seo/CityBuySeoContent";
-import SaleShell from "@/components/sale/SaleShell";
 import {
   getAllAreas,
   getAreaBySlug,
@@ -11,11 +10,10 @@ import {
 } from "@/lib/cities-config";
 import { getAreaConfig } from "@/lib/area-config";
 import { canonicalUrl } from "@/lib/seo";
-import { getCityBuySeoConfig } from "@/lib/seo/city-buy-seo-config";
+import { getCityBuySeoConfig, listCityBuySeoConfigKeys } from "@/lib/seo/city-buy-seo-config";
 import { buyAreaPath } from "@/lib/sale/buy-pages-config";
 import { fetchAreaListings } from "@/lib/seo-listings";
 import { appPath, siteUrl } from "@/lib/config";
-import { listCityBuySeoConfigKeys } from "@/lib/seo/city-buy-seo-config";
 
 const BUY_AREA_SLUGS = new Set(
   listCityBuySeoConfigKeys()
@@ -26,29 +24,29 @@ const BUY_AREA_SLUGS = new Set(
 export function generateStaticParams() {
   return getAllAreas()
     .filter(
-      (area) =>
-        area.parentCountrySlug === "in" &&
-        area.parentSlug === "chandigarh" &&
-        BUY_AREA_SLUGS.has(area.slug)
+      (row) =>
+        row.parentCountrySlug === "in" &&
+        row.parentSlug === "chandigarh" &&
+        BUY_AREA_SLUGS.has(row.slug)
     )
-    .map((area) => ({
-      country: area.parentCountrySlug,
-      city: area.parentSlug,
-      area: area.slug,
+    .map((row) => ({
+      hub: row.parentCountrySlug,
+      area: row.parentSlug,
+      locality: row.slug,
     }));
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ country: string; city: string; area: string }>;
+  params: Promise<{ hub: string; area: string; locality: string }>;
 }): Promise<Metadata> {
-  const { country, city, area } = await params;
-  const seo = getCityBuySeoConfig(country, city, area);
-  const result = getAreaBySlug(country, city, area);
+  const { hub, area, locality } = await params;
+  const seo = getCityBuySeoConfig(hub, area, locality);
+  const result = getAreaBySlug(hub, area, locality);
   if (!seo || !result) return { title: "Buy property | RentalPins" };
 
-  const path = buyAreaPath(country, city, area);
+  const path = buyAreaPath(hub, area, locality);
   const canonical = `${siteUrl}${appPath(path)}`;
   return {
     title: `Property for sale in ${result.area.name} | RentalPins Buy`,
@@ -66,25 +64,26 @@ export async function generateMetadata({
 
 export const revalidate = 7200;
 
+/** Long-form money pages: /buy/in/chandigarh/mohali */
 export default async function BuyMoneyAreaPage({
   params,
 }: {
-  params: Promise<{ country: string; city: string; area: string }>;
+  params: Promise<{ hub: string; area: string; locality: string }>;
 }) {
-  const { country, city, area } = await params;
+  const { hub, area, locality } = await params;
 
-  if (!RENTAL_COUNTRY_SLUGS.includes(country as (typeof RENTAL_COUNTRY_SLUGS)[number])) {
+  if (!RENTAL_COUNTRY_SLUGS.includes(hub as (typeof RENTAL_COUNTRY_SLUGS)[number])) {
     notFound();
   }
 
-  const result = getAreaBySlug(country, city, area);
-  const seoConfig = getCityBuySeoConfig(country, city, area);
+  const result = getAreaBySlug(hub, area, locality);
+  const seoConfig = getCityBuySeoConfig(hub, area, locality);
   if (!result || !seoConfig) notFound();
 
   const { area: areaMeta } = result;
   let listings: Awaited<ReturnType<typeof fetchAreaListings>> = [];
   try {
-    const areaConfig = getAreaConfig(city, area);
+    const areaConfig = getAreaConfig(area, locality);
     if (areaConfig) {
       listings = await fetchAreaListings(areaConfig, 20, { transactionType: "sale" });
     }
@@ -92,10 +91,10 @@ export default async function BuyMoneyAreaPage({
     console.error("BuyMoneyAreaPage listings fetch failed:", err);
   }
 
-  const pageUrl = canonicalUrl(buyAreaPath(country, city, area));
+  const pageUrl = canonicalUrl(buyAreaPath(hub, area, locality));
 
   return (
-    <SaleShell>
+    <>
       <FAQSchema
         faqs={seoConfig.faq.map((f) => ({ question: f.q, answer: f.a }))}
       />
@@ -127,6 +126,6 @@ export default async function BuyMoneyAreaPage({
           }),
         }}
       />
-    </SaleShell>
+    </>
   );
 }

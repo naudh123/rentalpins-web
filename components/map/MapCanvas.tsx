@@ -1,6 +1,6 @@
 "use client";
 
-import type { RefObject } from "react";
+import { useMemo, useEffect, type RefObject } from "react";
 import { AnimatePresence } from "framer-motion";
 import { GoogleMap } from "@react-google-maps/api";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
@@ -8,7 +8,11 @@ import type { MapAreaShape } from "@/lib/map-area";
 import type { MapViewMode } from "@/lib/map-view-mode";
 import { MAP_SATELLITE_AUTO_ZOOM } from "@/lib/map-view-mode";
 import type { MapPinLabelTier } from "@/lib/map-zoom-tier";
-import { MAP_ROADMAP_BACKGROUND, SILVER_MAP_OPTIONS, applyMapViewSurface } from "@/lib/map-styles";
+import {
+  applyMapViewSurface,
+  buildMapOptions,
+  resolveMapRoadmapBackground,
+} from "@/lib/map-styles";
 import { DEFAULT_MAP_ZOOM } from "@/lib/map-viewport";
 import type { SearchUrlState } from "@/lib/search-url";
 import { loadPersistedMapView } from "@/lib/map-last-view";
@@ -176,18 +180,29 @@ export default function MapCanvas({
   onMobileViewChange,
 }: MapCanvasProps) {
   const mapContainerStyle = { width: "100%", height: "100%" };
+  const mapTransaction = saleMode ? "sale" : "rent";
+  const mapOptions = useMemo(
+    () => buildMapOptions(mapTransaction),
+    [mapTransaction]
+  );
+  const mapBackground = resolveMapRoadmapBackground(mapTransaction);
   const showEmptyOverlay = showMapEmpty && mobileView !== "list";
   const showPeekEmptyHint = showEmptyPeekHint && mobileView === "peek";
+
+  useEffect(() => {
+    if (!mapInstance) return;
+    applyMapViewSurface(mapInstance, mapViewMode, mapZoom, mapTransaction);
+  }, [mapInstance, mapViewMode, mapZoom, mapTransaction]);
 
   return (
     <div
       ref={mapRegionRef}
       tabIndex={0}
       role="application"
-      aria-label="Interactive rental map"
+      aria-label={saleMode ? "Interactive property sale map" : "Interactive rental map"}
       aria-describedby="map-keyboard-help"
       className="relative z-0 min-h-[60vh] min-w-0 flex-1 overflow-hidden border-[var(--border)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-orange)] focus-visible:ring-offset-2 md:min-h-0 md:border-r"
-      style={{ backgroundColor: MAP_ROADMAP_BACKGROUND }}
+      style={{ backgroundColor: mapBackground }}
     >
       <p id="map-keyboard-help" className="sr-only">
         Press M to focus the map. Use arrow keys to browse listing pins, Enter to open the
@@ -201,7 +216,7 @@ export default function MapCanvas({
         mapContainerStyle={mapContainerStyle}
         center={initialMapView.center}
         zoom={initialMapView.zoom}
-        options={SILVER_MAP_OPTIONS}
+        options={mapOptions}
         onLoad={(map) => {
           mapRef.current = map;
           onMapInstance(map);
@@ -235,7 +250,7 @@ export default function MapCanvas({
             }
           }
           syncViewFromMap(map);
-          applyMapViewSurface(map, mapViewMode, map.getZoom() ?? DEFAULT_ZOOM);
+          applyMapViewSurface(map, mapViewMode, map.getZoom() ?? DEFAULT_ZOOM, mapTransaction);
           onMapLoad(map);
         }}
         onIdle={onMapIdle}
@@ -278,6 +293,7 @@ export default function MapCanvas({
         mapZoom={mapZoom}
         spiderfyEpoch={spiderfyEpoch}
         paused={mapPinsPaused}
+        saleMode={saleMode}
         onClusterZoom={onClusterZoom}
         onSelect={onSelectListing}
       />

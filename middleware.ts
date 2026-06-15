@@ -57,7 +57,7 @@ export function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = listingNorm.pathname;
     url.search = listingNorm.search;
-    return NextResponse.redirect(url, 301);
+    return NextResponse.redirect(url, 308);
   }
 
   const legacyTarget = LEGACY_PATH_REDIRECTS[decoded];

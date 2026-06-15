@@ -1,3 +1,5 @@
+import { DEFAULT_LISTING_FILTERS } from "@/lib/listing-filters";
+import { buildSearchUrl } from "@/lib/search-url";
 import { fetchListingsInBounds } from "@/lib/listings";
 import type { ListingFilters } from "@/lib/listing-filters";
 import type { ListingCard, ListingDetail } from "@/lib/types/listing";
@@ -159,4 +161,37 @@ export async function fetchSaleListingIntelligence(
   );
 
   return { band, comparables };
+}
+
+/** Sale map URL centred on listing with optional comp-band price filter. */
+export function saleCompsMapSearchHref(
+  lat: number,
+  lng: number,
+  opts?: {
+    priceMin?: number;
+    priceMax?: number;
+    bhk?: string;
+    zoom?: number;
+    selectedId?: string;
+    placeQuery?: string;
+  }
+): string {
+  return buildSearchUrl({
+    filters: {
+      ...DEFAULT_LISTING_FILTERS,
+      transactionType: "sale",
+      category: "Property",
+      priceMin: opts?.priceMin ?? null,
+      priceMax: opts?.priceMax ?? null,
+      bhk: opts?.bhk ?? "",
+    },
+    centerLat: lat,
+    centerLng: lng,
+    zoom: opts?.zoom ?? 14,
+    bounds: null,
+    placeQuery: opts?.placeQuery ?? null,
+    keywords: null,
+    selectedId: opts?.selectedId ?? null,
+    drawnArea: null,
+  });
 }

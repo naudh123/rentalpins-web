@@ -20,9 +20,18 @@ describe("buy-pages-config", () => {
 
   it("covers Mohali and Kharar sale sub-areas", () => {
     expect(BUY_SUB_AREA_KEYS).toContain("mohali/phase-7");
-    expect(BUY_SUB_AREA_KEYS).toContain("mohali/sector-70");
-    expect(BUY_SUB_AREA_KEYS).toContain("kharar/chandigarh-university");
+    expect(BUY_SUB_AREA_KEYS).toContain("mohali/aerocity");
+    expect(BUY_SUB_AREA_KEYS).toContain("kharar/kharar-to-cu");
+    expect(BUY_SUB_AREA_KEYS).toContain("kharar/kharar-to-kurali");
+    expect(BUY_SUB_AREA_KEYS).toContain("kharar/kurali-to-siswan");
+    expect(BUY_SUB_AREA_KEYS).toContain("mohali/new-chandigarh-sector-115");
+    expect(getBuyPageConfig("kharar", "kharar-to-cu")?.placeQuery).toContain("University");
+    expect(getBuyPageConfig("kharar", "kurali-to-siswan")?.placeQuery).toContain("Siswan");
+    expect(BUY_SUB_AREA_KEYS).toContain("kharar/sector-125");
+    expect(BUY_SUB_AREA_KEYS).toContain("kharar/sector-119");
+    expect(BUY_SUB_AREA_KEYS).toContain("kharar/banur");
     expect(getBuyPageConfig("mohali", "phase-7")?.placeQuery).toBe("Phase 7, Mohali");
+    expect(getBuyPageConfig("kharar", "sector-117")?.placeQuery).toContain("Banur");
     expect(getBuySubAreaParams()).toHaveLength(BUY_SUB_AREA_KEYS.length);
   });
 
@@ -30,6 +39,7 @@ describe("buy-pages-config", () => {
     const paths = getBuyHubSitemapPaths();
     expect(paths).toContain("/buy/mohali");
     expect(paths).toContain("/buy/mohali/phase-7");
+    expect(paths).toContain("/buy/mohali/aerocity");
     expect(paths).toContain("/buy/kharar/chandigarh-university");
     expect(paths.length).toBe(BUY_HUB_SLUGS.length + BUY_SUB_AREA_KEYS.length);
   });

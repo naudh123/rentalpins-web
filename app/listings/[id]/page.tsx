@@ -44,6 +44,7 @@ import { listingToSlugInput } from "@/lib/listing-path";
 import {
   buildListingNavigationQuery,
   listingCanonicalSegment,
+  listingSlugNeedsRedirect,
 } from "@/lib/listing-canonical";
 import { buildListingBreadcrumbs } from "@/lib/listing-breadcrumbs";
 import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
@@ -72,7 +73,7 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
   if (!listing) notFound();
 
   const canonicalSegment = listingCanonicalSegment(listingToSlugInput(listing));
-  if (slugParam !== canonicalSegment) {
+  if (listingSlugNeedsRedirect(slugParam, listing)) {
     const sp = await searchParams;
     const suffix = buildListingNavigationQuery(sp);
     permanentRedirect(appPath(`/listings/${canonicalSegment}${suffix}`));
@@ -239,6 +240,9 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
           hasGeo={hasGeo}
           hasDescription={Boolean(listing.description?.trim())}
           hasContact={Boolean(listing.ownerPhone || listing.ownerUid)}
+          hasSaleIntelligence={
+            isSale && Boolean(saleIntel && (saleIntel.band || saleIntel.comparables.length > 0))
+          }
           hasOwnerRail={ownerListings.length > 0}
           hasSimilarRail={similarListings.length > 0}
           excludeListingId={listingId}
@@ -276,6 +280,9 @@ export default async function ListingDetailPage({ params, searchParams }: Props)
             listingPrice={listing.price}
             priceUnit={listing.priceUnit}
             homeIso={listing.homeIso}
+            lat={listing.lat}
+            lng={listing.lng}
+            bhk={listing.attributes?.bhk}
             band={saleIntel.band}
             comparables={saleIntel.comparables}
             areaName={listing.locationName}

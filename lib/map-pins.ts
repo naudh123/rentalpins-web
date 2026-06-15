@@ -109,22 +109,28 @@ export function buildPriceMarkerIcon(
   };
 }
 
-let cachedHoverRingIcon: google.maps.Icon | undefined;
+const hoverRingCache = new Map<string, google.maps.Icon>();
 
 /** Lightweight ring shown under list-hovered pins (no price-pill SVG rebuild). */
 export function buildHoverRingIcon(
-  googleMaps: typeof google.maps
+  googleMaps: typeof google.maps,
+  sale = false
 ): google.maps.Icon {
-  if (cachedHoverRingIcon) return cachedHoverRingIcon;
+  const stroke = sale ? "#C9A227" : "#E8501A";
+  const cacheKey = sale ? "sale" : "rent";
+  const cached = hoverRingCache.get(cacheKey);
+  if (cached) return cached;
+
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-  <circle cx="20" cy="20" r="15" fill="none" stroke="#E8501A" stroke-width="2.5" opacity="0.9"/>
+  <circle cx="20" cy="20" r="15" fill="none" stroke="${stroke}" stroke-width="2.5" opacity="0.9"/>
 </svg>`;
-  cachedHoverRingIcon = {
+  const icon = {
     url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
     scaledSize: new googleMaps.Size(40, 40),
     anchor: new googleMaps.Point(20, 36),
   };
-  return cachedHoverRingIcon;
+  hoverRingCache.set(cacheKey, icon);
+  return icon;
 }
 
 /** Zillow-style building pin — "N units" when zoomed in. */
@@ -133,10 +139,28 @@ export function buildUnitCountMarkerIcon(
   style: PriceMarkerStyle,
   googleMaps: typeof google.maps
 ): google.maps.Icon {
-  const { selected = false, highlighted = false } = style;
+  const { selected = false, highlighted = false, sale = false } = style;
   const label = count === 1 ? "1 unit" : `${count} units`;
-  const bg = selected ? "#E8501A" : highlighted ? "#2A4F8F" : "#1E3A6E";
-  const stroke = selected ? "#D34415" : highlighted ? "#E8501A" : "#0F2554";
+  const bg = selected
+    ? sale
+      ? "#C9A227"
+      : "#E8501A"
+    : highlighted
+      ? sale
+        ? "#1E3A6E"
+        : "#2A4F8F"
+      : "#1E3A6E";
+  const stroke = selected
+    ? sale
+      ? "#B8922A"
+      : "#D34415"
+    : highlighted
+      ? sale
+        ? "#C9A227"
+        : "#E8501A"
+      : sale
+        ? "#C9A227"
+        : "#0F2554";
   const text = "#ffffff";
   const strokeWidth = selected ? 2.5 : highlighted ? 2 : 1.5;
   const baseW = Math.min(96, Math.max(52, label.length * 7 + 24));

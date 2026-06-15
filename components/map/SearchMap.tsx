@@ -128,8 +128,13 @@ export default function SearchMap({
   drawnShapeRef.current = drawnShape;
   useEffect(() => {
     if (!mapInstance) return;
-    applyMapViewSurface(mapInstance, mapViewMode, mapZoom);
-  }, [mapInstance, mapViewMode, mapZoom]);
+    applyMapViewSurface(
+      mapInstance,
+      mapViewMode,
+      mapZoom,
+      isSaleMode ? "sale" : "rent"
+    );
+  }, [mapInstance, mapViewMode, mapZoom, isSaleMode]);
 
   const onFetchedRef = useRef<(map: google.maps.Map) => void>(() => {});
 

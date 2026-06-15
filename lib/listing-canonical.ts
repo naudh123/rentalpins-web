@@ -35,6 +35,14 @@ export function listingCanonicalSegment(
   return buildListingSlugSegment(input);
 }
 
+/** True when the URL segment should 308 to the canonical SEO slug (wrong slug or ID-only). */
+export function listingSlugNeedsRedirect(
+  slugParam: string,
+  listing: ListingSlugInput | ListingDetail
+): boolean {
+  return slugParam !== listingCanonicalSegment(listing);
+}
+
 /** Relative path `/listings/{slug}` — no query string. */
 export function listingCanonicalRelPath(
   listing: ListingSlugInput | ListingDetail

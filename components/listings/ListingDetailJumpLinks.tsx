@@ -9,6 +9,7 @@ type JumpSection =
   | "location"
   | "description"
   | "contact"
+  | "sale_intelligence"
   | "owner_rail"
   | "similar_rail"
   | "recently_viewed";
@@ -24,6 +25,7 @@ interface Props {
   hasGeo: boolean;
   hasDescription: boolean;
   hasContact: boolean;
+  hasSaleIntelligence?: boolean;
   hasOwnerRail?: boolean;
   hasSimilarRail?: boolean;
   /** When set, shows Recent jump link if browser history has other listings. */
@@ -48,6 +50,7 @@ export default function ListingDetailJumpLinks({
   hasGeo,
   hasDescription,
   hasContact,
+  hasSaleIntelligence = false,
   hasOwnerRail = false,
   hasSimilarRail = false,
   excludeListingId,
@@ -72,6 +75,9 @@ export default function ListingDetailJumpLinks({
       if (link.section === "contact") return hasContact;
       return true;
     }),
+    ...(hasSaleIntelligence
+      ? [{ section: "sale_intelligence" as const, label: "Comps", hash: "#listing-intelligence" }]
+      : []),
     ...RAIL_LINKS.filter((link) => {
       if (link.section === "owner_rail") return hasOwnerRail;
       if (link.section === "similar_rail") return hasSimilarRail;

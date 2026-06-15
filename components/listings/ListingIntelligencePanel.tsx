@@ -2,6 +2,7 @@ import Link from "next/link";
 import ListingRelatedListingCard from "@/components/listings/ListingRelatedListingCard";
 import { appPath } from "@/lib/config";
 import { formatPrice } from "@/lib/format";
+import { saleCompsMapSearchHref } from "@/lib/sale/listing-comps";
 import type { ValuationBand } from "@/lib/sale/listing-comps";
 import type { ListingCard } from "@/lib/types/listing";
 
@@ -10,6 +11,9 @@ interface Props {
   listingPrice: number;
   priceUnit: string;
   homeIso?: string;
+  lat: number;
+  lng: number;
+  bhk?: string;
   band: ValuationBand | null;
   comparables: ListingCard[];
   areaName?: string;
@@ -24,6 +28,9 @@ export default function ListingIntelligencePanel({
   listingPrice,
   priceUnit,
   homeIso,
+  lat,
+  lng,
+  bhk,
   band,
   comparables,
   areaName,
@@ -35,6 +42,24 @@ export default function ListingIntelligencePanel({
   const listingInBand =
     showBand && listingPrice > 0
       ? listingPrice >= band.low && listingPrice <= band.high
+      : null;
+
+  const nearbyMapHref = appPath(
+    saleCompsMapSearchHref(lat, lng, {
+      bhk,
+      placeQuery: areaName,
+    })
+  );
+  const bandMapHref =
+    showBand && band
+      ? appPath(
+          saleCompsMapSearchHref(lat, lng, {
+            priceMin: band.low,
+            priceMax: band.high,
+            bhk,
+            placeQuery: areaName,
+          })
+        )
       : null;
 
   return (
@@ -108,24 +133,44 @@ export default function ListingIntelligencePanel({
           <h3 className="text-sm font-semibold text-[var(--brand-navy)]">Comparable listings</h3>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {comparables.map((comp) => (
-              <ListingRelatedListingCard
-                key={comp.id}
-                listing={comp}
-                section="similar"
-                sourceListingId={listingId}
-              />
+              <div key={comp.id}>
+                <ListingRelatedListingCard
+                  listing={comp}
+                  section="similar"
+                  sourceListingId={listingId}
+                />
+                {Number.isFinite(comp.lat) && Number.isFinite(comp.lng) ? (
+                  <Link
+                    href={appPath(
+                      saleCompsMapSearchHref(comp.lat, comp.lng, {
+                        selectedId: comp.id,
+                        zoom: 15,
+                      })
+                    )}
+                    className="mt-1 inline-block text-xs font-semibold text-[var(--sale-gold)] hover:underline"
+                  >
+                    View on sale map →
+                  </Link>
+                ) : null}
+              </div>
             ))}
           </div>
         </div>
       )}
 
       <div className="mt-5 flex flex-wrap gap-2">
-        <Link
-          href={appPath("/search?transaction=sale&category=Property")}
-          className="rp-btn rp-btn-secondary px-4 py-2 text-sm"
-        >
-          Browse sale map
+        <Link href={nearbyMapHref} className="rp-btn rp-btn-primary px-4 py-2 text-sm">
+          Search nearby on sale map
         </Link>
+        {bandMapHref ? (
+          <Link href={bandMapHref} className="rp-btn rp-btn-secondary px-4 py-2 text-sm">
+            Map comps in price band
+          </Link>
+        ) : (
+          <Link href={nearbyMapHref} className="rp-btn rp-btn-secondary px-4 py-2 text-sm">
+            Browse sale map
+          </Link>
+        )}
       </div>
     </section>
   );

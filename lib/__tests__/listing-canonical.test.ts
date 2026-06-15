@@ -4,6 +4,7 @@ import {
   cleanedListingSearchParams,
   listingCanonicalAbsoluteUrl,
   listingPathNeedsSeoQueryCleanup,
+  listingSlugNeedsRedirect,
 } from "@/lib/listing-canonical";
 import { buildListingSlugSegment } from "@/lib/listing-slug";
 
@@ -44,5 +45,12 @@ describe("listing-canonical", () => {
     const params = new URLSearchParams("from=%2Fsearch");
     expect(listingPathNeedsSeoQueryCleanup(params)).toBe(false);
     expect(cleanedListingSearchParams(params).toString()).toBe("from=%2Fsearch");
+  });
+
+  it("detects wrong slug and ID-only paths needing 308 redirect", () => {
+    const slug = buildListingSlugSegment(sampleListing);
+    expect(listingSlugNeedsRedirect(slug, sampleListing)).toBe(false);
+    expect(listingSlugNeedsRedirect(sampleListing.id, sampleListing)).toBe(true);
+    expect(listingSlugNeedsRedirect(`${slug}-wrong`, sampleListing)).toBe(true);
   });
 });

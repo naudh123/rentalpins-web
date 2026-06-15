@@ -11,7 +11,9 @@ import { trackEvent } from "@/lib/ga4";
 import {
   MAP_CLUSTER_ALGORITHM_OPTIONS,
   MAP_CLUSTER_MAX_ZOOM,
+  getClusterRenderer,
   rentalPinsClusterRenderer,
+  salePinsClusterRenderer,
 } from "@/lib/map-cluster";
 import { spiderfyPositions } from "@/lib/map-spiderfy";
 import {
@@ -56,6 +58,7 @@ interface Props {
   spiderfyEpoch?: number;
   /** Skip marker rebuilds while tab/background or full list sheet hides the map. */
   paused?: boolean;
+  saleMode?: boolean;
   onClusterZoom?: () => void;
   onSelect: (listing: ListingCardData) => void;
 }
@@ -166,10 +169,20 @@ function applyBuildingMarkerVisual(
     labelTier: MapPinLabelTier;
     stateMap: Map<string, MarkerVisualState>;
     buildingKey: string;
+    saleMode?: boolean;
   }
 ) {
-  const { count, primary, group, selectedId, highlightedId, labelTier, stateMap, buildingKey } =
-    opts;
+  const {
+    count,
+    primary,
+    group,
+    selectedId,
+    highlightedId,
+    labelTier,
+    stateMap,
+    buildingKey,
+    saleMode = false,
+  } = opts;
   const isSelected = group.some((l) => l.id === selectedId);
   const isHighlighted = group.some(
     (l) => l.id === highlightedId && l.id !== selectedId
@@ -192,7 +205,7 @@ function applyBuildingMarkerVisual(
     marker.setIcon(
       buildUnitCountMarkerIcon(
         count,
-        { selected: isSelected, highlighted: isHighlighted },
+        { selected: isSelected, highlighted: isHighlighted, sale: saleMode },
         google.maps
       )
     );
@@ -216,6 +229,7 @@ export default function ListingMarkerCluster({
   buildingPinZoom = MAP_BUILDING_PIN_ZOOM,
   spiderfyEpoch = 0,
   paused = false,
+  saleMode = false,
   onClusterZoom,
   onSelect,
 }: Props) {
@@ -234,6 +248,7 @@ export default function ListingMarkerCluster({
   const lastStructureKeyRef = useRef("");
   const lastSelectedIdRef = useRef<string | null>(null);
   const lastHighlightedIdRef = useRef<string | null>(null);
+  const lastClusterSaleRef = useRef<boolean | null>(null);
   const spiderfyDisplayRef = useRef<Map<string, { lat: number; lng: number }>>(new Map());
   const handleClusterClickRef = useRef<
     (
@@ -369,6 +384,7 @@ export default function ListingMarkerCluster({
             labelTier,
             stateMap: buildingStateRef.current,
             buildingKey: key,
+            saleMode,
           });
         }
       }
@@ -454,7 +470,11 @@ export default function ListingMarkerCluster({
           position: { lat: primary.lat, lng: primary.lng },
           map,
           title: "",
-          icon: buildUnitCountMarkerIcon(count, { selected: false, highlighted: false }, google.maps),
+          icon: buildUnitCountMarkerIcon(
+            count,
+            { selected: false, highlighted: false, sale: saleMode },
+            google.maps
+          ),
           zIndex: 600,
           optimized: true,
           clickable: true,
@@ -474,6 +494,7 @@ export default function ListingMarkerCluster({
         labelTier,
         stateMap: buildingStateRef.current,
         buildingKey: key,
+        saleMode,
       });
       if (!marker.getMap()) marker.setMap(map);
     }
@@ -531,13 +552,20 @@ export default function ListingMarkerCluster({
       }
     };
 
+    if (clustererRef.current && lastClusterSaleRef.current !== saleMode) {
+      clustererRef.current.clearMarkers();
+      clustererRef.current.setMap(null);
+      clustererRef.current = null;
+    }
+    lastClusterSaleRef.current = saleMode;
+
     if (!clustererRef.current) {
       clustererRef.current = new MarkerClusterer({
         map,
         markers: Array.from(markersByIdRef.current.values()),
         algorithmOptions:
           MAP_CLUSTER_ALGORITHM_OPTIONS as MarkerClustererOptions["algorithmOptions"],
-        renderer: rentalPinsClusterRenderer,
+        renderer: getClusterRenderer(saleMode),
         onClusterClick: (event, cluster, mapInstance) => {
           handleClusterClickRef.current(event, cluster, mapInstance);
         },
@@ -563,6 +591,7 @@ export default function ListingMarkerCluster({
     buildingPinZoom,
     onClusterZoom,
     paused,
+    saleMode,
   ]);
 
   useEffect(() => {
@@ -598,7 +627,7 @@ export default function ListingMarkerCluster({
       ring = new google.maps.Marker({
         map,
         position,
-        icon: buildHoverRingIcon(google.maps),
+        icon: buildHoverRingIcon(google.maps, saleMode),
         zIndex: 700,
         clickable: false,
         optimized: true,
@@ -609,7 +638,7 @@ export default function ListingMarkerCluster({
       ring.setMap(map);
       ring.setZIndex(700);
     }
-  }, [map, paused, highlightedId, selectedId, listings, mapZoom, buildingPinZoom, spiderfyEpoch]);
+  }, [map, paused, highlightedId, selectedId, listings, mapZoom, buildingPinZoom, spiderfyEpoch, saleMode]);
 
   useEffect(() => {
     return () => {
