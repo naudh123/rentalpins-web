@@ -52,13 +52,13 @@ export default function HomeHeroLane({
     >
       <div className="flex flex-1 flex-col">
         {isBuy ? (
-          <div className="mb-4 flex justify-center md:justify-start">
+          <div className="mb-5 flex justify-center">
             <Image
               src="/logo/logo-buy.png"
               alt="RentalPins Buy"
-              width={112}
-              height={112}
-              className="h-[4.5rem] w-auto object-contain sm:h-20"
+              width={200}
+              height={200}
+              className="h-28 w-auto object-contain sm:h-32 md:h-36 lg:h-40"
               priority
             />
           </div>
