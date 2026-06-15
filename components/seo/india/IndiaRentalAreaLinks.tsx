@@ -4,6 +4,7 @@ import {
   type RentalAreaNearbyLink,
 } from "@/lib/rental-area-config";
 import { buyPagePath } from "@/lib/sale/buy-pages-config";
+import { BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 import { appPath } from "@/lib/config";
 
 interface Props {
@@ -73,6 +74,14 @@ export default function IndiaRentalAreaLinks({
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                href={appPath(BUY_SEARCH_PATH)}
+                className="rounded-full border border-[color-mix(in_srgb,var(--sale-gold)_35%,var(--border))] bg-[color-mix(in_srgb,var(--sale-gold)_10%,white)] px-4 py-2 text-sm font-semibold text-[var(--brand-navy)] hover:border-[var(--sale-gold)]"
+              >
+                Open buy map
+              </Link>
+            </li>
             <li>
               <Link
                 href={appPath("/flats-for-sale")}

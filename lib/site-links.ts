@@ -30,3 +30,11 @@ export const EXPLORE_LINKS = [
   { label: "Sign in", href: appPath("/auth/login") },
   { label: "Get Android App", href: PLAY_STORE_URL, external: true },
 ] as const;
+
+export const BUY_EXPLORE_LINKS = [
+  { label: "Buy map", href: appPath("/buy/search") },
+  { label: "Mohali for sale", href: appPath("/buy/mohali") },
+  { label: "Kharar for sale", href: appPath("/buy/kharar") },
+  { label: "List for sale", href: appPath("/buy/post") },
+  { label: "Rentals map", href: appPath("/search") },
+] as const;

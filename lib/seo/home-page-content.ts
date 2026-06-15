@@ -1,16 +1,16 @@
 /** Homepage copy — honest, SEO-friendly, owner-listing focused. */
 
 export const HOME_HERO = {
-  eyebrow: "Map-first rentals · India & global hubs",
-  headline: "Discover rentals on the map.",
-  headlineAccent: "List your property with confidence.",
+  eyebrow: "Property discovery · Rent & buy · India & global hubs",
+  headline: "Discover property on the map.",
+  headlineAccent: "Rent, buy, or list with confidence.",
   subhead:
-    "Flats, PG, houses, shops, offices and warehouses — owner-direct on one live map. Browse without broker fees. Owners post free on web or Android.",
+    "Flats, PG, houses, shops, offices and property for sale — owner-direct on live maps. Browse without broker fees. Owners post free on web or Android.",
 } as const;
 
 export const HOME_PLATFORM_PILLS = [
   { label: "Listing fee", value: "Free" },
-  { label: "Rental categories", value: "9" },
+  { label: "Rent + buy maps", value: "2" },
   { label: "Owner contact", value: "Direct" },
 ] as const;
 
@@ -83,20 +83,34 @@ export const HOME_PROPERTY_TYPES = {
 } as const;
 
 export const HOME_RENTER_SECTION = {
-  title: "For renters",
+  title: "For renters & buyers",
   subtitle: "Browse owner-posted pins — no broker search commission.",
   steps: [
-    { step: "1", title: "Open the map", desc: "Pan to your city, phase, or sector and explore price pins in real time." },
-    { step: "2", title: "Filter & shortlist", desc: "Narrow by category, budget, and area before you schedule visits." },
+    { step: "1", title: "Open the map", desc: "Use the rent map or buy map for resale — pan to your city, phase, or sector." },
+    { step: "2", title: "Filter & shortlist", desc: "Narrow by category, budget, and area — or ask in plain English with AI search." },
     { step: "3", title: "Contact the owner", desc: "Message on WhatsApp or chat from the listing — deal directly." },
   ],
 } as const;
 
+export const HOME_BUY_SECTION = {
+  title: "Property for sale (RentalPins Buy)",
+  subtitle: "Separate gold-themed buy map for Tricity resale — owner-direct flats, villas, and plots.",
+  links: [
+    { label: "Buy map", href: "/buy/search" },
+    { label: "Mohali for sale", href: "/buy/mohali" },
+    { label: "Kharar for sale", href: "/buy/kharar" },
+    { label: "New Chandigarh", href: "/buy/mohali/new-chandigarh" },
+    { label: "List for sale", href: "/buy/post" },
+  ],
+} as const;
+
 export const HOME_SEO_LINKS = {
-  title: "Popular rental guides",
+  title: "Popular guides",
   links: [
     { label: "Mohali rentals", href: "/rentals/mohali" },
+    { label: "Mohali for sale", href: "/buy/mohali" },
     { label: "Sector 70 Mohali", href: "/rentals/mohali/sector-70" },
+    { label: "Buy in Chandigarh", href: "/buy/in/chandigarh" },
     { label: "Delhi flats", href: "/rentals/in/delhi/flats" },
     { label: "PG near CU", href: "/pg-near-chandigarh-university" },
     { label: "Rent without broker", href: "/rent-without-broker" },
@@ -126,6 +140,10 @@ export const HOME_FAQS = [
     a: "Chandigarh Tricity, Ludhiana, Delhi, Jaipur, Lucknow, Mumbai, London, Nairobi, and Lagos — with Mohali, Kharar, and Delhi area guides on the site.",
   },
   {
+    q: "Can I buy property on RentalPins?",
+    a: "Yes — RentalPins Buy is a separate map for owner-direct resale in Chandigarh Tricity. Open the buy map, filter by budget and BHK, or use AI search in plain English.",
+  },
+  {
     q: "Can I manage listings from the Android app?",
     a: "Yes. The same Google account works on the web and RentalPins Android app — edit photos, location and availability from either.",
   },
@@ -134,7 +152,7 @@ export const HOME_FAQS = [
 export const HOME_FINAL_CTA = {
   title: "Ready to list or browse?",
   subtitle:
-    "Free listing for owners. Map-first search for renters. No broker commission to discover or post.",
+    "Free listing for owners. Map-first search for renters and buyers. No broker commission to discover or post.",
 } as const;
 
 /** Patterns we avoid on the homepage (no fake social proof). */

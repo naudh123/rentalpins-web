@@ -4,8 +4,8 @@ import ListingDetailRoute, {
 
 export { generateMetadata };
 
-export default function RentListingDetailPage(
+export default function BuyListingDetailPage(
   props: React.ComponentProps<typeof ListingDetailRoute>
 ) {
-  return <ListingDetailRoute {...props} channel="rent" />;
+  return <ListingDetailRoute {...props} channel="buy" />;
 }

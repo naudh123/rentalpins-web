@@ -3,6 +3,7 @@ import ListingsGrid from "@/components/ListingsGrid";
 import FAQSchema from "@/components/seo/FAQSchema";
 import StructuredData from "@/components/seo/StructuredData";
 import { appPath } from "@/lib/config";
+import { BUY_POST_PATH } from "@/lib/sale/buy-app-paths";
 import {
   buyPagePath,
   type BuyPageConfig,
@@ -56,7 +57,7 @@ export default function BuyLandingPage({ page, listings }: Props) {
             <Link href={mapHref} className="rp-btn rp-btn-primary px-6 py-3">
               View properties on map
             </Link>
-            <Link href={appPath("/post?transaction=sale")} className="rp-btn rp-btn-secondary px-6 py-3">
+            <Link href={appPath(BUY_POST_PATH)} className="rp-btn rp-btn-secondary px-6 py-3">
               List your property for sale
             </Link>
             {page.areaSlug && (
@@ -165,7 +166,7 @@ export default function BuyLandingPage({ page, listings }: Props) {
               <p className="mt-2 text-sm text-[var(--muted)]">
                 Be among the first owners to list — or set a search alert on the map.
               </p>
-              <Link href={appPath("/post?transaction=sale")} className="rp-btn rp-btn-primary mt-6 inline-flex px-6 py-2.5">
+              <Link href={appPath(BUY_POST_PATH)} className="rp-btn rp-btn-primary mt-6 inline-flex px-6 py-2.5">
                 List for sale
               </Link>
             </div>

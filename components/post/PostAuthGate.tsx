@@ -7,18 +7,32 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { appPath } from "@/lib/config";
 import { Button } from "@/components/ui/Button";
 
+import type { TransactionType } from "@/lib/transaction-type";
+
 interface Props {
   listingId?: string | null;
+  transactionType?: TransactionType;
 }
 
 /** Sign-in gate for /post — Google first; OTP optional via login page. */
-export default function PostAuthGate({ listingId = null }: Props) {
+export default function PostAuthGate({
+  listingId = null,
+  transactionType = "rent",
+}: Props) {
   const router = useRouter();
   const { signInWithGoogle } = useAuth();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const postNext = listingId ? `/post?listingId=${listingId}` : "/post";
+  const postBase =
+    transactionType === "sale"
+      ? listingId
+        ? `/buy/post?listingId=${listingId}`
+        : "/buy/post"
+      : listingId
+        ? `/post?listingId=${listingId}`
+        : "/post";
+  const postNext = postBase;
   const loginHref = appPath(`/auth/login?next=${encodeURIComponent(postNext)}`);
 
   async function handleGoogle() {

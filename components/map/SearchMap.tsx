@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
 import { googleMapsApiKey } from "@/lib/config";
 import { useRentalPinsMapsLoader } from "@/lib/google-maps-loader";
@@ -52,7 +52,8 @@ import {
   hasUrlMapViewport,
   type PersistedMapView,
 } from "@/lib/map-last-view";
-import { parseSearchUrlState } from "@/lib/search-url";
+import { parseSearchUrlState, applyBuySearchDefaults } from "@/lib/search-url";
+import { isBuySearchPath } from "@/lib/sale/buy-app-paths";
 import { MAP_SEARCH_INPUT_ID } from "@/lib/map-search-input";
 import type { MapBounds } from "@/lib/types/saved-search";
 import {
@@ -71,6 +72,8 @@ interface Props {
   initialFilteredCount?: number;
   initialResultsMayBeIncomplete?: boolean;
   initialPrefixCapActive?: boolean;
+  /** When true (e.g. /buy/search), lock map to sale mode and ivory/gold theme. */
+  forceSaleMode?: boolean;
 }
 
 export default function SearchMap({
@@ -79,13 +82,16 @@ export default function SearchMap({
   initialFilteredCount,
   initialResultsMayBeIncomplete = false,
   initialPrefixCapActive,
+  forceSaleMode = false,
 }: Props) {
   const searchParams = useSearchParams();
-  const isSaleMode = searchParams.get("transaction") === "sale";
-  const urlState = useMemo(
-    () => parseSearchUrlState(searchParams),
-    [searchParams]
-  );
+  const pathname = usePathname();
+  const isBuySearch = forceSaleMode || isBuySearchPath(pathname);
+  const isSaleMode = isBuySearch || searchParams.get("transaction") === "sale";
+  const urlState = useMemo(() => {
+    const parsed = parseSearchUrlState(searchParams);
+    return isBuySearch ? applyBuySearchDefaults(parsed) : parsed;
+  }, [searchParams, isBuySearch]);
   const urlHasViewport = useMemo(
     () => hasUrlMapViewport(searchParams),
     [searchParams]

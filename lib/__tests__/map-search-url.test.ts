@@ -51,4 +51,11 @@ describe("mapSearchUrl", () => {
     expect(state.placeQuery).toBe("Chandigarh");
     expect(state.filters.category).toBe("Residential");
   });
+
+  it("routes sale deep links to buy search", () => {
+    const url = mapSearchUrl(30.7046, 76.7179, 12, undefined, "Property", null, undefined, "Mohali", "sale");
+    expect(url.startsWith("/buy/search?")).toBe(true);
+    expect(url).not.toContain("transaction=sale");
+    expect(url).toContain("category=Property");
+  });
 });

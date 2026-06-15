@@ -6,6 +6,7 @@ import {
 import type { TransactionType } from "./transaction-type";
 import type { MapBounds } from "./types/saved-search";
 import { decodeMapArea, encodeMapArea, type MapAreaShape } from "./map-area";
+import { BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 
 export interface SearchUrlState {
   filters: ListingFilters;
@@ -154,9 +155,39 @@ export function searchUrlQueryString(state: SearchUrlState): string {
   return p.toString();
 }
 
+/** Rent map search base path. */
+export const RENT_SEARCH_PATH = "/search";
+
+/** Map search href — routes sale traffic to /buy/search (implicit transaction). */
+export function buildMapSearchUrl(state: SearchUrlState): string {
+  const isSale = state.filters.transactionType === "sale";
+  const base = isSale ? BUY_SEARCH_PATH : RENT_SEARCH_PATH;
+  let qs = searchUrlQueryString(state);
+  if (isSale && qs) {
+    const p = new URLSearchParams(qs);
+    p.delete("transaction");
+    qs = p.toString();
+  }
+  return qs ? `${base}?${qs}` : base;
+}
+
 export function buildSearchUrl(state: SearchUrlState): string {
-  const qs = searchUrlQueryString(state);
-  return qs ? `/search?${qs}` : "/search";
+  return buildMapSearchUrl(state);
+}
+
+/** Force sale filters when parsing /buy/search URLs. */
+export function applyBuySearchDefaults(state: SearchUrlState): SearchUrlState {
+  return {
+    ...state,
+    filters: {
+      ...state.filters,
+      transactionType: "sale",
+      category:
+        !state.filters.category || state.filters.category === "All"
+          ? "Property"
+          : state.filters.category,
+    },
+  };
 }
 
 /** Viewport + filters key (excludes selected listing + drawn area) for change detection. */

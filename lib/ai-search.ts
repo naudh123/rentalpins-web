@@ -16,6 +16,8 @@ import {
 } from "./listing-filters";
 import type { TransactionType } from "./transaction-type";
 import { resetListingFilters } from "./listing-filter-reset";
+import { BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
+import { RENT_SEARCH_PATH } from "@/lib/search-url";
 
 export interface ParsedSearch {
   filters: ListingFilters;
@@ -23,6 +25,24 @@ export interface ParsedSearch {
   placeText: string;
   /** Leftover amenity keywords ("" = none). */
   keywords: string;
+}
+
+/** Example queries surfaced in SEO copy and map UI hints. */
+export const AI_SEARCH_RENT_EXAMPLES = [
+  "2BHK furnished under 20k near Sector 22 Chandigarh",
+  "PG for girls near IT Park Mohali",
+  "Shop for rent in Zirakpur under 30k",
+] as const;
+
+export const AI_SEARCH_SALE_EXAMPLES = [
+  "3BHK flat under 80 lakh in Phase 7 Mohali",
+  "Plot in New Chandigarh sector 117 under 50 lakh",
+  "2BHK ready to move Aerocity under 1 crore",
+] as const;
+
+/** Canonical map path for the active transaction module. */
+export function mapPathForTransaction(transactionType: TransactionType): string {
+  return transactionType === "sale" ? BUY_SEARCH_PATH : RENT_SEARCH_PATH;
 }
 
 const SORTS: ListingSort[] = ["recommended", "price_asc", "price_desc", "newest"];
@@ -119,7 +139,8 @@ export function mergeAiSearchFilters(
 /**
  * Calls the `parseSearchQuery` Cloud Function (asia-south1) to turn a
  * natural-language query into structured listing filters + a place phrase.
- * The result is re-validated against the canonical option lists.
+ * Pass `transactionType: "sale"` on the buy map so the backend biases toward
+ * purchase intent (total price, BHK, Property category).
  */
 export async function parseSearchQuery(
   query: string,

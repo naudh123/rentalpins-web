@@ -26,6 +26,13 @@ describe("listing-canonical", () => {
     );
   });
 
+  it("routes sale listings to /buy/listings canonical", () => {
+    const slug = buildListingSlugSegment({ ...sampleListing, transactionType: "sale" });
+    expect(
+      listingCanonicalAbsoluteUrl({ ...sampleListing, transactionType: "sale" })
+    ).toBe(`https://www.rentalpins.com/buy/listings/${slug}`);
+  });
+
   it("preserves only from in navigation query", () => {
     expect(
       buildListingNavigationQuery({

@@ -25,7 +25,8 @@ describe("saleCompsMapSearchHref", () => {
       bhk: "2 BHK",
       selectedId: "abc123",
     });
-    expect(href).toContain("transaction=sale");
+    expect(href).toContain("/buy/search");
+    expect(href).not.toContain("transaction=sale");
     expect(href).toContain("category=Property");
     expect(href).toContain("priceMin=4500000");
     expect(href).toContain("priceMax=8000000");

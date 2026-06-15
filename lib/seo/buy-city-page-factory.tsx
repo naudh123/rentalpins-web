@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import ListingsGrid from "@/components/ListingsGrid";
 import FAQSchema from "@/components/seo/FAQSchema";
 import CityBuySeoContent from "@/components/seo/CityBuySeoContent";
-import SaleShell from "@/components/sale/SaleShell";
 import { getCityBySlug, RENTAL_COUNTRY_SLUGS } from "@/lib/cities-config";
 import { getAreaConfig } from "@/lib/area-config";
 import { appPath, siteUrl } from "@/lib/config";
@@ -68,7 +67,7 @@ export async function BuyCityMoneyPage({
   const pageUrl = canonicalUrl(buyCityPath(country, city));
 
   return (
-    <SaleShell>
+    <>
       <FAQSchema
         faqs={seoConfig.faq.map((f) => ({ question: f.q, answer: f.a }))}
       />
@@ -100,6 +99,6 @@ export async function BuyCityMoneyPage({
           }),
         }}
       />
-    </SaleShell>
+    </>
   );
 }

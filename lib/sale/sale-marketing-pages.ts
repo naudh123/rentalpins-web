@@ -1,6 +1,7 @@
 import type { MarketingPageConfig } from "@/lib/seo/marketing-pages";
 import { appPath } from "@/lib/config";
 import { buyHubPath } from "@/lib/sale/buy-pages-config";
+import { BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 
 /** Demand-side sale SEO landings (mirrors CATEGORY_LANDING_PAGES + broker landings). */
 export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
@@ -30,7 +31,7 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Property for sale Tricity", href: appPath("/property-for-sale-chandigarh") },
       { label: "Mohali flats for sale", href: appPath(buyHubPath("mohali")) },
       { label: "List for sale", href: appPath("/list-for-sale") },
-      { label: "Sale map", href: appPath("/search?transaction=sale&category=Property") },
+      { label: "Sale map", href: appPath(BUY_SEARCH_PATH) },
     ],
   },
   "property-for-sale": {
@@ -112,7 +113,7 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Mohali buy hub", href: appPath(buyHubPath("mohali")) },
       { label: "Tricity property", href: appPath("/property-for-sale-chandigarh") },
       { label: "List flat for sale Mohali", href: appPath("/list-for-sale/mohali") },
-      { label: "Sale map Mohali", href: appPath("/search?transaction=sale&category=Property&lat=30.7046&lng=76.7179&zoom=12") },
+      { label: "Sale map Mohali", href: appPath(`${BUY_SEARCH_PATH}?lat=30.7046&lng=76.7179&zoom=12&category=Property`) },
     ],
   },
 };

@@ -1,9 +1,10 @@
 import { boundsAroundCenter } from "@/lib/map-bounds";
+import { resetListingFilters } from "@/lib/listing-filter-reset";
 import { buildSearchUrl, type SearchUrlState } from "@/lib/search-url";
-import { DEFAULT_LISTING_FILTERS } from "@/lib/listing-filters";
+import type { TransactionType } from "@/lib/transaction-type";
 import type { MapBounds } from "@/lib/types/saved-search";
 
-/** Deep-link into map search with full shareable viewport (bounds when possible). */
+/** Deep-link into rent or buy map search with full shareable viewport. */
 export function mapSearchUrl(
   lat: number,
   lng: number,
@@ -12,12 +13,19 @@ export function mapSearchUrl(
   category?: string | null,
   bounds?: MapBounds | null,
   keywords?: string | null,
-  placeQuery?: string | null
+  placeQuery?: string | null,
+  transactionType: TransactionType = "rent"
 ): string {
+  const baseFilters = resetListingFilters(transactionType);
   const state: SearchUrlState = {
     filters: {
-      ...DEFAULT_LISTING_FILTERS,
-      category: category && category !== "All" ? category : DEFAULT_LISTING_FILTERS.category,
+      ...baseFilters,
+      category:
+        transactionType === "sale"
+          ? "Property"
+          : category && category !== "All"
+            ? category
+            : baseFilters.category,
     },
     centerLat: lat,
     centerLng: lng,

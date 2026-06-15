@@ -3,8 +3,9 @@ import {
   buildListingSlugSegment,
   type ListingSlugInput,
 } from "@/lib/listing-slug";
-import { listingToSlugInput } from "@/lib/listing-path";
+import { listingToSlugInput, listingDetailBasePath } from "@/lib/listing-path";
 import type { ListingDetail } from "@/lib/types/listing";
+import type { TransactionType } from "@/lib/transaction-type";
 
 /** Query params stripped from listing canonical URLs (tracking / pagination noise). */
 export const LISTING_SEO_STRIP_PARAMS = [
@@ -35,6 +36,24 @@ export function listingCanonicalSegment(
   return buildListingSlugSegment(input);
 }
 
+function listingTransactionType(
+  listing: ListingSlugInput | ListingDetail
+): TransactionType {
+  if ("imageUrls" in listing) {
+    return listing.transactionType === "sale" ? "sale" : "rent";
+  }
+  return listing.transactionType === "sale" ? "sale" : "rent";
+}
+
+/** Relative listing detail path — sale listings live under /buy/listings. */
+export function listingDetailBasePathForListing(
+  listing: ListingSlugInput | ListingDetail
+): string {
+  const input =
+    "imageUrls" in listing ? listingToSlugInput(listing) : listing;
+  return listingDetailBasePath(input);
+}
+
 /** True when the URL segment should 308 to the canonical SEO slug (wrong slug or ID-only). */
 export function listingSlugNeedsRedirect(
   slugParam: string,
@@ -43,11 +62,11 @@ export function listingSlugNeedsRedirect(
   return slugParam !== listingCanonicalSegment(listing);
 }
 
-/** Relative path `/listings/{slug}` — no query string. */
+/** Relative path — no query string. */
 export function listingCanonicalRelPath(
   listing: ListingSlugInput | ListingDetail
 ): string {
-  return appPath(`/listings/${listingCanonicalSegment(listing)}`);
+  return listingDetailBasePathForListing(listing);
 }
 
 /** Absolute https://www.rentalpins.com/listings/{slug} — canonical for metadata & JSON-LD. */

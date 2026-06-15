@@ -1,5 +1,4 @@
 import Link from "next/link";
-import SaleShell from "@/components/sale/SaleShell";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { canonicalUrl } from "@/lib/seo";
@@ -26,7 +25,7 @@ export default function ListForSaleLandingPage({ config }: Props) {
   ];
 
   return (
-    <SaleShell>
+    <>
       <BreadcrumbSchema items={breadcrumbs} />
       <FAQSchema faqs={config.faq.map((f) => ({ question: f.q, answer: f.a }))} />
 
@@ -114,6 +113,6 @@ export default function ListForSaleLandingPage({ config }: Props) {
           </dl>
         </div>
       </section>
-    </SaleShell>
+    </>
   );
 }

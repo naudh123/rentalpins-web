@@ -42,8 +42,9 @@ export function listingShareDescription(listing: ListingDetail): string {
   const snippet = listing.description.replace(/\s+/g, " ").trim().slice(0, 140);
   const price = formatPrice(listing.price, listing.priceUnit, listing.homeIso);
   const loc = listing.locationName ? ` · ${listing.locationName}` : "";
+  const verb = listing.transactionType === "sale" ? "Buy on RentalPins" : "Rent on RentalPins";
   if (snippet) return `${snippet}${loc}`;
-  return `${listing.title} — ${price}${loc} · Rent on RentalPins`;
+  return `${listing.title} — ${price}${loc} · ${verb}`;
 }
 
 export function listingShareMetadata(listing: ListingDetail): Metadata {

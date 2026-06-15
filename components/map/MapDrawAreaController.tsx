@@ -6,6 +6,12 @@ import {
   mapBoundsToGoogleLiteral,
 } from "@/lib/map-geometry";
 import { encodeMapArea, type LatLngPoint, type MapAreaShape } from "@/lib/map-area";
+import {
+  boundsFromCorners,
+  isMeaningfulRectBounds,
+  isNearFirstPoint,
+  MAP_AREA_PREVIEW_STYLE,
+} from "@/lib/map-area-drawing";
 
 const SHARED_STYLE = {
   fillColor: "#E8501A",
@@ -81,44 +87,137 @@ export default function MapDrawAreaController({
   };
 
   useEffect(() => {
-    if (!map || paused || !drawMode || typeof google.maps.drawing === "undefined") return;
+    if (!map || paused || !drawMode) return;
 
-    const overlayType =
-      drawMode === "rect"
-        ? google.maps.drawing.OverlayType.RECTANGLE
-        : google.maps.drawing.OverlayType.POLYGON;
+    const cleanups: Array<() => void> = [];
+    let clickTimer: ReturnType<typeof setTimeout> | null = null;
+    const previousDraggable = map.get("draggable") !== false;
+    const previousDblClickZoom = map.get("disableDoubleClickZoom") !== true;
 
-    const dm = new google.maps.drawing.DrawingManager({
-      drawingMode: overlayType,
-      drawingControl: false,
-      rectangleOptions: { ...RECT_STYLE, editable: false, draggable: false },
-      polygonOptions: { ...POLY_STYLE, editable: false, draggable: false },
-    });
-    dm.setMap(map);
+    const clearClickTimer = () => {
+      if (clickTimer) clearTimeout(clickTimer);
+      clickTimer = null;
+    };
 
-    const completeListener = google.maps.event.addListener(
-      dm,
-      "overlaycomplete",
-      (event: google.maps.drawing.OverlayCompleteEvent) => {
-        dm.setDrawingMode(null);
-        if (event.type === google.maps.drawing.OverlayType.RECTANGLE) {
-          const overlay = event.overlay as google.maps.Rectangle;
-          const b = overlay.getBounds();
-          overlay.setMap(null);
-          if (b) emitShape({ type: "rect", bounds: googleBoundsToMapBounds(b) });
-        } else if (event.type === google.maps.drawing.OverlayType.POLYGON) {
-          const overlay = event.overlay as google.maps.Polygon;
-          const path = polygonPath(overlay);
-          overlay.setMap(null);
-          if (path.length >= 3) emitShape({ type: "poly", path });
+    const finish = () => {
+      onDrawCompleteRef.current();
+    };
+
+    if (drawMode === "rect") {
+      let start: google.maps.LatLng | null = null;
+      let preview: google.maps.Rectangle | null = null;
+      map.setOptions({ draggable: false });
+
+      const onMouseDown = (e: google.maps.MapMouseEvent) => {
+        if (!e.latLng) return;
+        start = e.latLng;
+        preview?.setMap(null);
+        preview = new google.maps.Rectangle({
+          ...MAP_AREA_PREVIEW_STYLE,
+          map,
+          bounds: boundsFromCorners(start, start),
+        });
+      };
+
+      const onMouseMove = (e: google.maps.MapMouseEvent) => {
+        if (!start || !e.latLng || !preview) return;
+        preview.setBounds(boundsFromCorners(start, e.latLng));
+      };
+
+      const onMouseUp = (e: google.maps.MapMouseEvent) => {
+        if (!start || !e.latLng) {
+          start = null;
+          preview?.setMap(null);
+          preview = null;
+          return;
         }
-        onDrawCompleteRef.current();
-      }
-    );
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend(start);
+        bounds.extend(e.latLng);
+        preview?.setMap(null);
+        preview = null;
+        start = null;
+        if (isMeaningfulRectBounds(bounds)) {
+          emitShape({ type: "rect", bounds: googleBoundsToMapBounds(bounds) });
+        }
+        finish();
+      };
+
+      const downListener = map.addListener("mousedown", onMouseDown);
+      const moveListener = map.addListener("mousemove", onMouseMove);
+      const upListener = map.addListener("mouseup", onMouseUp);
+      cleanups.push(
+        () => google.maps.event.removeListener(downListener),
+        () => google.maps.event.removeListener(moveListener),
+        () => google.maps.event.removeListener(upListener)
+      );
+    } else {
+      const path: LatLngPoint[] = [];
+      let preview: google.maps.Polygon | null = null;
+      map.setOptions({ disableDoubleClickZoom: true });
+
+      const completePolygon = () => {
+        if (path.length < 3) return;
+        emitShape({ type: "poly", path: [...path] });
+        preview?.setMap(null);
+        preview = null;
+        finish();
+      };
+
+      const onClick = (e: google.maps.MapMouseEvent) => {
+        if (!e.latLng) return;
+        const point: LatLngPoint = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+
+        clearClickTimer();
+        clickTimer = setTimeout(() => {
+          clickTimer = null;
+          if (path.length >= 3 && isNearFirstPoint(map, point, path[0]!)) {
+            completePolygon();
+            return;
+          }
+          path.push(point);
+          if (!preview) {
+            preview = new google.maps.Polygon({
+              ...MAP_AREA_PREVIEW_STYLE,
+              map,
+              paths: path,
+            });
+          } else {
+            preview.setPath(path);
+          }
+        }, 220);
+      };
+
+      const onDblClick = (e: google.maps.MapMouseEvent) => {
+        e.stop();
+        clearClickTimer();
+        if (path.length >= 3) completePolygon();
+      };
+
+      const onKeyDown = (ev: KeyboardEvent) => {
+        if (ev.key === "Escape") {
+          preview?.setMap(null);
+          finish();
+        }
+      };
+
+      const clickListener = map.addListener("click", onClick);
+      const dblClickListener = map.addListener("dblclick", onDblClick);
+      cleanups.push(
+        () => google.maps.event.removeListener(clickListener),
+        () => google.maps.event.removeListener(dblClickListener),
+        () => window.removeEventListener("keydown", onKeyDown)
+      );
+      window.addEventListener("keydown", onKeyDown);
+    }
 
     return () => {
-      google.maps.event.removeListener(completeListener);
-      dm.setMap(null);
+      clearClickTimer();
+      cleanups.forEach((fn) => fn());
+      map.setOptions({
+        draggable: previousDraggable,
+        disableDoubleClickZoom: previousDblClickZoom,
+      });
     };
   }, [map, drawMode, paused]);
 

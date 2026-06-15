@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CallableError } from "@/lib/firebase-callable";
-import { aiSearchErrorCode, mapAiSearchError } from "@/lib/ai-search";
+import { aiSearchErrorCode, mapAiSearchError, mapPathForTransaction } from "@/lib/ai-search";
 
 describe("aiSearchErrorCode", () => {
   it("maps callable codes to GA4 buckets", () => {
@@ -15,6 +15,13 @@ describe("aiSearchErrorCode", () => {
 
   it("returns unknown for non-callable errors", () => {
     expect(aiSearchErrorCode(new Error("boom"))).toBe("unknown");
+  });
+});
+
+describe("mapPathForTransaction", () => {
+  it("returns rent and buy map paths", () => {
+    expect(mapPathForTransaction("rent")).toBe("/search");
+    expect(mapPathForTransaction("sale")).toBe("/buy/search");
   });
 });
 

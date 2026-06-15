@@ -1,5 +1,7 @@
 import { appPath } from "@/lib/config";
 import { mapSearchUrl } from "@/lib/map-search-url";
+import { BUY_POST_PATH, BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
+import type { TransactionType } from "@/lib/transaction-type";
 
 export type SupplyIntent =
   | "property"
@@ -23,6 +25,8 @@ export interface SeoBrowseLinkOptions {
   placeQuery?: string;
   category?: string;
   keywords?: string;
+  /** Rent map (`/search`) or buy map (`/buy/search`). Default rent. */
+  transactionType?: TransactionType;
 }
 
 export interface SeoListLinkOptions {
@@ -31,7 +35,11 @@ export interface SeoListLinkOptions {
   intent?: SupplyIntent;
 }
 
-/** Map browse CTA to area-centred search when geo is known. */
+function mapBasePath(transactionType: TransactionType): string {
+  return transactionType === "sale" ? BUY_SEARCH_PATH : "/search";
+}
+
+/** Map browse CTA — area-centred rent or buy search when geo is known. */
 export function getBrowseHref(options: SeoBrowseLinkOptions = {}): string {
   const {
     lat,
@@ -40,6 +48,7 @@ export function getBrowseHref(options: SeoBrowseLinkOptions = {}): string {
     placeQuery,
     category,
     keywords,
+    transactionType = "rent",
   } = options;
 
   if (lat != null && lng != null) {
@@ -51,21 +60,37 @@ export function getBrowseHref(options: SeoBrowseLinkOptions = {}): string {
       category && category !== "All" ? category : undefined,
       undefined,
       keywords ?? undefined,
-      placeQuery
+      placeQuery,
+      transactionType
     );
     return appPath(path);
   }
 
   const params = new URLSearchParams();
-  if (placeQuery?.trim()) params.set("place", placeQuery.trim());
-  if (keywords?.trim()) params.set("q", keywords.trim());
+  if (placeQuery?.trim()) params.set("q", placeQuery.trim());
+  if (keywords?.trim()) params.set("keywords", keywords.trim());
+  if (transactionType === "sale") params.set("category", "Property");
+  else if (category?.trim() && category !== "All") params.set("category", category.trim());
   const qs = params.toString();
-  return appPath(qs ? `/search?${qs}` : "/search");
+  const base = mapBasePath(transactionType);
+  return appPath(qs ? `${base}?${qs}` : base);
 }
 
-/** List CTA — existing post flow; intent/slugs are for tracking attributes. */
+/** Buy map deep link — shorthand for getBrowseHref with sale transaction. */
+export function getBuyBrowseHref(
+  options: Omit<SeoBrowseLinkOptions, "transactionType"> = {}
+): string {
+  return getBrowseHref({ ...options, transactionType: "sale" });
+}
+
+/** List CTA — rent post flow. */
 export function getListPropertyHref(_options: SeoListLinkOptions = {}): string {
   return appPath("/post");
+}
+
+/** List-for-sale CTA — buy post flow. */
+export function getListForSaleHref(_options: SeoListLinkOptions = {}): string {
+  return appPath(BUY_POST_PATH);
 }
 
 export function intentFromCategorySlug(slug: string): SupplyIntent {
@@ -99,6 +124,9 @@ export function intentFromMarketingSlug(slug: string): SupplyIntent {
 
 export const SEO_SUPPLY_GROWTH_NOTICE =
   "RentalPins is growing listings in this area. You can browse nearby rentals on the map or list your property free.";
+
+export const SEO_BUY_SUPPLY_NOTICE =
+  "RentalPins Buy is growing sale inventory in this corridor. Browse owner-direct pins on the buy map or list your property for sale.";
 
 /** Parse city/area slugs from canonical rental hub paths like /rentals/in/chandigarh/mohali/sector-70 */
 export function slugsFromRentalHubHref(hubHref: string): {

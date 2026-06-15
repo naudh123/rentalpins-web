@@ -4,7 +4,7 @@ import { rentalCityPath } from "@/lib/cities-config";
 import { appPath } from "@/lib/config";
 import { MAIN_CATEGORIES } from "@/lib/categories";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
-import { HOME_RENTER_SECTION, HOME_SEO_LINKS } from "@/lib/seo/home-page-content";
+import { HOME_BUY_SECTION, HOME_RENTER_SECTION, HOME_SEO_LINKS } from "@/lib/seo/home-page-content";
 
 const CATEGORY_ICONS: Record<string, string> = {
   Property: "🏠",
@@ -33,7 +33,7 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-orange)]">
-              For renters
+              For renters & buyers
             </p>
             <h2
               id="home-renter-heading"
@@ -54,6 +54,33 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section
+        aria-labelledby="home-buy-heading"
+        className="border-t border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--sale-gold)_6%,var(--bg))] px-4 py-14"
+      >
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--sale-gold)]">
+            RentalPins Buy
+          </p>
+          <h2 id="home-buy-heading" className="mt-3 font-serif text-2xl text-[var(--brand-navy)] md:text-3xl">
+            {HOME_BUY_SECTION.title}
+          </h2>
+          <p className="mt-2 text-sm text-[var(--muted)]">{HOME_BUY_SECTION.subtitle}</p>
+          <ul className="mt-6 flex flex-wrap justify-center gap-2">
+            {HOME_BUY_SECTION.links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={appPath(link.href)}
+                  className="rounded-full border border-[color-mix(in_srgb,var(--sale-gold)_35%,var(--border))] bg-white px-4 py-2 text-sm font-medium text-[var(--brand-navy)] no-underline hover:border-[var(--sale-gold)]"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

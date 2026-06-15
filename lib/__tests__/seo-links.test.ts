@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   getBrowseHref,
+  getBuyBrowseHref,
+  getListForSaleHref,
   getListPropertyHref,
   intentFromCategorySlug,
   intentFromMarketingSlug,
@@ -18,7 +20,20 @@ describe("getBrowseHref", () => {
   it("falls back to place query search", () => {
     const href = getBrowseHref({ placeQuery: "Mohali" });
     expect(href).toContain("/search?");
-    expect(href).toContain("place=Mohali");
+    expect(href).toContain("q=Mohali");
+  });
+
+  it("routes sale browse to buy map", () => {
+    const href = getBuyBrowseHref({ lat: 30.7, lng: 76.7, zoom: 12 });
+    expect(href).toContain("/buy/search");
+    expect(href).not.toContain("transaction=sale");
+    expect(href).toContain("category=Property");
+  });
+
+  it("routes sale place query to buy search", () => {
+    const href = getBuyBrowseHref({ placeQuery: "Phase 7 Mohali" });
+    expect(href).toContain("/buy/search");
+    expect(href).toContain("q=Phase");
   });
 
   it("returns plain search when no options", () => {
@@ -27,8 +42,14 @@ describe("getBrowseHref", () => {
 });
 
 describe("getListPropertyHref", () => {
-  it("points to post flow", () => {
+  it("points to rent post flow", () => {
     expect(getListPropertyHref({ citySlug: "mohali", intent: "pg" })).toMatch(/\/post$/);
+  });
+});
+
+describe("getListForSaleHref", () => {
+  it("points to buy post flow", () => {
+    expect(getListForSaleHref()).toMatch(/\/buy\/post$/);
   });
 });
 

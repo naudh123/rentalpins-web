@@ -1,8 +1,8 @@
 import Link from "next/link";
-import SaleShell from "@/components/sale/SaleShell";
 import FAQSchema from "@/components/seo/FAQSchema";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import { appPath } from "@/lib/config";
+import { BUY_POST_PATH, BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 import { canonicalUrl } from "@/lib/seo";
 import type { MarketingPageConfig } from "@/lib/seo/marketing-pages";
 import type { SaleFunnelKind } from "@/lib/sale/sale-funnel-cities";
@@ -24,11 +24,11 @@ export default function SaleMarketingLandingPage({ config, funnelKind }: Props) 
     { name: "Buy", url: canonicalUrl("/buy") },
     { name: config.h1, url: pageUrl },
   ];
-  const saleMapHref = appPath("/search?transaction=sale&category=Property");
-  const listHref = appPath("/post?transaction=sale");
+  const saleMapHref = appPath(BUY_SEARCH_PATH);
+  const listHref = appPath(BUY_POST_PATH);
 
   return (
-    <SaleShell>
+    <>
       <BreadcrumbSchema items={breadcrumbs} />
       <FAQSchema faqs={config.faqs.map((f) => ({ question: f.q, answer: f.a }))} />
 
@@ -144,6 +144,6 @@ export default function SaleMarketingLandingPage({ config, funnelKind }: Props) 
           </Link>
         </div>
       </section>
-    </SaleShell>
+    </>
   );
 }

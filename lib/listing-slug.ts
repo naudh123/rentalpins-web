@@ -18,6 +18,7 @@ export interface ListingSlugInput {
   searchableTitle?: string;
   /** Persisted on activation — stable public URL segment. */
   urlSlug?: string;
+  transactionType?: import("@/lib/transaction-type").TransactionType;
 }
 
 /** Lowercase ASCII slug segment (no id suffix). */

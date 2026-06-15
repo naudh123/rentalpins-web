@@ -6,7 +6,8 @@ describe("llms txt", () => {
     const txt = buildLlmsTxt();
     expect(txt).toContain("https://www.rentalpins.com");
     expect(txt).toContain("https://www.rentalpins.com/sitemap-listings.xml");
-    expect(txt).toContain("Preferred detail URL");
+    expect(txt).toContain("https://www.rentalpins.com/buy/search");
+    expect(txt).toContain("buy/listings");
   });
 
   it("includes extended retrieval guidance in llms-full.txt", () => {

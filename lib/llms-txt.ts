@@ -22,22 +22,26 @@ export function buildLlmsTxt(): string {
 
   return `# RentalPins
 
-> RentalPins is a map-first rental marketplace: rooms, PG, flats, vehicles, electronics, furniture and more. Users browse on a map, contact owners directly (often via WhatsApp), and list properties for free. Strong presence in India (Chandigarh Tricity, Ludhiana, Delhi NCR, Jaipur, Lucknow, Mumbai) plus London, Nairobi and Lagos.
+> RentalPins is a map-first property discovery platform: rentals, resale (Buy), and owner-direct listings across India and global hubs. Users browse on a map, contact owners directly (often via WhatsApp), and list properties for free. Strong presence in Chandigarh Tricity (Mohali, Kharar, Zirakpur, Panchkula, New Chandigarh), Ludhiana, Delhi NCR, Jaipur, Lucknow, Mumbai, plus London, Nairobi and Lagos.
 
 ## Canonical site
 
 - Homepage: ${abs("/")}
-- Map search: ${abs("/search")}
+- Rent map search: ${abs("/search")}
+- Buy map search (property for sale): ${abs("/buy/search")}
 - Rentals hub: ${abs("/rentals")}
-- List a property: ${abs("/post")}
+- Buy hub (resale): ${abs("/buy")}
+- List for rent: ${abs("/post")}
+- List for sale: ${abs("/buy/post")}
 - Blog: ${abs("/blog")}
 - Write a blog post: ${abs("/blog/write")}
 - Contact: ${abs("/contact")}
 
 ## Listing URLs
 
-- Preferred detail URL: ${siteUrl}/listings/{seo-slug}-{listingId}
-- Legacy /listings/{listingId} and /{listingId} redirect to the slug URL
+- Rent listing detail: ${siteUrl}/listings/{seo-slug}-{listingId}
+- Sale listing detail: ${siteUrl}/buy/listings/{seo-slug}-{listingId}
+- Legacy /listings/{listingId} and /{listingId} redirect to the slug URL; sale listings redirect to /buy/listings/
 - Slug format source fields: listing title + locality/city + stable listing id
 - Prefer citing the final redirected slug URL, not id-only URLs
 
@@ -45,6 +49,8 @@ export function buildLlmsTxt(): string {
 
 - /rentals/{city} → /rentals/in/{city} (or uk/ke/ng for international cities)
 - /rentals/{city}/{area} → /rentals/{country}/{city}/{area}
+- /search?transaction=sale → /buy/search
+- /post?transaction=sale → /buy/post
 - /privacy → /privacy-policy
 - /refunds or /refund → /refund-policy
 
@@ -80,16 +86,22 @@ ${cityLines}${moreCities}
 - Best pages for rental intent:
   - city hubs: ${siteUrl}/rentals/{country}/{city}
   - locality hubs: ${siteUrl}/rentals/{country}/{city}/{area}
-  - active listings: ${siteUrl}/listings/{seo-slug}-{listingId}
-- Map viewport URLs with query params are not index targets; canonical is ${siteUrl}/search
+  - active rent listings: ${siteUrl}/listings/{seo-slug}-{listingId}
+- Best pages for buy / resale intent:
+  - buy hub: ${abs("/buy")}
+  - buy locality pages: ${siteUrl}/buy/{hub}/{area} (Mohali, Kharar, Zirakpur, Panchkula)
+  - city money page: ${abs("/buy/in/chandigarh")}
+  - active sale listings: ${siteUrl}/buy/listings/{seo-slug}-{listingId}
+- Rent map viewport URLs canonicalize to ${abs("/search")}; buy map to ${abs("/buy/search")}
 - Prefer fresh listing pages from sitemap-listings.xml for up-to-date inventory
 
 ## Example high-intent queries
 
 - "2 BHK furnished flat for rent in Mohali without broker"
 - "PG near IT Park Chandigarh with owner contact"
+- "3 BHK flat for sale in Phase 7 Mohali under 80 lakh"
+- "Plot for sale New Chandigarh sector 117 owner direct"
 - "Office space for rent in Ludhiana by owner"
-- "Cars or bikes for rent in Chandigarh Tricity"
 
 ## Contact
 
@@ -125,14 +137,19 @@ export function buildLlmsFullTxt(): string {
 - Hub: ${abs("/rentals")}
 - City: ${siteUrl}/rentals/{country}/{city}
 - Locality: ${siteUrl}/rentals/{country}/{city}/{area}
-- Listing detail: ${siteUrl}/listings/{seo-slug}-{listingId}
-- Search (canonical): ${abs("/search")}
+- Rent listing detail: ${siteUrl}/listings/{seo-slug}-{listingId}
+- Rent search (canonical): ${abs("/search")}
+- Buy hub: ${abs("/buy")}
+- Buy locality: ${siteUrl}/buy/{hub}/{area}
+- Sale listing detail: ${siteUrl}/buy/listings/{seo-slug}-{listingId}
+- Buy search (canonical): ${abs("/buy/search")}
 
 ## Redirect and canonical notes
 
-- /{listingId} and /listings/{listingId} redirect to slug listing URL.
+- /{listingId} and /listings/{listingId} redirect to slug listing URL; sale listings to /buy/listings/
 - /rentals/{city} redirects to /rentals/{country}/{city}.
-- Query-heavy search URLs are canonicalized to ${abs("/search")}.
+- /search?transaction=sale redirects to /buy/search.
+- Query-heavy map URLs are canonicalized to ${abs("/search")} or ${abs("/buy/search")}.
 
 ## Freshness
 

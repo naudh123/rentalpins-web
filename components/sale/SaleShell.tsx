@@ -7,13 +7,16 @@ import Logo from "@/components/brand/Logo";
 import SiteFooter from "@/components/marketing/SiteFooter";
 import SeoCtaTracker from "@/components/seo/SeoCtaTracker";
 import { appPath } from "@/lib/config";
-import { PLAY_STORE_URL } from "@/lib/site-links";
+import {
+  BUY_POST_PATH,
+  BUY_SEARCH_PATH,
+} from "@/lib/sale/buy-app-paths";
 
 const NAV = [
-  { label: "Buy map", href: appPath("/search?transaction=sale&category=Property") },
+  { label: "Buy map", href: appPath(BUY_SEARCH_PATH) },
   { label: "Mohali", href: appPath("/buy/mohali") },
+  { label: "Kharar", href: appPath("/buy/kharar") },
   { label: "Rent", href: appPath("/search") },
-  { label: "About", href: appPath("/about") },
 ] as const;
 
 export default function SaleShell({ children }: { children: React.ReactNode }) {
@@ -39,7 +42,9 @@ export default function SaleShell({ children }: { children: React.ReactNode }) {
               const active =
                 pathname === item.href ||
                 (item.href.includes("/buy/mohali") &&
-                  pathname?.startsWith("/buy/mohali"));
+                  pathname?.startsWith("/buy/mohali")) ||
+                (item.href.includes("/buy/kharar") &&
+                  pathname?.startsWith("/buy/kharar"));
               return (
                 <Link
                   key={item.href}
@@ -58,13 +63,13 @@ export default function SaleShell({ children }: { children: React.ReactNode }) {
 
           <div className="flex items-center gap-2">
             <Link
-              href={appPath("/search?transaction=sale&category=Property")}
+              href={appPath(BUY_SEARCH_PATH)}
               className="rp-btn rp-btn-primary hidden px-4 py-2 text-xs sm:inline-flex"
             >
-              Explore sale map
+              Explore buy map
             </Link>
             <Link
-              href={appPath("/post?transaction=sale")}
+              href={appPath(BUY_POST_PATH)}
               className="rp-btn rp-btn-secondary hidden px-4 py-2 text-xs sm:inline-flex"
             >
               List for sale
@@ -96,7 +101,7 @@ export default function SaleShell({ children }: { children: React.ReactNode }) {
               ))}
               <li>
                 <Link
-                  href={appPath("/post?transaction=sale")}
+                  href={appPath(BUY_POST_PATH)}
                   className="block rounded-lg px-3 py-2 text-sm font-semibold text-[var(--brand-navy)]"
                   onClick={() => setOpen(false)}
                 >
@@ -110,7 +115,7 @@ export default function SaleShell({ children }: { children: React.ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      <SiteFooter />
+      <SiteFooter variant="sale" />
       <SeoCtaTracker />
     </div>
   );

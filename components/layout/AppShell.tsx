@@ -14,6 +14,7 @@ import {
 } from "@/components/icons/NavIcons";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { appPath, basePath, showStagingBanner } from "@/lib/config";
+import { isBuyAppPath } from "@/lib/sale/buy-app-paths";
 import { getClientDb } from "@/lib/firebase-client";
 
 const DESKTOP_NAV = [
@@ -153,7 +154,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     };
   }, [user]);
 
-  if (isMarketingPath(pathname)) {
+  if (isMarketingPath(pathname) || isBuyAppPath(pathname)) {
     return <>{children}</>;
   }
 

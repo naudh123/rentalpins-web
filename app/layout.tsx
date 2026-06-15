@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { GoogleMapsLoaderProvider } from "@/components/providers/GoogleMapsLoaderProvider";
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
 import { SavedListingsProvider } from "@/components/providers/SavedListingsProvider";
 import AppShell from "@/components/layout/AppShell";
@@ -53,9 +54,11 @@ export default function RootLayout({
         <JsonLdWebsite />
         <JsonLdSoftwareApplication />
         <AuthProvider>
-          <SavedListingsProvider>
-            <AppShell>{children}</AppShell>
-          </SavedListingsProvider>
+          <GoogleMapsLoaderProvider>
+            <SavedListingsProvider>
+              <AppShell>{children}</AppShell>
+            </SavedListingsProvider>
+          </GoogleMapsLoaderProvider>
           <AnalyticsProvider />
         </AuthProvider>
         {gaMeasurementId && deployEnv !== "staging" && (

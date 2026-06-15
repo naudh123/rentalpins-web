@@ -60,6 +60,22 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
+  // Sale map lives under /buy/search — keep rent search clean.
+  if (decoded === "/search" && request.nextUrl.searchParams.get("transaction") === "sale") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/buy/search";
+    url.searchParams.delete("transaction");
+    return NextResponse.redirect(url, 308);
+  }
+
+  if (decoded === "/post" && request.nextUrl.searchParams.get("transaction") === "sale") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/buy/post";
+    url.search = request.nextUrl.search;
+    url.searchParams.delete("transaction");
+    return NextResponse.redirect(url, 308);
+  }
+
   const legacyTarget = LEGACY_PATH_REDIRECTS[decoded];
   if (legacyTarget) {
     const url = request.nextUrl.clone();

@@ -1,5 +1,6 @@
 import { appPath } from "@/lib/config";
 import { buyHubPath, saleMapSearchHref } from "@/lib/sale/buy-pages-config";
+import { BUY_POST_PATH, BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 import { BUY_HUB_SLUGS } from "@/lib/sale/buy-pages-config";
 
 export interface ListForSaleFaq {
@@ -189,9 +190,8 @@ export function getListForSaleSitemapPaths(): string[] {
   return [ROOT_PAGE.path, ...Object.values(CITY_PAGES).map((c) => c.path)];
 }
 
-export function listForSalePostHref(citySlug?: string): string {
-  const base = "/post?transaction=sale";
-  return appPath(base);
+export function listForSalePostHref(_citySlug?: string): string {
+  return appPath(BUY_POST_PATH);
 }
 
 export function listForSaleBrowseHref(config: ListForSalePageConfig): string {
@@ -204,5 +204,5 @@ export function listForSaleBrowseHref(config: ListForSalePageConfig): string {
       )
     );
   }
-  return appPath("/search?transaction=sale&category=Property");
+  return appPath(BUY_SEARCH_PATH);
 }

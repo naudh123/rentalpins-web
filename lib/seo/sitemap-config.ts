@@ -9,7 +9,7 @@ import {
   WITHOUT_BROKER_PAGES,
 } from "@/lib/seo/marketing-pages";
 
-/** Marketing + static landing slugs in `/sitemap.xml`. */
+/** Marketing + static landing slugs in `/sitemap.xml` (rent funnels). Buy hubs live via getBuyHubSitemapPaths in app/sitemap.ts. */
 export function getCoreMarketingSitemapSlugs(): string[] {
   return [
     ...Object.keys(WITHOUT_BROKER_PAGES),

@@ -1538,7 +1538,6 @@ export function saleMapSearchHref(
   placeQuery?: string
 ): string {
   const p = new URLSearchParams({
-    transaction: "sale",
     lat: String(lat),
     lng: String(lng),
     zoom: String(zoom),
@@ -1547,7 +1546,7 @@ export function saleMapSearchHref(
   if (placeQuery?.trim()) {
     p.set("q", placeQuery.trim());
   }
-  return `/search?${p.toString()}`;
+  return `/buy/search?${p.toString()}`;
 }
 
 export const SALE_TRANSACTION: TransactionType = "sale";

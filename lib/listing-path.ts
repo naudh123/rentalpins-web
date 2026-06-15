@@ -3,11 +3,20 @@ import {
   buildListingSlugSegment,
   type ListingSlugInput,
 } from "@/lib/listing-slug";
+import { buyListingPath } from "@/lib/sale/buy-app-paths";
 import type { ListingCard, ListingDetail } from "@/lib/types/listing";
+
+/** Relative listing detail path — sale listings under /buy/listings. */
+export function listingDetailBasePath(listing: ListingSlugInput): string {
+  const segment = buildListingSlugSegment(listing);
+  return listing.transactionType === "sale"
+    ? buyListingPath(segment)
+    : appPath(`/listings/${segment}`);
+}
 
 /** Relative listing detail path with SEO slug (no query string). */
 export function listingPublicPath(listing: ListingSlugInput): string {
-  return appPath(`/listings/${buildListingSlugSegment(listing)}`);
+  return listingDetailBasePath(listing);
 }
 
 export function listingToSlugInput(
@@ -22,6 +31,7 @@ export function listingToSlugInput(
     | "category"
     | "attributes"
     | "urlSlug"
+    | "transactionType"
   > & { searchableTitle?: string }
 ): ListingSlugInput {
   return {
@@ -35,6 +45,7 @@ export function listingToSlugInput(
     attributes: listing.attributes,
     searchableTitle: listing.searchableTitle,
     urlSlug: listing.urlSlug,
+    transactionType: listing.transactionType,
   };
 }
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CityBuySEOConfig } from "@/lib/seo/city-buy-seo-config";
 import { appPath } from "@/lib/config";
+import { BUY_POST_PATH, BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 
 export default function CityBuySeoContent({ config }: { config: CityBuySEOConfig }) {
   return (
@@ -116,10 +117,10 @@ export default function CityBuySeoContent({ config }: { config: CityBuySEOConfig
         )}
 
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href={appPath("/search?transaction=sale&category=Property")} className="rp-btn rp-btn-primary px-6 py-2.5">
+          <Link href={appPath(BUY_SEARCH_PATH)} className="rp-btn rp-btn-primary px-6 py-2.5">
             Open sale map
           </Link>
-          <Link href={appPath("/post?transaction=sale")} className="rp-btn rp-btn-secondary px-6 py-2.5">
+          <Link href={appPath(BUY_POST_PATH)} className="rp-btn rp-btn-secondary px-6 py-2.5">
             List for sale
           </Link>
         </div>

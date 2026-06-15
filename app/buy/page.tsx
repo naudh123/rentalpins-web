@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { appPath, siteUrl } from "@/lib/config";
+import { BUY_POST_PATH, BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 import { BUY_HUBS } from "@/lib/sale/buy-pages-config";
 
 export const metadata: Metadata = {
@@ -34,12 +35,12 @@ export default function BuyIndexPage() {
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            href={appPath("/search?transaction=sale&category=Property")}
+            href={appPath(BUY_SEARCH_PATH)}
             className="rp-btn rp-btn-primary px-6 py-3"
           >
             Explore sale map
           </Link>
-          <Link href={appPath("/post?transaction=sale")} className="rp-btn rp-btn-secondary px-6 py-3">
+          <Link href={appPath(BUY_POST_PATH)} className="rp-btn rp-btn-secondary px-6 py-3">
             List for sale
           </Link>
           <Link href={appPath("/flats-for-sale")} className="rp-btn rp-btn-secondary px-6 py-3">

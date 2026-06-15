@@ -19,6 +19,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: canonicalUrl("/"), lastModified: now, changeFrequency: "daily", priority: 1 },
     { url: canonicalUrl("/search"), lastModified: now, changeFrequency: "daily", priority: 0.95 },
     { url: canonicalUrl("/buy"), lastModified: now, changeFrequency: "weekly", priority: 0.88 },
+    { url: canonicalUrl("/buy/search"), lastModified: now, changeFrequency: "daily", priority: 0.87 },
+    { url: canonicalUrl("/buy/post"), lastModified: now, changeFrequency: "weekly", priority: 0.75 },
     ...getBuyHubSitemapPaths().map((path) => ({
       url: canonicalUrl(path),
       lastModified: now,
