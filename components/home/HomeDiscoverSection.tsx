@@ -58,14 +58,14 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
       </section>
 
       <section
-        aria-labelledby="home-buy-heading"
-        className="border-t border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--sale-gold)_6%,var(--bg))] px-4 py-14"
+        aria-labelledby="home-buy-links-heading"
+        className="border-t border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--sale-gold)_5%,var(--bg))] px-4 py-12"
       >
         <div className="mx-auto max-w-5xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--sale-gold)]">
             RentalPins Buy
           </p>
-          <h2 id="home-buy-heading" className="mt-3 font-serif text-2xl text-[var(--brand-navy)] md:text-3xl">
+          <h2 id="home-buy-links-heading" className="mt-3 font-serif text-2xl text-[var(--brand-navy)] md:text-3xl">
             {HOME_BUY_SECTION.title}
           </h2>
           <p className="mt-2 text-sm text-[var(--muted)]">{HOME_BUY_SECTION.subtitle}</p>

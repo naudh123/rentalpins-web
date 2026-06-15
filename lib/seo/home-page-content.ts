@@ -1,12 +1,53 @@
 /** Homepage copy — honest, SEO-friendly, owner-listing focused. */
 
 export const HOME_HERO = {
-  eyebrow: "Property discovery · Rent & buy · India & global hubs",
-  headline: "Discover property on the map.",
-  headlineAccent: "Rent, buy, or list with confidence.",
+  /** Umbrella H1 — neutral, covers rent, buy, and invest positioning. */
+  headline:
+    "Discover Rentals, Properties for Sale, and Investment Opportunities on the Map",
   subhead:
-    "Flats, PG, houses, shops, offices and property for sale — owner-direct on live maps. Browse without broker fees. Owners post free on web or Android.",
+    "RentalPins helps people rent, buy, sell, and discover property directly through live map-based listings.",
 } as const;
+
+export const HOME_RENT_LANE = {
+  eyebrow: "Rent",
+  heading: "Rent without broker",
+  copy: "Find rental properties near you and contact owners directly.",
+  benefits: [
+    "Owner-direct rentals",
+    "Map-based discovery",
+    "No broker-first experience",
+  ],
+  primaryCta: { label: "Browse rentals", href: "/search" },
+  secondaryCta: { label: "List for rent", href: "/post" },
+} as const;
+
+export const HOME_BUY_LANE = {
+  eyebrow: "Buy",
+  heading: "Buy owner-direct",
+  copy:
+    "Find properties for sale, compare locations, explore new projects, and buy smart.",
+  benefits: [
+    "Owner-direct listings",
+    "New projects",
+    "Investment opportunities",
+    "Commercial properties",
+  ],
+  primaryCta: { label: "Browse for sale", href: "/buy/search" },
+  secondaryCta: { label: "List for sale", href: "/buy/post" },
+  tertiaryCta: { label: "Post requirement", href: "/buy/requirements" },
+} as const;
+
+/**
+ * Tricity buy hub chips — canonical hub URLs (not /buy/chandigarh shorthand).
+ * Chandigarh uses city money page; New Chandigarh uses hub/area route.
+ */
+export const HOME_BUY_HERO_CHIPS = [
+  { label: "Chandigarh", href: "/buy/in/chandigarh" },
+  { label: "Mohali", href: "/buy/mohali" },
+  { label: "Panchkula", href: "/buy/panchkula" },
+  { label: "Zirakpur", href: "/buy/zirakpur" },
+  { label: "New Chandigarh", href: "/buy/mohali/new-chandigarh" },
+] as const;
 
 export const HOME_PLATFORM_PILLS = [
   { label: "Listing fee", value: "Free" },
@@ -92,15 +133,17 @@ export const HOME_RENTER_SECTION = {
   ],
 } as const;
 
+/** Supporting buy links below the hero — deep links only (hero owns primary CTAs). */
 export const HOME_BUY_SECTION = {
-  title: "Property for sale (RentalPins Buy)",
-  subtitle: "Separate gold-themed buy map for Tricity resale — owner-direct flats, villas, and plots.",
+  title: "Explore property for sale",
+  subtitle: "Tricity buy guides, corridors, and sector pages on RentalPins Buy.",
   links: [
-    { label: "Buy map", href: "/buy/search" },
     { label: "Mohali for sale", href: "/buy/mohali" },
     { label: "Kharar for sale", href: "/buy/kharar" },
+    { label: "Zirakpur for sale", href: "/buy/zirakpur" },
+    { label: "Panchkula for sale", href: "/buy/panchkula" },
     { label: "New Chandigarh", href: "/buy/mohali/new-chandigarh" },
-    { label: "List for sale", href: "/buy/post" },
+    { label: "Tricity property", href: "/property-for-sale-chandigarh" },
   ],
 } as const;
 

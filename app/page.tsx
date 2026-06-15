@@ -16,21 +16,19 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import { canonicalUrl } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title:
-    "RentalPins — List Property Free & Find Rentals Without Broker in India",
+  title: "RentalPins — Rent & Buy Property on the Map | India",
   description:
-    "List flats, PG, houses, shops, offices and warehouses free on RentalPins. Renters browse owner listings on the map across Mohali, Delhi, Ludhiana and more — no broker commission.",
+    "Find rentals and properties for sale on RentalPins. Browse map-based listings, compare locations, contact owners directly, and list your property free.",
   path: "/",
   keywords: [
+    "rent property on map",
+    "buy property without broker",
     "list property free",
-    "post rental listing",
-    "rent without broker",
+    "property for sale",
     "flats for rent",
-    "PG for rent",
-    "property owner listing",
     "Mohali rentals",
-    "Delhi rentals",
-    "commercial property rent",
+    "Mohali property for sale",
+    "rent without broker",
   ],
 });
 
@@ -46,10 +44,10 @@ export default function HomePage() {
         data={{
           "@context": "https://schema.org",
           "@type": "WebPage",
-          name: "RentalPins — List property free & find rentals on the map",
+          name: "RentalPins — Rent & buy property on the map",
           url: canonicalUrl("/"),
           description:
-            "Map-first rental marketplace for owners and renters. List flats, PG, shops and offices free. Browse without broker.",
+            "RentalPins helps people rent, buy, sell, and discover property directly through live map-based listings.",
           isPartOf: { "@type": "WebSite", name: "RentalPins", url: canonicalUrl("/") },
         }}
       />

@@ -34,17 +34,24 @@ export default function MarketingShell({
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
             {NAV.map((item) => {
-              const active =
-                pathname === item.href || pathname?.startsWith(`${item.href}/`);
+              const isBuyLink = item.label === "Buy";
+              const active = isBuyLink
+                ? pathname === item.href || pathname?.startsWith(`${item.href}/`)
+                : pathname === item.href || pathname?.startsWith(`${item.href}/`);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-                    active
-                      ? "bg-[color-mix(in_srgb,var(--brand-orange)_14%,transparent)] text-[var(--brand-orange)]"
-                      : "text-[var(--muted)] hover:text-[var(--brand-navy)]"
+                  className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                    active && isBuyLink
+                      ? "bg-[color-mix(in_srgb,var(--sale-gold)_18%,transparent)] text-[var(--brand-navy)] ring-1 ring-[color-mix(in_srgb,var(--sale-gold)_45%,var(--border))]"
+                      : active
+                        ? "bg-[color-mix(in_srgb,var(--brand-orange)_14%,transparent)] text-[var(--brand-orange)]"
+                        : isBuyLink
+                          ? "border border-[color-mix(in_srgb,var(--sale-gold)_35%,var(--border))] bg-[color-mix(in_srgb,var(--sale-gold)_7%,transparent)] text-[var(--brand-navy)] hover:border-[var(--sale-gold)]"
+                          : "text-[var(--muted)] hover:text-[var(--brand-navy)]"
                   }`}
+                  style={isBuyLink ? { outlineColor: "var(--sale-gold)" } : undefined}
                 >
                   {item.label}
                 </Link>
@@ -94,16 +101,23 @@ export default function MarketingShell({
         {open && (
           <div className="border-t border-[var(--border)] bg-[var(--surface)] px-4 py-4 md:hidden">
             <nav className="flex flex-col gap-1">
-              {NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--bg-elevated)]"
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              ))}
+              {NAV.map((item) => {
+                const isBuyLink = item.label === "Buy";
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-[var(--bg-elevated)] ${
+                      isBuyLink
+                        ? "border border-[color-mix(in_srgb,var(--sale-gold)_35%,var(--border))] bg-[color-mix(in_srgb,var(--sale-gold)_6%,transparent)] text-[var(--brand-navy)]"
+                        : ""
+                    }`}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
               <Link
                 href={appPath("/search")}
                 className="rp-btn rp-btn-primary mt-2 w-full"

@@ -16,7 +16,7 @@ describe("home page content", () => {
   it("avoids fake social proof claims", () => {
     const blobs = [
       HOME_HERO.subhead,
-      HOME_HERO.headlineAccent,
+      HOME_HERO.headline,
       ...HOME_OWNER_VALUE.benefits.flatMap((b) => [b.title, b.desc]),
       ...HOME_FAQS.flatMap((f) => [f.q, f.a]),
     ];

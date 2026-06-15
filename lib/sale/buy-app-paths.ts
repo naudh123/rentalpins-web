@@ -5,6 +5,9 @@ export const BUY_SEARCH_PATH = "/buy/search";
 
 export const BUY_POST_PATH = "/buy/post";
 
+/** Buyer requirement board — placeholder until demand module ships. */
+export const BUY_REQUIREMENTS_PATH = "/buy/requirements";
+
 /** Sale marketing funnels outside /buy — still use SaleShell, not rent AppShell. */
 export const SALE_MARKETING_PREFIXES = [
   "/flats-for-sale",
