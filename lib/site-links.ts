@@ -24,17 +24,25 @@ export const COMPANY_LINKS = [
 ] as const;
 
 export const EXPLORE_LINKS = [
-  { label: "Map search", href: appPath("/search") },
+  { label: "Rent map", href: appPath("/search") },
+  { label: "Buy map", href: appPath("/buy/search") },
   { label: "Browse by city", href: appPath("/rentals") },
-  { label: "Post a listing", href: appPath("/post") },
+  { label: "Investment areas", href: appPath("/invest") },
   { label: "Sign in", href: appPath("/auth/login") },
   { label: "Get Android App", href: PLAY_STORE_URL, external: true },
 ] as const;
 
 export const BUY_EXPLORE_LINKS = [
   { label: "Buy map", href: appPath("/buy/search") },
+  { label: "Post property", href: appPath("/buy/post") },
+  { label: "Post requirement", href: appPath("/buy/requirements") },
   { label: "Mohali for sale", href: appPath("/buy/mohali") },
-  { label: "Kharar for sale", href: appPath("/buy/kharar") },
-  { label: "List for sale", href: appPath("/buy/post") },
-  { label: "Rentals map", href: appPath("/search") },
+  { label: "Rent map", href: appPath("/search") },
 ] as const;
+
+/** Global homepage / marketing footer blurb */
+export const FOOTER_PLATFORM_COPY =
+  "Map-first property discovery — rent, buy, and explore investment opportunities across India and global hubs. Contact owners directly.";
+
+export const FOOTER_BUY_COPY =
+  "Map-first property for sale — flats, villas, and plots across Chandigarh Tricity. Owner-direct listings on RentalPins Buy.";

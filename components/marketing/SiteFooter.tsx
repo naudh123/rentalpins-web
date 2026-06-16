@@ -5,6 +5,8 @@ import {
   BUY_EXPLORE_LINKS,
   COMPANY_LINKS,
   EXPLORE_LINKS,
+  FOOTER_BUY_COPY,
+  FOOTER_PLATFORM_COPY,
   LEGAL_LINKS,
   SOCIAL_LINKS,
 } from "@/lib/site-links";
@@ -27,11 +29,9 @@ export default function SiteFooter({ variant = "rent" }: Props) {
     <footer className="border-t border-[var(--border)] bg-[var(--bg-elevated)] py-12">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-5">
         <div className="lg:col-span-1">
-          <Logo href={appPath(isSale ? "/buy" : "/")} size="sm" />
+          <Logo href={appPath(isSale ? "/buy" : "/")} size="md" />
           <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
-            {isSale
-              ? "Map-first property for sale — flats, villas, and plots across Chandigarh Tricity. Owner-direct, separate from rentals."
-              : "Map-first rentals — rooms, PG, flats, vehicles and more across India and global hubs. Contact owners directly."}
+            {isSale ? FOOTER_BUY_COPY : FOOTER_PLATFORM_COPY}
           </p>
           <div className="mt-4 flex gap-2">
             {SOCIAL_LINKS.map((s) => (
