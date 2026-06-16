@@ -30,6 +30,7 @@ export const HOME_MODE_GATEWAY = {
     copy: "Discover properties for sale, new projects, and investment opportunities.",
     primary: { label: "Browse for sale", href: "/buy/search" },
     secondary: { label: "List for sale", href: "/buy/post" },
+    tertiary: { label: "Post requirement", href: "/buy/requirements" },
   },
   invest: {
     title: "Invest",

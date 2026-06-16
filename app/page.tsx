@@ -8,7 +8,6 @@ import HomeDiscoverSection from "@/components/home/HomeDiscoverSection";
 import HomeFaqSection from "@/components/home/HomeFaqSection";
 import HomeFinalCta from "@/components/home/HomeFinalCta";
 import HomeHero from "@/components/home/HomeHero";
-import HomeInvestPreview from "@/components/home/HomeInvestPreview";
 import HomeInvestmentIntelSection from "@/components/home/HomeInvestmentIntelSection";
 import HomeOwnerListingSection from "@/components/home/HomeOwnerListingSection";
 import HomeTricitySection from "@/components/home/HomeTricitySection";
@@ -63,7 +62,6 @@ export default function HomePage() {
 
       <div className="rp-gradient-hero">
         <HomeHero liveCityCount={liveCount} />
-        <HomeInvestPreview />
         <HomeTricitySection />
         <HomeBuyerDemandSection />
         <HomeInvestmentIntelSection />
