@@ -1,10 +1,10 @@
 import Image from "next/image";
 
 const HEIGHT = {
-  sm: "h-9",
-  md: "h-11",
-  lg: "h-14",
-  hero: "h-28 w-auto sm:h-32 md:h-36 lg:h-40",
+  sm: "h-10",
+  md: "h-12",
+  lg: "h-16",
+  hero: "h-32 w-auto sm:h-36 md:h-40 lg:h-44",
 } as const;
 
 interface Props {
