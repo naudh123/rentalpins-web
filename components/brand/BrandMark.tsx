@@ -1,10 +1,10 @@
 import Image from "next/image";
 
 const HEIGHT = {
-  sm: "h-10",
+  sm: "h-11",
   md: "h-12",
   lg: "h-16",
-  hero: "h-32 w-auto sm:h-36 md:h-40 lg:h-44",
+  hero: "h-36 w-auto sm:h-40 md:h-44 lg:h-48",
 } as const;
 
 interface Props {
@@ -25,8 +25,8 @@ export default function BrandMark({
     <Image
       src="/logo/logo-pin.png"
       alt=""
-      width={507}
-      height={645}
+      width={495}
+      height={593}
       className={`${hClass} w-auto shrink-0 object-contain ${className}`}
       priority={priority}
     />

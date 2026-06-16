@@ -181,7 +181,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       >
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-2">
-            <Logo href={appPath("/")} size="sm" />
+            <Logo href={appPath("/")} size="md" />
             <ProductBadge variant="rent" className="hidden sm:inline-flex" />
           </div>
 
