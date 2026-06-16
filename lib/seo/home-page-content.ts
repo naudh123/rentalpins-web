@@ -28,8 +28,8 @@ export const HOME_MODE_GATEWAY = {
   buy: {
     title: "Buy",
     copy: "Discover properties for sale, new projects, and investment opportunities.",
-    primary: { label: "Browse properties", href: "/buy/search" },
-    secondary: { label: "List property", href: "/buy/post" },
+    primary: { label: "Browse for sale", href: "/buy/search" },
+    secondary: { label: "List for sale", href: "/buy/post" },
   },
   invest: {
     title: "Invest",

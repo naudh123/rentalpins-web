@@ -4,7 +4,7 @@ const BOX = {
   sm: "h-8 w-8",
   md: "h-10 w-10",
   lg: "h-14 w-14",
-  hero: "h-[6.2rem] w-[6.2rem] sm:h-[6.5rem] sm:w-[6.5rem] md:h-[7.8rem] md:w-[7.8rem] lg:h-[10.4rem] lg:w-[10.4rem]",
+  hero: "h-[6.2rem] w-[5.1rem] sm:h-[6.5rem] sm:w-[5.35rem] md:h-[7.8rem] md:w-[6.4rem] lg:h-[10.4rem] lg:w-[8.5rem]",
 } as const;
 
 interface Props {

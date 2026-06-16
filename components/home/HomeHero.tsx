@@ -26,13 +26,9 @@ export default function HomeHero({ liveCityCount }: Props) {
       <div className="relative px-4 pb-3 pt-4 text-center sm:pt-5 md:pb-4 md:pt-6">
         <div className="mx-auto flex max-w-4xl flex-col items-center">
           <BrandMark size="hero" priority />
-          <p className="mt-3 font-serif text-[1.95rem] font-bold tracking-tight sm:text-[2.44rem] md:mt-4 md:text-[2.93rem]">
-            <span className="rp-wordmark-navy">Rental</span>
-            <span className="rp-wordmark-orange">Pins</span>
-          </p>
           <h1
             id="home-hero-heading"
-            className="mt-2 max-w-4xl font-serif text-[1.55rem] leading-[1.12] tracking-tight text-[var(--brand-navy)] sm:mt-3 sm:text-[1.85rem] md:text-4xl md:leading-tight lg:text-[2.5rem]"
+            className="mt-4 max-w-4xl font-serif text-[1.55rem] leading-[1.12] tracking-tight text-[var(--brand-navy)] sm:mt-5 sm:text-[1.85rem] md:text-4xl md:leading-tight lg:text-[2.5rem]"
           >
             {HOME_HERO.headline}
           </h1>
