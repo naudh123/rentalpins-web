@@ -24,6 +24,9 @@ const nextConfig: NextConfig = {
   basePath,
   assetPrefix: basePath || undefined,
   images: {
+    // Vercel Image Optimization returns 402 (OPTIMIZED_IMAGE_REQUEST_PAYMENT_REQUIRED)
+    // on this project — serve public assets and Firebase URLs directly instead.
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "firebasestorage.googleapis.com" },
       { protocol: "https", hostname: "*.firebasestorage.app" },
