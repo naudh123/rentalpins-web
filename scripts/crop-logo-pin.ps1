@@ -5,13 +5,14 @@ $out = Join-Path $PSScriptRoot "..\public\logo\logo-pin.png"
 
 function Test-VisiblePixel($color) {
   if ($color.A -le 16) { return $false }
-  # Treat near-black background as empty.
+  if ($color.R -gt 238 -and $color.G -gt 238 -and $color.B -gt 238) { return $false }
   if ($color.R -lt 24 -and $color.G -lt 24 -and $color.B -lt 24) { return $false }
   return $true
 }
 
 $img = [System.Drawing.Bitmap]::FromFile($src)
-$cropH = [int]($img.Height * 0.63)
+# Blue pin only — stop before the gap + orange chevron (~top 50% of master asset).
+$cropH = [int]($img.Height * 0.5)
 $tmp = New-Object System.Drawing.Bitmap($img.Width, $cropH)
 $g = [System.Drawing.Graphics]::FromImage($tmp)
 $g.Clear([System.Drawing.Color]::Transparent)
@@ -41,7 +42,7 @@ for ($y = 0; $y -lt $tmp.Height; $y++) {
   }
 }
 
-$pad = 6
+$pad = 8
 $minX = [Math]::Max(0, $minX - $pad)
 $minY = [Math]::Max(0, $minY - $pad)
 $maxX = [Math]::Min($tmp.Width - 1, $maxX + $pad)

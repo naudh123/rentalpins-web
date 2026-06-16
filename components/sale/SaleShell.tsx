@@ -29,10 +29,10 @@ export default function SaleShell({ children }: { children: React.ReactNode }) {
       className="sale-theme flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)]"
       data-transaction="sale"
     >
-      <header className="sticky top-0 z-50 border-b border-[var(--border-subtle)] rp-glass">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+      <header className="sticky top-0 z-50 overflow-visible border-b border-[var(--border-subtle)] rp-glass">
+        <div className="mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-4 px-4 py-1 sm:px-6">
           <div className="flex items-center gap-2">
-            <Logo href={appPath("/buy")} size="md" />
+            <Logo href={appPath("/buy")} size="nav" />
             <ProductBadge variant="buy" className="hidden sm:inline-flex" />
           </div>
 

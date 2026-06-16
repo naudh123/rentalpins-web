@@ -175,13 +175,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       )}
 
       <header
-        className={`sticky top-0 z-50 border-b border-[var(--border-subtle)] rp-glass ${
+        className={`sticky top-0 z-50 overflow-visible border-b border-[var(--border-subtle)] rp-glass ${
           isMapPage ? "md:border-b" : ""
         }`}
       >
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
+        <div className="mx-auto flex min-h-14 max-w-7xl items-center justify-between gap-4 px-4 py-1">
           <div className="flex items-center gap-2">
-            <Logo href={appPath("/")} size="md" />
+            <Logo href={appPath("/")} size="nav" />
             <ProductBadge variant="rent" className="hidden sm:inline-flex" />
           </div>
 

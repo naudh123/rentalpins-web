@@ -38,9 +38,9 @@ export default function MarketingShell({
 
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg)] text-[var(--text)]">
-      <header className="sticky top-0 z-50 border-b border-[var(--border-subtle)] rp-glass">
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <Logo href={appPath("/")} size="md" />
+      <header className="sticky top-0 z-50 overflow-visible border-b border-[var(--border-subtle)] rp-glass">
+        <div className="mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-4 px-4 py-1 sm:px-6">
+          <Logo href={appPath("/")} size="nav" />
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
             {GLOBAL_NAV.map((item) => {

@@ -398,12 +398,6 @@ button {
   color: var(--brand-orange);
 }
 
-/* Pin-only crop from vertical master logo asset */
-/* Pin-only viewport from square master logo (top ~41% = pin + chevron). */
-.rp-brand-mark__img {
-  /* Full square image; parent clips bottom wordmark + tagline. */
-}
-
 /* ── Homepage premium surfaces ───────────────────────────── */
 .rp-home-lux-card {
   border: 1px solid color-mix(in srgb, var(--brand-navy) 8%, var(--border));

@@ -1,9 +1,11 @@
 import Image from "next/image";
 
+/** Pin mark heights — nav is tuned for header bars. */
 const HEIGHT = {
-  sm: "h-11",
-  md: "h-12",
-  lg: "h-16",
+  nav: "h-10 max-h-10",
+  sm: "h-10 max-h-10",
+  md: "h-11 max-h-11",
+  lg: "h-14 max-h-14",
   hero: "h-36 w-auto sm:h-40 md:h-44 lg:h-48",
 } as const;
 
@@ -13,7 +15,7 @@ interface Props {
   priority?: boolean;
 }
 
-/** Pin + chevron mark (derived from master logo, no wordmark/tagline). */
+/** Pin mark from the official logo (blue pin + orange chevron). */
 export default function BrandMark({
   size = "hero",
   className = "",
@@ -25,9 +27,9 @@ export default function BrandMark({
     <Image
       src="/logo/logo-pin.png"
       alt=""
-      width={495}
-      height={593}
-      className={`${hClass} w-auto shrink-0 object-contain ${className}`}
+      width={503}
+      height={700}
+      className={`${hClass} w-auto shrink-0 object-contain object-center ${className}`}
       priority={priority}
     />
   );
