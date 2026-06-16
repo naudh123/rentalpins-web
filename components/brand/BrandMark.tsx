@@ -1,14 +1,17 @@
 import Image from "next/image";
 
-const BOX = {
-  sm: "h-8 w-8",
-  md: "h-10 w-10",
-  lg: "h-14 w-14",
-  hero: "h-[6.2rem] w-[5.1rem] sm:h-[6.5rem] sm:w-[5.35rem] md:h-[7.8rem] md:w-[6.4rem] lg:h-[10.4rem] lg:w-[8.5rem]",
+/** Pin occupies ~top 41% of the square master logo asset (1024×1024). */
+const PIN_VIEWPORT = 0.41;
+
+const WIDTH = {
+  sm: "w-9",
+  md: "w-11",
+  lg: "w-16",
+  hero: "w-[7.5rem] sm:w-32 md:w-36 lg:w-40",
 } as const;
 
 interface Props {
-  size?: keyof typeof BOX;
+  size?: keyof typeof WIDTH;
   className?: string;
   priority?: boolean;
 }
@@ -21,15 +24,16 @@ export default function BrandMark({
 }: Props) {
   return (
     <div
-      className={`rp-brand-mark relative shrink-0 overflow-hidden ${BOX[size]} ${className}`}
+      className={`rp-brand-mark shrink-0 overflow-hidden ${WIDTH[size]} ${className}`}
+      style={{ aspectRatio: `1 / ${PIN_VIEWPORT}` }}
       aria-hidden
     >
       <Image
         src="/logo/logo.png"
         alt=""
-        width={512}
-        height={512}
-        className="rp-brand-mark__img"
+        width={1024}
+        height={1024}
+        className="rp-brand-mark__img block h-auto w-full max-w-none"
         priority={priority}
       />
     </div>

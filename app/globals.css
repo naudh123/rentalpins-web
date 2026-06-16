@@ -399,15 +399,9 @@ button {
 }
 
 /* Pin-only crop from vertical master logo asset */
+/* Pin-only viewport from square master logo (top ~41% = pin + chevron). */
 .rp-brand-mark__img {
-  position: absolute;
-  left: 50%;
-  top: -1%;
-  width: 118%;
-  max-width: none;
-  height: auto;
-  transform: translateX(-50%) scale(2.05);
-  transform-origin: top center;
+  /* Full square image; parent clips bottom wordmark + tagline. */
 }
 
 /* ── Homepage premium surfaces ───────────────────────────── */
