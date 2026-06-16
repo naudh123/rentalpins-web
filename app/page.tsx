@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import HomeRecentlyViewed from "@/components/listings/HomeRecentlyViewed";
 import MarketingShell from "@/components/MarketingShell";
+import HomeAiAdvisorSection from "@/components/home/HomeAiAdvisorSection";
+import HomeBuyerDemandSection from "@/components/home/HomeBuyerDemandSection";
+import HomeDeveloperSection from "@/components/home/HomeDeveloperSection";
 import HomeDiscoverSection from "@/components/home/HomeDiscoverSection";
 import HomeFaqSection from "@/components/home/HomeFaqSection";
 import HomeFinalCta from "@/components/home/HomeFinalCta";
 import HomeHero from "@/components/home/HomeHero";
+import HomeInvestPreview from "@/components/home/HomeInvestPreview";
+import HomeInvestmentIntelSection from "@/components/home/HomeInvestmentIntelSection";
 import HomeOwnerListingSection from "@/components/home/HomeOwnerListingSection";
+import HomeTricitySection from "@/components/home/HomeTricitySection";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
 import { JsonLdFAQ } from "@/components/JsonLd";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
@@ -22,13 +28,15 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/",
   keywords: [
     "rent property on map",
-    "buy property without broker",
-    "list property free",
+    "buy property on map",
+    "owner-direct property",
     "property for sale",
+    "Chandigarh Tricity property",
+    "Mohali property",
+    "New Chandigarh investment",
+    "no broker rentals",
+    "list property free",
     "flats for rent",
-    "Mohali rentals",
-    "Mohali property for sale",
-    "rent without broker",
   ],
 });
 
@@ -55,6 +63,12 @@ export default function HomePage() {
 
       <div className="rp-gradient-hero">
         <HomeHero liveCityCount={liveCount} />
+        <HomeInvestPreview />
+        <HomeTricitySection />
+        <HomeBuyerDemandSection />
+        <HomeInvestmentIntelSection />
+        <HomeAiAdvisorSection />
+        <HomeDeveloperSection />
         <HomeOwnerListingSection />
         <HomeRecentlyViewed />
         <HomeDiscoverSection cities={cities} topCities={topCities} />

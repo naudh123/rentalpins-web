@@ -40,6 +40,11 @@
   --sale-ivory-elevated: #f5f2ec;
   --sale-border: #e8e2d6;
   --sale-muted: #7a6f5c;
+
+  /* Invest lane — premium emerald (future RentalPins Invest) */
+  --invest-emerald: #0d6b5c;
+  --invest-emerald-muted: #c5e8e2;
+  --invest-platinum: #e8eaed;
 }
 
 @theme inline {
@@ -132,6 +137,82 @@ body {
     radial-gradient(ellipse 75% 65% at 90% 0%, rgba(201, 162, 39, 0.14), transparent),
     radial-gradient(ellipse 55% 45% at 0% 100%, rgba(30, 58, 110, 0.08), transparent),
     linear-gradient(180deg, var(--sale-ivory) 0%, #fffefb 72%);
+}
+
+.home-hero-lane--invest {
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(13, 107, 92, 0.1), transparent),
+    linear-gradient(180deg, var(--invest-platinum) 0%, #ffffff 72%);
+}
+
+.rp-home-section {
+  padding: 3.5rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .rp-home-section {
+    padding: 4rem 1.5rem;
+  }
+}
+
+.rp-home-section-inner {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 72rem;
+}
+
+.rp-home-trust-pill {
+  border: 1px solid color-mix(in srgb, var(--brand-navy) 10%, var(--border));
+  background: color-mix(in srgb, var(--surface) 92%, var(--bg-elevated));
+  border-radius: 9999px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brand-navy);
+}
+
+.rp-home-mode-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.rp-home-mode-card:hover {
+  border-color: color-mix(in srgb, var(--brand-navy) 18%, var(--border));
+  box-shadow: var(--shadow-card);
+}
+
+.rp-home-mode-card--rent:hover {
+  border-color: color-mix(in srgb, var(--brand-orange) 35%, var(--border));
+}
+
+.rp-home-mode-card--buy:hover {
+  border-color: color-mix(in srgb, var(--sale-gold) 40%, var(--border));
+}
+
+.rp-home-mode-card--invest {
+  opacity: 0.92;
+}
+
+.rp-home-area-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 1.25rem 1.35rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.rp-home-area-card:hover {
+  border-color: color-mix(in srgb, var(--sale-gold) 30%, var(--border));
+  box-shadow: var(--shadow-card);
 }
 
 .rp-glass {
@@ -315,6 +396,18 @@ button {
 
 .rp-wordmark-orange {
   color: var(--brand-orange);
+}
+
+/* Pin-only crop from vertical master logo asset */
+.rp-brand-mark__img {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 112%;
+  max-width: none;
+  height: auto;
+  transform: translateX(-50%) scale(2.45);
+  transform-origin: top center;
 }
 
 /* ── Homepage premium surfaces ───────────────────────────── */

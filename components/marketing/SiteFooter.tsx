@@ -27,7 +27,7 @@ export default function SiteFooter({ variant = "rent" }: Props) {
     <footer className="border-t border-[var(--border)] bg-[var(--bg-elevated)] py-12">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-5">
         <div className="lg:col-span-1">
-          <Logo href={appPath(isSale ? "/buy" : "/")} size="sm" showTagline />
+          <Logo href={appPath(isSale ? "/buy" : "/")} size="sm" />
           <p className="mt-4 text-sm leading-relaxed text-[var(--muted)]">
             {isSale
               ? "Map-first property for sale — flats, villas, and plots across Chandigarh Tricity. Owner-direct, separate from rentals."

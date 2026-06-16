@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import ProductBadge from "@/components/brand/ProductBadge";
 import { appPath } from "@/lib/config";
 
 export type HomeHeroLaneVariant = "rent" | "buy";
@@ -48,42 +48,32 @@ export default function HomeHeroLane({
 
   return (
     <article
-      className={`${laneShell} flex flex-col px-5 py-8 sm:px-7 sm:py-9 md:px-9 md:py-10 lg:min-h-[24rem]`}
+      className={`${laneShell} flex flex-col px-5 py-7 sm:px-7 sm:py-8 md:px-8 md:py-9 lg:min-h-[20rem]`}
     >
       <div className="flex flex-1 flex-col">
-        {isBuy ? (
-          <div className="mb-5 flex justify-center">
-            <Image
-              src="/logo/logo-buy.png"
-              alt="RentalPins Buy"
-              width={200}
-              height={200}
-              className="h-28 w-auto object-contain sm:h-32 md:h-36 lg:h-40"
-              priority
-            />
-          </div>
-        ) : null}
-
-        <p
-          className="text-[11px] font-bold uppercase tracking-[0.22em]"
-          style={{ color: accentVar }}
-        >
-          {eyebrow}
-        </p>
+        <div className="flex items-center gap-2">
+          <ProductBadge variant={isBuy ? "buy" : "rent"} />
+          <p
+            className="text-[11px] font-bold uppercase tracking-[0.22em] text-[var(--muted)]"
+            aria-hidden
+          >
+            {eyebrow}
+          </p>
+        </div>
 
         <h2
           id={headingId}
-          className="mt-2 font-serif text-2xl leading-tight text-[var(--brand-navy)] sm:text-3xl md:text-[2rem]"
+          className="mt-2 font-serif text-xl leading-tight text-[var(--brand-navy)] sm:text-2xl md:text-[1.75rem]"
         >
           {heading}
         </h2>
 
-        <p className="mt-3 max-w-md text-sm leading-relaxed text-[var(--muted)] md:text-[0.95rem]">
+        <p className="mt-2.5 max-w-md text-sm leading-relaxed text-[var(--muted)]">
           {copy}
         </p>
 
         {benefits && benefits.length > 0 ? (
-          <ul className="mt-4 space-y-1.5" aria-label={`${eyebrow} benefits`}>
+          <ul className="mt-3.5 space-y-1.5" aria-label={`${eyebrow} benefits`}>
             {benefits.map((item) => (
               <li
                 key={item}
@@ -100,13 +90,13 @@ export default function HomeHeroLane({
           </ul>
         ) : null}
 
-        <div className="mt-7 flex flex-col gap-3">
+        <div className="mt-6 flex flex-col gap-2.5">
           <Link
             href={appPath(primaryCta.href)}
             data-cta={primaryCta.dataCta}
             data-cta-location="home-hero-lane"
             data-intent={variant}
-            className="rp-btn rp-btn-primary w-full px-7 py-3.5 text-center text-base sm:w-fit"
+            className="rp-btn rp-btn-primary w-full px-6 py-3 text-center text-sm sm:w-fit sm:text-base"
             style={
               isBuy
                 ? undefined
@@ -143,7 +133,7 @@ export default function HomeHeroLane({
         </div>
 
         {chips && chips.length > 0 ? (
-          <ul className="mt-6 flex flex-wrap gap-2" aria-label="Popular buy areas">
+          <ul className="mt-5 flex flex-wrap gap-2" aria-label="Popular buy areas">
             {chips.map((chip) => (
               <li key={chip.href}>
                 <Link

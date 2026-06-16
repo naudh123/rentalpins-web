@@ -1,6 +1,4 @@
-import Image from "next/image";
-import Link from "next/link";
-import { appPath } from "@/lib/config";
+import BrandMark from "@/components/brand/BrandMark";
 import { PLAY_STORE_URL } from "@/lib/site-links";
 import {
   HOME_BUY_HERO_CHIPS,
@@ -8,8 +6,10 @@ import {
   HOME_HERO,
   HOME_PLATFORM_PILLS,
   HOME_RENT_LANE,
+  HOME_TRUST_PILLS,
 } from "@/lib/seo/home-page-content";
 import HomeHeroLane from "@/components/home/HomeHeroLane";
+import HomeModeGateway from "@/components/home/HomeModeGateway";
 
 interface Props {
   liveCityCount: number;
@@ -23,26 +23,35 @@ export default function HomeHero({ liveCityCount }: Props) {
         aria-hidden
       />
 
-      <div className="relative px-4 pb-4 pt-5 text-center sm:pt-6 md:pb-5 md:pt-7">
+      <div className="relative px-4 pb-3 pt-4 text-center sm:pt-5 md:pb-4 md:pt-6">
         <div className="mx-auto flex max-w-4xl flex-col items-center">
-          <Image
-            src="/logo/logo.png"
-            alt="RentalPins"
-            width={176}
-            height={176}
-            className="h-24 w-24 object-contain sm:h-28 sm:w-28 md:h-40 md:w-40 lg:h-44 lg:w-44"
-            priority
-          />
+          <BrandMark size="hero" priority />
+          <p className="mt-3 font-serif text-[1.95rem] font-bold tracking-tight sm:text-[2.44rem] md:mt-4 md:text-[2.93rem]">
+            <span className="rp-wordmark-navy">Rental</span>
+            <span className="rp-wordmark-orange">Pins</span>
+          </p>
           <h1
             id="home-hero-heading"
-            className="mt-3 max-w-4xl font-serif text-[1.65rem] leading-[1.12] tracking-tight text-[var(--brand-navy)] sm:mt-4 sm:text-3xl md:text-4xl md:leading-tight lg:text-[2.65rem]"
+            className="mt-2 max-w-4xl font-serif text-[1.55rem] leading-[1.12] tracking-tight text-[var(--brand-navy)] sm:mt-3 sm:text-[1.85rem] md:text-4xl md:leading-tight lg:text-[2.5rem]"
           >
             {HOME_HERO.headline}
           </h1>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)] sm:mt-3 md:text-base">
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-[var(--muted)] md:text-[0.95rem]">
             {HOME_HERO.subhead}
           </p>
-          <p className="mt-2 text-xs text-[var(--muted)] sm:text-sm">
+
+          <ul
+            className="mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-2"
+            aria-label="Platform highlights"
+          >
+            {HOME_TRUST_PILLS.map((pill) => (
+              <li key={pill}>
+                <span className="rp-home-trust-pill">{pill}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-3 text-xs text-[var(--muted)] sm:text-sm">
             Also on{" "}
             <a
               href={PLAY_STORE_URL}
@@ -55,6 +64,8 @@ export default function HomeHero({ liveCityCount }: Props) {
           </p>
         </div>
       </div>
+
+      <HomeModeGateway />
 
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 border-y border-[var(--border-subtle)] md:grid-cols-2">
         <HomeHeroLane
@@ -101,22 +112,22 @@ export default function HomeHero({ liveCityCount }: Props) {
         />
       </div>
 
-      <dl className="mx-auto grid max-w-3xl grid-cols-2 gap-3 px-4 py-8 sm:grid-cols-4 sm:py-9">
+      <dl className="mx-auto grid max-w-3xl grid-cols-2 gap-3 px-4 py-6 sm:grid-cols-4 sm:py-7">
         {HOME_PLATFORM_PILLS.map((pill) => (
-          <div key={pill.label} className="rp-home-lux-card rounded-2xl px-3 py-4 text-center">
+          <div key={pill.label} className="rp-home-lux-card rounded-2xl px-3 py-3 text-center">
             <dt className="text-[10px] font-semibold uppercase tracking-wide text-[var(--muted)] sm:text-xs">
               {pill.label}
             </dt>
-            <dd className="mt-1 font-serif text-lg text-[var(--brand-orange)] sm:text-xl">
+            <dd className="mt-1 font-serif text-base text-[var(--brand-orange)] sm:text-lg">
               {pill.value}
             </dd>
           </div>
         ))}
-        <div className="rp-home-lux-card rounded-2xl px-3 py-4 text-center">
+        <div className="rp-home-lux-card rounded-2xl px-3 py-3 text-center">
           <dt className="text-[10px] font-semibold uppercase tracking-wide text-[var(--muted)] sm:text-xs">
             Live cities
           </dt>
-          <dd className="mt-1 font-serif text-lg text-[var(--brand-orange)] sm:text-xl">
+          <dd className="mt-1 font-serif text-base text-[var(--brand-orange)] sm:text-lg">
             {liveCityCount}
           </dd>
         </div>

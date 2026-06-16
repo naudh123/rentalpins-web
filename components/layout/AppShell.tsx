@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import Logo from "@/components/brand/Logo";
+import ProductBadge from "@/components/brand/ProductBadge";
 import {
   IconChat,
   IconPost,
@@ -18,10 +19,10 @@ import { isBuyAppPath } from "@/lib/sale/buy-app-paths";
 import { getClientDb } from "@/lib/firebase-client";
 
 const DESKTOP_NAV = [
-  { href: "/search", label: "Search" },
+  { href: "/search", label: "Search rentals" },
   { href: "/saved-listings", label: "Saved" },
   { href: "/rentals", label: "Cities" },
-  { href: "/post", label: "Post" },
+  { href: "/post", label: "Post rental" },
   { href: "/chat", label: "Chat" },
 ] as const;
 
@@ -179,7 +180,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         }`}
       >
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4">
-          <Logo href={appPath("/")} size="sm" />
+          <div className="flex items-center gap-2">
+            <Logo href={appPath("/")} size="sm" />
+            <ProductBadge variant="rent" className="hidden sm:inline-flex" />
+          </div>
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
             {DESKTOP_NAV.map((item) => {
@@ -224,6 +228,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
+            <Link
+              href={appPath("/search")}
+              className="rp-btn rp-btn-primary hidden px-4 py-2 text-xs lg:inline-flex"
+            >
+              Open map
+            </Link>
+            <Link
+              href={appPath("/post")}
+              className="rp-btn rp-btn-secondary hidden px-4 py-2 text-xs lg:inline-flex"
+            >
+              Post listing
+            </Link>
             {user ? (
               <>
                 <Link

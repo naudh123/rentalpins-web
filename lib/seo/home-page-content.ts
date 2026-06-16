@@ -8,6 +8,37 @@ export const HOME_HERO = {
     "RentalPins helps people rent, buy, sell, and discover property directly through live map-based listings.",
 } as const;
 
+/** Premium trust signals — qualitative only, no invented metrics. */
+export const HOME_TRUST_PILLS = [
+  "Map-based discovery",
+  "Owner direct",
+  "Rent + buy",
+  "India + global hubs",
+] as const;
+
+export const HOME_MODE_GATEWAY = {
+  headline: "Discover property on the map",
+  subhead: "Choose how you want to explore RentalPins.",
+  rent: {
+    title: "Rent",
+    copy: "Find rentals near you and contact owners directly.",
+    primary: { label: "Open map", href: "/search" },
+    secondary: { label: "Post listing", href: "/post" },
+  },
+  buy: {
+    title: "Buy",
+    copy: "Discover properties for sale, new projects, and investment opportunities.",
+    primary: { label: "Browse properties", href: "/buy/search" },
+    secondary: { label: "List property", href: "/buy/post" },
+  },
+  invest: {
+    title: "Invest",
+    copy: "Explore growth corridors, investment hotspots, and market intelligence.",
+    primary: { label: "Explore investments", href: "/invest" },
+    comingSoon: true,
+  },
+} as const;
+
 export const HOME_RENT_LANE = {
   eyebrow: "Rent",
   heading: "Rent without broker",
@@ -17,8 +48,8 @@ export const HOME_RENT_LANE = {
     "Map-based discovery",
     "No broker-first experience",
   ],
-  primaryCta: { label: "Browse rentals", href: "/search" },
-  secondaryCta: { label: "List for rent", href: "/post" },
+  primaryCta: { label: "Open map", href: "/search" },
+  secondaryCta: { label: "Post listing", href: "/post" },
 } as const;
 
 export const HOME_BUY_LANE = {
@@ -54,6 +85,106 @@ export const HOME_PLATFORM_PILLS = [
   { label: "Rent + buy maps", value: "2" },
   { label: "Owner contact", value: "Direct" },
 ] as const;
+
+export const HOME_TRICITY_SECTION = {
+  title: "Explore Chandigarh Tricity",
+  subtitle:
+    "Discover rentals, properties for sale, and investment opportunities across the region.",
+  cities: [
+    {
+      name: "Chandigarh",
+      rentalHref: "/rentals/in/chandigarh",
+      saleHref: "/buy/in/chandigarh",
+      investLabel: "Investment guide",
+      investHref: "/invest",
+    },
+    {
+      name: "Mohali",
+      rentalHref: "/rentals/in/chandigarh/mohali",
+      saleHref: "/buy/mohali",
+      investLabel: "Growth corridor",
+      investHref: "/invest",
+    },
+    {
+      name: "Panchkula",
+      rentalHref: "/rentals/in/chandigarh/panchkula",
+      saleHref: "/buy/panchkula",
+      investLabel: "Coming soon",
+      investHref: "/invest",
+    },
+    {
+      name: "Zirakpur",
+      rentalHref: "/rentals/in/chandigarh/zirakpur",
+      saleHref: "/buy/zirakpur",
+      investLabel: "Commercial potential",
+      investHref: "/invest",
+    },
+    {
+      name: "New Chandigarh",
+      rentalHref: "/rentals/in/chandigarh/kharar",
+      saleHref: "/buy/mohali/new-chandigarh",
+      investLabel: "New projects",
+      investHref: "/invest",
+    },
+  ],
+} as const;
+
+export const HOME_BUYER_DEMAND = {
+  title: "Post your property requirement",
+  subtitle:
+    "Tell RentalPins what you want to buy or rent. Owners, sellers, and developers can match with your demand.",
+  examples: [
+    "Need a plot in New Chandigarh",
+    "Looking for 3 BHK in Mohali",
+    "Commercial space near Airport Road",
+  ],
+  primaryCta: { label: "Post requirement", href: "/buy/requirements" },
+  secondaryCta: { label: "Browse buyer demand", href: "/buy/requirements" },
+} as const;
+
+export const HOME_INVESTMENT_INTEL = {
+  title: "Where smart property decisions begin",
+  subtitle:
+    "Compare locations, discover growth corridors, and explore investment-ready property opportunities.",
+  areas: [
+    { name: "New Chandigarh", tag: "Growth corridor" },
+    { name: "Airport Road", tag: "Investor interest" },
+    { name: "Mohali PR7", tag: "New projects" },
+    { name: "Zirakpur", tag: "Commercial potential" },
+    { name: "Panchkula Extension", tag: "Growth corridor" },
+  ],
+  cta: { label: "Explore investment areas", href: "/invest" },
+} as const;
+
+export const HOME_AI_ADVISOR = {
+  title: "Not sure where to start?",
+  subtitle:
+    "Use RentalPins AI to shortlist locations based on your budget, purpose, and timeline.",
+  modes: ["Rent", "Buy", "Invest", "Commercial"] as const,
+  cta: { label: "Ask AI advisor", href: "/advisor" },
+} as const;
+
+export const HOME_DEVELOPER_TEASER = {
+  title: "For developers and property sellers",
+  subtitle:
+    "Showcase projects, capture qualified buyer leads, and reach serious property seekers on the map.",
+  benefits: [
+    "Project visibility",
+    "Buyer leads",
+    "Site visit requests",
+    "Brochure downloads",
+    "Location-based discovery",
+  ],
+  cta: { label: "List your project", href: "/buy/post" },
+  secondaryCta: { label: "Developer hub", href: "/developers" },
+} as const;
+
+export const HOME_INVEST_PREVIEW = {
+  eyebrow: "Invest",
+  title: "Investment intelligence",
+  copy: "Growth corridors, market reports, and project insights — launching soon on RentalPins Invest.",
+  cta: { label: "Preview RentalPins Invest", href: "/invest" },
+} as const;
 
 export const HOME_OWNER_VALUE = {
   title: "Why owners list on RentalPins",
