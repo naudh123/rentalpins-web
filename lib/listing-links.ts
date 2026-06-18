@@ -1,5 +1,5 @@
 import { appPath } from "./config";
-import { listingPublicPath } from "./listing-path";
+import { buildListingCanonicalPath } from "@/lib/seo/listing-seo";
 import type { ListingSlugInput } from "./listing-slug";
 
 /** Only allow same-origin relative return paths. */
@@ -23,7 +23,7 @@ export function listingDetailHref(
   const base =
     typeof listing === "string"
       ? appPath(`/listings/${listing}`)
-      : listingPublicPath(listing);
+      : appPath(buildListingCanonicalPath(listing));
   if (!returnPath || !returnPath.startsWith("/") || returnPath.startsWith("//")) {
     return base;
   }

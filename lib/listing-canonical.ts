@@ -1,11 +1,13 @@
-import { appPath, publicSiteUrl } from "@/lib/config";
+import {
+  buildSeoSlugSegment,
+  normalizeListingSeo,
+} from "@/lib/seo/listing-seo";
 import {
   buildListingSlugSegment,
   type ListingSlugInput,
 } from "@/lib/listing-slug";
-import { listingToSlugInput, listingDetailBasePath } from "@/lib/listing-path";
+import { listingToSlugInput } from "@/lib/listing-path";
 import type { ListingDetail } from "@/lib/types/listing";
-import type { TransactionType } from "@/lib/transaction-type";
 
 /** Query params stripped from listing canonical URLs (tracking / pagination noise). */
 export const LISTING_SEO_STRIP_PARAMS = [
@@ -33,25 +35,14 @@ export function listingCanonicalSegment(
 ): string {
   const input =
     "imageUrls" in listing ? listingToSlugInput(listing) : listing;
-  return buildListingSlugSegment(input);
+  return buildSeoSlugSegment(input);
 }
 
-function listingTransactionType(
-  listing: ListingSlugInput | ListingDetail
-): TransactionType {
-  if ("imageUrls" in listing) {
-    return listing.transactionType === "sale" ? "sale" : "rent";
-  }
-  return listing.transactionType === "sale" ? "sale" : "rent";
-}
-
-/** Relative listing detail path — sale listings live under /buy/listings. */
+/** Relative listing detail path — segmented by category (property, equipment, etc.). */
 export function listingDetailBasePathForListing(
   listing: ListingSlugInput | ListingDetail
 ): string {
-  const input =
-    "imageUrls" in listing ? listingToSlugInput(listing) : listing;
-  return listingDetailBasePath(input);
+  return normalizeListingSeo(listing).canonicalPath;
 }
 
 /** True when the URL segment should 308 to the canonical SEO slug (wrong slug or ID-only). */
@@ -59,7 +50,13 @@ export function listingSlugNeedsRedirect(
   slugParam: string,
   listing: ListingSlugInput | ListingDetail
 ): boolean {
-  return slugParam !== listingCanonicalSegment(listing);
+  const canonical = listingCanonicalSegment(listing);
+  if (slugParam === canonical) return false;
+  const input =
+    "imageUrls" in listing ? listingToSlugInput(listing) : listing;
+  if (slugParam === buildListingSlugSegment(input)) return true;
+  if (slugParam === input.id) return true;
+  return slugParam !== canonical;
 }
 
 /** Relative path — no query string. */
@@ -69,11 +66,23 @@ export function listingCanonicalRelPath(
   return listingDetailBasePathForListing(listing);
 }
 
-/** Absolute https://www.rentalpins.com/listings/{slug} — canonical for metadata & JSON-LD. */
+/** Absolute canonical listing URL for metadata & JSON-LD. */
 export function listingCanonicalAbsoluteUrl(
   listing: ListingSlugInput | ListingDetail
 ): string {
-  return `${publicSiteUrl()}${listingCanonicalRelPath(listing)}`;
+  return normalizeListingSeo(listing).canonicalAbsoluteUrl;
+}
+
+/** Re-export centralized canonical URL builder. */
+export { buildListingCanonicalUrl, buildListingCanonicalPath } from "@/lib/seo/listing-seo";
+
+/** Legacy slug segment (title-in-place-id) — for redirects from old stored slugs. */
+export function legacyListingSlugSegment(
+  listing: ListingSlugInput | ListingDetail
+): string {
+  const input =
+    "imageUrls" in listing ? listingToSlugInput(listing) : listing;
+  return buildListingSlugSegment(input);
 }
 
 /** Preserve only safe navigation params when redirecting slug variants. */

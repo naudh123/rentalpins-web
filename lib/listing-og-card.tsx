@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import type { ListingDetail } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
-import { LISTING_OG_HEIGHT, LISTING_OG_WIDTH } from "@/lib/listing-share";
+import { LISTING_OG_HEIGHT, LISTING_OG_WIDTH } from "@/lib/listing-share-constants";
 
 const NAVY = "#1e3a6e";
 const NAVY_DARK = "#0f2554";

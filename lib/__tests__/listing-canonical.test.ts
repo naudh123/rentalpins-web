@@ -6,7 +6,7 @@ import {
   listingPathNeedsSeoQueryCleanup,
   listingSlugNeedsRedirect,
 } from "@/lib/listing-canonical";
-import { buildListingSlugSegment } from "@/lib/listing-slug";
+import { buildSeoSlugSegment } from "@/lib/seo/listing-seo";
 
 const sampleListing = {
   id: "TL5GclYimIKzQMTO0kzW",
@@ -19,18 +19,18 @@ const sampleListing = {
 };
 
 describe("listing-canonical", () => {
-  it("builds absolute canonical URL with SEO slug", () => {
-    const slug = buildListingSlugSegment(sampleListing);
+  it("builds absolute canonical URL under segmented property path", () => {
+    const slug = buildSeoSlugSegment(sampleListing);
     expect(listingCanonicalAbsoluteUrl(sampleListing)).toBe(
-      `https://www.rentalpins.com/listings/${slug}`
+      `https://www.rentalpins.com/rentals/property/${slug}`
     );
   });
 
-  it("routes sale listings to /buy/listings canonical", () => {
-    const slug = buildListingSlugSegment({ ...sampleListing, transactionType: "sale" });
+  it("routes sale listings to /buy/property canonical", () => {
+    const slug = buildSeoSlugSegment({ ...sampleListing, transactionType: "sale" });
     expect(
       listingCanonicalAbsoluteUrl({ ...sampleListing, transactionType: "sale" })
-    ).toBe(`https://www.rentalpins.com/buy/listings/${slug}`);
+    ).toBe(`https://www.rentalpins.com/buy/property/${slug}`);
   });
 
   it("preserves only from in navigation query", () => {
@@ -55,7 +55,7 @@ describe("listing-canonical", () => {
   });
 
   it("detects wrong slug and ID-only paths needing 308 redirect", () => {
-    const slug = buildListingSlugSegment(sampleListing);
+    const slug = buildSeoSlugSegment(sampleListing);
     expect(listingSlugNeedsRedirect(slug, sampleListing)).toBe(false);
     expect(listingSlugNeedsRedirect(sampleListing.id, sampleListing)).toBe(true);
     expect(listingSlugNeedsRedirect(`${slug}-wrong`, sampleListing)).toBe(true);

@@ -71,6 +71,7 @@ function mapSitemapEntry(id: string, d: Record<string, unknown>): ListingSitemap
     searchableTitle:
       typeof d.searchableTitle === "string" ? d.searchableTitle : undefined,
     urlSlug: typeof d.urlSlug === "string" ? d.urlSlug : undefined,
+    transactionType: d.transactionType === "sale" ? "sale" : "rent",
     updatedAt: updated,
   };
 }

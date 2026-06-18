@@ -4,10 +4,26 @@ import {
   cleanedListingSearchParams,
   listingPathNeedsSeoQueryCleanup,
 } from "@/lib/listing-canonical";
+import { LISTING_CATEGORY_SEGMENTS } from "@/lib/seo/listing-category-segments";
 
 export interface ListingUrlNormalization {
   pathname: string;
   search: string;
+}
+
+const SEGMENT_PATTERN = LISTING_CATEGORY_SEGMENTS.join("|");
+
+/** Matches segmented listing detail paths. */
+const SEGMENTED_LISTING_RE = new RegExp(
+  `^/(?:buy/property|rentals/(?:${SEGMENT_PATTERN}))/[^/]+$`
+);
+
+function isListingDetailPath(pathname: string): boolean {
+  const decoded = pathname.replace(/\/+$/, "");
+  if (/^\/listings\/[^/]+$/.test(decoded)) return true;
+  if (/^\/buy\/listings\/[^/]+$/.test(decoded)) return true;
+  if (SEGMENTED_LISTING_RE.test(decoded)) return true;
+  return false;
 }
 
 /** Normalize trailing slash + strip tracking params on listing detail paths. */
@@ -22,16 +38,12 @@ export function normalizeListingRequestUrl(
     normalizedPath = decoded.replace(/\/+$/, "") || "/";
   }
 
-  const isListingDetail =
-    normalizedPath.startsWith("/listings/") &&
-    normalizedPath.split("/").filter(Boolean).length === 2;
-
   const isLegacyRootId =
     normalizedPath.startsWith("/") &&
     !normalizedPath.slice(1).includes("/") &&
     FIREBASE_LISTING_ID_RE.test(normalizedPath.slice(1));
 
-  if (!isListingDetail && !isLegacyRootId) {
+  if (!isListingDetailPath(normalizedPath) && !isLegacyRootId) {
     if (normalizedPath !== decoded) {
       return { pathname: normalizedPath, search: request.nextUrl.search };
     }

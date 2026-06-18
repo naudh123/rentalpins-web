@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
-import { JsonLdBreadcrumb } from "@/components/JsonLd";
 import ListingDetailNav from "@/components/listings/ListingDetailNav";
 import ListingDetailJumpLinks from "@/components/listings/ListingDetailJumpLinks";
 import ListingHashFocusRestorer from "@/components/listings/ListingHashFocusRestorer";
@@ -23,6 +22,7 @@ import ListingDetailViewTracker from "@/components/listings/ListingDetailViewTra
 import ListingMapLink from "@/components/listings/ListingMapLink";
 import RecentlyViewedRail from "@/components/listings/RecentlyViewedRail";
 import ListingIntelligencePanel from "@/components/listings/ListingIntelligencePanel";
+import ListingDetailFaqSection from "@/components/listings/ListingDetailFaqSection";
 import {
   fetchListingById,
   fetchMoreFromOwner,
@@ -44,10 +44,13 @@ import { listingToSlugInput } from "@/lib/listing-path";
 import {
   buildListingNavigationQuery,
   listingCanonicalRelPath,
-  listingCanonicalSegment,
   listingSlugNeedsRedirect,
 } from "@/lib/listing-canonical";
 import { buildListingBreadcrumbs } from "@/lib/listing-breadcrumbs";
+import { buildListingFaqs } from "@/lib/seo/listing-faqs";
+import { buildAllListingStructuredData } from "@/lib/seo/listing-schema";
+import { normalizeListingSeo } from "@/lib/seo/listing-seo";
+import type { ListingCategorySegment } from "@/lib/seo/listing-category-segments";
 import { listingWhatsAppMessage, whatsappUrl } from "@/lib/whatsapp";
 import ListingActions from "@/app/listings/[id]/ListingActions";
 
@@ -60,6 +63,8 @@ export type ListingDetailChannel = "rent" | "buy";
 
 interface Props extends RouteProps {
   channel: ListingDetailChannel;
+  /** When set, wrong category segment routes 308 to canonical. */
+  expectedSegment?: ListingCategorySegment;
 }
 
 export async function generateMetadata({ params }: RouteProps): Promise<Metadata> {
@@ -75,6 +80,7 @@ export default async function ListingDetailRoute({
   params,
   searchParams,
   channel,
+  expectedSegment,
 }: Props) {
   const { id: slugParam } = await params;
   const listingId = extractListingIdFromSlugParam(slugParam);
@@ -83,15 +89,24 @@ export default async function ListingDetailRoute({
   const listing = await fetchListingById(listingId);
   if (!listing) notFound();
 
+  const seo = normalizeListingSeo(listing);
   const isSale = listing.transactionType === "sale";
   const sp = await searchParams;
   const suffix = buildListingNavigationQuery(sp);
-  const canonicalPath = listingCanonicalRelPath(listing);
+  const canonicalPath = appPath(listingCanonicalRelPath(listing));
 
   if (channel === "rent" && isSale) {
     permanentRedirect(`${canonicalPath}${suffix}`);
   }
   if (channel === "buy" && !isSale) {
+    permanentRedirect(`${canonicalPath}${suffix}`);
+  }
+
+  if (expectedSegment && seo.categorySegment && seo.categorySegment !== expectedSegment) {
+    permanentRedirect(`${canonicalPath}${suffix}`);
+  }
+
+  if (!expectedSegment && seo.categorySegment) {
     permanentRedirect(`${canonicalPath}${suffix}`);
   }
 
@@ -117,6 +132,7 @@ export default async function ListingDetailRoute({
         : 0;
 
   const listingUrl = listingCanonicalUrl(listing);
+  const listingFaqs = buildListingFaqs(listing);
   const whatsAppHref = listing.ownerPhone
     ? whatsappUrl(listing.ownerPhone, listingWhatsAppMessage(listing.title, listingUrl))
     : "";
@@ -138,48 +154,14 @@ export default async function ListingDetailRoute({
     Math.abs(listing.lat) <= 90 &&
     Math.abs(listing.lng) <= 180;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: listing.title,
-    description: listing.description.slice(0, 500),
-    image: productImages,
-    url: listingUrl,
-    sku: listingId,    category: listing.category,
-    ...(hasGeo
-      ? {
-          contentLocation: {
-            "@type": "Place",
-            ...(listing.locationName ? { name: listing.locationName } : {}),
-            geo: {
-              "@type": "GeoCoordinates",
-              latitude: listing.lat,
-              longitude: listing.lng,
-            },
-          },
-        }
-      : {}),
-    offers: {
-      "@type": "Offer",
-      price: listing.price > 0 ? listing.price : undefined,
-      priceCurrency: listing.homeIso === "IN" ? "INR" : "USD",
-      availability: "https://schema.org/InStock",
-      url: listingUrl,
-    },
-    ...(reviewSummary
-      ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: Math.round(reviewSummary.avgRating * 10) / 10,
-            reviewCount: reviewSummary.count,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }
-      : {}),
-  };
-
   const breadcrumbItems = buildListingBreadcrumbs(listing, listingUrl);
+  const structuredDataBlocks = buildAllListingStructuredData({
+    listing,
+    listingId,
+    breadcrumbs: breadcrumbItems.schema,
+    faqs: listingFaqs,
+    reviewSummary,
+  });
 
   const mapHref = isSale
     ? appPath(saleCompsMapSearchHref(listing.lat, listing.lng, { zoom: 14, selectedId: listingId }))
@@ -200,9 +182,10 @@ export default async function ListingDetailRoute({
     >
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredDataBlocks),
+        }}
       />
-      <JsonLdBreadcrumb items={breadcrumbItems.schema} />
       <ListingHashFocusRestorer />
       <RecentlyViewedRecorder listingId={listingId} />
       <ListingDetailViewTracker
@@ -459,6 +442,8 @@ export default async function ListingDetailRoute({
           </div>
         </section>
       )}
+
+      <ListingDetailFaqSection faqs={listingFaqs} />
 
       <ListingActions
         listingId={listingId}

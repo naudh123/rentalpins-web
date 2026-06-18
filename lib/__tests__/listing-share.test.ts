@@ -4,11 +4,11 @@ import {
   listingOgImagePath,
   listingShareDescription,
 } from "@/lib/listing-share";
-import { buildListingSlugSegment } from "@/lib/listing-slug";
+import { buildSeoSlugSegment } from "@/lib/seo/listing-seo";
 import type { ListingDetail } from "@/lib/types/listing";
 
 const baseListing: ListingDetail = {
-  id: "abc123",
+  id: "abc123def45678901",
   title: "2 BHK near Sector 17",
   description: "Spacious flat with parking and lift.",
   price: 18000,
@@ -35,10 +35,10 @@ describe("listing-share", () => {
     vi.stubEnv("NEXT_PUBLIC_BASE_PATH", "");
   });
 
-  it("uses slug canonical URL when listing object is provided", () => {
-    const slug = buildListingSlugSegment(baseListing);
+  it("uses segmented canonical URL when listing object is provided", () => {
+    const slug = buildSeoSlugSegment(baseListing);
     expect(listingCanonicalUrl(baseListing)).toBe(
-      `https://www.rentalpins.com/listings/${slug}`
+      `https://www.rentalpins.com/rentals/property/${slug}`
     );
   });
 
@@ -55,16 +55,15 @@ describe("listing-share", () => {
     );
   });
 
-  it("points OG image at slug opengraph-image route", () => {
-    const slug = buildListingSlugSegment(baseListing);
+  it("points OG image at legacy listings opengraph-image route", () => {
     expect(listingOgImagePath(baseListing)).toBe(
-      `/listings/${slug}/opengraph-image`
+      `/listings/${baseListing.id}/opengraph-image`
     );
   });
 
-  it("builds share description with price and location", () => {
+  it("builds SEO share description with location", () => {
     const d = listingShareDescription(baseListing);
-    expect(d).toContain("Spacious flat");
-    expect(d).toContain("Chandigarh");
+    expect(d).toMatch(/Chandigarh|Sector/i);
+    expect(d).toMatch(/RentalPins/i);
   });
 });

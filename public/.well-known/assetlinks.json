@@ -1,14 +1,11 @@
 [
   {
-    "relation": [
-      "delegate_permission/common.handle_all_urls",
-      "delegate_permission/common.get_login_creds"
-    ],
+    "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
       "package_name": "com.rentit_clean.rentit",
       "sha256_cert_fingerprints": [
-        "3A:5B:83:DF:D8:2B:9D:E3:5D:E3:1D:81:C7:B7:A2:B9:C6:FE:3E:EB:AE:D5:22:D2:1B:30:D2:B0:7C:22:E1:79"
+        "REPLACE_WITH_PLAY_STORE_SHA256_FINGERPRINT"
       ]
     }
   }

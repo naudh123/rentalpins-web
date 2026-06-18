@@ -8,6 +8,9 @@ import { getSaleMarketingSlugs } from "@/lib/sale/sale-marketing-pages";
 import { getSupplyPageSitemapPaths } from "@/lib/supply-pages-config";
 import { canonicalUrl } from "@/lib/seo";
 import { getCoreMarketingSitemapSlugs } from "@/lib/seo/sitemap-config";
+import { categoryAuthoritySitemapPaths } from "@/lib/seo/category-authority-page";
+import { LISTING_CATEGORY_SEGMENTS } from "@/lib/seo/listing-category-segments";
+import { getAllCities } from "@/lib/cities-config";
 
 /** Core sitemap — city/locality/listing/blog URLs live in dedicated XML routes (daily revalidate). */
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -20,7 +23,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: canonicalUrl("/search"), lastModified: now, changeFrequency: "daily", priority: 0.95 },
     { url: canonicalUrl("/buy"), lastModified: now, changeFrequency: "weekly", priority: 0.88 },
     { url: canonicalUrl("/buy/search"), lastModified: now, changeFrequency: "daily", priority: 0.87 },
-    { url: canonicalUrl("/buy/post"), lastModified: now, changeFrequency: "weekly", priority: 0.75 },
+    { url: canonicalUrl("/buy/requirements"), lastModified: now, changeFrequency: "weekly", priority: 0.72 },
+    { url: canonicalUrl("/projects"), lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: canonicalUrl("/developers"), lastModified: now, changeFrequency: "weekly", priority: 0.68 },
+    ...getAllCities()
+      .filter((c) => c.status === "live")
+      .flatMap((c) => [
+        { path: `/buy/requirements/${c.slug}`, priority: 0.7 },
+        { path: `/projects/${c.slug}`, priority: 0.68 },
+      ])
+      .map(({ path, priority }) => ({
+        url: canonicalUrl(path),
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority,
+      })),
+    ...LISTING_CATEGORY_SEGMENTS.flatMap((segment) =>
+      categoryAuthoritySitemapPaths(segment).map((path) => ({
+        url: canonicalUrl(path),
+        lastModified: now,
+        changeFrequency: "weekly" as const,
+        priority: 0.76,
+      }))
+    ),
     ...getBuyHubSitemapPaths().map((path) => ({
       url: canonicalUrl(path),
       lastModified: now,

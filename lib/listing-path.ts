@@ -1,17 +1,14 @@
 import { appPath } from "@/lib/config";
 import {
-  buildListingSlugSegment,
-  type ListingSlugInput,
-} from "@/lib/listing-slug";
-import { buyListingPath } from "@/lib/sale/buy-app-paths";
+  buildListingCanonicalPath,
+  normalizeListingSeo,
+} from "@/lib/seo/listing-seo";
+import type { ListingSlugInput } from "@/lib/listing-slug";
 import type { ListingCard, ListingDetail } from "@/lib/types/listing";
 
-/** Relative listing detail path — sale listings under /buy/listings. */
+/** Relative listing detail path — segmented canonical URL. */
 export function listingDetailBasePath(listing: ListingSlugInput): string {
-  const segment = buildListingSlugSegment(listing);
-  return listing.transactionType === "sale"
-    ? buyListingPath(segment)
-    : appPath(`/listings/${segment}`);
+  return buildListingCanonicalPath(listing);
 }
 
 /** Relative listing detail path with SEO slug (no query string). */
