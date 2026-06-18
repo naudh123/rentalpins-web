@@ -22,6 +22,7 @@ export const PRIORITY_BROKER_LANDING_SLUGS = [
   "property-without-broker-mohali",
   "property-without-broker-ludhiana",
   "property-without-broker-delhi",
+  "property-without-broker-jaipur",
 ] as const;
 
 /** Student PG campus landings expanded in batch 2 — guarded by word-count tests. */

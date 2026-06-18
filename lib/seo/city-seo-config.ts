@@ -461,6 +461,116 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
     ],
   },
 
+  [key("in", "jaipur")]: {
+    key: key("in", "jaipur"),
+    placeName: "Jaipur",
+    intro: [
+      "Jaipur is Rajasthan's largest rental market — students and IT professionals in Malviya Nagar and Jagatpura, families in Vaishali Nagar and Mansarovar, and premium central demand in C-Scheme and Raja Park.",
+      "RentalPins Jaipur hub maps owner-direct flats, PG, rooms, houses, shops, and vehicles so tenants can compare Pink City localities before contacting — without paying brokerage to search.",
+      "Use area pages such as Malviya Nagar for student PG intent, Vaishali Nagar for family society flats, and Sitapura for budget workforce housing.",
+      "Jaipur tenants searching without brokers benefit from filtering map pins by locality first — Malviya Nagar, Vaishali Nagar, and Mansarovar rents differ even for similar BHK sizes.",
+      "IT corridor renters often cross-shop Jagatpura and Sitapura pins when commute to Sitapura industrial belt matters more than central Jaipur address prestige.",
+      "Short GSC guides at /rentals/jaipur and locality spokes link to the same live inventory as this hub — use both for quick navigation and deep map search.",
+      "Saved searches on the Jaipur hub help tenants track new owner posts in Malviya Nagar or Mansarovar during peak admission and transfer weeks without daily classified scrolling.",
+      "Before paying token, photograph existing wear at handover and confirm whether rent includes maintenance, water, and power backup — Jaipur builder floors and society flats vary more than broker-standard listing templates suggest.",
+    ],
+    bestAreas: [
+      {
+        name: "Malviya Nagar & Jagatpura",
+        description: "Student PG, rooms, and IT-corridor flats near MNIT, colleges, and Sitapura belt.",
+        href: rentalAreaPath("in", "jaipur", "malviya-nagar"),
+      },
+      {
+        name: "Vaishali Nagar & Vidhyadhar Nagar",
+        description: "Gated societies, builder floors, and family flats in planned north-west belts.",
+        href: rentalAreaPath("in", "jaipur", "vaishali-nagar"),
+      },
+      {
+        name: "Mansarovar",
+        description: "Jaipur's largest residential zone — value flats and PG along New Sanganer Road.",
+        href: rentalAreaPath("in", "jaipur", "mansarovar"),
+      },
+      {
+        name: "C-Scheme & Raja Park",
+        description: "Premium central Jaipur — apartments, offices, and professional rentals near MI Road.",
+        href: rentalAreaPath("in", "jaipur", "c-scheme"),
+      },
+      {
+        name: "Sitapura & Tonk Road",
+        description: "Budget PG, workforce rooms, and corridor flats along south Jaipur industrial spine.",
+        href: rentalAreaPath("in", "jaipur", "sitapura"),
+      },
+    ],
+    averageRent: [
+      { label: "PG / room", range: "₹3,500 – ₹9,000/mo" },
+      { label: "1 BHK flat", range: "₹8,000 – ₹16,000/mo" },
+      { label: "2 BHK flat / house", range: "₹12,000 – ₹25,000/mo" },
+      { label: "Premium central (C-Scheme)", range: "₹18,000 – ₹45,000+/mo" },
+    ],
+    universities: [
+      {
+        name: "MNIT & Malviya Nagar institutes",
+        description: "Drives PG and room demand across Malviya Nagar, JLN Marg, and Airport Road corridors.",
+      },
+      {
+        name: "Sitapura & Jagatpura colleges",
+        description: "Student and workforce housing near industrial-education belts in east and south Jaipur.",
+      },
+    ],
+    transport: [
+      "JLN Marg, Tonk Road, and New Sanganer Road are major rental corridors — commute to IT parks and coaching hubs defines pricing.",
+      "Malviya Nagar and Vaishali Nagar tenants often evaluate Airport Road and Gandhi Path access before finalizing.",
+      "Sitapura and Jagatpura renters prioritize factory or campus commute over central Jaipur prestige — map pins help validate real travel time.",
+      "Session-start weeks fill Malviya Nagar PG quickly — message Jaipur owners with move-in date and budget band rather than passive browsing during peak weeks.",
+    ],
+    faq: [
+      {
+        q: "How do I find flats for rent in Jaipur without a broker?",
+        a: "Use the RentalPins Jaipur map, filter by category and locality, and message owners directly from listing pins.",
+      },
+      {
+        q: "Which Jaipur areas are best for students?",
+        a: "Malviya Nagar, Jagatpura, and Sitapura see high PG and room demand near colleges and IT corridors.",
+      },
+      {
+        q: "Which areas suit family flats in Jaipur?",
+        a: "Vaishali Nagar, Mansarovar, and Vidhyadhar Nagar are popular for gated societies and builder floors.",
+      },
+      {
+        q: "What rent should I expect for a 2 BHK in Jaipur?",
+        a: "Typically ₹12,000–₹25,000/month depending on locality, furnishing, and parking — compare nearby map pins for accuracy.",
+      },
+      {
+        q: "Can I list my Jaipur property for free?",
+        a: "Yes — owners publish on RentalPins web or app; listings sync to the same map used by local tenants.",
+      },
+      {
+        q: "How do I compare Jaipur localities before visiting?",
+        a: "Open the Jaipur hub map, filter by property type, and save pins in Malviya Nagar, Vaishali Nagar, or Mansarovar — then message owners to confirm furnishing and deposit before site visits.",
+      },
+      {
+        q: "Are PG and family flats mixed in search results?",
+        a: "Use PG/Hostels versus flats filters on the Jaipur map — mixing categories wastes time when student PG and family housing needs are clearly different.",
+      },
+      {
+        q: "Does RentalPins have short Jaipur locality guides?",
+        a: "Yes — /rentals/jaipur and area spokes such as /rentals/jaipur/malviya-nagar link to the same live inventory as this hub.",
+      },
+      {
+        q: "Where should IT professionals search in Jaipur?",
+        a: "Start with Jagatpura and Sitapura map pins for Sitapura belt commutes, then compare Malviya Nagar furnished flats if you need better amenities closer to JLN Marg.",
+      },
+      {
+        q: "How do owners get better leads in Jaipur?",
+        a: "Include exact locality names, furnishing, parking, and deposit terms in listing text — tenants eliminate mismatched pins before visiting when details are clear on the map.",
+      },
+      {
+        q: "Can I compare Mansarovar and Vaishali Nagar on one map?",
+        a: "Yes — pan the Jaipur hub between both belts, save pins in each, and message owners before visiting to confirm furnishing and parking.",
+      },
+    ],
+  },
+
   [key("in", "delhi")]: {
     key: key("in", "delhi"),
     placeName: "Delhi NCR",

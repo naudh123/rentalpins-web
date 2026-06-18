@@ -319,6 +319,15 @@ export const JAIPUR_AREAS: AreaConfig[] = [
     radiusKm: 4,
     description: "Bani Park and station-area rentals.",
   },
+  {
+    slug: "vidhyadhar-nagar",
+    name: "Vidhyadhar Nagar",
+    city: "Jaipur",
+    geohashPrefixes: ["tsvcn", "tsvcp", "tsvcq", "tsvcj", "tsvcm"],
+    center: { lat: 26.9981, lng: 75.786 },
+    radiusKm: 5,
+    description: "Vidhyadhar Nagar — planned sector flats and family homes.",
+  },
 ];
 
 // ─── Lucknow ─────────────────────────────────────────────────────────────────

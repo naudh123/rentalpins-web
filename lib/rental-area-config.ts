@@ -1,5 +1,6 @@
 import { mapSearchUrl } from "@/lib/map-search-url";
 import { appPath } from "@/lib/config";
+import { JAIPUR_GSC_PAGES } from "@/lib/seo/jaipur-gsc-config";
 
 export interface RentalAreaFaq {
   q: string;
@@ -44,6 +45,7 @@ export const INDIAN_GSC_HUB_SLUGS = [
   "zirakpur",
   "delhi",
   "chandigarh-university",
+  "jaipur",
 ] as const;
 
 export type IndianGscHubSlug = (typeof INDIAN_GSC_HUB_SLUGS)[number];
@@ -700,6 +702,7 @@ const PAGES: Record<PageKey, RentalAreaPageConfig> = {
     placeQuery: "Hudson Lane, Delhi",
     legacyAreaPath: "/rentals/in/delhi/hudson-lane",
   },
+  ...JAIPUR_GSC_PAGES,
 };
 
 export const INDIAN_GSC_PAGE_KEYS = Object.keys(PAGES);

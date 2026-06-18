@@ -344,4 +344,62 @@ export const MARKETING_PAGE_EXTRA_SECTIONS: Record<string, MarketingSeoSection[]
       ],
     },
   ],
+  "property-without-broker-jaipur": [
+    {
+      title: "Jaipur localities for owner-direct rentals",
+      paragraphs: [
+        "Malviya Nagar, Jagatpura, and Sitapura dominate student PG and IT-corridor flat demand; Vaishali Nagar, Mansarovar, and Vidhyadhar Nagar carry family society inventory — all browsable without broker search fees on RentalPins.",
+        "C-Scheme, Raja Park, and Bani Park skew premium central — compare map pins before paying advance on vague 'central Jaipur' classified titles.",
+        "The Jaipur money-page guide covers rent bands, transport, and area context — pair it with this no-broker landing when relocating for work or study.",
+      ],
+    },
+    {
+      title: "Student, family, and IT demand in Jaipur",
+      paragraphs: [
+        "Students shortlist PG near MNIT and Malviya Nagar coaching belts; families prefer Vaishali Nagar and Mansarovar societies with schools and markets within short drives.",
+        "Sitapura workforce renters filter budget PG and shared rooms — message owners directly for food plan and commute fit.",
+        "Owner listings should include accurate locality names — tenants searching 'Vaishali Nagar' or 'Malviya Nagar' discover pins faster on hub and map search.",
+      ],
+    },
+    {
+      title: "Broker-free viewing checklist in Jaipur",
+      paragraphs: [
+        "Confirm the unit matches the map pin and who holds keys — broker reposts of owner Jaipur flats remain common on external classified sites.",
+        "Photograph existing wear at handover and clarify maintenance, water, and power backup before token — builder floors and older flats vary on utility quality.",
+        "Ask whether the owner expects an 11-month agreement or shorter student lease — Jaipur PG and family markets use different contract norms.",
+      ],
+    },
+    {
+      title: "Malviya Nagar and Sitapura corridor rentals",
+      paragraphs: [
+        "Students near MNIT should filter PG/Hostels and rooms on the Jaipur map before session peak — broker boards duplicate owner photos heavily in Malviya Nagar belts.",
+        "Sitapura and Jagatpura carry workforce PG and corridor flats — tenants message owners directly for commute, food inclusion, and deposit refund terms.",
+        "Family tenants in Vaishali Nagar benefit from flats category hubs — compare pin clusters near schools and Gandhi Path before shortlisting visits.",
+      ],
+    },
+    {
+      title: "Using Jaipur guides with no-broker search",
+      paragraphs: [
+        "Pair this landing with the Jaipur money-page rental guide for rent bands and transport context, then browse live owner pins on the city hub map.",
+        "Short /rentals/jaipur locality guides link back to map inventory — use Malviya Nagar and Vaishali Nagar spokes for quick navigation.",
+        "Save searches when your Jaipur move-in is two to four weeks away — fresh owner posts appear as pins without repeating daily classified scrolling through broker duplicates.",
+      ],
+    },
+    {
+      title: "Jaipur rent negotiation without intermediaries",
+      paragraphs: [
+        "Discuss maintenance, water supply, and power backup with owners directly — Jaipur builder floors and society flats vary more on utilities than broker-standard listing templates suggest.",
+        "Compare Vaishali Nagar and Mansarovar pins on the same budget band before visiting — locality names in owner titles help you discover matches faster on hub search.",
+        "Use Jaipur flats, PG, and houses category hubs under the city page to stay in owner-posted inventory with neighbourhood context before you pay any token amount.",
+      ],
+    },
+    {
+      title: "Premium central and north Jaipur without brokers",
+      paragraphs: [
+        "C-Scheme and Raja Park tenants should confirm parking, furnishing, and society rules before token — central Jaipur premiums make mismatched shortlists expensive.",
+        "Vidhyadhar Nagar and Bani Park attract family and transit tenants — map pins reveal sector and station proximity better than broad Pink City keywords.",
+        "Owners in premium belts should refresh photos after vacancy — stale central Jaipur pins lose visibility to newer owner posts during peak leasing weeks.",
+      ],
+    },
+  ],
 };

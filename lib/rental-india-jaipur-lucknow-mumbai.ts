@@ -226,6 +226,31 @@ export const JAIPUR_LUCKNOW_MUMBAI_CITIES: CityConfig[] = [
         ctaHeading: "Bani Park lister?",
         ctaBody: "List on RentalPins.",
       },
+      {
+        slug: "vidhyadhar-nagar",
+        name: "Vidhyadhar Nagar",
+        tagline: "Sector blocks · North Jaipur · Gandhi Path",
+        badge: "NOW LIVE — VIDHYADHAR NAGAR",
+        primaryFocus: "Planned sectors & society flats",
+        heroDescription: "Vidhyadhar Nagar — planned residential sectors with society flats, builder floors and strong family rental demand in north Jaipur.",
+        coordinates: { lat: 26.9981, lng: 75.786 },
+        popularAreas: ["Vidhyadhar Nagar", "Sector 1", "Sector 6", "Gandhi Path north"],
+        topCategories: [
+          { name: "Property", color: "#7B1FA2", icon: "🏠", desc: "Society flats and builder floors." },
+        ],
+        popularSearches: [
+          "Flat Vidhyadhar Nagar Jaipur", "2 BHK Vidhyadhar Nagar",
+          "Society flat north Jaipur", "Rent Vidhyadhar Nagar",
+        ],
+        faqs: [
+          {
+            q: "Why is Vidhyadhar Nagar popular for family rentals?",
+            a: "Planned sectors, newer societies and road infrastructure attract families comparing value with Vaishali Nagar and Mansarovar.",
+          },
+        ],
+        ctaHeading: "Vidhyadhar Nagar lister?",
+        ctaBody: "List on RentalPins.",
+      },
     ],
   },
   {

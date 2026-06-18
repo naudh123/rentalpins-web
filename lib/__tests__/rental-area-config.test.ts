@@ -28,11 +28,22 @@ const REQUIRED_ROUTES = [
   "/rentals/delhi/gtb-nagar",
   "/rentals/delhi/dwarka",
   "/rentals/delhi/hudson-lane",
+  "/rentals/jaipur",
+  "/rentals/jaipur/malviya-nagar",
+  "/rentals/jaipur/vaishali-nagar",
+  "/rentals/jaipur/mansarovar",
+  "/rentals/jaipur/jagatpura",
+  "/rentals/jaipur/c-scheme",
+  "/rentals/jaipur/raja-park",
+  "/rentals/jaipur/sitapura",
+  "/rentals/jaipur/tonk-road",
+  "/rentals/jaipur/bani-park",
+  "/rentals/jaipur/vidhyadhar-nagar",
 ] as const;
 
 describe("rental area config (India GSC)", () => {
   it("defines all required GSC routes", () => {
-    expect(INDIAN_GSC_PAGE_KEYS).toHaveLength(13);
+    expect(INDIAN_GSC_PAGE_KEYS).toHaveLength(24);
     expect(getIndianGscSitemapPaths().sort()).toEqual(
       [...REQUIRED_ROUTES].sort()
     );
@@ -61,6 +72,9 @@ describe("rental area config (India GSC)", () => {
 
     const muk = getIndianRentalPageConfig("delhi", "mukherjee-nagar")!;
     expect(muk.h1).toMatch(/Mukherjee Nagar/i);
+
+    const malviya = getIndianRentalPageConfig("jaipur", "malviya-nagar")!;
+    expect(malviya.h1).toMatch(/Malviya Nagar/i);
   });
 
   it("keeps nearby links within GSC registry", () => {

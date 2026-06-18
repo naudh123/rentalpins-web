@@ -145,6 +145,7 @@ export default function PostListingForm({
   const improvingRef = useRef(false);
   const isMountedRef = useRef(true);
   const [progress, setProgress] = useState("");
+  const [photosPreparing, setPhotosPreparing] = useState(false);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -586,7 +587,7 @@ export default function PostListingForm({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!user || !profile) return;
-    if (submittingRef.current || busy) return;
+    if (submittingRef.current || busy || photosPreparing) return;
 
     const trimmedTitle = title.trim();
     const trimmedDesc = description.trim();
@@ -914,6 +915,7 @@ export default function PostListingForm({
               slots={photoSlots}
               onChange={setPhotoSlots}
               disabled={busy}
+              onPreparingChange={setPhotosPreparing}
             />
           </div>
         </div>
@@ -1139,12 +1141,14 @@ export default function PostListingForm({
 
         <button
           type="submit"
-          disabled={busy || !location}
+          disabled={busy || photosPreparing || !location}
           className="rp-btn rp-btn-primary w-full py-3.5 disabled:opacity-50"
         >
           {busy
             ? progress || "Saving…"
-            : isEditMode
+            : photosPreparing
+              ? "Preparing photos…"
+              : isEditMode
               ? "Save changes & continue →"
               : "Save draft & continue →"}
         </button>

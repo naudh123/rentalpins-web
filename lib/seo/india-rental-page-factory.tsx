@@ -27,6 +27,22 @@ export function indiaRentalPageExports(hubSlug: string, areaSlug?: string) {
         ]
       : [];
 
+  const jaipurKeywords =
+    hubSlug === "jaipur"
+      ? [
+          "flats for rent in jaipur",
+          "pg in malviya nagar jaipur",
+          "flat for rent vaishali nagar jaipur",
+          config.areaSlug === "malviya-nagar"
+            ? "pg malviya nagar jaipur"
+            : config.areaSlug === "vaishali-nagar"
+              ? "flat vaishali nagar jaipur"
+              : config.areaSlug === "mansarovar"
+                ? "flat mansarovar jaipur"
+                : "jaipur rentals",
+        ]
+      : [];
+
   const metadata: Metadata = buildPageMetadata({
     title: config.title,
     description: config.metaDescription,
@@ -38,6 +54,7 @@ export function indiaRentalPageExports(hubSlug: string, areaSlug?: string) {
       "RentalPins",
       "no broker",
       ...mohaliKeywords,
+      ...jaipurKeywords,
     ],
     locale: "en_IN",
   });

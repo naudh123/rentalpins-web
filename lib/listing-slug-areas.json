@@ -270,6 +270,15 @@
     "radiusKm": 4
   },
   {
+    "slug": "vidhyadhar-nagar",
+    "name": "Vidhyadhar Nagar",
+    "center": {
+      "lat": 26.9981,
+      "lng": 75.786
+    },
+    "radiusKm": 5
+  },
+  {
     "slug": "lucknow-metro",
     "name": "Lucknow Metro",
     "center": {

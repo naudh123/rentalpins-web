@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { resizeImageForUpload } from "@/lib/image-resize";
+import { yieldToMain } from "@/lib/async-timeout";
 
 export const MAX_LISTING_PHOTOS = 8;
 
@@ -18,20 +20,29 @@ interface Props {
   slots: ListingPhotoSlot[];
   onChange: (slots: ListingPhotoSlot[]) => void;
   disabled?: boolean;
+  onPreparingChange?: (preparing: boolean) => void;
 }
 
 function fileKey(file: File): string {
   return `${file.name}-${file.size}-${file.lastModified}`;
 }
 
+function isImageFile(file: File): boolean {
+  if (file.type.startsWith("image/")) return true;
+  return /\.(jpe?g|png|webp|heic|heif|bmp|gif)$/i.test(file.name);
+}
+
 function newId(): string {
   return `ph_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
 
-export default function ListingPhotosField({ slots, onChange, disabled }: Props) {
+export default function ListingPhotosField({ slots, onChange, disabled, onPreparingChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [previewUrls, setPreviewUrls] = useState<Record<string, string>>({});
+  const [preparing, setPreparing] = useState(false);
+  const [prepareError, setPrepareError] = useState("");
+  const [prepareProgress, setPrepareProgress] = useState("");
 
   const slotsRemaining = MAX_LISTING_PHOTOS - slots.length;
 
@@ -59,17 +70,46 @@ export default function ListingPhotosField({ slots, onChange, disabled }: Props)
   }, [slots]);
 
   const addFiles = useCallback(
-    (incoming: FileList | File[]) => {
-      const list = Array.from(incoming).filter((f) => f.type.startsWith("image/"));
+    async (incoming: FileList | File[]) => {
+      const list = Array.from(incoming).filter(isImageFile);
       if (!list.length || slotsRemaining <= 0) return;
-      const added: ListingPhotoSlot[] = list.slice(0, slotsRemaining).map((file) => ({
-        id: newId(),
-        kind: "new" as const,
-        file,
-      }));
-      onChange([...slots, ...added]);
+
+      setPrepareError("");
+      setPreparing(true);
+      onPreparingChange?.(true);
+      const toAdd = list.slice(0, slotsRemaining);
+      const prepared: ListingPhotoSlot[] = [];
+
+      try {
+        for (let i = 0; i < toAdd.length; i++) {
+          const file = toAdd[i]!;
+          setPrepareProgress(`Preparing photo ${i + 1} of ${toAdd.length}…`);
+          try {
+            const compressed = await resizeImageForUpload(file);
+            prepared.push({
+              id: newId(),
+              kind: "new" as const,
+              file: compressed,
+            });
+          } catch (err) {
+            const message =
+              err instanceof Error ? err.message : "Could not prepare photo.";
+            setPrepareError(message);
+            break;
+          }
+          await yieldToMain();
+        }
+
+        if (prepared.length) {
+          onChange([...slots, ...prepared]);
+        }
+      } finally {
+        setPreparing(false);
+        onPreparingChange?.(false);
+        setPrepareProgress("");
+      }
     },
-    [onChange, slots, slotsRemaining]
+    [onChange, onPreparingChange, slots, slotsRemaining]
   );
 
   const removeAt = (index: number) => {
@@ -93,6 +133,17 @@ export default function ListingPhotosField({ slots, onChange, disabled }: Props)
           {slots.length}/{MAX_LISTING_PHOTOS}
         </span>
       </div>
+
+      {preparing && (
+        <p className="text-xs font-medium text-[var(--brand-navy)]" role="status">
+          {prepareProgress || "Preparing photos…"}
+        </p>
+      )}
+      {prepareError ? (
+        <p className="text-xs text-red-600" role="alert">
+          {prepareError}
+        </p>
+      ) : null}
 
       {slots.length > 0 && (
         <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -149,37 +200,43 @@ export default function ListingPhotosField({ slots, onChange, disabled }: Props)
       {slotsRemaining > 0 && (
         <div
           role="button"
-          tabIndex={disabled ? -1 : 0}
+          tabIndex={disabled || preparing ? -1 : 0}
           onKeyDown={(e) => {
-            if (disabled) return;
+            if (disabled || preparing) return;
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
               inputRef.current?.click();
             }
           }}
-          onClick={() => !disabled && inputRef.current?.click()}
+          onClick={() => !disabled && !preparing && inputRef.current?.click()}
           onDragOver={(e) => {
             e.preventDefault();
-            if (!disabled) setDragOver(true);
+            if (!disabled && !preparing) setDragOver(true);
           }}
           onDragLeave={() => setDragOver(false)}
           onDrop={(e) => {
             e.preventDefault();
             setDragOver(false);
-            if (disabled) return;
-            if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
+            if (disabled || preparing) return;
+            if (e.dataTransfer.files?.length) void addFiles(e.dataTransfer.files);
           }}
           className={`rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors ${
             dragOver
               ? "border-[var(--accent)] bg-[var(--accent)]/5"
               : "border-[var(--border)] hover:border-[var(--accent)]/50"
-          } ${disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+          } ${disabled || preparing ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
         >
           <p className="text-sm font-medium text-[var(--brand-navy)]">
-            {slots.length === 0 ? "Add photos" : "Add more photos"}
+            {preparing
+              ? "Preparing photos…"
+              : slots.length === 0
+                ? "Add photos"
+                : "Add more photos"}
           </p>
           <p className="mt-1 text-xs text-[var(--muted)]">
-            Drag & drop or click · {slotsRemaining} slot{slotsRemaining === 1 ? "" : "s"} left
+            {preparing
+              ? "Optimizing size so upload stays fast"
+              : `Drag & drop or click · ${slotsRemaining} slot${slotsRemaining === 1 ? "" : "s"} left`}
           </p>
         </div>
       )}
@@ -190,9 +247,9 @@ export default function ListingPhotosField({ slots, onChange, disabled }: Props)
         accept="image/*"
         multiple
         className="sr-only"
-        disabled={disabled}
+        disabled={disabled || preparing}
         onChange={(e) => {
-          if (e.target.files?.length) addFiles(e.target.files);
+          if (e.target.files?.length) void addFiles(e.target.files);
           e.target.value = "";
         }}
       />

@@ -229,6 +229,7 @@ export const WITHOUT_BROKER_PAGES: Record<string, MarketingPageConfig> = {
     relatedLinks: [
       { label: "Chandigarh property", href: appPath("/property-without-broker-chandigarh") },
       { label: "Delhi property", href: appPath("/property-without-broker-delhi") },
+      { label: "Jaipur property", href: appPath("/property-without-broker-jaipur") },
       { label: "All rentals", href: appPath("/rentals") },
     ],
   },
@@ -278,6 +279,36 @@ export const WITHOUT_BROKER_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Delhi rental guide", href: appPath("/rentals/in/delhi#city-seo-content-heading") },
       { label: "Property without broker India", href: appPath("/property-without-broker") },
       { label: "Rent without broker", href: appPath("/rent-without-broker") },
+    ],
+  },
+  "property-without-broker-jaipur": {
+    slug: "property-without-broker-jaipur",
+    title: "Property for Rent in Jaipur Without Broker | RentalPins",
+    description:
+      "Rooms, flats, PG, shops and commercial property in Jaipur — direct owner contact, no broker.",
+    h1: "Jaipur property for rent without broker",
+    intro:
+      "RentalPins Jaipur hub covers Malviya Nagar, Vaishali Nagar, Mansarovar, Jagatpura, C-Scheme, Raja Park, Sitapura, Tonk Road, Bani Park, Vidhyadhar Nagar, and more — browse rooms, flats, PG, and shops with direct owner contact and no brokerage to search or inquire.",
+    benefits: [
+      { title: "Jaipur area pages", desc: "Deep links for major localities with live listings." },
+      { title: "Student & IT PG", desc: "PG and room filters for Malviya Nagar and Jagatpura belts." },
+      { title: "Family society flats", desc: "Vaishali Nagar, Mansarovar, and Vidhyadhar Nagar hubs." },
+      { title: "Free post", desc: "Owners list from web or app." },
+      { title: "Money-page guide", desc: "Long-form Jaipur rental guide with rent bands and deposit tips on the city hub." },
+      { title: "GSC locality guides", desc: "Short /rentals/jaipur spokes link back to live map inventory." },
+    ],
+    faqs: [
+      { q: "Which Jaipur areas are live?", a: "Malviya Nagar, Vaishali Nagar, Mansarovar, Jagatpura, C-Scheme, Raja Park, Sitapura, Tonk Road, Bani Park, Vidhyadhar Nagar and the city hub." },
+      { q: "Can I find PG in Malviya Nagar without broker?", a: "Yes — filter PG/Hostels on the Jaipur map and contact owners directly." },
+      { q: "Does RentalPins charge tenants brokerage?", a: "No search commission — you message owners from listing pins." },
+      { q: "How do I compare Jaipur flats in one budget?", a: "Pan the map across Vaishali Nagar and Mansarovar, open pins for exact locality, then shortlist before visits." },
+    ],
+    relatedLinks: [
+      { label: "Jaipur rentals hub", href: appPath(rentalCityPath("in", "jaipur")) },
+      { label: "Jaipur rental guide", href: appPath(`${rentalCityPath("in", "jaipur")}#city-seo-content-heading`) },
+      { label: "Malviya Nagar guide", href: appPath("/rentals/jaipur/malviya-nagar") },
+      { label: "Rent without broker", href: appPath("/rent-without-broker") },
+      { label: "Property without broker India", href: appPath("/property-without-broker") },
     ],
   },
 };

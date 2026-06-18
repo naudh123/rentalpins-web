@@ -276,6 +276,75 @@ export const CITY_SEO_EXTRA_SECTIONS: Record<string, CitySeoSection[]> = {
       ],
     },
   ],
+  "in/jaipur": [
+    {
+      title: "Residential search across Jaipur localities",
+      paragraphs: [
+        "Malviya Nagar and Jagatpura attract students and IT professionals with strong PG, room, and compact flat demand near JLN Marg and Sitapura corridor.",
+        "Vaishali Nagar, Mansarovar, and Vidhyadhar Nagar suit family tenants seeking gated societies, builder floors, and planned sector infrastructure.",
+        "Use Jaipur area pages to drill from city hub into Malviya Nagar or Vaishali Nagar rather than relying on generic Pink City classified feeds.",
+        "C-Scheme, Raja Park, and Bani Park skew premium central — map pins help you separate MI Road convenience from peripheral value options.",
+      ],
+    },
+    {
+      title: "Student PG and IT-corridor rentals",
+      paragraphs: [
+        "MNIT and Malviya Nagar coaching belts support steady PG and room demand each academic year. Shared rooms remain the most affordable entry point for outstation students.",
+        "Compare Malviya Nagar PG with Jagatpura apartments if you want slightly better amenities at a higher rent band near Sitapura workplaces.",
+        "Owners near campuses should highlight food, laundry, and study-friendly rules in listing descriptions.",
+        "Admission-week peaks fill Malviya Nagar PG quickly — message owners with your exact move-in date rather than browsing passively.",
+      ],
+    },
+    {
+      title: "Family flats and society rentals in Jaipur",
+      paragraphs: [
+        "Vaishali Nagar and Vidhyadhar Nagar dominate family flat demand with gated communities, schools, and retail within short drives.",
+        "Mansarovar offers scale and value — multiple micro-markets along New Sanganer Road mean area-level comparison is essential before committing.",
+        "Use flats category filters so PG results do not clutter family shortlists during peak leasing season.",
+        "Before paying advance rent, confirm whether the owner expects an 11-month agreement or shorter student-friendly terms — Jaipur markets differ by tenant type.",
+      ],
+    },
+    {
+      title: "Why map search beats broker-led boards in Jaipur",
+      paragraphs: [
+        "Broker boards often recycle the same inventory with added commission — RentalPins shows owner-posted pins with direct contact and location context on one map.",
+        "Saved searches help you monitor new listings in Malviya Nagar, Mansarovar, or Vaishali Nagar without repeating manual classified scrolling.",
+        "When comparing two similar flats, check pin distance to JLN Marg or Tonk Road on the map — a slightly lower rent can cost more in daily commute if the pin sits far from your workplace or college.",
+        "Owners who respond within a few hours on WhatsApp typically close faster — Jaipur tenants often finalize one of three shortlisted pins within a week during peak season.",
+      ],
+    },
+    {
+      title: "Sitapura, Tonk Road, and south-corridor rentals",
+      paragraphs: [
+        "Sitapura hosts industry, logistics, and education — high volume of budget PG, rooms, and shared flats for workers and students.",
+        "Tonk Road and Durgapura belt apartments suit tenants who need south-corridor access without central Jaipur premiums.",
+        "Workforce renters should filter PG versus flats early — Sitapura inventory skews budget shared accommodation.",
+        "Owners listing near Sitapura should note factory or campus proximity in titles — commute-sensitive tenants eliminate mismatched pins before visiting.",
+      ],
+    },
+    {
+      title: "Premium central Jaipur — C-Scheme, Raja Park, Bani Park",
+      paragraphs: [
+        "C-Scheme and MI Road attract professionals and businesses seeking central accessibility — expect premium rents versus Mansarovar or Jagatpura.",
+        "Raja Park combines PG pockets with family flats in dense central colonies — inspect block-level map pins before paying advance.",
+        "Bani Park suits transit tenants near railway station with service apartments and mid-premium homes — confirm lease duration for short stays.",
+        "Premium tenants should compare multiple central pins on the map — furnishing and parking move rents sharply within the same neighbourhood name.",
+      ],
+    },
+    {
+      title: "Owner tips for faster Jaipur leasing",
+      paragraphs: [
+        "Residential owners in Vaishali Nagar and Mansarovar should include parking, furnishing, and deposit terms in listing text — family tenants eliminate mismatched pins before visiting.",
+        "PG owners in Malviya Nagar should note food plan, AC charges, and curfew in descriptions — students shortlist faster when monthly cost is transparent.",
+        "Refresh photos after vacancy during peak season — stale pins lose visibility to newer owner posts on the same Jaipur map corridor.",
+        "Respond within a few hours on WhatsApp during peak weeks — Jaipur tenants often finalize one of three shortlisted pins within days when owners reply promptly.",
+        "Link residential searches through Jaipur area pages — Malviya Nagar for students and Vaishali Nagar for families keep intent separated on the map.",
+        "Property-without-broker-jaipur and short /rentals/jaipur locality guides point to the same Jaipur map inventory — combine long-form tips with live Malviya Nagar and Vaishali Nagar pins before session deposit deadlines.",
+        "Owners refreshing photos after vacancy regain map visibility faster than stale pins during peak Malviya Nagar PG and Vaishali Nagar family-flat weeks.",
+        "Tenants relocating for Rajasthan government or private-sector transfers should shortlist one north-west belt (Vaishali Nagar or Vidhyadhar Nagar) and one south belt (Mansarovar or Jagatpura) before site visits — Jaipur micro-markets differ sharply on commute and rent.",
+      ],
+    },
+  ],
   "in/delhi": [
     {
       title: "Locality-first search across Delhi NCR",

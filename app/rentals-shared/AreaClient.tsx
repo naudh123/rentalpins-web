@@ -1011,6 +1011,60 @@ const FOCUSED_LONGFORM_OVERRIDES: Record<string, LongFormSection[]> = {
       ],
     },
   ],
+  "jaipur/tonk-road": [
+    {
+      title: "Tonk Road and Durgapura corridor rentals",
+      paragraphs: [
+        "Tonk Road is a major south Jaipur spine linking Malviya Nagar, Mansarovar, and Jagatpura — corridor flats and shops attract tenants who prioritize arterial access over central premiums.",
+        "Durgapura and Pratap Nagar pockets mix family housing with retail frontages — map pins help separate residential lanes from high-traffic commercial stretches.",
+        "RentalPins links Tonk Road discovery to nearby Malviya Nagar and Mansarovar comparisons for better rent-to-commute value.",
+      ],
+    },
+    {
+      title: "Tonk Road pricing and tenant fit",
+      paragraphs: [
+        "Rent on Tonk Road varies by furnishing, floor, and distance to key junctions — similar BHK titles can span wide price bands.",
+        "Commercial tenants should confirm signage rights and loading access separately from residential renters evaluating noise and traffic.",
+        "Owners improve conversion by naming exact landmarks — vague 'Tonk Road Jaipur' titles attract mismatched inquiries.",
+      ],
+    },
+  ],
+  "jaipur/vidhyadhar-nagar": [
+    {
+      title: "Vidhyadhar Nagar planned sector demand",
+      paragraphs: [
+        "Vidhyadhar Nagar is among north Jaipur's fastest-growing family rental belts — planned sectors, society flats, and builder floors attract tenants comparing value with Vaishali Nagar.",
+        "Gandhi Path and sector-block naming matter for commute — map-led search beats scrolling generic Pink City classifieds.",
+        "RentalPins locality pages help shortlist Vidhyadhar Nagar pins alongside Vaishali Nagar and Bani Park alternatives.",
+      ],
+    },
+    {
+      title: "Vidhyadhar Nagar rent trends and listing quality",
+      paragraphs: [
+        "Pricing reflects sector maturity, society amenities, and furnishing — newer towers command premiums over older builder floors in the same sector.",
+        "Family tenants prioritize school access, parking, and compound security before finalizing advance.",
+        "Owners who include tower, block, and parking details receive higher-intent inquiries from map search.",
+      ],
+    },
+  ],
+  "jaipur/jaipur-metro": [
+    {
+      title: "Greater Jaipur city-wide rental search",
+      paragraphs: [
+        "Jaipur Metro coverage spans Pink City core and outer belts — Malviya Nagar, Vaishali Nagar, Mansarovar, Jagatpura, Sitapura, and Tonk Road each behave as distinct micro-markets on the same map.",
+        "City-wide search works best when you anchor to commute, budget, and property type first, then drill into locality pages for deeper context.",
+        "RentalPins city-wide pins let tenants compare south IT corridors with north-west family belts without broker-led NCR-style noise.",
+      ],
+    },
+    {
+      title: "Cross-locality comparison across Jaipur",
+      paragraphs: [
+        "Students often start in Malviya Nagar or Sitapura; families lean Vaishali Nagar or Mansarovar — use category filters so PG and flat results stay separated.",
+        "Premium central demand in C-Scheme and Raja Park sits on the same map as value options in Mansarovar — pan before you commit to advance.",
+        "Short /rentals/jaipur guides link into this hub for quick locality navigation while inventory stays owner-direct.",
+      ],
+    },
+  ],
   "lucknow/mahanagar": [
     {
       title: "Mahanagar planned residential rental profile",
@@ -1095,6 +1149,11 @@ const NAV_CITIES = [
       { label: "Mansarovar", href: "/rentals/in/jaipur/mansarovar" },
       { label: "Jagatpura", href: "/rentals/in/jaipur/jagatpura" },
       { label: "C-Scheme", href: "/rentals/in/jaipur/c-scheme" },
+      { label: "Raja Park", href: "/rentals/in/jaipur/raja-park" },
+      { label: "Sitapura", href: "/rentals/in/jaipur/sitapura" },
+      { label: "Tonk Road", href: "/rentals/in/jaipur/tonk-road" },
+      { label: "Bani Park", href: "/rentals/in/jaipur/bani-park" },
+      { label: "Vidhyadhar Nagar", href: "/rentals/in/jaipur/vidhyadhar-nagar" },
     ],
   },
   {
@@ -1262,6 +1321,12 @@ function Navbar() {
             ["Jaipur", "/rentals/in/jaipur"],
             ["  Malviya Nagar", "/rentals/in/jaipur/malviya-nagar"],
             ["  Vaishali Nagar", "/rentals/in/jaipur/vaishali-nagar"],
+            ["  Mansarovar", "/rentals/in/jaipur/mansarovar"],
+            ["  Jagatpura", "/rentals/in/jaipur/jagatpura"],
+            ["  C-Scheme", "/rentals/in/jaipur/c-scheme"],
+            ["  Raja Park", "/rentals/in/jaipur/raja-park"],
+            ["  Sitapura", "/rentals/in/jaipur/sitapura"],
+            ["  Vidhyadhar Nagar", "/rentals/in/jaipur/vidhyadhar-nagar"],
             ["Lucknow", "/rentals/in/lucknow"],
             ["  Gomti Nagar", "/rentals/in/lucknow/gomti-nagar"],
             ["  Indira Nagar", "/rentals/in/lucknow/indira-nagar-lucknow"],
@@ -1318,6 +1383,9 @@ function Footer() {
         { label: "Rohini", href: "/rentals/in/delhi/rohini" },
         { label: "Jaipur", href: "/rentals/in/jaipur" },
         { label: "Malviya Nagar (Jaipur)", href: "/rentals/in/jaipur/malviya-nagar" },
+        { label: "Vaishali Nagar (Jaipur)", href: "/rentals/in/jaipur/vaishali-nagar" },
+        { label: "Mansarovar (Jaipur)", href: "/rentals/in/jaipur/mansarovar" },
+        { label: "Jaipur guides", href: "/rentals/jaipur" },
         { label: "Lucknow", href: "/rentals/in/lucknow" },
         { label: "Gomti Nagar", href: "/rentals/in/lucknow/gomti-nagar" },
         { label: "Mumbai", href: "/rentals/in/mumbai" },
