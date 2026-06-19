@@ -33,7 +33,9 @@ const SEGMENT_LABELS: Record<ListingCategorySegment, string> = {
 
 function categoryCityPath(segment: ListingCategorySegment, city: string, locality?: string): string {
   const base = listingSegmentBasePath(segment);
-  return locality ? `${base}/${city}/${locality}` : `${base}/${city}`;
+  return locality
+    ? `${base}/locality/${city}/${locality}`
+    : `${base}/locality/${city}`;
 }
 
 export function createCategoryAuthorityPage(segment: ListingCategorySegment) {

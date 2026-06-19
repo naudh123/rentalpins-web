@@ -103,6 +103,17 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Legacy category locality hubs: /rentals/property/{city}/{locality} → /locality/…
+  const propertyLocality = decoded.match(
+    /^\/rentals\/(property|appliances|electronics|equipment|furniture|vehicles)\/([^/]+)\/([^/]+)$/
+  );
+  if (propertyLocality && propertyLocality[2] !== "locality") {
+    const [, segment, city, locality] = propertyLocality;
+    const url = request.nextUrl.clone();
+    url.pathname = `/rentals/${segment}/locality/${city}/${locality}`;
+    return NextResponse.redirect(url, 308);
+  }
+
   const segments = pathname.split("/").filter(Boolean);
   if (segments[0] !== "rentals" || segments.length < 2) {
     return NextResponse.next();
