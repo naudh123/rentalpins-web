@@ -1065,6 +1065,78 @@ const FOCUSED_LONGFORM_OVERRIDES: Record<string, LongFormSection[]> = {
       ],
     },
   ],
+  "noida/sector-62": [
+    {
+      title: "Sector 62 IT-corridor rental demand",
+      paragraphs: [
+        "Sector 62 is among Noida's most searched rental localities, drawing demand from IT professionals and students due to office clusters and NH-24 connectivity.",
+        "Renter preference here often balances commute practicality with PG affordability, with strong movement in shared flats and paying guest inventory.",
+        "RentalPins locality pages help users compare Sector 62 with Sector 18 and Sector 128 before contacting owners.",
+      ],
+    },
+    {
+      title: "Sector 62 pricing and conversion behavior",
+      paragraphs: [
+        "Rent variation in Sector 62 is influenced by furnishing, food plan, and distance to IT parks. Similar unit sizes can have meaningful pricing spread across internal pockets.",
+        "Tenants typically convert faster on listings with complete photos, exact society or block details, and clear deposit terms.",
+        "Owners can improve lead quality by keeping inventory updated and pricing close to active neighborhood benchmarks.",
+      ],
+    },
+  ],
+  "noida/sector-18": [
+    {
+      title: "Sector 18 metro-linked rental profile",
+      paragraphs: [
+        "Sector 18 combines Noida's top commercial market with Blue Line metro access — strong PG, room, and family flat demand near Atta Market.",
+        "Inventory includes apartments and builder floors, with renters prioritizing station walk time and daily retail convenience.",
+        "RentalPins map-led search helps compare value options within Sector 18 and nearby central Noida sectors.",
+      ],
+    },
+    {
+      title: "Sector 18 rent trends and locality fit",
+      paragraphs: [
+        "Pricing in Sector 18 depends on block-level accessibility, property condition, and amenity quality.",
+        "Long-stay renters usually shortlist by metro, market, and commute factors alongside rent.",
+        "Detailed owner listings with clear sector relevance generally produce higher trust and better inquiry conversion.",
+      ],
+    },
+  ],
+  "noida/sector-137": [
+    {
+      title: "Sector 137 expressway workforce rentals",
+      paragraphs: [
+        "Sector 137 along the Noida–Greater Noida Expressway sees steady demand from IT and corporate commuters seeking furnished flats and PG.",
+        "The expressway belt creates distinct micro-markets — compare pins near metro versus office clusters before committing.",
+        "RentalPins enables this through sector-first pages and internal links to Sector 128 and Greater Noida.",
+      ],
+    },
+    {
+      title: "Sector 137 rent bands and tenant fit",
+      paragraphs: [
+        "Professional tenants often prioritize furnished inventory and parking over lowest headline rent in expressway societies.",
+        "Owners should note tower, furnishing, and commute landmarks in listing titles for faster shortlisting.",
+        "Cross-shopping Sector 128 pins on the same map helps tenants balance premium amenities with rent.",
+      ],
+    },
+  ],
+  "noida/noida-metro": [
+    {
+      title: "Greater Noida city-wide rental search",
+      paragraphs: [
+        "Noida Metro coverage spans central sectors, expressway belts, and Greater Noida corridors — Sector 62, 18, 50, 137, and Noida Extension each behave as distinct micro-markets on the same map.",
+        "City-wide search works best when you anchor to commute, budget, and property type first, then drill into sector pages for deeper context.",
+        "RentalPins city-wide pins let tenants compare IT corridors with family belts without broker-led NCR-wide noise.",
+      ],
+    },
+    {
+      title: "Cross-sector comparison across Noida",
+      paragraphs: [
+        "Professionals often start in Sector 62 or Sector 137; families lean Sector 50 or Sector 76 — use category filters so PG and flat results stay separated.",
+        "Noida Extension value societies sit on the same map as central Noida premiums — pan before you commit to advance.",
+        "Short /rentals/noida guides link into this hub for quick sector navigation while inventory stays owner-direct.",
+      ],
+    },
+  ],
   "lucknow/mahanagar": [
     {
       title: "Mahanagar planned residential rental profile",
@@ -1154,6 +1226,22 @@ const NAV_CITIES = [
       { label: "Tonk Road", href: "/rentals/in/jaipur/tonk-road" },
       { label: "Bani Park", href: "/rentals/in/jaipur/bani-park" },
       { label: "Vidhyadhar Nagar", href: "/rentals/in/jaipur/vidhyadhar-nagar" },
+    ],
+  },
+  {
+    hub: "Noida",
+    href: "/rentals/in/noida",
+    spokes: [
+      { label: "Sector 62", href: "/rentals/in/noida/sector-62" },
+      { label: "Sector 18", href: "/rentals/in/noida/sector-18" },
+      { label: "Sector 50", href: "/rentals/in/noida/sector-50" },
+      { label: "Sector 76", href: "/rentals/in/noida/sector-76" },
+      { label: "Sector 137", href: "/rentals/in/noida/sector-137" },
+      { label: "Sector 15", href: "/rentals/in/noida/sector-15" },
+      { label: "Sector 128", href: "/rentals/in/noida/sector-128" },
+      { label: "Greater Noida", href: "/rentals/in/noida/greater-noida" },
+      { label: "Noida Extension", href: "/rentals/in/noida/noida-extension" },
+      { label: "Sector 45", href: "/rentals/in/noida/sector-45" },
     ],
   },
   {
@@ -1327,6 +1415,12 @@ function Navbar() {
             ["  Raja Park", "/rentals/in/jaipur/raja-park"],
             ["  Sitapura", "/rentals/in/jaipur/sitapura"],
             ["  Vidhyadhar Nagar", "/rentals/in/jaipur/vidhyadhar-nagar"],
+            ["Noida", "/rentals/in/noida"],
+            ["  Sector 62", "/rentals/in/noida/sector-62"],
+            ["  Sector 18", "/rentals/in/noida/sector-18"],
+            ["  Sector 50", "/rentals/in/noida/sector-50"],
+            ["  Sector 137", "/rentals/in/noida/sector-137"],
+            ["  Greater Noida", "/rentals/in/noida/greater-noida"],
             ["Lucknow", "/rentals/in/lucknow"],
             ["  Gomti Nagar", "/rentals/in/lucknow/gomti-nagar"],
             ["  Indira Nagar", "/rentals/in/lucknow/indira-nagar-lucknow"],
@@ -1386,6 +1480,11 @@ function Footer() {
         { label: "Vaishali Nagar (Jaipur)", href: "/rentals/in/jaipur/vaishali-nagar" },
         { label: "Mansarovar (Jaipur)", href: "/rentals/in/jaipur/mansarovar" },
         { label: "Jaipur guides", href: "/rentals/jaipur" },
+        { label: "Noida", href: "/rentals/in/noida" },
+        { label: "Sector 62 (Noida)", href: "/rentals/in/noida/sector-62" },
+        { label: "Sector 18 (Noida)", href: "/rentals/in/noida/sector-18" },
+        { label: "Sector 137 (Noida)", href: "/rentals/in/noida/sector-137" },
+        { label: "Noida guides", href: "/rentals/noida" },
         { label: "Lucknow", href: "/rentals/in/lucknow" },
         { label: "Gomti Nagar", href: "/rentals/in/lucknow/gomti-nagar" },
         { label: "Mumbai", href: "/rentals/in/mumbai" },

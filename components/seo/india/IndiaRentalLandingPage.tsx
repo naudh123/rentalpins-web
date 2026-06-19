@@ -10,6 +10,7 @@ import AreaSupplyDemandSection from "@/components/seo/AreaSupplyDemandSection";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
 import MohaliGscHubLinks from "@/components/seo/MohaliGscHubLinks";
 import JaipurGscHubLinks from "@/components/seo/JaipurGscHubLinks";
+import NoidaGscHubLinks from "@/components/seo/NoidaGscHubLinks";
 import {
   INDIAN_RENTAL_GROWTH_NOTICE,
   indianRentalMapHref,
@@ -137,6 +138,10 @@ export default function IndiaRentalLandingPage({ config }: Props) {
 
       {config.hubSlug === "jaipur" ? (
         <JaipurGscHubLinks title="Jaipur locality guides" />
+      ) : null}
+
+      {config.hubSlug === "noida" ? (
+        <NoidaGscHubLinks title="Noida sector guides" />
       ) : null}
 
       <AreaSupplyDemandSection

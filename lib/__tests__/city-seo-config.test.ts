@@ -11,6 +11,7 @@ describe("getCitySeoConfig", () => {
     expect(getCitySeoConfig("in", "ludhiana")?.placeName).toBe("Ludhiana");
     expect(getCitySeoConfig("in", "delhi")?.placeName).toBe("Delhi NCR");
     expect(getCitySeoConfig("in", "jaipur")?.placeName).toBe("Jaipur");
+    expect(getCitySeoConfig("in", "noida")?.placeName).toBe("Noida");
   });
 
   it("returns priority area configs under parent city", () => {
@@ -23,13 +24,14 @@ describe("getCitySeoConfig", () => {
     expect(getCitySeoConfig("in", "chandigarh", "panchkula")).toBeNull();
   });
 
-  it("lists six priority money-page keys", () => {
+  it("lists seven priority money-page keys", () => {
     expect(listCitySeoConfigKeys()).toEqual([
       "in/chandigarh",
       "in/chandigarh/mohali",
       "in/chandigarh/kharar",
       "in/ludhiana",
       "in/jaipur",
+      "in/noida",
       "in/delhi",
     ]);
   });

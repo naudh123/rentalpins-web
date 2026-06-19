@@ -345,6 +345,75 @@ export const CITY_SEO_EXTRA_SECTIONS: Record<string, CitySeoSection[]> = {
       ],
     },
   ],
+  "in/noida": [
+    {
+      title: "Residential search across Noida sectors",
+      paragraphs: [
+        "Sector 62 and Sector 128 attract IT professionals with strong PG, shared flat, and furnished apartment demand near expressway and NH-24 corridors.",
+        "Sector 18, Sector 50, and Sector 15 suit family tenants seeking metro-linked societies, builder floors, and established central Noida infrastructure.",
+        "Use Noida area pages to drill from city hub into Sector 62 or Sector 18 rather than relying on generic NCR classified feeds.",
+        "Sector 137, Greater Noida, and Noida Extension skew value and workforce — map pins help you separate expressway convenience from central Noida premiums.",
+      ],
+    },
+    {
+      title: "IT-corridor PG and professional rentals",
+      paragraphs: [
+        "Sector 62 IT parks support steady PG and room demand each quarter. Shared rooms remain the most affordable entry point for outstation professionals.",
+        "Compare Sector 62 PG with Sector 128 society flats if you want slightly better amenities at a higher rent band near expressway offices.",
+        "Owners near IT corridors should highlight food, laundry, and Wi-Fi in listing descriptions.",
+        "Transfer-week peaks fill Sector 62 PG quickly — message owners with your exact move-in date rather than browsing passively.",
+      ],
+    },
+    {
+      title: "Family flats and society rentals in Noida",
+      paragraphs: [
+        "Sector 50 and Sector 45 dominate family flat demand with gated communities, schools, and retail within short drives.",
+        "Sector 76 and Noida Extension offer scale and value — multiple micro-markets mean sector-level comparison is essential before committing.",
+        "Use flats category filters so PG results do not clutter family shortlists during peak leasing season.",
+        "Before paying advance rent, confirm whether the owner expects an 11-month agreement or shorter professional terms — Noida markets differ by tenant type.",
+      ],
+    },
+    {
+      title: "Why map search beats broker-led boards in Noida",
+      paragraphs: [
+        "Broker boards often recycle the same inventory with added commission — RentalPins shows owner-posted pins with direct contact and location context on one map.",
+        "Saved searches help you monitor new listings in Sector 62, Sector 50, or Sector 18 without repeating manual classified scrolling.",
+        "When comparing two similar flats, check pin distance to metro on the map — a slightly lower rent can cost more in daily commute if the pin sits far from your station.",
+        "Owners who respond within a few hours on WhatsApp typically close faster — Noida tenants often finalize one of three shortlisted pins within a week during peak season.",
+      ],
+    },
+    {
+      title: "Expressway, Greater Noida, and south-corridor rentals",
+      paragraphs: [
+        "Sector 137 hosts expressway offices and workforce housing — high volume of PG, rooms, and society flats for commuters.",
+        "Greater Noida planned sectors suit students and families seeking value rents versus central Noida.",
+        "Workforce renters should filter PG versus flats early — Sector 137 inventory skews professional shared accommodation.",
+        "Owners listing near expressway belts should note office or campus proximity in titles — commute-sensitive tenants eliminate mismatched pins before visiting.",
+      ],
+    },
+    {
+      title: "Noida West — Sector 76 and Noida Extension",
+      paragraphs: [
+        "Sector 76 and Aqua Line metro attract families and professionals seeking newer society stock at competitive rents.",
+        "Noida Extension (Greater Noida West) combines dense Gaur City societies with high-volume 2–3 BHK supply — inspect block-level map pins before paying advance.",
+        "Compare Sector 76 with Noida Extension pins when metro walk time and society amenities matter equally.",
+        "Premium tenants in Sector 128 should compare multiple expressway pins — furnishing and parking move rents sharply within the same sector name.",
+      ],
+    },
+    {
+      title: "Owner tips for faster Noida leasing",
+      paragraphs: [
+        "Residential owners in Sector 50 and Sector 45 should include parking, furnishing, and deposit terms in listing text — family tenants eliminate mismatched pins before visiting.",
+        "PG owners in Sector 62 should note food plan, AC charges, and curfew in descriptions — professionals shortlist faster when monthly cost is transparent.",
+        "Refresh photos after vacancy during peak season — stale pins lose visibility to newer owner posts on the same Noida map corridor.",
+        "Respond within a few hours on WhatsApp during peak weeks — Noida tenants often finalize one of three shortlisted pins within days when owners reply promptly.",
+        "Link residential searches through Noida area pages — Sector 62 for professionals and Sector 50 for families keep intent separated on the map.",
+        "Property-without-broker-noida and short /rentals/noida sector guides point to the same Noida map inventory — combine long-form tips with live Sector 62 and Sector 18 pins before transfer deposit deadlines.",
+        "Owners refreshing photos after vacancy regain map visibility faster than stale pins during peak Sector 62 PG and Sector 50 family-flat weeks.",
+        "Tenants relocating for NCR corporate transfers should shortlist one central belt (Sector 18 or Sector 50) and one expressway belt (Sector 137 or Sector 128) before site visits — Noida micro-markets differ sharply on commute and rent.",
+      ],
+    },
+  ],
   "in/delhi": [
     {
       title: "Locality-first search across Delhi NCR",

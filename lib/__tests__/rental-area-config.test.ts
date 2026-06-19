@@ -39,11 +39,22 @@ const REQUIRED_ROUTES = [
   "/rentals/jaipur/tonk-road",
   "/rentals/jaipur/bani-park",
   "/rentals/jaipur/vidhyadhar-nagar",
+  "/rentals/noida",
+  "/rentals/noida/sector-62",
+  "/rentals/noida/sector-18",
+  "/rentals/noida/sector-50",
+  "/rentals/noida/sector-76",
+  "/rentals/noida/sector-137",
+  "/rentals/noida/sector-15",
+  "/rentals/noida/sector-128",
+  "/rentals/noida/greater-noida",
+  "/rentals/noida/noida-extension",
+  "/rentals/noida/sector-45",
 ] as const;
 
 describe("rental area config (India GSC)", () => {
   it("defines all required GSC routes", () => {
-    expect(INDIAN_GSC_PAGE_KEYS).toHaveLength(24);
+    expect(INDIAN_GSC_PAGE_KEYS).toHaveLength(35);
     expect(getIndianGscSitemapPaths().sort()).toEqual(
       [...REQUIRED_ROUTES].sort()
     );
@@ -75,6 +86,9 @@ describe("rental area config (India GSC)", () => {
 
     const malviya = getIndianRentalPageConfig("jaipur", "malviya-nagar")!;
     expect(malviya.h1).toMatch(/Malviya Nagar/i);
+
+    const sector62 = getIndianRentalPageConfig("noida", "sector-62")!;
+    expect(sector62.h1).toMatch(/Sector 62/i);
   });
 
   it("keeps nearby links within GSC registry", () => {

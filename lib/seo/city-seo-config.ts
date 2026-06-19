@@ -571,6 +571,116 @@ const CITY_SEO_CONFIGS: Record<string, CitySEOConfig> = {
     ],
   },
 
+  [key("in", "noida")]: {
+    key: key("in", "noida"),
+    placeName: "Noida",
+    intro: [
+      "Noida is one of Delhi NCR's largest rental markets — IT professionals in Sector 62 and 137, metro-linked families in Sector 18 and 50, and value seekers in Greater Noida and Noida Extension.",
+      "RentalPins Noida hub maps owner-direct flats, PG, rooms, society apartments, and office pockets so tenants can compare sectors before contacting — without paying brokerage to search.",
+      "Use area pages such as Sector 62 for IT PG intent, Sector 18 for metro-linked flats, and Noida Extension for newer society stock at competitive rents.",
+      "Noida tenants searching without brokers benefit from filtering map pins by sector first — Sector 62, Sector 18, and Sector 137 rents differ even for similar BHK sizes.",
+      "Expressway commuters often cross-shop Sector 128 and Sector 137 pins when office location along the Noida–Greater Noida corridor matters more than central Noida address prestige.",
+      "Short GSC guides at /rentals/noida and sector spokes link to the same live inventory as this hub — use both for quick navigation and deep map search.",
+      "Saved searches on the Noida hub help tenants track new owner posts in Sector 62 or Sector 50 during peak transfer weeks without daily classified scrolling.",
+      "Before paying token, photograph existing wear at handover and confirm whether rent includes maintenance, water, and power backup — Noida society flats and builder floors vary more than broker-standard listing templates suggest.",
+    ],
+    bestAreas: [
+      {
+        name: "Sector 62 & Sector 128",
+        description: "IT-corridor PG, shared flats, and expressway society apartments near offices and NH-24.",
+        href: rentalAreaPath("in", "noida", "sector-62"),
+      },
+      {
+        name: "Sector 18 & Sector 15",
+        description: "Metro-linked central Noida — PG, rooms, and family flats near Atta Market.",
+        href: rentalAreaPath("in", "noida", "sector-18"),
+      },
+      {
+        name: "Sector 50 & Sector 45",
+        description: "Central Noida family societies and builder floors with steady long-stay demand.",
+        href: rentalAreaPath("in", "noida", "sector-50"),
+      },
+      {
+        name: "Sector 76 & Noida Extension",
+        description: "Noida West and Greater Noida West — Aqua Line metro and new society value flats.",
+        href: rentalAreaPath("in", "noida", "sector-76"),
+      },
+      {
+        name: "Sector 137 & Greater Noida",
+        description: "Expressway belt workforce housing and affordable planned-sector family rentals.",
+        href: rentalAreaPath("in", "noida", "sector-137"),
+      },
+    ],
+    averageRent: [
+      { label: "PG / room", range: "₹5,000 – ₹12,000/mo" },
+      { label: "1 BHK flat", range: "₹10,000 – ₹18,000/mo" },
+      { label: "2 BHK society flat", range: "₹15,000 – ₹30,000/mo" },
+      { label: "Premium expressway (Sector 128)", range: "₹22,000 – ₹50,000+/mo" },
+    ],
+    universities: [
+      {
+        name: "Greater Noida & Knowledge Park institutes",
+        description: "Drives PG and room demand across Greater Noida and expressway-adjacent sectors each academic year.",
+      },
+      {
+        name: "Sector 62 IT workforce",
+        description: "Professional PG and furnished flats near IT parks and NH-24 corridors.",
+      },
+    ],
+    transport: [
+      "Blue Line and Aqua Line metro corridors define Noida rental micro-markets — Sector 18, 50, 62 and 76 tenants often filter by station walk time.",
+      "Noida–Greater Noida Expressway links Sector 128, 137 and Greater Noida — map pins help validate real commute versus broker-listed locality names.",
+      "Sector 62 renters prioritize IT park and NH-24 access; Noida Extension tenants weigh society amenities against metro distance.",
+      "Transfer-season peaks fill Sector 62 PG quickly — message Noida owners with move-in date and budget band rather than passive browsing during peak weeks.",
+    ],
+    faq: [
+      {
+        q: "How do I find flats for rent in Noida without a broker?",
+        a: "Use the RentalPins Noida map, filter by category and sector, and message owners directly from listing pins.",
+      },
+      {
+        q: "Which Noida sectors are best for IT professionals?",
+        a: "Sector 62, Sector 128 and Sector 137 see high PG and furnished flat demand near IT parks and expressway offices.",
+      },
+      {
+        q: "Which sectors suit family flats in Noida?",
+        a: "Sector 50, Sector 76, Sector 15 and central Noida societies are popular for family tenants.",
+      },
+      {
+        q: "What rent should I expect for a 2 BHK in Noida?",
+        a: "Typically ₹15,000–₹30,000/month depending on sector, furnishing, and society — compare nearby map pins for accuracy.",
+      },
+      {
+        q: "Can I list my Noida property for free?",
+        a: "Yes — owners publish on RentalPins web or app; listings sync to the same map used by local tenants.",
+      },
+      {
+        q: "How do I compare Noida sectors before visiting?",
+        a: "Open the Noida hub map, filter by property type, and save pins in Sector 62, Sector 18, or Sector 50 — then message owners to confirm furnishing and deposit before site visits.",
+      },
+      {
+        q: "Are PG and family flats mixed in search results?",
+        a: "Use PG/Hostels versus flats filters on the Noida map — mixing categories wastes time when student PG and family housing needs are clearly different.",
+      },
+      {
+        q: "Does RentalPins have short Noida sector guides?",
+        a: "Yes — /rentals/noida and area spokes such as /rentals/noida/sector-62 link to the same live inventory as this hub.",
+      },
+      {
+        q: "Where should expressway commuters search in Noida?",
+        a: "Start with Sector 137 and Sector 128 map pins for expressway offices, then compare Sector 62 furnished flats if you need better metro access.",
+      },
+      {
+        q: "How do owners get better leads in Noida?",
+        a: "Include exact sector names, society, furnishing, parking, and deposit terms in listing text — tenants eliminate mismatched pins before visiting when details are clear on the map.",
+      },
+      {
+        q: "Can I compare Noida Extension and Sector 76 on one map?",
+        a: "Yes — pan the Noida hub between both belts, save pins in each, and message owners before visiting to confirm furnishing and parking.",
+      },
+    ],
+  },
+
   [key("in", "delhi")]: {
     key: key("in", "delhi"),
     placeName: "Delhi NCR",

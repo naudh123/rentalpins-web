@@ -279,6 +279,105 @@
     "radiusKm": 5
   },
   {
+    "slug": "noida-metro",
+    "name": "Noida Metro",
+    "center": {
+      "lat": 28.5355,
+      "lng": 77.391
+    },
+    "radiusKm": 22
+  },
+  {
+    "slug": "sector-62",
+    "name": "Sector 62",
+    "center": {
+      "lat": 28.627,
+      "lng": 77.3649
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "sector-18",
+    "name": "Sector 18",
+    "center": {
+      "lat": 28.5708,
+      "lng": 77.3261
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "sector-50",
+    "name": "Sector 50",
+    "center": {
+      "lat": 28.5745,
+      "lng": 77.356
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "sector-76",
+    "name": "Sector 76",
+    "center": {
+      "lat": 28.6045,
+      "lng": 77.387
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "sector-137",
+    "name": "Sector 137",
+    "center": {
+      "lat": 28.5022,
+      "lng": 77.4118
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "sector-15",
+    "name": "Sector 15",
+    "center": {
+      "lat": 28.585,
+      "lng": 77.3115
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "sector-128",
+    "name": "Sector 128",
+    "center": {
+      "lat": 28.535,
+      "lng": 77.365
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "greater-noida",
+    "name": "Greater Noida",
+    "center": {
+      "lat": 28.4744,
+      "lng": 77.504
+    },
+    "radiusKm": 12
+  },
+  {
+    "slug": "noida-extension",
+    "name": "Noida Extension",
+    "center": {
+      "lat": 28.613,
+      "lng": 77.42
+    },
+    "radiusKm": 8
+  },
+  {
+    "slug": "sector-45",
+    "name": "Sector 45",
+    "center": {
+      "lat": 28.554,
+      "lng": 77.352
+    },
+    "radiusKm": 4
+  },
+  {
     "slug": "lucknow-metro",
     "name": "Lucknow Metro",
     "center": {

@@ -43,6 +43,22 @@ export function indiaRentalPageExports(hubSlug: string, areaSlug?: string) {
         ]
       : [];
 
+  const noidaKeywords =
+    hubSlug === "noida"
+      ? [
+          "flats for rent in noida",
+          "pg in sector 62 noida",
+          "flat for rent sector 18 noida",
+          config.areaSlug === "sector-62"
+            ? "pg sector 62 noida"
+            : config.areaSlug === "sector-18"
+              ? "flat sector 18 noida"
+              : config.areaSlug === "sector-137"
+                ? "flat sector 137 noida"
+                : "noida rentals",
+        ]
+      : [];
+
   const metadata: Metadata = buildPageMetadata({
     title: config.title,
     description: config.metaDescription,
@@ -55,6 +71,7 @@ export function indiaRentalPageExports(hubSlug: string, areaSlug?: string) {
       "no broker",
       ...mohaliKeywords,
       ...jaipurKeywords,
+      ...noidaKeywords,
     ],
     locale: "en_IN",
   });

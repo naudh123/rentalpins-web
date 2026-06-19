@@ -9,6 +9,7 @@
 import type { AreaConfig, CityConfig } from "./rental-city-config-types";
 import { INTERNATIONAL_CITIES } from "./rental-intl-city-config";
 import { JAIPUR_LUCKNOW_MUMBAI_CITIES } from "./rental-india-jaipur-lucknow-mumbai";
+import { NOIDA_CITIES } from "./rental-india-noida";
 
 export type { AreaConfig, CityConfig } from "./rental-city-config-types";
 
@@ -606,6 +607,7 @@ export const CITIES: CityConfig[] = [
   },
 
   ...JAIPUR_LUCKNOW_MUMBAI_CITIES,
+  ...NOIDA_CITIES,
 
   {
     countrySlug: "in",
