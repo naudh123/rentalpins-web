@@ -1,6 +1,7 @@
 /** Listing fields needed on the activate / pay page. */
 
 import { readGeopointFromPosition } from "@/lib/listing-plans";
+import type { OwnerListingSource } from "@/lib/owner-listing-lifecycle";
 
 export interface ActivateListing {
   id: string;
@@ -14,6 +15,8 @@ export interface ActivateListing {
   category: string;
   subCategory: string;
   urlSlug?: string;
+  sourceCollection: OwnerListingSource;
+  isRenewal: boolean;
 }
 
 function str(v: unknown, fallback = ""): string {
@@ -32,7 +35,8 @@ function sanitizeImageUrl(raw: unknown): string {
 
 export function parseActivateListing(
   id: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
+  sourceCollection: OwnerListingSource = "listings"
 ): ActivateListing {
   const imageUrl = sanitizeImageUrl(
     firstString(data.imageThumbnails) ||
@@ -56,5 +60,7 @@ export function parseActivateListing(
     category: str(data.category),
     subCategory: str(data.subCategory),
     urlSlug: urlSlug || undefined,
+    sourceCollection,
+    isRenewal: sourceCollection === "deactivated_listings",
   };
 }

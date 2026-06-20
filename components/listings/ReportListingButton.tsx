@@ -159,6 +159,8 @@ export default function ReportListingButton({
     }
   }
 
+  if (user?.uid === ownerUid) return null;
+
   return (
     <>
       <button

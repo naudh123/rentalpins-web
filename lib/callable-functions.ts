@@ -59,3 +59,82 @@ export function parseSearchQueryCallable(
     AI_SEARCH_OPTS
   );
 }
+
+export function restoreListingForEditing(listingId: string): Promise<{ success?: boolean }> {
+  return callHttpsFunction<{ success?: boolean }>(
+    "restoreListingForEditing",
+    { listingId },
+    CALLABLE_REGION_US,
+    PAYMENT_OPTS
+  );
+}
+
+export interface MarkListingClosedOptions {
+  listingId: string;
+  reason?: "rented" | "sold";
+  leaseEndAtMs?: number;
+}
+
+export function markListingAsClosed(
+  options: MarkListingClosedOptions
+): Promise<{ success?: boolean }> {
+  return callHttpsFunction<{ success?: boolean }>(
+    "markListingAsClosed",
+    {
+      listingId: options.listingId,
+      reason: options.reason ?? "rented",
+      ...(options.leaseEndAtMs != null ? { leaseEndAtMs: options.leaseEndAtMs } : {}),
+    },
+    CALLABLE_REGION_US,
+    PAYMENT_OPTS
+  );
+}
+
+/** @deprecated Use markListingAsClosed */
+export function markListingAsRented(listingId: string): Promise<{ success?: boolean }> {
+  return markListingAsClosed({ listingId, reason: "rented" });
+}
+
+export function archiveListingByOwner(listingId: string): Promise<{ success?: boolean }> {
+  return callHttpsFunction<{ success?: boolean }>(
+    "archiveListingByOwner",
+    { listingId },
+    CALLABLE_REGION_US,
+    PAYMENT_OPTS
+  );
+}
+
+export function finalizeBoost(data: {
+  listingId: string;
+  boostPlanId: string;
+}): Promise<Record<string, unknown>> {
+  return callHttpsFunction<Record<string, unknown>>(
+    "finalizeBoost",
+    data,
+    CALLABLE_REGION_ASIA,
+    PAYMENT_OPTS
+  );
+}
+
+export function createRazorpayOrderForCredits(data: {
+  productId: string;
+}): Promise<RazorpayOrderResult & { credits?: number }> {
+  return callHttpsFunction(
+    "createRazorpayOrderForCredits",
+    data,
+    CALLABLE_REGION_US,
+    PAYMENT_OPTS
+  );
+}
+
+export function verifyAndAddCredits(data: {
+  orderId: string;
+  productId: string;
+}): Promise<{ success?: boolean; creditsAdded?: number }> {
+  return callHttpsFunction(
+    "verifyAndAddCredits",
+    data,
+    CALLABLE_REGION_US,
+    PAYMENT_OPTS
+  );
+}

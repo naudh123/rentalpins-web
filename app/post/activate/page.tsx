@@ -84,6 +84,7 @@ function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const listingIdParam = searchParams.get("listingId") || "";
+  const isRenewMode = searchParams.get("mode") === "renew";
   const { user, profile, loading: authLoading, profileError, isBlocked, refreshProfile } =
     useAuth();
 
@@ -146,7 +147,7 @@ function ActivateContent() {
   /** URL param or Firestore doc id — URL can be missing while draft state is still loaded. */
   const activeListingId = listingIdParam.trim() || listing?.id || "";
   const isOwner = Boolean(user && listing && listing.ownerUid === user.uid);
-  const canPay = isOwner && listing && !listing.isActive;
+  const canPay = isOwner && listing && (!listing.isActive || isRenewMode);
 
   useEffect(() => {
     latestCanPayRef.current = Boolean(canPay);
@@ -435,95 +436,132 @@ function ActivateContent() {
     }
     const db = getClientDb();
     const ownerUid = user.uid;
-    return onSnapshot(
+    let listingsDoc: ActivateListing | null = null;
+    let deactivatedDoc: ActivateListing | null = null;
+
+    function handleActivationSuccess(parsed: ActivateListing) {
+      if (!parsed.isActive || !waitingActivationRef.current || activationHandledRef.current) {
+        return;
+      }
+      activationHandledRef.current = true;
+      if (!trackedWaitResolvedRef.current) {
+        setTrackedWaitResolved(true);
+        trackEvent("post_activate_wait_resolved", {
+          listing_id: activeListingId,
+          ...authStateMeta(),
+          retry_channel: "wait_retry",
+          ...phaseMeta("wait"),
+          ...groupMeta("retry"),
+          ...pathMeta("wait_retry"),
+          ...flowMeta(),
+          availability_state: plansStatusRef.current,
+          gateway: usePayPalRef.current ? "paypal" : "razorpay",
+          outcome: "live",
+          had_timeout: hadWaitTimeoutRef.current,
+          wait_retry_count: waitRetryCountRef.current,
+          visible_plan_count: plansRef.current.length,
+          has_multiple_plans: plansRef.current.length > 1,
+          ...getDwellMeta(),
+        });
+      }
+      const waitPath =
+        waitRetryCountRef.current > 0 || hadWaitTimeoutRef.current
+          ? "wait_retry"
+          : "normal";
+      const checkoutMeta = {
+        availability_state: plansStatusRef.current,
+        visible_plan_count: plansRef.current.length,
+        has_multiple_plans: plansRef.current.length > 1,
+      };
+      trackEvent("payment_success", {
+        listing_id: activeListingId,
+        ...authStateMeta(),
+        retry_channel: "none",
+        ...phaseMeta("outcome"),
+        ...groupMeta("outcome"),
+        ...pathMeta(waitPath),
+        ...flowMeta(),
+        gateway: usePayPalRef.current ? "paypal" : "razorpay",
+        plan_position: lastCheckoutPlanPositionRef.current,
+        plan_signature: lastCheckoutPlanSignatureRef.current,
+        checkout_attempt: lastCheckoutAttemptRef.current?.sessionAttempt ?? 0,
+        plan_attempt: lastCheckoutAttemptRef.current?.planAttempt ?? 0,
+        ...checkoutMeta,
+        ...getDwellMeta(),
+      });
+      trackEvent("listing_published", {
+        listing_id: activeListingId,
+        ...authStateMeta(),
+        retry_channel: "none",
+        ...phaseMeta("outcome"),
+        ...groupMeta("outcome"),
+        ...pathMeta(waitPath),
+        ...flowMeta(),
+        plan_position: lastCheckoutPlanPositionRef.current,
+        plan_signature: lastCheckoutPlanSignatureRef.current,
+        checkout_attempt: lastCheckoutAttemptRef.current?.sessionAttempt ?? 0,
+        plan_attempt: lastCheckoutAttemptRef.current?.planAttempt ?? 0,
+        ...checkoutMeta,
+        ...getDwellMeta(),
+      });
+      router.push(appPath(listingPublicPathFromActivateListing(parsed)));
+    }
+
+    function reconcile() {
+      const resolved = listingsDoc ?? deactivatedDoc;
+      if (!resolved) {
+        setListing(null);
+        setListingStatus("missing");
+        return;
+      }
+      firestoreListingIdRef.current = resolved.id;
+      setListing(resolved);
+      if (resolved.ownerUid !== ownerUid) {
+        setListingStatus("forbidden");
+        return;
+      }
+      setListingStatus("ready");
+      if (resolved.isActive && resolved.sourceCollection === "listings") {
+        handleActivationSuccess(resolved);
+      }
+    }
+
+    const unsubListings = onSnapshot(
       doc(db, "listings", activeListingId),
       (snap) => {
-        if (!snap.exists()) {
-          setListing(null);
-          setListingStatus("missing");
-          return;
-        }
-        const parsed = parseActivateListing(snap.id, snap.data() as Record<string, unknown>);
-        firestoreListingIdRef.current = snap.id;
-        setListing(parsed);
-        if (parsed.ownerUid !== ownerUid) {
-          setListingStatus("forbidden");
-          return;
-        }
-        setListingStatus("ready");
-        if (
-          parsed.isActive &&
-          waitingActivationRef.current &&
-          !activationHandledRef.current
-        ) {
-          activationHandledRef.current = true;
-          if (!trackedWaitResolvedRef.current) {
-            setTrackedWaitResolved(true);
-            trackEvent("post_activate_wait_resolved", {
-              listing_id: activeListingId,
-              ...authStateMeta(),
-              retry_channel: "wait_retry",
-              ...phaseMeta("wait"),
-              ...groupMeta("retry"),
-              ...pathMeta("wait_retry"),
-              ...flowMeta(),
-              availability_state: plansStatusRef.current,
-              gateway: usePayPalRef.current ? "paypal" : "razorpay",
-              outcome: "live",
-              had_timeout: hadWaitTimeoutRef.current,
-              wait_retry_count: waitRetryCountRef.current,
-              visible_plan_count: plansRef.current.length,
-              has_multiple_plans: plansRef.current.length > 1,
-              ...getDwellMeta(),
-            });
-          }
-          const waitPath =
-            waitRetryCountRef.current > 0 || hadWaitTimeoutRef.current
-              ? "wait_retry"
-              : "normal";
-          const checkoutMeta = {
-            availability_state: plansStatusRef.current,
-            visible_plan_count: plansRef.current.length,
-            has_multiple_plans: plansRef.current.length > 1,
-          };
-          trackEvent("payment_success", {
-            listing_id: activeListingId,
-            ...authStateMeta(),
-            retry_channel: "none",
-            ...phaseMeta("outcome"),
-            ...groupMeta("outcome"),
-            ...pathMeta(waitPath),
-            ...flowMeta(),
-            gateway: usePayPalRef.current ? "paypal" : "razorpay",
-            plan_position: lastCheckoutPlanPositionRef.current,
-            plan_signature: lastCheckoutPlanSignatureRef.current,
-            checkout_attempt: lastCheckoutAttemptRef.current?.sessionAttempt ?? 0,
-            plan_attempt: lastCheckoutAttemptRef.current?.planAttempt ?? 0,
-            ...checkoutMeta,
-            ...getDwellMeta(),
-          });
-          trackEvent("listing_published", {
-            listing_id: activeListingId,
-            ...authStateMeta(),
-            retry_channel: "none",
-            ...phaseMeta("outcome"),
-            ...groupMeta("outcome"),
-            ...pathMeta(waitPath),
-            ...flowMeta(),
-            plan_position: lastCheckoutPlanPositionRef.current,
-            plan_signature: lastCheckoutPlanSignatureRef.current,
-            checkout_attempt: lastCheckoutAttemptRef.current?.sessionAttempt ?? 0,
-            plan_attempt: lastCheckoutAttemptRef.current?.planAttempt ?? 0,
-            ...checkoutMeta,
-            ...getDwellMeta(),
-          });
-          router.push(
-            appPath(listingPublicPathFromActivateListing(parsed))
-          );
-        }
+        listingsDoc = snap.exists()
+          ? parseActivateListing(snap.id, snap.data() as Record<string, unknown>, "listings")
+          : null;
+        reconcile();
       },
-      () => setListingStatus("missing")
+      () => {
+        listingsDoc = null;
+        reconcile();
+      }
     );
+
+    const unsubDeactivated = onSnapshot(
+      doc(db, "deactivated_listings", activeListingId),
+      (snap) => {
+        deactivatedDoc = snap.exists()
+          ? parseActivateListing(
+              snap.id,
+              snap.data() as Record<string, unknown>,
+              "deactivated_listings"
+            )
+          : null;
+        reconcile();
+      },
+      () => {
+        deactivatedDoc = null;
+        reconcile();
+      }
+    );
+
+    return () => {
+      unsubListings();
+      unsubDeactivated();
+    };
   }, [activeListingId, router, user]);
 
   useEffect(() => {
@@ -1101,7 +1139,7 @@ function ActivateContent() {
     );
   }
 
-  if (listing?.isActive) {
+  if (listing?.isActive && !isRenewMode) {
     return (
       <div className="mx-auto max-w-md px-4 py-12 text-center">
         <h1 className="font-serif text-2xl text-[var(--brand-navy)]">Listing is live</h1>
@@ -1124,10 +1162,19 @@ function ActivateContent() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-8 pb-28 md:pb-8">
-      <h1 className="font-serif text-2xl text-[var(--brand-navy)]">Activate listing</h1>
+      <h1 className="font-serif text-2xl text-[var(--brand-navy)]">
+        {isRenewMode
+          ? "Renew plan"
+          : listing?.isRenewal
+            ? "Renew listing"
+            : "Activate listing"}
+      </h1>
       <p className="mt-2 text-sm text-[var(--muted)]">
-        Choose a plan and pay. Your listing goes live after payment is confirmed (same as the
-        mobile app).
+        {isRenewMode
+          ? "Extend your live listing — choose a plan and pay. Your expiry date will update after payment."
+          : listing?.isRenewal
+            ? "Your property details are saved. Choose a plan and pay to go live again on the map."
+            : "Choose a plan and pay. Your listing goes live after payment is confirmed (same as the mobile app)."}
       </p>
 
       {listing && (
@@ -1144,7 +1191,13 @@ function ActivateContent() {
             {listing.locationName && (
               <p className="truncate text-xs text-[var(--muted)]">{listing.locationName}</p>
             )}
-            <p className="mt-1 text-xs font-medium text-amber-700">Draft — payment required</p>
+            <p className="mt-1 text-xs font-medium text-amber-700">
+              {isRenewMode
+                ? "Live — extend your current plan"
+                : listing.isRenewal
+                  ? "Saved property — payment required to re-list"
+                  : "Draft — payment required"}
+            </p>
           </div>
         </div>
       )}
@@ -1264,14 +1317,14 @@ function ActivateContent() {
           onClick={() => trackActivateExitClick(`/post?listingId=${activeListingId}`, "edit_draft")}
           className="text-[var(--muted)] hover:text-[var(--brand-navy)]"
         >
-          ← Edit draft
+          {listing?.isRenewal ? "← Edit details" : "← Edit draft"}
         </Link>
         <Link
           href={appPath("/profile")}
           onClick={() => trackActivateExitClick("/profile", "footer_my_listings")}
           className="text-[var(--brand-orange)] hover:underline"
         >
-          My listings
+          My properties
         </Link>
       </div>
     </div>

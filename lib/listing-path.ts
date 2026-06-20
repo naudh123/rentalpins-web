@@ -5,6 +5,7 @@ import {
 } from "@/lib/seo/listing-seo";
 import type { ListingSlugInput } from "@/lib/listing-slug";
 import type { ListingCard, ListingDetail } from "@/lib/types/listing";
+import type { TransactionType } from "@/lib/transaction-type";
 
 /** Relative listing detail path — segmented canonical URL. */
 export function listingDetailBasePath(listing: ListingSlugInput): string {
@@ -50,6 +51,35 @@ export function listingPublicPathFromCard(
   listing: ListingCard | ListingDetail
 ): string {
   return listingPublicPath(listingToSlugInput(listing));
+}
+
+/** Owner edit form — rent listings on `/post`, sale on `/buy/post`. */
+export function ownerListingEditPath(listing: {
+  id: string;
+  transactionType?: TransactionType;
+}): string {
+  const base = listing.transactionType === "sale" ? "/buy/post" : "/post";
+  return appPath(`${base}?listingId=${listing.id}`);
+}
+
+/** Plan selection — works for drafts and saved (deactivated) properties. */
+export function ownerListingActivatePath(listingId: string): string {
+  return appPath(`/post/activate?listingId=${listingId}`);
+}
+
+/** Extend plan on a live listing without letting it expire. */
+export function ownerListingRenewPath(listingId: string): string {
+  return appPath(`/post/activate?listingId=${listingId}&mode=renew`);
+}
+
+/** Per-listing seller inbox. */
+export function ownerListingLeadsPath(listingId: string): string {
+  return appPath(`/chat?listing=${listingId}&role=selling`);
+}
+
+/** Boost / feature on map. */
+export function ownerListingBoostPath(listingId: string): string {
+  return appPath(`/post/boost?listingId=${listingId}`);
 }
 
 /** Post-activation / owner links when only activate-page fields are loaded. */

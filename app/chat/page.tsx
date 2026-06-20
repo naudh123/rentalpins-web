@@ -119,6 +119,9 @@ function ChatContent() {
   const visibleRooms = useMemo(() => {
     if (!user) return rooms;
     let base = rooms;
+    if (listingParam) {
+      base = base.filter((r) => r.listingId === listingParam);
+    }
     if (roleFilter !== "all") {
       base = base.filter((r) =>
         roleFilter === "buying" ? r.buyerUid === user.uid : r.sellerUid === user.uid
@@ -139,7 +142,7 @@ function ChatContent() {
       const hay = `${r.listingTitle} ${r.lastMessage || ""}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [rooms, roleFilter, unreadOnly, user, queryText]);
+  }, [rooms, roleFilter, unreadOnly, user, queryText, listingParam]);
   const unreadRooms = useMemo(() => {
     if (!user) return [];
     return rooms.filter((r) =>

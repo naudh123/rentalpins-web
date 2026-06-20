@@ -31,7 +31,7 @@ import {
   TENANT_PREFERENCE_OPTIONS,
   PROPERTY_CATEGORY,
 } from "@/lib/categories";
-import type { TransactionType } from "@/lib/transaction-type";
+import { parseTransactionType, type TransactionType } from "@/lib/transaction-type";
 import { parseListingAttributes } from "@/lib/listing-attributes";
 import { getClientDb } from "@/lib/firebase-client";
 import { getDocResilient } from "@/lib/firestore-fetch";
@@ -46,7 +46,9 @@ import { allowUnverifiedOwnerContact, appPath } from "@/lib/config";
 import { isValidPhoneForAuth, normalizePhoneForAuth } from "@/lib/phone-auth";
 import { resolveIsoFromPhone } from "@/lib/phone-iso";
 import { parsePostDraftListing } from "@/lib/draft-listing";
+import { listingPublicPath, listingToSlugInput } from "@/lib/listing-path";
 import { uploadListingImages } from "@/lib/storage-upload";
+import { restoreListingForEditing } from "@/lib/callable-functions";
 import { mapCallableError } from "@/lib/auth-errors";
 import { trackEvent } from "@/lib/ga4";
 import {
@@ -121,8 +123,10 @@ export default function PostListingForm({
   const [contactMobile, setContactMobile] = useState("+91 ");
   const [location, setLocation] = useState<PickedLocation | null>(null);
   const [photoSlots, setPhotoSlots] = useState<ListingPhotoSlot[]>([]);
+  const [editingLiveListing, setEditingLiveListing] = useState(false);
+  const [loadedUrlSlug, setLoadedUrlSlug] = useState<string | undefined>();
   const [draftLoadStatus, setDraftLoadStatus] = useState<
-    "idle" | "loading" | "ready" | "missing" | "forbidden" | "live"
+    "idle" | "loading" | "ready" | "missing" | "forbidden"
   >(listingId ? "loading" : "idle");
   const [error, setError] = useState("");
   const [aiNotice, setAiNotice] = useState<{
@@ -396,12 +400,37 @@ export default function PostListingForm({
 
     void (async () => {
       try {
-        const snap = await getDocResilient(doc(getClientDb(), "listings", listingId));
+        const db = getClientDb();
+        let snap = await getDocResilient(doc(db, "listings", listingId));
         if (cancelled) return;
 
         if (!snap.exists()) {
-          setDraftLoadStatus("missing");
-          return;
+          const deactivatedSnap = await getDocResilient(
+            doc(db, "deactivated_listings", listingId)
+          );
+          if (cancelled) return;
+          if (!deactivatedSnap.exists()) {
+            setDraftLoadStatus("missing");
+            return;
+          }
+          const deactivatedDraft = parsePostDraftListing(
+            deactivatedSnap.id,
+            deactivatedSnap.data()
+          );
+          if (!deactivatedDraft || deactivatedDraft.ownerUid !== user.uid) {
+            setDraftLoadStatus(
+              deactivatedDraft ? "forbidden" : "missing"
+            );
+            return;
+          }
+          await restoreListingForEditing(listingId);
+          snap = await getDocResilient(doc(db, "listings", listingId));
+          if (cancelled) return;
+          if (!snap.exists()) {
+            setError("Could not restore this property for editing.");
+            setDraftLoadStatus("missing");
+            return;
+          }
         }
 
         const draft = parsePostDraftListing(snap.id, snap.data());
@@ -413,11 +442,21 @@ export default function PostListingForm({
           setDraftLoadStatus("forbidden");
           return;
         }
-        if (draft.isActive) {
-          setDraftLoadStatus("live");
+
+        const docTransactionType = parseTransactionType(snap.data().transactionType);
+        if (docTransactionType === "sale" && !isSale) {
+          router.replace(appPath(`/buy/post?listingId=${listingId}`));
+          return;
+        }
+        if (docTransactionType === "rent" && isSale) {
+          router.replace(appPath(`/post?listingId=${listingId}`));
           return;
         }
 
+        setEditingLiveListing(draft.isActive);
+        setLoadedUrlSlug(
+          typeof snap.data().urlSlug === "string" ? snap.data().urlSlug : undefined
+        );
         setMainCategory(draft.category);
         setSubCategory(draft.subCategory);
         const attrs = parseListingAttributes(snap.data());
@@ -458,9 +497,13 @@ export default function PostListingForm({
           }))
         );
         setDraftLoadStatus("ready");
-      } catch {
+      } catch (err) {
         if (!cancelled) {
-          setError("Could not load this draft.");
+          setError(
+            err instanceof Error
+              ? mapCallableError(err)
+              : "Could not load this listing."
+          );
           setDraftLoadStatus("missing");
         }
       }
@@ -469,7 +512,7 @@ export default function PostListingForm({
     return () => {
       cancelled = true;
     };
-  }, [listingId, user]);
+  }, [isSale, listingId, router, user]);
 
   if (needsPhoneLink && !allowUnverifiedOwnerContact) {
     const postNext = listingId ? `/post?listingId=${listingId}` : "/post";
@@ -495,7 +538,7 @@ export default function PostListingForm({
   if (draftLoadStatus === "loading") {
     return (
       <div className="mx-auto max-w-lg px-4 py-12 text-center text-[var(--muted)]">
-        Loading draft…
+        Loading listing…
       </div>
     );
   }
@@ -503,7 +546,7 @@ export default function PostListingForm({
   if (draftLoadStatus === "missing") {
     return (
       <div className="mx-auto max-w-md px-4 py-12 text-center">
-        <h1 className="font-serif text-2xl">Draft not found</h1>
+        <h1 className="font-serif text-2xl">Listing not found</h1>
         <p className="mt-2 text-sm text-[var(--muted)]">It may have been removed.</p>
         <Link href={appPath("/post")} className="mt-6 inline-block text-[var(--accent)]">
           Create new listing
@@ -516,26 +559,9 @@ export default function PostListingForm({
     return (
       <div className="mx-auto max-w-md px-4 py-12 text-center">
         <h1 className="font-serif text-2xl">Access denied</h1>
-        <p className="mt-2 text-sm text-[var(--muted)]">You can only edit your own drafts.</p>
+        <p className="mt-2 text-sm text-[var(--muted)]">You can only edit your own listings.</p>
         <Link href={appPath("/profile")} className="mt-6 inline-block text-[var(--accent)]">
           My listings
-        </Link>
-      </div>
-    );
-  }
-
-  if (draftLoadStatus === "live") {
-    return (
-      <div className="mx-auto max-w-md px-4 py-12 text-center">
-        <h1 className="font-serif text-2xl">Listing is live</h1>
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Active listings cannot be edited here yet.
-        </p>
-        <Link
-          href={appPath(`/listings/${listingId}`)}
-          className="mt-6 inline-block text-[var(--accent)]"
-        >
-          View listing
         </Link>
       </div>
     );
@@ -773,7 +799,7 @@ export default function PostListingForm({
           homeIso: listingHomeIso,
         });
         savedListingId = listingId;
-        trackEvent("listing_draft_updated", {
+        trackEvent(editingLiveListing ? "listing_live_updated" : "listing_draft_updated", {
           listing_id: listingId,
           ...postFlowMeta(),
         });
@@ -827,7 +853,25 @@ export default function PostListingForm({
         }
       }
 
-      router.push(appPath(`/post/activate?listingId=${savedListingId}`));
+      if (editingLiveListing && savedListingId && location) {
+        router.push(
+          listingPublicPath(
+            listingToSlugInput({
+              id: savedListingId,
+              title: trimmedTitle,
+              locationName: locationNameForSave,
+              lat: location.lat,
+              lng: location.lng,
+              category: mainCategory,
+              subCategory,
+              urlSlug: loadedUrlSlug,
+              transactionType,
+            })
+          )
+        );
+      } else {
+        router.push(appPath(`/post/activate?listingId=${savedListingId}`));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save listing");
     } finally {
@@ -841,16 +885,24 @@ export default function PostListingForm({
     <div className="mx-auto max-w-lg px-4 py-8 pb-24 md:pb-8">
       <p className="rp-badge">List on the map</p>
       <h1 className="mt-2 font-serif text-3xl text-[var(--brand-navy)]">
-        {isEditMode ? "Edit draft" : isSale ? "List property for sale" : "Post a listing"}
+        {isEditMode
+          ? editingLiveListing
+            ? "Edit listing"
+            : "Edit draft"
+          : isSale
+            ? "List property for sale"
+            : "Post a listing"}
       </h1>
       <p className="mt-2 text-sm text-[var(--muted)]">
         {isSale
           ? "Curated owner-direct sale listing — add photos, location, and asking price. Buyers discover you on the RentalPins Buy map."
-          : isEditMode
-          ? "Update your draft, then continue to activation and payment."
-          : allowUnverifiedOwnerContact
-            ? "Step 1: save draft with your WhatsApp number · Step 2: activate to go live. OTP verification is optional."
-            : "Step 1: save draft · Step 2: choose plan & pay to go live (same as the app)."}
+          : isEditMode && editingLiveListing
+            ? "Update photos, location, price, and details. Changes go live immediately."
+            : isEditMode
+              ? "Update your draft, then continue to activation and payment."
+              : allowUnverifiedOwnerContact
+                ? "Step 1: save draft with your WhatsApp number · Step 2: activate to go live. OTP verification is optional."
+                : "Step 1: save draft · Step 2: choose plan & pay to go live (same as the app)."}
       </p>
 
       {!isGoogleMapsConfigured() && (
@@ -1148,17 +1200,28 @@ export default function PostListingForm({
             ? progress || "Saving…"
             : photosPreparing
               ? "Preparing photos…"
-              : isEditMode
-              ? "Save changes & continue →"
-              : "Save draft & continue →"}
+              : isEditMode && editingLiveListing
+                ? "Save changes"
+                : isEditMode
+                  ? "Save changes & continue →"
+                  : "Save draft & continue →"}
         </button>
 
-        {isEditMode && listingId && (
+        {isEditMode && listingId && !editingLiveListing && (
           <Link
             href={appPath(`/post/activate?listingId=${listingId}`)}
             className="block text-center text-sm text-[var(--muted)] hover:text-[var(--accent)]"
           >
             Skip to activation →
+          </Link>
+        )}
+
+        {isEditMode && editingLiveListing && listingId && (
+          <Link
+            href={appPath("/profile")}
+            className="block text-center text-sm text-[var(--muted)] hover:text-[var(--accent)]"
+          >
+            ← Back to my listings
           </Link>
         )}
       </form>

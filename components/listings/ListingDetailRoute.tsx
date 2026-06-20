@@ -11,6 +11,7 @@ import ListingMapSnippet from "@/components/listings/ListingMapSnippet";
 import ListingOwnerTrust from "@/components/listings/ListingOwnerTrust";
 import ListingOwnerProfileLink from "@/components/listings/ListingOwnerProfileLink";
 import ReportListingButton from "@/components/listings/ReportListingButton";
+import ListingOwnerEditLink from "@/components/listings/ListingOwnerEditLink";
 import ListingReviews from "@/components/listings/ListingReviews";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
 import ListingStickyBar, {
@@ -313,7 +314,12 @@ export default async function ListingDetailRoute({
           ownerPhone={listing.ownerPhone}
           ownerUid={listing.ownerUid}
         />
-        <div className="mt-4 flex justify-end border-t border-[var(--border-subtle)] pt-3">
+        <div className="mt-4 flex items-center justify-between border-t border-[var(--border-subtle)] pt-3">
+          <ListingOwnerEditLink
+            listingId={listingId}
+            ownerUid={listing.ownerUid}
+            transactionType={listing.transactionType}
+          />
           <ReportListingButton
             listingId={listingId}
             listingTitle={listing.title}
