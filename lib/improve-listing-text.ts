@@ -109,6 +109,38 @@ export async function persistListingContentAfterAi(
   await improveListingText({ ...input, listingId: input.listingId });
 }
 
+/** Index listing for semantic search (searchText + embedding). Non-fatal on failure. */
+export async function indexListingForSearch(listingId: string): Promise<void> {
+  const id = listingId.trim();
+  if (!id) return;
+  await callHttpsFunction<{ success?: boolean }>(
+    "indexListingForSearch",
+    { listingId: id },
+    IMPROVE_REGION,
+    { timeoutMs: 50_000, refreshAuthToken: true }
+  );
+}
+
+export async function indexListingForSearchWithTimeout(
+  listingId: string,
+  timeoutMs = PERSIST_LISTING_CONTENT_TIMEOUT_MS
+): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      indexListingForSearch(listingId),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error("index_listing_for_search_timeout")),
+          timeoutMs
+        );
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 /** Wait for persist before navigation; non-fatal if this times out. */
 export const PERSIST_LISTING_CONTENT_TIMEOUT_MS = 8_000;
 

@@ -1,6 +1,7 @@
 import MarketingLandingPage from "@/components/seo/MarketingLandingPage";
 import {
   APP_DOWNLOAD_PAGES,
+  APARTMENT_SEARCH_PAGES,
   CATEGORY_LANDING_PAGES,
   COMPETITOR_PAGES,
   INDUSTRIAL_PAGES,
@@ -20,6 +21,7 @@ const NATIONAL_FUNNEL_SLUGS: Record<string, NationalFunnelKind> = {
 };
 
 const ALL: Record<string, MarketingPageConfig> = {
+  ...APARTMENT_SEARCH_PAGES,
   ...WITHOUT_BROKER_PAGES,
   ...APP_DOWNLOAD_PAGES,
   ...CATEGORY_LANDING_PAGES,

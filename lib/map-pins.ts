@@ -1,7 +1,29 @@
 /** Price labels and custom marker icons for map pins. */
 
-export function formatPinPrice(price: number, homeIso?: string): string {
+import { formatListingPrice } from "@/lib/listing-price";
+
+export function formatPinPrice(
+  price: number,
+  homeIso?: string,
+  opts?: {
+    category?: string;
+    priceUnit?: string;
+    transactionType?: string;
+  }
+): string {
   if (price <= 0) return "Ask";
+  if (opts?.category) {
+    return formatListingPrice(
+      {
+        price,
+        priceUnit: opts.priceUnit,
+        category: opts.category,
+        transactionType: opts.transactionType,
+        homeIso,
+      },
+      { compact: true, sale: opts.transactionType === "sale" }
+    );
+  }
   const locale = homeIso === "IN" ? "en-IN" : undefined;
   if (price >= 10_000_000) {
     return `${(price / 10_000_000).toFixed(1)}Cr`;

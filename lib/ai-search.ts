@@ -25,6 +25,18 @@ export interface ParsedSearch {
   placeText: string;
   /** Leftover amenity keywords ("" = none). */
   keywords: string;
+  /** Parts of the query that could not map to filters or place (e.g. "pet friendly"). */
+  unmatched: string[];
+  confidence: AiSearchConfidence;
+}
+
+export type AiSearchConfidence = "high" | "low";
+
+export interface AiSearchFeedback {
+  unmatched: string[];
+  confidence: AiSearchConfidence;
+  /** User-facing note below the AI bar. */
+  message: string | null;
 }
 
 /** Example queries surfaced in SEO copy and map UI hints. */
@@ -100,8 +112,79 @@ function allSubCategories(): string[] {
 }
 
 /**
+ * Merge AI-parsed filters into the user's current map filters.
+ * Only overrides fields the model populated (defaults like "All" / null are no-ops).
+ */
+export function mergeAiSearchFiltersIntoExisting(
+  current: ListingFilters,
+  partial: Partial<ListingFilters>,
+  transactionType: TransactionType = current.transactionType ?? "rent"
+): ListingFilters {
+  const next: ListingFilters = {
+    ...current,
+    transactionType,
+  };
+
+  if (transactionType === "sale") {
+    next.category = "Property";
+  }
+
+  if (partial.category && partial.category !== "All") {
+    next.category = partial.category;
+  }
+  if (partial.subCategory) next.subCategory = partial.subCategory;
+  if (partial.bhk) next.bhk = partial.bhk;
+  if (partial.furnishing) next.furnishing = partial.furnishing;
+  if (transactionType !== "sale" && partial.tenantPreference) {
+    next.tenantPreference = partial.tenantPreference;
+  }
+  if (partial.priceMin != null && partial.priceMin > 0) next.priceMin = partial.priceMin;
+  if (partial.priceMax != null && partial.priceMax > 0) next.priceMax = partial.priceMax;
+  if (partial.areaMin != null && partial.areaMin > 0) next.areaMin = partial.areaMin;
+  if (partial.areaMax != null && partial.areaMax > 0) next.areaMax = partial.areaMax;
+  if (partial.sort && partial.sort !== "recommended") next.sort = partial.sort;
+
+  return next;
+}
+
+/** Build inline feedback after a successful AI parse. */
+export function buildAiSearchFeedback(
+  parsed: Pick<ParsedSearch, "unmatched" | "confidence" | "placeText">,
+  locationResolved: boolean
+): AiSearchFeedback {
+  const parts: string[] = [];
+
+  if (parsed.unmatched.length > 0) {
+    parts.push(
+      `Couldn't match: ${parsed.unmatched.join(", ")} — showing results for the rest.`
+    );
+  }
+
+  if (
+    parsed.confidence === "low" &&
+    parsed.placeText &&
+    !locationResolved
+  ) {
+    parts.push(
+      "Couldn't pin an exact location — here's what's closest in this area."
+    );
+  } else if (parsed.confidence === "low" && !parsed.placeText) {
+    parts.push(
+      "Query was vague — showing nearby listings that best match."
+    );
+  }
+
+  return {
+    unmatched: parsed.unmatched,
+    confidence: parsed.confidence,
+    message: parts.length ? parts.join(" ") : null,
+  };
+}
+
+/**
  * Merge Cloud Function filter output with the active transaction context.
  * Sale mode always keeps transactionType=sale and Property category baseline.
+ * @deprecated Prefer mergeAiSearchFiltersIntoExisting when user filters may already be set.
  */
 export function mergeAiSearchFilters(
   partial: Partial<ListingFilters>,
@@ -142,10 +225,16 @@ export function mergeAiSearchFilters(
  * Pass `transactionType: "sale"` on the buy map so the backend biases toward
  * purchase intent (total price, BHK, Property category).
  */
-export async function parseSearchQuery(
+async function callParseSearchQueryApi(
   query: string,
-  transactionType: TransactionType = "rent"
-): Promise<ParsedSearch> {
+  transactionType: TransactionType
+): Promise<{
+  filtersPartial: Partial<ListingFilters>;
+  placeText: string;
+  keywords: string;
+  unmatched: string[];
+  confidence: AiSearchConfidence;
+}> {
   const data = (await parseSearchQueryCallable({
     query,
     transactionType,
@@ -159,13 +248,57 @@ export async function parseSearchQuery(
     filters?: Partial<ListingFilters>;
     placeText?: string;
     keywords?: string;
+    unmatched?: unknown;
+    confidence?: string;
   };
 
-  const filters = mergeAiSearchFilters(data.filters ?? {}, transactionType);
+  const unmatched = Array.isArray(data.unmatched)
+    ? data.unmatched
+        .filter((s): s is string => typeof s === "string")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .slice(0, 8)
+    : [];
 
   return {
-    filters,
+    filtersPartial: data.filters ?? {},
     placeText: typeof data.placeText === "string" ? data.placeText : "",
     keywords: typeof data.keywords === "string" ? data.keywords : "",
+    unmatched,
+    confidence: data.confidence === "high" ? "high" : "low",
+  };
+}
+
+export async function parseSearchQuery(
+  query: string,
+  transactionType: TransactionType = "rent"
+): Promise<ParsedSearch> {
+  const api = await callParseSearchQueryApi(query, transactionType);
+  return {
+    filters: mergeAiSearchFilters(api.filtersPartial, transactionType),
+    placeText: api.placeText,
+    keywords: api.keywords,
+    unmatched: api.unmatched,
+    confidence: api.confidence,
+  };
+}
+
+/** Parse + merge into existing map filters (preserves unspecified fields). */
+export async function parseSearchQueryMerged(
+  query: string,
+  currentFilters: ListingFilters,
+  transactionType: TransactionType = currentFilters.transactionType ?? "rent"
+): Promise<ParsedSearch> {
+  const api = await callParseSearchQueryApi(query, transactionType);
+  return {
+    filters: mergeAiSearchFiltersIntoExisting(
+      currentFilters,
+      api.filtersPartial,
+      transactionType
+    ),
+    placeText: api.placeText,
+    keywords: api.keywords,
+    unmatched: api.unmatched,
+    confidence: api.confidence,
   };
 }

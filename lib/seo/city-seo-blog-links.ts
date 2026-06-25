@@ -10,7 +10,15 @@ export const CITY_SEO_FEATURED_BLOG_SLUGS: Record<string, string[]> = {
     "mohali-it-park-rental-guide",
     "pg-vs-flat-chandigarh-students",
   ],
-  "in/chandigarh/kharar": ["kharar-pg-guide-chandigarh-university"],
+  "in/chandigarh/kharar": [
+    "kharar-pg-guide-chandigarh-university",
+    "pg-vs-flat-near-chandigarh-university",
+    "best-areas-to-stay-near-chandigarh-university",
+    "affordable-student-accommodation-near-chandigarh-university",
+    "pg-near-chandigarh-university-for-girls",
+    "pg-near-chandigarh-university-for-boys",
+    "flats-near-chandigarh-university",
+  ],
   "in/ludhiana": ["how-to-find-room-ludhiana"],
   "in/delhi": ["delhi-rentals-without-broker-guide"],
 };

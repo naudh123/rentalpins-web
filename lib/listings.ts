@@ -130,6 +130,7 @@ function docToCard(id: string, d: Record<string, unknown>): ListingCard | null {
     homeIso: str(d.homeIso) || str(d.iso) || undefined,
     attributes: parseListingAttributes(d),
     urlSlug: str(d.urlSlug) || undefined,
+    searchText: str(d.searchText) || undefined,
     transactionType: parseTransactionType(d.transactionType),
     createdAt:
       (d.createdAt as { toDate?: () => Date })?.toDate?.()?.toISOString?.() ||

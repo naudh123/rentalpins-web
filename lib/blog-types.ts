@@ -1,8 +1,11 @@
+import type { BlogVertical } from "@/lib/blog-config";
+
 export interface BlogPostSummary {
   slug: string;
   title: string;
   date: string;
   excerpt: string;
+  vertical: BlogVertical;
   category: string;
   coverImage?: string;
   author?: string;

@@ -16,7 +16,8 @@ import { JsonLdFAQ } from "@/components/JsonLd";
 import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import StructuredData from "@/components/seo/StructuredData";
 import { getAllCities } from "@/lib/cities-config";
-import { HOME_FAQS } from "@/lib/seo/home-page-content";
+import AeoAnswerBox from "@/components/seo/AeoAnswerBox";
+import { HOME_FAQS, HOME_HERO } from "@/lib/seo/home-page-content";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { canonicalUrl } from "@/lib/seo";
 
@@ -62,6 +63,9 @@ export default function HomePage() {
 
       <div className="rp-gradient-hero">
         <HomeHero liveCityCount={liveCount} />
+        <div className="mx-auto max-w-3xl px-4 pb-4">
+          <AeoAnswerBox summary={HOME_HERO.subhead} heading="What is RentalPins?" />
+        </div>
         <HomeTricitySection />
         <HomeBuyerDemandSection />
         <HomeInvestmentIntelSection />

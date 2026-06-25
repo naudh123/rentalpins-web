@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
-import { formatPrice } from "@/lib/format";
+import { formatListingPrice } from "@/lib/listing-price";
 import { listingDetailHref } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
@@ -32,7 +32,14 @@ export default function ListingCard({
   layout = "row",
 }: Props) {
   const router = useRouter();
-  const priceLabel = formatPrice(listing.price, listing.priceUnit, listing.homeIso);
+  const priceLabel = formatListingPrice({
+    price: listing.price,
+    priceUnit: listing.priceUnit,
+    category: listing.category,
+    subCategory: listing.subCategory,
+    transactionType: listing.transactionType,
+    homeIso: listing.homeIso,
+  });
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const returnPath =

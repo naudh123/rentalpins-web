@@ -12,12 +12,21 @@ import type { TransactionType } from "@/lib/transaction-type";
 interface Props {
   listingId?: string | null;
   transactionType?: TransactionType;
+  /** Override post-login redirect (e.g. /buy/requirements/post). */
+  redirectPath?: string;
+  title?: string;
+  description?: string;
+  badge?: string;
 }
 
 /** Sign-in gate for /post — Google first; OTP optional via login page. */
 export default function PostAuthGate({
   listingId = null,
   transactionType = "rent",
+  redirectPath,
+  title = "Post a listing",
+  description = "Sign in with Google to start. You will add your WhatsApp contact number on the form — OTP verification is optional for now.",
+  badge = "List on the map",
 }: Props) {
   const router = useRouter();
   const { signInWithGoogle } = useAuth();
@@ -25,13 +34,14 @@ export default function PostAuthGate({
   const [busy, setBusy] = useState(false);
 
   const postBase =
-    transactionType === "sale"
+    redirectPath ??
+    (transactionType === "sale"
       ? listingId
         ? `/buy/post?listingId=${listingId}`
         : "/buy/post"
       : listingId
         ? `/post?listingId=${listingId}`
-        : "/post";
+        : "/post");
   const postNext = postBase;
   const loginHref = appPath(`/auth/login?next=${encodeURIComponent(postNext)}`);
 
@@ -50,12 +60,9 @@ export default function PostAuthGate({
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
-      <p className="rp-badge">List on the map</p>
-      <h1 className="mt-2 font-serif text-3xl text-[var(--brand-navy)]">Post a listing</h1>
-      <p className="mt-2 text-sm text-[var(--muted)]">
-        Sign in with Google to start. You will add your WhatsApp contact number on the form — OTP
-        verification is optional for now.
-      </p>
+      <p className="rp-badge">{badge}</p>
+      <h1 className="mt-2 font-serif text-3xl text-[var(--brand-navy)]">{title}</h1>
+      <p className="mt-2 text-sm text-[var(--muted)]">{description}</p>
 
       <div className="rp-card mt-8 space-y-4 p-6">
         <Button type="button" fullWidth disabled={busy} onClick={handleGoogle}>

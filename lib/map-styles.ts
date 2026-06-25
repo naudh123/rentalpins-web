@@ -248,6 +248,12 @@ export function buildMapOptions(
 
 export const SILVER_MAP_OPTIONS: google.maps.MapOptions = buildMapOptions("rent");
 
+/** Prebuilt sale map options — RentalPins Buy ivory/gold roadmap. */
+export const SALE_MAP_OPTIONS: google.maps.MapOptions = buildMapOptions("sale");
+
+/** @deprecated Use buildMapOptions("rent") — kept for LocationPicker imports. */
+export const RENT_MAP_OPTIONS = SILVER_MAP_OPTIONS;
+
 /** Apply roadmap theme or high-res satellite/hybrid tiles (Zillow-style auto switch). */
 export function applyMapViewSurface(
   map: google.maps.Map,

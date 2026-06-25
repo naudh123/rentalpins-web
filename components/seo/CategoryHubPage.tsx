@@ -23,6 +23,12 @@ import SeoSupplyBlocks from "@/components/seo/SeoSupplyBlocks";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
 import { intentFromCategorySlug, getSupplyLandingHref } from "@/lib/seo-links";
 import { resolveSupplyCtaOverride } from "@/lib/supply-pages-config";
+import AeoAnswerBox from "@/components/seo/AeoAnswerBox";
+import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
+import { buildMarketInsights } from "@/lib/seo/locality-insights";
+import MarketInsightsBlock from "@/components/seo/MarketInsightsBlock";
+import EntityClusterLinks from "@/components/seo/EntityClusterLinks";
+import { clustersForPlace } from "@/lib/seo/topic-clusters";
 import { resolveGscCityHeroDescription } from "@/lib/seo/gsc-city-seo-overrides";
 
 interface Props {
@@ -85,20 +91,23 @@ export default function CategoryHubPage({
     { name: category.pluralLabel, url: pageUrl },
   ];
 
-  const faqs = [
-    {
-      q: `How do I find ${category.pluralLabel.toLowerCase()} in ${placeName} without a broker?`,
-      a: `Browse the RentalPins map for ${placeName}, filter by ${category.mainCategory}, and contact owners directly via WhatsApp or chat.`,
-    },
-    {
-      q: `Is it free to list ${category.pluralLabel.toLowerCase()} on RentalPins?`,
-      a: "Owners can post listings on the web or Android app. Check in-app plans for activation in your city.",
-    },
-    {
-      q: `Which areas have the most ${category.pluralLabel.toLowerCase()} in ${city.name}?`,
-      a: `Explore area hubs such as ${city.popularAreas.slice(0, 5).join(", ")} — each links to category-specific inventory.`,
-    },
-  ];
+  const faqs = buildConversationalFaqs("rent-category", {
+    city: placeName,
+    category: category.pluralLabel.toLowerCase(),
+  });
+
+  const aeoSummary = `RentalPins helps users discover ${category.pluralLabel.toLowerCase()} for rent in ${placeName} through map-based, owner-direct listings. Filter by budget, compare nearby areas, and contact owners directly where available.`;
+
+  const marketInsights = buildMarketInsights({
+    city: city.name,
+    locality: area?.name,
+    listings,
+    nearbyLocalities: city.popularAreas.slice(0, 6),
+  });
+
+  const entityLinks = clustersForPlace(area?.slug ?? city.slug)
+    .flatMap((c) => c.links)
+    .slice(0, 8);
 
   const schemaType = category.schemaType;
   const itemListSchema = {
@@ -140,8 +149,14 @@ export default function CategoryHubPage({
   return (
     <MarketingShell>
       <BreadcrumbSchema items={breadcrumbs} />
-      <FAQSchema faqs={faqs.map((f) => ({ question: f.q, answer: f.a }))} />
+      <FAQSchema faqs={faqs} />
       <StructuredData data={[itemListSchema, ...(realEstateSchema ? [realEstateSchema] : [])]} />
+
+      <div className="mx-auto max-w-4xl px-4 pt-6">
+        <AeoAnswerBox summary={aeoSummary} />
+        <MarketInsightsBlock insights={marketInsights} className="mt-6" />
+        <EntityClusterLinks links={entityLinks} className="mt-6" />
+      </div>
 
       <div className="rp-gradient-hero border-b border-[var(--border-subtle)] px-4 py-10">
         <div className="mx-auto max-w-4xl">
@@ -311,9 +326,12 @@ export default function CategoryHubPage({
         <h2 className="rp-section-title text-center text-lg">FAQs</h2>
         <dl className="mt-6 space-y-4">
           {faqs.map((f) => (
-            <div key={f.q} className="rp-card p-5">
-              <dt className="font-semibold text-[var(--brand-navy)]">{f.q}</dt>
-              <dd className="mt-2 text-sm text-[var(--muted)]">{f.a}</dd>
+            <div key={f.question} className="rp-card p-5">
+              <dt className="font-semibold text-[var(--brand-navy)]">{f.question}</dt>
+              <dd className="mt-2 text-sm text-[var(--muted)]">
+                <p>{f.directAnswer}</p>
+                {f.explanation ? <p className="mt-2">{f.explanation}</p> : null}
+              </dd>
             </div>
           ))}
         </dl>

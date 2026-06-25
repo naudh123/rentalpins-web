@@ -9,6 +9,7 @@ describe("buy-app-paths", () => {
     expect(isBuyAppPath("/buy/mohali")).toBe(true);
     expect(isBuyAppPath("/buy/search")).toBe(true);
     expect(isBuyAppPath("/flats-for-sale")).toBe(true);
+    expect(isBuyAppPath("/commercial-property-for-sale")).toBe(true);
     expect(isBuyAppPath("/search")).toBe(false);
     expect(isBuyAppPath("/rentals/mohali")).toBe(false);
   });

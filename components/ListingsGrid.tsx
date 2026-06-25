@@ -6,6 +6,7 @@ import { BRAND, UI } from "@/lib/brand";
 import { listingPublicPath } from "@/lib/listing-path";
 import { listingToSlugInput } from "@/lib/listing-path";
 import type { SeoListingCard } from "@/lib/seo-listings";
+import { formatListingPrice } from "@/lib/listing-price";
 
 // ─── Listing cards link to canonical SEO slug URLs (never app.rentalpins.com) ─
 
@@ -25,20 +26,19 @@ const UNIT_SHORT: Record<string, string> = {
 
 interface ListingCard extends SeoListingCard {}
 
-/** Avoid misleading teasers when Firestore has bad/test values (e.g. ₹1/mo). */
-function formatPrice(price: number, priceUnit: string, sale = false): string {
-  const unit = (priceUnit || "").toLowerCase();
-  // Only flag implausible long-term rents; keep hourly/daily/sale prices untouched
-  const longTerm =
-    !sale &&
-    (unit.includes("month") || unit.includes("year") || unit.includes("week"));
-  if (price > 0 && price < 500 && longTerm) {
-    return "See price in app";
-  }
-  if (price >= 10000000) return `₹${(price / 10000000).toFixed(1)}Cr`;
-  if (price >= 100000)   return `₹${(price / 100000).toFixed(1)}L`;
-  if (price >= 1000)     return `₹${(price / 1000).toFixed(1)}K`;
-  return `₹${price.toLocaleString("en-IN")}`;
+/** Grid price line — full locale formatting for property; no misleading ₹1.3K/mo. */
+function gridPriceLabel(listing: ListingCard, sale = false): string {
+  return formatListingPrice(
+    {
+      price: listing.price,
+      priceUnit: listing.priceUnit,
+      category: listing.category,
+      subCategory: listing.subCategory,
+      transactionType: sale ? "sale" : undefined,
+      homeIso: "IN",
+    },
+    { sale }
+  );
 }
 
 function timeAgo(iso: string): string {
@@ -62,7 +62,7 @@ function ListingCardItem({
   sale?: boolean;
 }) {
   const unitSuffix = UNIT_SHORT[listing.priceUnit] ?? "";
-  const priceLine = formatPrice(listing.price, listing.priceUnit, sale);
+  const priceLine = gridPriceLabel(listing, sale);
   const showUnitSuffix = !priceLine.startsWith("See ");
   // Link directly to Flutter app with listing ID as query param.
   // Same tab (no target="_blank"). Flutter reads ?listing= and opens detail.

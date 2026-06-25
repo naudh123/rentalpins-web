@@ -81,9 +81,25 @@ body {
     var(--bg);
 }
 
+/* ── RentalPins Rent — silver map shell (search / post rent) ─ */
+.rent-theme,
+[data-transaction="rent"] {
+  --map-shell-accent: var(--brand-orange);
+  --map-shell-bg: #f7f4f0;
+  --map-shell-panel: var(--bg-elevated);
+}
+
+.rent-theme.rp-map-layout,
+[data-transaction="rent"].rp-map-layout {
+  background: var(--map-shell-bg);
+}
+
 /* ── RentalPins Buy — luxury sale theme ───────────────────── */
 .sale-theme,
 [data-transaction="sale"] {
+  --map-shell-accent: var(--sale-gold);
+  --map-shell-bg: var(--sale-ivory);
+  --map-shell-panel: var(--sale-ivory-elevated);
   --bg: var(--sale-ivory);
   --bg-elevated: var(--sale-ivory-elevated);
   --surface: #fffefb;

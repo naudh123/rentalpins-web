@@ -10,9 +10,14 @@ function relatedPostScore(
   current: BlogPostSummary,
   candidate: BlogPostSummary
 ): number {
-  let score = 0;
-  if (candidate.category === current.category) score += 4;
-  score += tagOverlap(current.tags, candidate.tags) * 2;
+  const categoryScore = candidate.category === current.category ? 4 : 0;
+  const tagScore = tagOverlap(current.tags, candidate.tags) * 2;
+  if (categoryScore === 0 && tagScore === 0) return -1;
+
+  let score = categoryScore + tagScore;
+  if (candidate.vertical === current.vertical) score += 2;
+  else if (current.vertical === "neutral" || candidate.vertical === "neutral") score += 1;
+  else score -= 4;
   return score;
 }
 

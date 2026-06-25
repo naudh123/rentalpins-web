@@ -54,6 +54,7 @@ import { trackEvent } from "@/lib/ga4";
 import {
   improveListingText,
   persistListingContentAfterAiWithTimeout,
+  indexListingForSearchWithTimeout,
 } from "@/lib/improve-listing-text";
 import {
   isValidListingCoordinate,
@@ -825,19 +826,23 @@ export default function PostListingForm({
         });
       }
 
-      if (wasAiImprovedRef.current && savedListingId && location) {
+      if (savedListingId && location) {
         setProgress("Saving search content…");
         try {
-          await persistListingContentAfterAiWithTimeout({
-            listingId: savedListingId,
-            title: trimmedTitle,
-            description: trimmedDesc,
-            latitude: location.lat,
-            longitude: location.lng,
-            category: mainCategory,
-            subCategory,
-            locationName: locationNameForSave,
-          });
+          if (wasAiImprovedRef.current) {
+            await persistListingContentAfterAiWithTimeout({
+              listingId: savedListingId,
+              title: trimmedTitle,
+              description: trimmedDesc,
+              latitude: location.lat,
+              longitude: location.lng,
+              category: mainCategory,
+              subCategory,
+              locationName: locationNameForSave,
+            });
+          } else {
+            await indexListingForSearchWithTimeout(savedListingId);
+          }
           trackEvent("post_listing_ai_persist_succeeded", {
             listing_id: savedListingId,
             ...postFlowMeta(),
@@ -985,6 +990,7 @@ export default function PostListingForm({
             onChange={handleLocationChange}
             prefillCurrentLocationOnMount={!isEditMode}
             homeIso={profile?.homeIso}
+            transactionType={transactionType}
           />
         </div>
 

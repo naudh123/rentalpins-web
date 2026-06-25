@@ -17,6 +17,7 @@ import {
 import { resetListingFilters } from "@/lib/listing-filter-reset";
 import { buildMapResultsCountInfo, type MapResultsCountInfo } from "@/lib/map-list-count";
 import { trackEvent } from "@/lib/ga4";
+import { COMMERCIAL_SALE_SUBCATEGORIES } from "@/lib/sale/commercial-sale";
 
 const SORT_OPTIONS: { value: ListingSort; label: string }[] = [
   { value: "recommended", label: "Recommended" },
@@ -39,6 +40,8 @@ interface Props {
   saveSearchSlot?: ReactNode;
   /** Precomputed count copy — avoids header flicker during map refresh. */
   countInfo?: MapResultsCountInfo;
+  /** Buy map — Property-only filters, no category rail. */
+  saleMode?: boolean;
 }
 
 export default function SearchFilters({
@@ -54,10 +57,11 @@ export default function SearchFilters({
   clientFilterActive = false,
   saveSearchSlot,
   countInfo: countInfoProp,
+  saleMode = false,
 }: Props) {
   const [expanded, setExpanded] = useState(false);
   const activeCount = countActiveFilters(filters);
-  const categories = ["All", ...MAIN_CATEGORIES];
+  const categories = saleMode ? [PROPERTY_CATEGORY] : ["All", ...MAIN_CATEGORIES];
   const countInfo =
     countInfoProp ??
     buildMapResultsCountInfo({
@@ -185,17 +189,44 @@ export default function SearchFilters({
       </div>
 
       <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-3.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            type="button"
-            onClick={() => update({ category: cat })}
-            className={`rp-chip snap-start shrink-0 px-4 py-2 text-sm ${filters.category === cat ? "rp-chip-active" : ""}`}
-            aria-pressed={filters.category === cat}
-          >
-            {cat === "All" ? "All" : cat.split(" ")[0]}
-          </button>
-        ))}
+        {!saleMode &&
+          categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              onClick={() => update({ category: cat })}
+              className={`rp-chip snap-start shrink-0 px-4 py-2 text-sm ${filters.category === cat ? "rp-chip-active" : ""}`}
+              aria-pressed={filters.category === cat}
+            >
+              {cat === "All" ? "All" : cat.split(" ")[0]}
+            </button>
+          ))}
+        {saleMode && (
+          <>
+            <button
+              type="button"
+              onClick={() => update({ subCategory: "" })}
+              className={`rp-chip snap-start shrink-0 px-4 py-2 text-sm ${!filters.subCategory ? "rp-chip-active" : ""}`}
+              aria-pressed={!filters.subCategory}
+            >
+              All property
+            </button>
+            {COMMERCIAL_SALE_SUBCATEGORIES.map((sub) => {
+              const active = filters.subCategory === sub;
+              return (
+                <button
+                  key={sub}
+                  type="button"
+                  onClick={() => update({ subCategory: active ? "" : sub })}
+                  className={`rp-chip snap-start shrink-0 px-4 py-2 text-sm ${active ? "rp-chip-active" : ""}`}
+                  aria-pressed={active}
+                >
+                  {sub.split(" ")[0]}
+                </button>
+              );
+            })}
+          </>
+        )}
       </div>
 
       {expanded && (
@@ -204,17 +235,21 @@ export default function SearchFilters({
         >
           <div>
             <label className="rp-label">Category</label>
-            <select
-              value={filters.category}
-              onChange={(e) => update({ category: e.target.value })}
-              className="rp-input"
-            >
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            {saleMode ? (
+              <p className="text-sm text-[var(--muted)]">Property for sale</p>
+            ) : (
+              <select
+                value={filters.category}
+                onChange={(e) => update({ category: e.target.value })}
+                className="rp-input"
+              >
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           {subOptions.length > 0 && (

@@ -2,7 +2,7 @@
 
 import { useCallback, type MutableRefObject } from "react";
 import type { ListingFilters } from "@/lib/listing-filters";
-import { aiSearchErrorCode, parseSearchQuery } from "@/lib/ai-search";
+import { aiSearchErrorCode, buildAiSearchFeedback, parseSearchQueryMerged, type AiSearchFeedback } from "@/lib/ai-search";
 import {
   geocoderResultToSearchResult,
   type PlaceSearchResult,
@@ -19,10 +19,12 @@ interface Options {
   filtersRef: MutableRefObject<ListingFilters>;
   placeQueryRef: MutableRefObject<string>;
   textQueryRef: MutableRefObject<string>;
+  semanticQueryRef: MutableRefObject<string>;
   selectedIdRef: MutableRefObject<string | null>;
   lastKeywordSyncedRef: MutableRefObject<string>;
   setPlaceQuery: React.Dispatch<React.SetStateAction<string>>;
   setTextQuery: React.Dispatch<React.SetStateAction<string>>;
+  setSemanticQuery: React.Dispatch<React.SetStateAction<string>>;
   setSelectedId: React.Dispatch<React.SetStateAction<string | null>>;
   invalidateFetchCache: () => void;
   scheduleFetchBounds: (map: google.maps.Map, force?: boolean) => void;
@@ -31,6 +33,7 @@ interface Options {
   syncUrlNow: (nextFilters?: ListingFilters) => void;
   buildPersistedView: (map: google.maps.Map) => PersistedMapView | null;
   handleFiltersChange: (next: ListingFilters) => void;
+  setAiSearchFeedback: React.Dispatch<React.SetStateAction<AiSearchFeedback | null>>;
 }
 
 export function useMapPlaceSearch({
@@ -40,10 +43,12 @@ export function useMapPlaceSearch({
   filtersRef,
   placeQueryRef,
   textQueryRef,
+  semanticQueryRef,
   selectedIdRef,
   lastKeywordSyncedRef,
   setPlaceQuery,
   setTextQuery,
+  setSemanticQuery,
   setSelectedId,
   invalidateFetchCache,
   scheduleFetchBounds,
@@ -52,6 +57,7 @@ export function useMapPlaceSearch({
   syncUrlNow,
   buildPersistedView,
   handleFiltersChange,
+  setAiSearchFeedback,
 }: Options) {
   const flyToPlace = useCallback(
     (result: PlaceSearchResult) => {
@@ -138,18 +144,31 @@ export function useMapPlaceSearch({
     async (query: string) => {
       try {
         const transactionType = filtersRef.current.transactionType;
-        const parsed = await parseSearchQuery(query, transactionType);
+        const parsed = await parseSearchQueryMerged(
+          query,
+          filtersRef.current,
+          transactionType
+        );
         handleFiltersChange(parsed.filters);
         trackEvent("ai_search_applied", {
           category: parsed.filters.category,
           has_place: Boolean(parsed.placeText),
           has_keywords: Boolean(parsed.keywords),
+          has_unmatched: parsed.unmatched.length > 0,
+          confidence: parsed.confidence,
           transaction_type: transactionType,
         });
         setTextQuery(parsed.keywords);
         textQueryRef.current = parsed.keywords;
+        setSemanticQuery(query.trim());
+        semanticQueryRef.current = query.trim();
         lastKeywordSyncedRef.current = parsed.keywords.trim();
         syncUrlNow(parsed.filters);
+
+        const applyFeedback = (locationResolved: boolean) => {
+          setAiSearchFeedback(buildAiSearchFeedback(parsed, locationResolved));
+        };
+
         if (
           parsed.placeText &&
           typeof google !== "undefined" &&
@@ -157,13 +176,19 @@ export function useMapPlaceSearch({
         ) {
           const geocoder = new google.maps.Geocoder();
           geocoder.geocode({ address: parsed.placeText }, (results, status) => {
-            if (status === "OK" && results && results[0]) {
+            const locationResolved =
+              status === "OK" && Boolean(results && results[0]);
+            if (locationResolved && results && results[0]) {
               const r = geocoderResultToSearchResult(results[0]);
               if (r) flyToPlace(r);
             }
+            applyFeedback(locationResolved);
           });
+        } else {
+          applyFeedback(false);
         }
       } catch (err) {
+        setAiSearchFeedback(null);
         trackEvent("ai_search_failed", { error_code: aiSearchErrorCode(err) });
         console.error("AI search failed", err);
         throw err;
@@ -174,9 +199,12 @@ export function useMapPlaceSearch({
       flyToPlace,
       handleFiltersChange,
       lastKeywordSyncedRef,
+      setAiSearchFeedback,
+      setSemanticQuery,
       setTextQuery,
       syncUrlNow,
       textQueryRef,
+      semanticQueryRef,
     ]
   );
 

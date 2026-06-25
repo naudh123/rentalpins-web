@@ -90,7 +90,7 @@ export default async function SearchPage({
   }
 
   return (
-    <div className="h-full">
+    <div className="rent-theme h-full" data-transaction="rent">
       <Suspense fallback={<SearchFallback />}>
         <SearchMap
           initialListings={initialListings}

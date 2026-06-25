@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import MarketingShell from "@/components/MarketingShell";
+import BuyerRequirementsBoard from "@/components/buy/BuyerRequirementsBoard";
 import FAQSchema from "@/components/seo/FAQSchema";
 import { HubFaqSection } from "@/components/seo/MarketInsightsBlock";
 import { appPath, siteUrl } from "@/lib/config";
@@ -9,6 +9,7 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
 import { getCityBySlug, getAllCities } from "@/lib/cities-config";
 import { BUY_REQUIREMENTS_PATH } from "@/lib/sale/buy-app-paths";
+import { BUY_HUB_SLUGS } from "@/lib/sale/buy-pages-config";
 
 function requirementsPath(city?: string, locality?: string): string {
   if (city && locality) return `/buy/requirements/${city}/${locality}`;
@@ -61,29 +62,11 @@ export async function BuyRequirementsSeoPage({
     locality: locality?.replace(/-/g, " "),
   });
 
-  const sampleRequirements = [
-    {
-      id: "req-1",
-      propertyType: "2–3 BHK Flat",
-      budget: "₹50L – ₹80L",
-      locality: locality?.replace(/-/g, " ") ?? "Phase 7 / Sector 70",
-      timeline: "Within 3 months",
-      purpose: "Self use",
-      contact: "Verified buyer · contact via RentalPins",
-    },
-    {
-      id: "req-2",
-      propertyType: "Plot / Villa",
-      budget: "₹1Cr+",
-      locality: cityConfig?.name ?? "Mohali",
-      timeline: "Flexible",
-      purpose: "Investment",
-      contact: "Verified buyer · contact via RentalPins",
-    },
-  ];
+  const boardCity =
+    city && (BUY_HUB_SLUGS as readonly string[]).includes(city) ? city : undefined;
 
   return (
-    <MarketingShell>
+    <>
       <FAQSchema faqs={faqs} />
       <section className="rp-gradient-hero">
         <div className="mx-auto max-w-3xl px-4 py-16">
@@ -102,7 +85,10 @@ export async function BuyRequirementsSeoPage({
             <Link href={appPath("/buy/search")} className="rp-btn rp-btn-primary px-6 py-3">
               Browse sale listings
             </Link>
-            <Link href={appPath(BUY_REQUIREMENTS_PATH)} className="rp-btn rp-btn-secondary px-6 py-3">
+            <Link
+              href={appPath(`${BUY_REQUIREMENTS_PATH}/post`)}
+              className="rp-btn rp-btn-secondary px-6 py-3"
+            >
               Post requirement
             </Link>
           </div>
@@ -110,45 +96,7 @@ export async function BuyRequirementsSeoPage({
       </section>
 
       <div className="mx-auto max-w-3xl px-4 py-10">
-        <h2 className="font-serif text-2xl">Sample buyer requirements</h2>
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Illustrative cards — full authenticated requirement board launching soon.
-        </p>
-        <ul className="mt-6 space-y-4">
-          {sampleRequirements.map((req) => (
-            <li
-              key={req.id}
-              className="rounded-xl border border-[var(--border)] bg-white p-5"
-            >
-              <h3 className="font-semibold text-[var(--brand-navy)]">{req.propertyType}</h3>
-              <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-                <div>
-                  <dt className="text-[var(--muted)]">Budget</dt>
-                  <dd>{req.budget}</dd>
-                </div>
-                <div>
-                  <dt className="text-[var(--muted)]">Preferred locality</dt>
-                  <dd>{req.locality}</dd>
-                </div>
-                <div>
-                  <dt className="text-[var(--muted)]">Timeline</dt>
-                  <dd>{req.timeline}</dd>
-                </div>
-                <div>
-                  <dt className="text-[var(--muted)]">Purpose</dt>
-                  <dd>{req.purpose}</dd>
-                </div>
-              </dl>
-              <p className="mt-3 text-xs text-[var(--muted)]">{req.contact}</p>
-              <Link
-                href={appPath("/buy/post")}
-                className="mt-3 inline-block text-sm font-semibold text-[var(--sale-gold)] hover:underline"
-              >
-                I have a matching property →
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <BuyerRequirementsBoard city={boardCity} />
 
         {city && (
           <div className="mt-8">
@@ -186,6 +134,6 @@ export async function BuyRequirementsSeoPage({
           }),
         }}
       />
-    </MarketingShell>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { listingCanonicalUrl } from "@/lib/listing-share";
 import type { ListingDetail } from "@/lib/types/listing";
 import { currencyForIso } from "@/lib/phone-iso";
+import { schemaOfferPrice } from "@/lib/listing-price";
 import { normalizeListingSeo } from "@/lib/seo/listing-seo";
 import type { SeoFaq } from "@/lib/seo/listing-faqs";
 import type { ListingBreadcrumbItem } from "@/lib/listing-breadcrumbs";
@@ -52,6 +53,14 @@ export function buildListingStructuredData(input: ListingSchemaInput): Record<st
   const schemaType = resolveSchemaType(listing);
   const images = productImages(listing);
   const isSale = listing.transactionType === "sale";
+  const offerPrice = schemaOfferPrice({
+    price: listing.price,
+    priceUnit: listing.priceUnit,
+    category: listing.category,
+    subCategory: listing.subCategory,
+    transactionType: listing.transactionType,
+    homeIso: listing.homeIso,
+  });
 
   const base: Record<string, unknown> = {
     "@context": "https://schema.org",
@@ -63,7 +72,7 @@ export function buildListingStructuredData(input: ListingSchemaInput): Record<st
     category: seo.normalizedCategoryLabel,
     offers: {
       "@type": "Offer",
-      price: listing.price > 0 ? listing.price : undefined,
+      price: offerPrice,
       priceCurrency: currency,
       availability: "https://schema.org/InStock",
       url,

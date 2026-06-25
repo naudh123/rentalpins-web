@@ -16,7 +16,8 @@ import {
   listingCoordinateWarning,
   pickListingLocationName,
 } from "@/lib/listing-location";
-import { SILVER_MAP_OPTIONS } from "@/lib/map-styles";
+import { buildMapOptions } from "@/lib/map-styles";
+import type { TransactionType } from "@/lib/transaction-type";
 
 export interface PickedLocation {
   lat: number;
@@ -31,6 +32,8 @@ interface Props {
   prefillCurrentLocationOnMount?: boolean;
   /** Used for optional “outside India” warnings. */
   homeIso?: string | null;
+  /** Rent map = silver; sale/buy map = ivory/gold. */
+  transactionType?: TransactionType;
 }
 
 const DEFAULT = { lat: 30.7333, lng: 76.7794 };
@@ -76,7 +79,10 @@ export default function LocationPicker({
   onChange,
   prefillCurrentLocationOnMount = false,
   homeIso = null,
+  transactionType = "rent",
 }: Props) {
+  const isSale = transactionType === "sale";
+  const mapOptions = buildMapOptions(transactionType);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [locating, setLocating] = useState(false);
   const [geoError, setGeoError] = useState("");
@@ -147,7 +153,7 @@ export default function LocationPicker({
     void applyCoords(lat, lng, label);
   }, [applyCoords]);
 
-  const useMyLocation = useCallback(() => {
+  const requestMyLocation = useCallback(() => {
     if (!navigator.geolocation) {
       setGeoError("Location is not supported in this browser.");
       return;
@@ -180,8 +186,8 @@ export default function LocationPicker({
       return;
     }
     didPrefillRef.current = true;
-    useMyLocation();
-  }, [prefillCurrentLocationOnMount, value, isLoaded, useMyLocation]);
+    requestMyLocation();
+  }, [prefillCurrentLocationOnMount, value, isLoaded, requestMyLocation]);
 
   if (!isGoogleMapsConfigured()) {
     return <MapsApiKeyMissingNotice compact />;
@@ -238,7 +244,7 @@ export default function LocationPicker({
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
-          onClick={useMyLocation}
+          onClick={requestMyLocation}
           disabled={locating}
           className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium text-[var(--brand-navy)] hover:border-[var(--accent)] disabled:opacity-50"
         >
@@ -260,7 +266,10 @@ export default function LocationPicker({
         <p className="text-xs text-amber-700">{coordWarning}</p>
       )}
 
-      <div className="h-48 overflow-hidden rounded-xl border border-[var(--border)]">
+      <div
+        className={`h-48 overflow-hidden rounded-xl border border-[var(--border)]${isSale ? " sale-theme" : ""}`}
+        data-transaction={isSale ? "sale" : "rent"}
+      >
         <GoogleMap
           mapContainerStyle={{ width: "100%", height: "100%" }}
           center={value ?? DEFAULT}
@@ -274,7 +283,7 @@ export default function LocationPicker({
             }
           }}
           options={{
-            ...SILVER_MAP_OPTIONS,
+            ...mapOptions,
             zoomControl: true,
             fullscreenControl: false,
           }}

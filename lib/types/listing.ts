@@ -57,6 +57,8 @@ export interface ListingDocument {
   /** SEO path segment set on activation (includes listing id suffix). */
   urlSlug?: string;
   searchableTitle?: string;
+  /** Denormalized AI-enriched search blob (Flutter parity). */
+  searchText?: string;
   /** `rent` (default) or `sale` — add-only; omit on legacy rental docs. */
   transactionType?: TransactionType;
 }
@@ -83,6 +85,7 @@ export interface ListingCard {
   updatedAt: string;
   attributes?: ListingAttributes;
   urlSlug?: string;
+  searchText?: string;
   transactionType?: TransactionType;
 }
 

@@ -35,7 +35,7 @@ import { fetchOwnerTrust } from "@/lib/owner-trust";
 import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { appPath } from "@/lib/config";
 import { mapSearchUrl } from "@/lib/map-search-url";
-import { formatPrice } from "@/lib/format";
+import { formatListingPrice } from "@/lib/listing-price";
 import { listingCanonicalUrl, listingShareMetadata } from "@/lib/listing-share";
 import {
   buildListingSlugSegment,
@@ -137,11 +137,14 @@ export default async function ListingDetailRoute({
   const whatsAppHref = listing.ownerPhone
     ? whatsappUrl(listing.ownerPhone, listingWhatsAppMessage(listing.title, listingUrl))
     : "";
-  const priceLabel = formatPrice(
-    listing.price,
-    listing.priceUnit,
-    listing.homeIso
-  );
+  const priceLabel = formatListingPrice({
+    price: listing.price,
+    priceUnit: listing.priceUnit,
+    category: listing.category,
+    subCategory: listing.subCategory,
+    transactionType: listing.transactionType,
+    homeIso: listing.homeIso,
+  });
 
   const productImages = listing.imageUrls.length
     ? listing.imageUrls

@@ -1,6 +1,7 @@
 import { appPath, siteUrl } from "@/lib/config";
 import {
   APP_DOWNLOAD_PAGES,
+  APARTMENT_SEARCH_PAGES,
   CATEGORY_LANDING_PAGES,
   COMPETITOR_PAGES,
   INDUSTRIAL_PAGES,
@@ -12,6 +13,7 @@ import {
 /** Marketing + static landing slugs in `/sitemap.xml` (rent funnels). Buy hubs live via getBuyHubSitemapPaths in app/sitemap.ts. */
 export function getCoreMarketingSitemapSlugs(): string[] {
   return [
+    ...Object.keys(APARTMENT_SEARCH_PAGES),
     ...Object.keys(WITHOUT_BROKER_PAGES),
     ...Object.keys(APP_DOWNLOAD_PAGES),
     ...Object.keys(CATEGORY_LANDING_PAGES),

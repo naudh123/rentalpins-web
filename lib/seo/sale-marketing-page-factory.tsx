@@ -9,6 +9,7 @@ const FUNNEL_SLUGS: Record<string, SaleFunnelKind> = {
   "property-for-sale": "property",
   "property-for-sale-chandigarh": "property",
   "property-for-sale-mohali": "property",
+  "commercial-property-for-sale": "property",
 };
 
 function getConfig(slug: string): MarketingPageConfig | null {

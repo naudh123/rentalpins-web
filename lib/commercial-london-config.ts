@@ -44,6 +44,7 @@ export const COMMERCIAL_LONDON_AREA_SLUGS = [
   "shoreditch",
   "southwark",
   "tower-hamlets",
+  "kensington-and-chelsea",
   "westminster",
   "canary-wharf",
 ] as const;
@@ -297,6 +298,47 @@ const AREA: Record<CommercialLondonAreaSlug, CommercialLondonAreaConfig> = {
       },
     ],
   },
+  "kensington-and-chelsea": {
+    slug: "kensington-and-chelsea",
+    locationName: "Kensington and Chelsea",
+    title: "Commercial Property to Rent in Kensington and Chelsea | RentalPins",
+    metaDescription:
+      "Commercial property to rent in Kensington and Chelsea — offices, retail and showroom space in West London. Owners list free on RentalPins.",
+    h1: "Commercial property to rent in Kensington and Chelsea",
+    intro:
+      "Kensington and Chelsea combines premium retail, professional offices, and hospitality along King's Road, Kensington High Street, and Chelsea corridors. RentalPins is opening commercial listings in London where owners and agents publish map pins and tenants browse without search brokerage.",
+    propertyTypes: [
+      "Boutique retail and showroom units",
+      "Professional offices and consulting suites",
+      "Hospitality and restaurant premises",
+      "Storage and serviced commercial space",
+    ],
+    nearbyAreas: ["westminster", "camden", "islington", "southwark"],
+    mapCenter: { lat: 51.4991, lng: -0.1938, zoom: 13 },
+    placeQuery: "Kensington and Chelsea, London, UK",
+    faqs: [
+      {
+        q: "Can I list commercial property in Kensington and Chelsea?",
+        a: "Yes. Owners and authorised agents can list offices, shops and other commercial units for free while we open the London catalogue.",
+      },
+      {
+        q: "What commercial types are common in Kensington and Chelsea?",
+        a: "Tenants often search for boutique retail, professional offices, hospitality units, and showroom space near transport links.",
+      },
+      {
+        q: "How do tenants browse Kensington commercial rentals?",
+        a: "Use Browse Commercial Rentals on Map to open the RentalPins map centred on Kensington and Chelsea, then filter by property type.",
+      },
+      {
+        q: "Is inventory available right now?",
+        a: "London commercial inventory is opening gradually. Owners can list early for free; tenants see pins as listings go live.",
+      },
+      {
+        q: "Does RentalPins charge tenant brokerage?",
+        a: "No search commission — shortlist on the map and contact owners or listing agents directly.",
+      },
+    ],
+  },
   westminster: {
     slug: "westminster",
     locationName: "Westminster",
@@ -409,7 +451,7 @@ export const COMMERCIAL_LONDON_HUB: CommercialLondonHubConfig = {
     },
     {
       q: "Which London areas have dedicated pages?",
-      a: "We publish area hubs for Hackney, Islington, Camden, Shoreditch, Southwark, Tower Hamlets, Westminster and Canary Wharf based on organic search demand.",
+      a: "We publish area hubs for Hackney, Islington, Camden, Shoreditch, Southwark, Tower Hamlets, Kensington and Chelsea, Westminster and Canary Wharf based on organic search demand.",
     },
     {
       q: "Can I list warehouse to rent in London?",

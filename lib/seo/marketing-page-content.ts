@@ -29,6 +29,9 @@ export const PRIORITY_BROKER_LANDING_SLUGS = [
 export const PRIORITY_PG_LANDING_SLUGS = [
   "pg-near-chandigarh-university",
   "pg-near-cgc-landran",
+  "flats-near-cgc-landran",
+  "hostel-near-cgc-landran",
+  "student-accommodation-near-cgc-landran",
   "pg-near-pec",
   "pg-near-pau",
   "pg-near-gndec",
@@ -59,6 +62,8 @@ export const PRIORITY_SECONDARY_LANDING_SLUGS = [
 
 /** National category funnel landings expanded in batch 4. */
 export const PRIORITY_CATEGORY_LANDING_SLUGS = [
+  "apartment-rental-listings",
+  "where-to-find-apartments",
   "flats-for-rent",
   "houses-for-rent",
   "pg-for-rent",

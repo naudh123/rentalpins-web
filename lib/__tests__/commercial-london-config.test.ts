@@ -14,7 +14,7 @@ const FAKE_COUNT_PATTERN =
   /\b\d{1,3}(,\d{3})+\+?\s*(listings|users|downloads|verified)\b/i;
 
 describe("commercial london config", () => {
-  it("defines hub plus eight GSC priority areas", () => {
+  it("defines hub plus nine GSC priority areas", () => {
     expect(COMMERCIAL_LONDON_AREA_SLUGS).toEqual([
       "hackney",
       "islington",
@@ -22,10 +22,11 @@ describe("commercial london config", () => {
       "shoreditch",
       "southwark",
       "tower-hamlets",
+      "kensington-and-chelsea",
       "westminster",
       "canary-wharf",
     ]);
-    expect(getCommercialLondonSitemapPaths()).toHaveLength(9);
+    expect(getCommercialLondonSitemapPaths()).toHaveLength(10);
   });
 
   it("resolves each area slug", () => {

@@ -1,5 +1,5 @@
 import type { ListingDetail } from "@/lib/types/listing";
-import { formatPrice } from "@/lib/format";
+import { formatListingPrice } from "@/lib/listing-price";
 import { normalizeListingSeo } from "@/lib/seo/listing-seo";
 
 export interface SeoFaq {
@@ -10,7 +10,14 @@ export interface SeoFaq {
 /** AI/GEO-friendly FAQs for listing detail pages — crawlable, factual, no JS gating. */
 export function buildListingFaqs(listing: ListingDetail): SeoFaq[] {
   const seo = normalizeListingSeo(listing);
-  const price = formatPrice(listing.price, listing.priceUnit, listing.homeIso);
+  const price = formatListingPrice({
+    price: listing.price,
+    priceUnit: listing.priceUnit,
+    category: listing.category,
+    subCategory: listing.subCategory,
+    transactionType: listing.transactionType,
+    homeIso: listing.homeIso,
+  });
   const location = seo.normalizedLocationLabel || listing.locationName || "this area";
   const isSale = listing.transactionType === "sale";
   const action = isSale ? "buy" : "rent";

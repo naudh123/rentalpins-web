@@ -19,6 +19,9 @@ describe("map-styles", () => {
   });
 
   it("builds map options with matching background and styles", () => {
+    const rent = buildMapOptions("rent");
+    expect(rent.backgroundColor).toBe(MAP_ROADMAP_BACKGROUND);
+    expect(rent.styles).toBe(SILVER_MAP_STYLES);
     const sale = buildMapOptions("sale");
     expect(sale.backgroundColor).toBe(SALE_MAP_ROADMAP_BACKGROUND);
     expect(sale.styles).toBe(SALE_MAP_STYLES);

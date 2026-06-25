@@ -59,11 +59,21 @@ export default function MarketingLandingPage({
           <h1 className="font-serif text-3xl text-[var(--brand-navy)] md:text-4xl">{config.h1}</h1>
           <p className="mt-4 text-base leading-relaxed text-[var(--muted)]">{config.intro}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href={appPath("/search")} className="rp-btn rp-btn-primary px-6 py-2.5">
-              Browse map
+            <Link
+              href={appPath("/search")}
+              data-cta="browse-rentals"
+              data-location="hero"
+              className="rp-btn rp-btn-primary px-6 py-2.5"
+            >
+              Browse Rentals
             </Link>
-            <Link href={appPath("/post")} className="rp-btn rp-btn-secondary px-6 py-2.5">
-              Post free
+            <Link
+              href={appPath("/post")}
+              data-cta="list-property-free"
+              data-location="hero"
+              className="rp-btn rp-btn-secondary px-6 py-2.5"
+            >
+              List Property Free
             </Link>
             {(showAppCta || config.slug.includes("app") || config.slug === "download-app") && (
               <a

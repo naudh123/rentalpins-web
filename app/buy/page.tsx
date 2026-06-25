@@ -68,6 +68,20 @@ export default function BuyIndexPage() {
             ))}
           </ul>
         </div>
+
+        <div className="mt-14 rounded-2xl border border-[color-mix(in_srgb,var(--sale-gold)_30%,white)] bg-[color-mix(in_srgb,var(--sale-gold)_8%,white)] p-6 sm:p-8">
+          <h2 className="font-serif text-2xl text-[var(--brand-navy)]">Buy & sell guides</h2>
+          <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
+            Practical buyer and seller articles plus featured investment guides for Chandigarh
+            Tricity.
+          </p>
+          <Link
+            href={appPath("/blog/buy")}
+            className="rp-btn rp-btn-secondary mt-5 inline-flex px-5 py-2.5"
+          >
+            Read buy guides
+          </Link>
+        </div>
       </div>
     </section>
   );

@@ -5,11 +5,18 @@ import type { BlogListingHub } from "@/lib/blog-related-listings";
 import type { SeoListingCard } from "@/lib/seo-listings";
 
 interface Props {
-  hub: BlogListingHub;
+  hub: BlogListingHub | { label: string; placeName: string; hubHref: string };
   listings: SeoListingCard[];
+  transactionType?: "rent" | "sale";
 }
 
-export default function BlogRelatedListings({ hub, listings }: Props) {
+export default function BlogRelatedListings({
+  hub,
+  listings,
+  transactionType = "rent",
+}: Props) {
+  const isSale = transactionType === "sale";
+  const inventoryLabel = isSale ? "sale listings" : "rentals";
   return (
     <section
       aria-labelledby="related-listings-heading"
@@ -24,20 +31,24 @@ export default function BlogRelatedListings({ hub, listings }: Props) {
             {hub.label}
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Live listings from owners on RentalPins — contact directly, no broker.
+            Live {inventoryLabel} from owners on RentalPins — contact directly, no broker.
           </p>
         </div>
         <Link
           href={appPath(hub.hubHref)}
           className="text-sm font-semibold text-[#E8501A] hover:underline"
         >
-          View all {hub.placeName} rentals
+          View all {hub.placeName} {inventoryLabel}
         </Link>
       </div>
 
       {listings.length > 0 ? (
         <div className="mt-8">
-          <ListingsGrid listings={listings} areaName={hub.placeName} />
+          <ListingsGrid
+            listings={listings}
+            areaName={hub.placeName}
+            transactionType={transactionType}
+          />
         </div>
       ) : (
         <div className="mt-8 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
@@ -48,7 +59,7 @@ export default function BlogRelatedListings({ hub, listings }: Props) {
             href={appPath(hub.hubHref)}
             className="mt-4 inline-flex text-sm font-semibold text-[#E8501A] hover:underline"
           >
-            Browse {hub.placeName} rentals
+            Browse {hub.placeName} {inventoryLabel}
           </Link>
         </div>
       )}

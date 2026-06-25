@@ -255,6 +255,180 @@ export const MARKETING_PG_EXTRA_SECTIONS: Record<string, MarketingSeoSection[]> 
       ],
     },
   ],
+  "flats-near-cgc-landran": [
+    {
+      title: "Shared flats near CGC Landran",
+      paragraphs: [
+        "CGC students in groups of three or four often prefer 2–3 BHK flats along Kharar–Landran road — filter flats on the Kharar map and compare walk or ride time to campus gates.",
+        "Owner-listed flats show exact pin location before you visit — avoid broker boards that recycle the same photos with added commission.",
+        "List your flat free on RentalPins if you are a landlord near CGC — students search map pins during admission weeks.",
+      ],
+    },
+    {
+      title: "Flat vs PG for CGC students",
+      paragraphs: [
+        "PG suits first-year students who want meals and fixed monthly costs. Shared flats suit groups who cook together and want fewer house rules.",
+        "Compare total monthly outlay including utilities, Wi‑Fi, and food — headline flat rent can look higher until PG meal and laundry surcharges are added.",
+        "Cross-link with PG near CGC Landran and hostel pages when your group is undecided before session deposit.",
+      ],
+    },
+    {
+      title: "Kharar corridor flat search tips",
+      paragraphs: [
+        "Start map search two to four weeks before CGC session intake — peak weeks fill popular flats quickly.",
+        "Message owners with move-in date, group size, and budget band in the first WhatsApp — coordinated inquiries get faster viewing slots.",
+        "Visit in daylight and confirm society occupancy rules for student groups before paying token.",
+      ],
+    },
+    {
+      title: "Furnishing and deposit norms",
+      paragraphs: [
+        "Many owner flats include basic furnishing — confirm appliances, Wi‑Fi, and water heater with the owner before token.",
+        "Deposit is often one to two months' rent — clarify notice period and refund rules in writing on WhatsApp.",
+        "Photograph existing wear at handover — deposit disputes are easier to avoid than resolve after move-out.",
+      ],
+    },
+    {
+      title: "Linked campus and area pages",
+      paragraphs: [
+        "Kharar area hub and PG near CGC pages link to the same Tricity map inventory — use them alongside this flat landing.",
+        "Student accommodation near CGC compares PG, hostel, and flat options in one workflow — read before shortlisting pins.",
+        "National pg-for-rent and flats-for-rent landings funnel into the same Kharar map when your anchor is CGC.",
+      ],
+    },
+    {
+      title: "Owner listing tips near CGC",
+      paragraphs: [
+        "Include walk-time notes, furnishing list, and preferred tenant type in your listing description — students shortlist faster on map search.",
+        "Accurate map pins reduce wasted visits — place the pin at the building entrance, not a vague corridor label.",
+        "RentalPins does not charge tenants search commission — owners receive direct inquiries from interested students.",
+      ],
+    },
+    {
+      title: "Group flat budgeting near CGC",
+      paragraphs: [
+        "Split rent, utilities, Wi‑Fi, and groceries across batchmates before signing — flat headline rent hides shared costs until month-end.",
+        "Confirm society rules for student groups and guest visits with the owner before token — some buildings restrict bachelor tenants.",
+        "Compare flat total monthly cost with PG near CGC and hostel options on linked campus pages when your group is still deciding.",
+      ],
+    },
+  ],
+  "hostel-near-cgc-landran": [
+    {
+      title: "Hostels along the CGC belt",
+      paragraphs: [
+        "Managed hostels and warden-run housing sit along Kharar–Landran road — filter PG/Hostels on the map and confirm hostel vs PG rules with each owner.",
+        "Hostels often have stricter curfew and batch-style management than private PG — compare food quality and room ventilation on visit.",
+        "Operators can list hostel beds free on RentalPins and reach CGC students searching during admission weeks.",
+      ],
+    },
+    {
+      title: "Girls and boys hostel options",
+      paragraphs: [
+        "Owners specify suitability where relevant — confirm security, visitor rules, and warden contact in the first message.",
+        "Parents should shortlist three pins and visit in one trip during admission — inspect mess, laundry, and street access in daylight.",
+        "Cross-link with PG near CGC and student accommodation pages when comparing managed options.",
+      ],
+    },
+    {
+      title: "Session timing for CGC hostels",
+      paragraphs: [
+        "Book two to four weeks before intake when possible — popular hostels along the college belt fill during peak weeks.",
+        "Save map searches on RentalPins to catch fresh owner posts without daily classified scrolling.",
+        "Message owners with exact joining dates and food preferences during peak season.",
+      ],
+    },
+    {
+      title: "Hostel vs PG near Landran",
+      paragraphs: [
+        "PG may offer more flexible meal plans and sharing layouts. Hostels suit students who want fixed routines and managed security.",
+        "Compare headline rent with meals, laundry, AC, and Wi‑Fi included or excluded — effective cost varies sharply.",
+        "Groups of friends sometimes choose flats instead — see flats near CGC for shared 2–3 BHK options.",
+      ],
+    },
+    {
+      title: "Broker-free hostel search",
+      paragraphs: [
+        "Contact owners from RentalPins listing pins — broker reposts of hostel photos are common near Landran colleges.",
+        "Confirm the building matches the map pin before session deposit — vague 'near CGC' titles can mislead on distance.",
+        "Keep WhatsApp threads with owners from RentalPins inquiries for deposit and rule clarity.",
+      ],
+    },
+    {
+      title: "Area context for CGC hostels",
+      paragraphs: [
+        "Landran and Kharar area hubs on RentalPins share Tricity student inventory relevant to CGC commuters.",
+        "Kharar PG guide for Chandigarh University students also helps CGC renters comparing corridor options.",
+        "Vehicle rental pins on the same map help students plan hostel commute if they do not walk daily.",
+      ],
+    },
+    {
+      title: "Listing hostel beds near CGC",
+      paragraphs: [
+        "Hostel operators can post beds free on RentalPins and appear in PG/Hostel map filters for the Landran belt.",
+        "Describe curfew, mess timings, and room sharing ratio in your listing — CGC students shortlist faster with explicit hostel rules.",
+        "Accurate map pins at the building entrance reduce wasted visits and help parents compare options remotely before session deposit.",
+      ],
+    },
+  ],
+  "student-accommodation-near-cgc-landran": [
+    {
+      title: "Choosing student housing near CGC",
+      paragraphs: [
+        "CGC Landran students typically choose PG, hostel, or shared flat based on budget, food preference, and roommate plans — compare all three on the RentalPins map.",
+        "Start with your commute anchor — Kharar–Landran road, Landran town, or adjoining sectors — then filter category on pins.",
+        "Owners list PG, hostel beds, and flats free on RentalPins in live cities.",
+      ],
+    },
+    {
+      title: "Budget and total monthly cost",
+      paragraphs: [
+        "Build a monthly table: rent, meals, laundry, Wi‑Fi, electricity, and commute — effective cost often exceeds headline rent on classified boards.",
+        "PG with meals can beat cooking in a flat for solo students. Groups splitting a flat often win on privacy per rupee.",
+        "Ask owners about AC surcharges and guest policies before token — Landran student markets vary sharply.",
+      ],
+    },
+    {
+      title: "Peak session search workflow",
+      paragraphs: [
+        "Shortlist three map pins, visit in daylight, then message owners with move-in dates from RentalPins listing pages.",
+        "Save searches before CGC intake — fresh owner posts appear as pins without repeating broker boards.",
+        "Parents can shortlist remotely via map location before a single visit trip.",
+      ],
+    },
+    {
+      title: "Safety and viewing checklist",
+      paragraphs: [
+        "Inspect street lighting, building access, and warden or caretaker presence for hostels and PG.",
+        "Confirm food quality, bathroom sharing ratio, and ventilation — basement rooms look cheap until monsoon.",
+        "Photograph room condition at handover and clarify deposit refund rules.",
+      ],
+    },
+    {
+      title: "Cross-linked CGC campus pages",
+      paragraphs: [
+        "PG near CGC, flats near CGC, and hostel near CGC pages link to each other and to Kharar area hub inventory.",
+        "PG near Chandigarh University guide helps compare Kharar corridor options shared by CU and CGC students.",
+        "Student accommodation landing is the umbrella entry — drill into category pages after reading map context.",
+      ],
+    },
+    {
+      title: "Listing student housing near CGC",
+      paragraphs: [
+        "PG operators, hostel managers, and flat owners can post free on RentalPins and appear in map search for the Landran belt.",
+        "Include walk-time, food plan, and tenant preference in descriptions — students discover pins faster with explicit terms.",
+        "Accurate map pins reduce wasted visits and build trust with CGC students comparing options online.",
+      ],
+    },
+    {
+      title: "Session planning for CGC students",
+      paragraphs: [
+        "Start accommodation search two to four weeks before session intake — popular Kharar–Landran PG and hostel beds fill quickly during peak weeks.",
+        "Parents can shortlist map pins remotely, confirm photos and rules on video call, then visit once before paying deposit.",
+        "Compare total monthly cost across PG, hostel, and shared flat — include food, electricity, and commute when deciding near CGC Landran.",
+      ],
+    },
+  ],
   "pg-near-lpu": [
     {
       title: "PG near Lovely Professional University",

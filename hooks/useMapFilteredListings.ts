@@ -11,11 +11,18 @@ import type { MapAreaShape } from "@/lib/map-area";
 import { buildMapListingDisplayItems } from "@/lib/map-building-groups";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
 import { MAP_LIST_PAGE_SIZE } from "@/lib/map-list-count";
+import {
+  mergeSemanticSearchResults,
+  semanticRankListings,
+  type SemanticScore,
+} from "@/lib/semantic-search";
 
 interface Options {
   rawListings: ListingCardData[];
   filters: ListingFilters;
   textQuery: string;
+  /** Full natural-language query for embedding similarity (AI bar or keywords). */
+  semanticQuery: string;
   drawnShape: MapAreaShape | null;
 }
 
@@ -23,12 +30,70 @@ export function useMapFilteredListings({
   rawListings,
   filters,
   textQuery,
+  semanticQuery,
   drawnShape,
 }: Options) {
+  const structurallyFiltered = useMemo(
+    () => applyListingFilters(rawListings, filters),
+    [rawListings, filters]
+  );
+
+  const candidateKey = useMemo(
+    () => structurallyFiltered.map((l) => l.id).join(","),
+    [structurallyFiltered]
+  );
+
+  const [semanticScores, setSemanticScores] = useState<SemanticScore[]>([]);
+  const [semanticLoading, setSemanticLoading] = useState(false);
+
+  useEffect(() => {
+    const q = semanticQuery.trim();
+    if (!q || structurallyFiltered.length === 0) {
+      setSemanticScores([]);
+      setSemanticLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setSemanticLoading(true);
+
+    void semanticRankListings(q, structurallyFiltered.map((l) => l.id))
+      .then((result) => {
+        if (!cancelled) setSemanticScores(result.scores);
+      })
+      .catch(() => {
+        if (!cancelled) setSemanticScores([]);
+      })
+      .finally(() => {
+        if (!cancelled) setSemanticLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [semanticQuery, candidateKey, structurallyFiltered]);
+
   const filteredListings = useMemo(() => {
-    const filtered = applyListingFilters(rawListings, filters);
-    return applyTextSearchFilter(filtered, textQuery);
-  }, [rawListings, filters, textQuery]);
+    const q = semanticQuery.trim();
+    if (!q) {
+      return applyTextSearchFilter(structurallyFiltered, textQuery);
+    }
+    if (semanticLoading && semanticScores.length === 0) {
+      return applyTextSearchFilter(structurallyFiltered, textQuery.trim() || q);
+    }
+    return mergeSemanticSearchResults(
+      structurallyFiltered,
+      semanticScores,
+      q,
+      textQuery
+    );
+  }, [
+    structurallyFiltered,
+    semanticQuery,
+    textQuery,
+    semanticScores,
+    semanticLoading,
+  ]);
 
   const listings = useMemo(() => {
     if (!drawnShape) return filteredListings;
@@ -75,5 +140,6 @@ export function useMapFilteredListings({
     setListPage,
     listTotalPages,
     paginatedListItems,
+    semanticLoading,
   };
 }

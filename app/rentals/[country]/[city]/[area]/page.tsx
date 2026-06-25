@@ -15,6 +15,7 @@ import { fetchAreaListings } from "@/lib/seo-listings";
 import { getAreaConfig } from "@/lib/area-config";
 import { canonicalUrl } from "@/lib/seo";
 import { robotsForCity } from "@/lib/seo/indexing-policy";
+import { applyProgrammaticIndexability } from "@/lib/seo/programmatic-metadata";
 import { isRentalCategorySlug } from "@/lib/seo/categories";
 import {
   categoryHubMetadata,
@@ -33,6 +34,18 @@ import {
   buildMohaliCanonicalAreaMetadata,
   isMohaliCanonicalArea,
 } from "@/lib/seo/mohali-seo-overrides";
+import AeoAnswerBox from "@/components/seo/AeoAnswerBox";
+import EntityClusterLinks from "@/components/seo/EntityClusterLinks";
+import { flattenAeoFaqAnswer } from "@/lib/seo/aeo-faq";
+import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
+import { buildMarketInsights } from "@/lib/seo/locality-insights";
+import MarketInsightsBlock from "@/components/seo/MarketInsightsBlock";
+import { clustersForPlace } from "@/lib/seo/topic-clusters";
+import { buildCollectionPageSchema } from "@/lib/seo/schema-helpers";
+import StructuredData from "@/components/seo/StructuredData";
+import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
+import StickySeoCTA from "@/components/seo/StickySeoCTA";
+import { getBrowseHref, getListPropertyHref } from "@/lib/seo-links";
 
 const OG_LOCALE: Record<string, string> = {
   in: "en_IN",
@@ -99,7 +112,21 @@ export async function generateMetadata({
     );
   }
 
-  return {
+  const areaConfig = getAreaConfig(resolvedParams.city, resolvedParams.area);
+  let listingCount = 0;
+  if (areaConfig) {
+    try {
+      const listings = await fetchAreaListings(areaConfig, 20);
+      listingCount = listings.length;
+    } catch {
+      listingCount = 0;
+    }
+  }
+  const hasUniqueContent = Boolean(
+    getCitySeoConfig(resolvedParams.country, resolvedParams.city, resolvedParams.area)
+  );
+
+  const baseMeta = {
     title: `Rentals in ${area.name} — ${areaNames} & More`,
     description: `Find rooms, apartments, PG, vehicles, office space and more on rent in ${area.name}. ${area.heroDescription} Contact owners directly on RentalPins. No broker fee.`,
     keywords: [
@@ -118,10 +145,10 @@ export async function generateMetadata({
       siteName: "RentalPins",
       images: [{ url: "/og-image.png", width: 1200, height: 630 }],
       locale: OG_LOCALE[city.countrySlug] ?? "en_IN",
-      type: "website",
+      type: "website" as const,
     },
     twitter: {
-      card: "summary_large_image",
+      card: "summary_large_image" as const,
       title: `Rentals in ${area.name} | RentalPins`,
       description: `Find rentals on the map across ${area.name}. Free to browse, easy to list.`,
       images: ["/og-image.png"],
@@ -131,6 +158,16 @@ export async function generateMetadata({
     },
     robots: robotsForCity(city),
   };
+
+  return applyProgrammaticIndexability({
+    path: rentalAreaPath(city.countrySlug, city.slug, area.slug),
+    countrySlug: city.countrySlug,
+    citySlug: city.slug,
+    areaSlug: area.slug,
+    listingCount,
+    hasUniqueContent,
+    base: baseMeta,
+  });
 }
 
 export const revalidate = 7200;
@@ -183,9 +220,14 @@ export default async function AreaPage({
   const relatedGuides = seoConfig
     ? pickCitySeoBlogPosts(seoConfig.key, getMdxPosts())
     : [];
-  const pageFaqs = seoConfig?.faq.length ? seoConfig.faq : area.faqs;
+  const pageFaqs = seoConfig?.faq.length
+    ? seoConfig.faq
+    : buildConversationalFaqs("rent-locality", {
+        city: city.name,
+        locality: area.name,
+      });
 
-  let listings: any[] = [];
+  let listings: Awaited<ReturnType<typeof fetchAreaListings>> = [];
   try {
     const areaConfig = getAreaConfig(resolvedParams.city, resolvedParams.area);
     if (areaConfig) {
@@ -194,6 +236,17 @@ export default async function AreaPage({
   } catch (err) {
     console.error("AreaPage listings fetch failed:", err);
   }
+
+  const aeoSummary = `RentalPins helps users discover rentals in ${area.name}, ${city.name} through map-based, owner-direct listings. Browse by location, compare nearby areas, and contact owners directly where available.`;
+
+  const marketInsights = buildMarketInsights({
+    city: city.name,
+    locality: area.name,
+    listings,
+    nearbyLocalities: area.popularAreas.slice(0, 6),
+  });
+
+  const entityLinks = clustersForPlace(area.slug).flatMap((c) => c.links).slice(0, 8);
 
   const spokeLinks = getSiblingAreas(
     resolvedParams.country,
@@ -217,7 +270,11 @@ export default async function AreaPage({
     topCategories: area.topCategories,
     popularSearches: area.popularSearches,
     spokeLinks,
-    faqs: pageFaqs,
+    faqs: pageFaqs.map((f) =>
+      "q" in f && "a" in f
+        ? { q: f.q, a: f.a }
+        : { q: f.question, a: flattenAeoFaqAnswer(f) }
+    ),
     ctaHeading: area.ctaHeading,
     ctaBody: area.ctaBody,
   };
@@ -266,16 +323,65 @@ export default async function AreaPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
-      {pageFaqs.length > 0 ? (
-        <FAQSchema
-          faqs={pageFaqs.map((faq) => ({ question: faq.q, answer: faq.a }))}
-        />
-      ) : null}
+      {pageFaqs.length > 0 ? <FAQSchema faqs={pageFaqs} /> : null}
+      <StructuredData
+        data={buildCollectionPageSchema(
+          {
+            name: `Rentals in ${area.name}`,
+            description: area.heroDescription,
+            url: pageUrl,
+          },
+          listings.slice(0, 10).map((l) => ({
+            name: l.title,
+            url: pageUrl,
+          }))
+        )}
+      />
+      <div className="mx-auto max-w-5xl px-4 pt-8">
+        <AeoAnswerBox summary={aeoSummary} />
+        <MarketInsightsBlock insights={marketInsights} className="mt-8" />
+        <EntityClusterLinks links={entityLinks} className="mt-8" heading="Explore related topics" />
+      </div>
       <ListingsGrid listings={listings} areaName={area.name} />
       {seoConfig ? (
         <CitySeoContent config={seoConfig} relatedGuides={relatedGuides} />
       ) : null}
+      <ListPropertyCTA
+        variant="inline"
+        cityName={city.name}
+        areaName={area.name}
+        citySlug={city.slug}
+        areaSlug={area.slug}
+        browseHref={getBrowseHref({
+          citySlug: city.slug,
+          areaSlug: area.slug,
+          lat: area.coordinates.lat,
+          lng: area.coordinates.lng,
+          placeQuery: area.name,
+        })}
+        listHref={getListPropertyHref({ citySlug: city.slug, areaSlug: area.slug })}
+      />
+      <ListPropertyCTA
+        variant="bottom"
+        cityName={city.name}
+        areaName={area.name}
+        citySlug={city.slug}
+        areaSlug={area.slug}
+      />
       <AreaClient area={areaData} listingsCount={listings.length} />
+      <StickySeoCTA
+        citySlug={city.slug}
+        areaSlug={area.slug}
+        placeQuery={area.name}
+        browseHref={getBrowseHref({
+          citySlug: city.slug,
+          areaSlug: area.slug,
+          lat: area.coordinates.lat,
+          lng: area.coordinates.lng,
+          placeQuery: area.name,
+        })}
+        listHref={getListPropertyHref({ citySlug: city.slug, areaSlug: area.slug })}
+      />
     </>
   );
 }

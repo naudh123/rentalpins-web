@@ -57,6 +57,7 @@ export interface MapResultsPanelProps extends MapEmptyPanelProps {
   onFitAll: () => void;
   onResetView: () => void;
   onHighlight: (listing: ListingCardData) => void;
+  saleMode?: boolean;
 }
 
 export default function MapResultsPanel({
@@ -109,6 +110,7 @@ export default function MapResultsPanel({
   mapEmptyDrawnAreaActive = false,
   mapEmptyKeywordPreview,
   onHighlight,
+  saleMode = false,
 }: MapResultsPanelProps) {
   return (
     <aside
@@ -159,6 +161,7 @@ export default function MapResultsPanel({
         clientFilterActive={Boolean(textQuery.trim() || drawnShape)}
         refreshing={refreshing}
         countInfo={countInfo}
+        saleMode={saleMode}
         saveSearchSlot={
           <div className="hidden items-center gap-1 md:flex">
             <button

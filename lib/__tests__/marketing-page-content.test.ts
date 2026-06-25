@@ -14,6 +14,7 @@ import {
 } from "@/lib/seo/marketing-broker-blog-links";
 import { getMdxPosts } from "@/lib/blog";
 import {
+  APARTMENT_SEARCH_PAGES,
   COMPETITOR_PAGES,
   INDUSTRIAL_PAGES,
   NEAR_ME_PAGES,
@@ -31,6 +32,7 @@ function pageConfig(slug: string) {
     COMPETITOR_PAGES[slug] ??
     INDUSTRIAL_PAGES[slug] ??
     CATEGORY_LANDING_PAGES[slug] ??
+    APARTMENT_SEARCH_PAGES[slug] ??
     APP_DOWNLOAD_PAGES[slug]
   );
 }
@@ -86,7 +88,7 @@ describe("marketing page content", () => {
 
   it("enriches category funnel landings with long-form sections", () => {
     for (const slug of PRIORITY_CATEGORY_LANDING_SLUGS) {
-      const base = CATEGORY_LANDING_PAGES[slug];
+      const base = CATEGORY_LANDING_PAGES[slug] ?? APARTMENT_SEARCH_PAGES[slug];
       expect(base).toBeDefined();
       const enriched = enrichMarketingPageConfig(base!);
       expect(enriched.sections?.length).toBeGreaterThanOrEqual(7);
@@ -95,7 +97,8 @@ describe("marketing page content", () => {
 
   it("keeps category funnel landings above thin-content floor", () => {
     for (const slug of PRIORITY_CATEGORY_LANDING_SLUGS) {
-      const enriched = enrichMarketingPageConfig(CATEGORY_LANDING_PAGES[slug]!);
+      const base = CATEGORY_LANDING_PAGES[slug] ?? APARTMENT_SEARCH_PAGES[slug];
+      const enriched = enrichMarketingPageConfig(base!);
       expect(countMarketingPageWords(enriched)).toBeGreaterThanOrEqual(650);
     }
   });

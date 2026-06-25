@@ -152,6 +152,7 @@ export interface MapUrlRestorationOptions {
   filtersRef: MutableRefObject<ListingFilters>;
   placeQueryRef: MutableRefObject<string>;
   textQueryRef: MutableRefObject<string>;
+  semanticQueryRef: MutableRefObject<string>;
   selectedIdRef: MutableRefObject<string | null>;
   drawnShapeRef: MutableRefObject<MapAreaShape | null>;
   lastSyncedQueryRef: MutableRefObject<string | null>;
@@ -164,6 +165,7 @@ export interface MapUrlRestorationOptions {
   setFilters: (f: ListingFilters) => void;
   setPlaceQuery: (q: string) => void;
   setTextQuery: (q: string) => void;
+  setSemanticQuery: (q: string) => void;
   setSelectedId: (id: string | null) => void;
   setDrawnShape: (shape: MapAreaShape | null) => void;
   setMapCenter: (c: { lat: number; lng: number }) => void;
@@ -184,6 +186,7 @@ export function useMapUrlRestoration(options: MapUrlRestorationOptions): void {
     filtersRef,
     placeQueryRef,
     textQueryRef,
+    semanticQueryRef,
     selectedIdRef,
     drawnShapeRef,
     lastSyncedQueryRef,
@@ -196,6 +199,7 @@ export function useMapUrlRestoration(options: MapUrlRestorationOptions): void {
     setFilters,
     setPlaceQuery,
     setTextQuery,
+    setSemanticQuery,
     setSelectedId,
     setDrawnShape,
     setMapCenter,
@@ -213,6 +217,7 @@ export function useMapUrlRestoration(options: MapUrlRestorationOptions): void {
     filtersRef,
     placeQueryRef,
     textQueryRef,
+    semanticQueryRef,
     selectedIdRef,
     drawnShapeRef,
     lastSyncedQueryRef,
@@ -222,6 +227,7 @@ export function useMapUrlRestoration(options: MapUrlRestorationOptions): void {
     setFilters,
     setPlaceQuery,
     setTextQuery,
+    setSemanticQuery,
     setSelectedId,
     setDrawnShape,
     setMapCenter,

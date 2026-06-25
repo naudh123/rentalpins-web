@@ -52,13 +52,12 @@ import {
   hasUrlMapViewport,
   type PersistedMapView,
 } from "@/lib/map-last-view";
-import { parseSearchUrlState, applyBuySearchDefaults } from "@/lib/search-url";
+import { parseSearchUrlState, applyBuySearchDefaults, clampBuyListingFilters } from "@/lib/search-url";
 import { isBuySearchPath } from "@/lib/sale/buy-app-paths";
 import { MAP_SEARCH_INPUT_ID } from "@/lib/map-search-input";
 import type { MapBounds } from "@/lib/types/saved-search";
-import {
-  trackEvent,
-} from "@/lib/ga4";
+import { trackEvent } from "@/lib/ga4";
+import type { AiSearchFeedback } from "@/lib/ai-search";
 import InAppBrowserNotice from "@/components/auth/InAppBrowserNotice";
 import MapCanvas from "@/components/map/MapCanvas";
 import MapResultsPanel from "@/components/map/MapResultsPanel";
@@ -113,6 +112,8 @@ export default function SearchMap({
   const [mapBounds, setMapBounds] = useState<MapBounds | null>(urlState.bounds);
   const [placeQuery, setPlaceQuery] = useState(urlState.placeQuery ?? "");
   const [textQuery, setTextQuery] = useState(urlState.keywords ?? "");
+  const [semanticQuery, setSemanticQuery] = useState(urlState.keywords ?? "");
+  const [aiSearchFeedback, setAiSearchFeedback] = useState<AiSearchFeedback | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const mapRegionRef = useRef<HTMLDivElement | null>(null);
   const [mapInstance, setMapInstance] = useState<google.maps.Map | null>(null);
@@ -129,6 +130,8 @@ export default function SearchMap({
   placeQueryRef.current = placeQuery;
   const textQueryRef = useRef(textQuery);
   textQueryRef.current = textQuery;
+  const semanticQueryRef = useRef(semanticQuery);
+  semanticQueryRef.current = semanticQuery;
   const selectedIdRef = useRef<string | null>(urlState.selectedId);
   const drawnShapeRef = useRef<MapAreaShape | null>(urlState.drawnArea);
   drawnShapeRef.current = drawnShape;
@@ -225,6 +228,7 @@ export default function SearchMap({
     rawListings,
     filters,
     textQuery,
+    semanticQuery,
     drawnShape,
   });
 
@@ -246,7 +250,10 @@ export default function SearchMap({
   const clearKeywordFilter = useCallback(
     (source: "chip" | "empty_state" = "chip") => {
       setTextQuery("");
+      setSemanticQuery("");
+      setAiSearchFeedback(null);
       textQueryRef.current = "";
+      semanticQueryRef.current = "";
       lastKeywordSyncedRef.current = "";
       scheduleUrlSync();
       trackEvent("map_keywords_cleared", { source });
@@ -319,12 +326,14 @@ export default function SearchMap({
       filtersRef,
       placeQueryRef,
       textQueryRef,
+      semanticQueryRef,
       selectedIdRef,
       drawnShapeRef,
       lastKeywordSyncedRef,
       setFilters,
       setPlaceQuery,
       setTextQuery,
+      setSemanticQuery,
       setSelectedId,
       setDrawnShape,
       setDrawMode,
@@ -491,6 +500,13 @@ export default function SearchMap({
     clearKeywordFilter,
   });
 
+  const onFiltersChange = useCallback(
+    (next: ListingFilters) => {
+      handleFiltersChange(isBuySearch ? clampBuyListingFilters(next) : next);
+    },
+    [handleFiltersChange, isBuySearch]
+  );
+
   const handleClusterZoom = useCallback(() => {
     skipNextIdleFetchRef.current = true;
   }, [skipNextIdleFetchRef]);
@@ -511,10 +527,12 @@ export default function SearchMap({
       filtersRef,
       placeQueryRef,
       textQueryRef,
+      semanticQueryRef,
       selectedIdRef,
       lastKeywordSyncedRef,
       setPlaceQuery,
       setTextQuery,
+      setSemanticQuery,
       setSelectedId,
       invalidateFetchCache,
       scheduleFetchBounds,
@@ -522,12 +540,14 @@ export default function SearchMap({
       scheduleUrlSync,
       syncUrlNow,
       buildPersistedView,
-      handleFiltersChange,
+      handleFiltersChange: onFiltersChange,
+      setAiSearchFeedback,
     });
 
   const placeSearchProps = useMapCanvasPlaceSearchProps({
     placeQuery,
     textQuery,
+    aiSearchFeedbackMessage: aiSearchFeedback?.message ?? null,
     onPlaceResult: flyToPlace,
     onClearPlace: clearLocationSearch,
     onUseCurrentLocation: useCurrentLocation,
@@ -543,6 +563,7 @@ export default function SearchMap({
     filtersRef,
     placeQueryRef,
     textQueryRef,
+    semanticQueryRef,
     selectedIdRef,
     drawnShapeRef,
     lastSyncedQueryRef,
@@ -555,6 +576,7 @@ export default function SearchMap({
     setFilters,
     setPlaceQuery,
     setTextQuery,
+    setSemanticQuery,
     setSelectedId,
     setDrawnShape,
     setMapCenter,
@@ -662,7 +684,8 @@ export default function SearchMap({
     },
     onPanelResizeStart: startPanelResize,
     filters,
-    onFiltersChange: handleFiltersChange,
+    onFiltersChange: onFiltersChange,
+    saleMode: isSaleMode,
     listings,
     filteredListings,
     totalInBounds,
@@ -740,8 +763,8 @@ export default function SearchMap({
 
   return (
     <div
-      className={`relative flex rp-map-layout flex-col md:flex-row${isSaleMode ? " sale-theme" : ""}`}
-      data-transaction={isSaleMode ? "sale" : undefined}
+      className={`relative flex rp-map-layout flex-col md:flex-row${isSaleMode ? " sale-theme" : " rent-theme"}`}
+      data-transaction={isSaleMode ? "sale" : "rent"}
     >
       <InAppBrowserNotice context="search" variant="compact" />
       <MapCanvas {...canvasProps} />

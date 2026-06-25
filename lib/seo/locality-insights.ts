@@ -3,6 +3,7 @@ import type { ListingCard } from "@/lib/types/listing";
 export interface MarketInsightsData {
   heading: string;
   intro: string;
+  userIntent?: string;
   priceRange: string | null;
   commonTypes: string[];
   popularCategories: string[];
@@ -39,6 +40,9 @@ export function buildMarketInsights(input: MarketInsightsInput): MarketInsightsD
       intro: locality
         ? `${locality} ${city} is a popular locality for tenants and buyers looking for owner-direct flats, rooms, and family rentals near key commercial areas.`
         : `${city} is an active rental and buy market on RentalPins with owner-direct listings across residential and commercial categories.`,
+      userIntent: locality
+        ? `Renters and buyers typically search ${locality} for proximity to workplaces, colleges, and Tricity connectivity while avoiding broker-first classifieds.`
+        : `Users exploring ${city} on RentalPins want map-based comparison of sectors, budgets, and property types before contacting owners.`,
       priceRange: null,
       commonTypes: [],
       popularCategories: [],
@@ -75,6 +79,7 @@ export function buildMarketInsights(input: MarketInsightsInput): MarketInsightsD
   return {
     heading,
     intro: `Based on ${active.length} active listings on RentalPins in ${place}, here is a snapshot of current market activity.`,
+    userIntent: `Visitors to this page are typically comparing ${commonTypes.slice(0, 2).join(" and ") || "rental"} options in ${place} before contacting owners on the map.`,
     priceRange: formatInrRange(min, max, dominantUnit),
     commonTypes,
     popularCategories,

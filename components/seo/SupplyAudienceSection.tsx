@@ -102,7 +102,7 @@ export default function SupplyAudienceSection({
         <Link
           href={list}
           data-cta="list-property-free"
-          data-cta-location="supply-audience"
+          data-location="inline"
           data-city={citySlug ?? ""}
           data-area={areaSlug ?? ""}
           data-intent={intent}

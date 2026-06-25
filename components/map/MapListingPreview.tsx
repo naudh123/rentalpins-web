@@ -7,7 +7,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard } from "@/lib/types/listing";
-import { formatPrice } from "@/lib/format";
+import { formatListingPrice } from "@/lib/listing-price";
 import { listingDetailHref } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
@@ -22,7 +22,14 @@ export default function MapListingPreview({ listing, onClose }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const reduceMotion = useReducedMotion();
-  const priceLabel = formatPrice(listing.price, listing.priceUnit, listing.homeIso);
+  const priceLabel = formatListingPrice({
+    price: listing.price,
+    priceUnit: listing.priceUnit,
+    category: listing.category,
+    subCategory: listing.subCategory,
+    transactionType: listing.transactionType,
+    homeIso: listing.homeIso,
+  });
 
   useFocusTrap({
     active: true,

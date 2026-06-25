@@ -7,6 +7,7 @@ interface Props {
   onSearch: (query: string) => Promise<void> | void;
   disabled?: boolean;
   variant?: "rent" | "sale";
+  feedbackMessage?: string | null;
 }
 
 const PLACEHOLDERS = {
@@ -23,6 +24,7 @@ export default function AiSearchBar({
   onSearch,
   disabled,
   variant = "rent",
+  feedbackMessage,
 }: Props) {
   const [value, setValue] = useState("");
   const [busy, setBusy] = useState(false);
@@ -83,6 +85,11 @@ export default function AiSearchBar({
           className="w-full rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs text-red-800"
         >
           {error}
+        </p>
+      ) : null}
+      {!error && feedbackMessage ? (
+        <p className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface)]/95 px-3 py-1.5 text-xs text-[var(--muted)] shadow-sm">
+          {feedbackMessage}
         </p>
       ) : null}
     </div>

@@ -29,9 +29,9 @@ export async function GET() {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
   <channel>
-    <title>RentalPins Blog</title>
+    <title>RentalPins Insights</title>
     <link>${canonicalUrl("/blog")}</link>
-    <description>Rental tips, city guides, and housing advice across India.</description>
+    <description>Rental and buy/sell guides for property owners and seekers across India.</description>
     <language>en-in</language>${items}
   </channel>
 </rss>`;

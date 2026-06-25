@@ -5,6 +5,8 @@ import {
   resolveCategoryHub,
 } from "@/lib/seo/render-category-hub";
 import { robotsForCity } from "@/lib/seo/indexing-policy";
+import { applyProgrammaticIndexability } from "@/lib/seo/programmatic-metadata";
+import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
 import { getAllAreas, RENTAL_COUNTRY_SLUGS } from "@/lib/cities-config";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import { isRentalCategorySlug } from "@/lib/seo/categories";
@@ -39,7 +41,19 @@ export async function generateMetadata({
     ctx,
     `/rentals/${resolved.country}/${resolved.city}/${resolved.area}/${resolved.category}`
   );
-  return { ...meta, robots: robotsForCity(ctx.city) };
+  const hasUniqueContent = Boolean(
+    getCitySeoConfig(resolved.country, resolved.city, resolved.area)
+  );
+  return applyProgrammaticIndexability({
+    path: `/rentals/${resolved.country}/${resolved.city}/${resolved.area}/${resolved.category}`,
+    countrySlug: resolved.country,
+    citySlug: resolved.city,
+    areaSlug: resolved.area,
+    categorySlug: resolved.category,
+    listingCount: ctx.listings.length,
+    hasUniqueContent,
+    base: { ...meta, robots: robotsForCity(ctx.city) },
+  });
 }
 
 export const revalidate = 7200;

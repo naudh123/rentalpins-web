@@ -78,7 +78,11 @@ function markerIcon(
           { maximumFractionDigits: 0 }
         )
       : "Ask"
-    : formatPinPrice(listing.price, listing.homeIso);
+    : formatPinPrice(listing.price, listing.homeIso, {
+        category: listing.category,
+        priceUnit: listing.priceUnit,
+        transactionType: listing.transactionType,
+      });
   return buildPriceMarkerIcon(
     label,
     {
@@ -111,7 +115,11 @@ function markerTitle(listing: ListingCardData, labelTier: MapPinLabelTier): stri
           { maximumFractionDigits: 0 }
         )
       : "Ask"
-    : formatPinPrice(listing.price, listing.homeIso);
+    : formatPinPrice(listing.price, listing.homeIso, {
+        category: listing.category,
+        priceUnit: listing.priceUnit,
+        transactionType: listing.transactionType,
+      });
   const location = listing.locationName ? `, ${listing.locationName}` : "";
   return `${listing.title}${location}, ${priceLabel}`;
 }

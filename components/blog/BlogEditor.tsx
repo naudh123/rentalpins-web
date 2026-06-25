@@ -7,8 +7,9 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import MarketingShell from "@/components/MarketingShell";
 import BlogSeoPanel from "@/components/blog/BlogSeoPanel";
 import BlogFaqEditor from "@/components/blog/BlogFaqEditor";
-import { BLOG_CATEGORIES, BLOG_DRAFT_STORAGE_KEY, BLOG_LIMITS } from "@/lib/blog-config";
+import { BLOG_DRAFT_STORAGE_KEY, BLOG_LIMITS, BLOG_VERTICALS, type BlogVertical } from "@/lib/blog-config";
 import type { BlogFaqItem } from "@/lib/blog-types";
+import { categoriesForVertical } from "@/lib/blog-vertical";
 import {
   analyzeBlogSeo,
   blogReadTimeLabel,
@@ -29,6 +30,7 @@ interface BlogDraft {
   title: string;
   excerpt: string;
   content: string;
+  vertical: BlogVertical;
   category: string;
   coverImage: string;
   slug: string;
@@ -44,6 +46,7 @@ interface EditorInitial {
   title?: string;
   excerpt?: string;
   content?: string;
+  vertical?: BlogVertical;
   category?: string;
   coverImage?: string;
   tags?: string[];
@@ -149,14 +152,16 @@ const ExcerptField = memo(function ExcerptField({
 const CategoryField = memo(function CategoryField({
   value,
   onChange,
+  vertical,
 }: {
   value: string;
   onChange: (value: string) => void;
+  vertical: BlogVertical;
 }) {
-  const options =
-    BLOG_CATEGORIES.includes(value as (typeof BLOG_CATEGORIES)[number])
-      ? BLOG_CATEGORIES
-      : ([value, ...BLOG_CATEGORIES] as readonly string[]);
+  const pool = categoriesForVertical(vertical);
+  const options = pool.includes(value as (typeof pool)[number])
+    ? pool
+    : ([value, ...pool] as readonly string[]);
 
   return (
     <label className="block">
@@ -169,6 +174,35 @@ const CategoryField = memo(function CategoryField({
         {options.map((category) => (
           <option key={category} value={category}>
             {category}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+});
+
+const VerticalField = memo(function VerticalField({
+  value,
+  onChange,
+}: {
+  value: BlogVertical;
+  onChange: (value: BlogVertical) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="text-sm font-semibold text-slate-700">Guide type</span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as BlogVertical)}
+        className={fieldClass}
+      >
+        {BLOG_VERTICALS.map((vertical) => (
+          <option key={vertical} value={vertical}>
+            {vertical === "rent"
+              ? "Rentals"
+              : vertical === "buy"
+                ? "Buy & Sell"
+                : "Rent & Buy (neutral)"}
           </option>
         ))}
       </select>
@@ -260,6 +294,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
   const [title, setTitle] = useState(initial?.title ?? "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt ?? "");
   const [content, setContent] = useState(initial?.content ?? "");
+  const [vertical, setVertical] = useState<BlogVertical>(initial?.vertical ?? "rent");
   const [category, setCategory] = useState(initial?.category ?? "General");
   const [coverImage, setCoverImage] = useState(initial?.coverImage ?? "");
   const [metaTitle, setMetaTitle] = useState(initial?.metaTitle ?? "");
@@ -286,6 +321,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
       title,
       excerpt,
       content,
+      vertical,
       category,
       coverImage,
       slug: slug || slugify(title),
@@ -299,6 +335,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
       title,
       excerpt,
       content,
+      vertical,
       category,
       coverImage,
       slug,
@@ -352,6 +389,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
     setTitle(draft.title);
     setExcerpt(draft.excerpt);
     setContent(draft.content);
+    setVertical(draft.vertical ?? "rent");
     setCategory(draft.category);
     setCoverImage(draft.coverImage);
     setSlug(draft.slug);
@@ -372,6 +410,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         title,
         excerpt,
         content,
+        vertical,
         category,
         coverImage,
         slug,
@@ -393,6 +432,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
     title,
     excerpt,
     content,
+    vertical,
     category,
     coverImage,
     slug,
@@ -433,6 +473,9 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         setTitle(data.title ?? "");
         setExcerpt(data.excerpt ?? "");
         setContent(data.content ?? "");
+        setVertical(
+          BLOG_VERTICALS.includes(data.vertical) ? data.vertical : "rent"
+        );
         setCategory(data.category ?? "General");
         setCoverImage(data.coverImage ?? "");
         setTagsInput(Array.isArray(data.tags) ? data.tags.join(", ") : "");
@@ -479,6 +522,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         title,
         excerpt,
         content,
+        vertical,
         category,
         coverImage,
         published: publish,
@@ -550,7 +594,7 @@ export default function BlogEditor({ editSlug, initial }: Props) {
         <div className="mx-auto max-w-lg px-4 py-16 text-center">
           <h1 className="font-serif text-2xl font-bold text-[#1E3A6E]">Write a blog post</h1>
           <p className="mt-3 text-slate-600">
-            Sign in to share rental tips, city guides, and housing advice.
+            Sign in to share rental tips, buy guides, and housing advice.
           </p>
           <Link
             href={`${appPath("/auth/login")}?next=${loginNext}`}
@@ -615,9 +659,24 @@ export default function BlogEditor({ editSlug, initial }: Props) {
           />
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <CategoryField value={category} onChange={wrapSetter(setCategory)} />
-            <CoverImageField value={coverImage} onChange={wrapSetter(setCoverImage)} />
+            <VerticalField
+              value={vertical}
+              onChange={(next) => {
+                setVertical(next);
+                const pool = categoriesForVertical(next);
+                if (!pool.includes(category as (typeof pool)[number])) {
+                  setCategory(pool[0] ?? "General");
+                }
+                markDirty();
+              }}
+            />
+            <CategoryField
+              value={category}
+              vertical={vertical}
+              onChange={wrapSetter(setCategory)}
+            />
           </div>
+          <CoverImageField value={coverImage} onChange={wrapSetter(setCoverImage)} />
 
           <ContentField
             value={content}

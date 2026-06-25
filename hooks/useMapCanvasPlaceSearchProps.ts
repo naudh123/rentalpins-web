@@ -7,6 +7,7 @@ import { MAP_SEARCH_INPUT_ID } from "@/lib/map-search-input";
 interface Options {
   placeQuery: string;
   textQuery: string;
+  aiSearchFeedbackMessage?: string | null;
   onPlaceResult: (result: PlaceSearchResult) => void;
   onClearPlace: () => void;
   onUseCurrentLocation: (result: PlaceSearchResult) => void;
@@ -18,6 +19,7 @@ interface Options {
 export function useMapCanvasPlaceSearchProps({
   placeQuery,
   textQuery,
+  aiSearchFeedbackMessage = null,
   onPlaceResult,
   onClearPlace,
   onUseCurrentLocation,
@@ -29,6 +31,7 @@ export function useMapCanvasPlaceSearchProps({
       mapSearchInputId: MAP_SEARCH_INPUT_ID,
       placeQuery,
       textQuery,
+      aiSearchFeedbackMessage,
       onPlaceResult,
       onClearPlace,
       onUseCurrentLocation,
@@ -38,6 +41,7 @@ export function useMapCanvasPlaceSearchProps({
     [
       placeQuery,
       textQuery,
+      aiSearchFeedbackMessage,
       onPlaceResult,
       onClearPlace,
       onUseCurrentLocation,

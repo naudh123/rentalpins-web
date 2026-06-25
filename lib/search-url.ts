@@ -175,18 +175,21 @@ export function buildSearchUrl(state: SearchUrlState): string {
   return buildMapSearchUrl(state);
 }
 
+/** v1 buy map — residential Property only; sale mode always locked. */
+export function clampBuyListingFilters(filters: ListingFilters): ListingFilters {
+  return {
+    ...filters,
+    transactionType: "sale",
+    category: "Property",
+    tenantPreference: "",
+  };
+}
+
 /** Force sale filters when parsing /buy/search URLs. */
 export function applyBuySearchDefaults(state: SearchUrlState): SearchUrlState {
   return {
     ...state,
-    filters: {
-      ...state.filters,
-      transactionType: "sale",
-      category:
-        !state.filters.category || state.filters.category === "All"
-          ? "Property"
-          : state.filters.category,
-    },
+    filters: clampBuyListingFilters(state.filters),
   };
 }
 

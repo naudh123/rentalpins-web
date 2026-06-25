@@ -73,6 +73,7 @@ export function useMapResultsPanelProps(options: Options): MapResultsPanelProps 
     mapEmptyDrawnAreaActive,
     mapEmptyKeywordPreview,
     onHighlight,
+    saleMode,
   } = options;
 
   return useMemo(
@@ -126,6 +127,7 @@ export function useMapResultsPanelProps(options: Options): MapResultsPanelProps 
       mapEmptyDrawnAreaActive,
       mapEmptyKeywordPreview,
       onHighlight,
+      saleMode,
     }),
     [
       panelRef,
@@ -177,6 +179,7 @@ export function useMapResultsPanelProps(options: Options): MapResultsPanelProps 
       mapEmptyDrawnAreaActive,
       mapEmptyKeywordPreview,
       onHighlight,
+      saleMode,
     ]
   );
 }

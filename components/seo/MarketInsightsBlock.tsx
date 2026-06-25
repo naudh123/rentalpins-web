@@ -18,6 +18,13 @@ export default function MarketInsightsBlock({ insights, className = "" }: Props)
       </h2>
       <p className="mt-3 leading-relaxed text-[var(--muted)]">{insights.intro}</p>
 
+      {insights.userIntent ? (
+        <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
+          <span className="font-semibold text-[var(--brand-navy)]">User intent: </span>
+          {insights.userIntent}
+        </p>
+      ) : null}
+
       {insights.hasRealData && (
         <dl className="mt-5 grid gap-4 sm:grid-cols-2">
           {insights.priceRange && (
@@ -100,15 +107,21 @@ export function PopularSearchesBlock({
   );
 }
 
-/** Crawlable FAQ block for hub pages. */
+/** Crawlable FAQ block for hub pages — delegates to AEO layout when items use directAnswer. */
 export function HubFaqSection({
   faqs,
   className = "",
 }: {
-  faqs: { question: string; answer: string }[];
+  faqs: { question: string; answer?: string; directAnswer?: string; explanation?: string }[];
   className?: string;
 }) {
   if (!faqs.length) return null;
+
+  const aeoFaqs = faqs.map((faq) => ({
+    question: faq.question,
+    directAnswer: faq.directAnswer ?? faq.answer ?? "",
+    explanation: faq.explanation,
+  }));
 
   return (
     <section className={className} aria-labelledby="hub-faq-heading">
@@ -116,10 +129,13 @@ export function HubFaqSection({
         Frequently asked questions
       </h2>
       <dl className="mt-4 space-y-4">
-        {faqs.map((faq) => (
+        {aeoFaqs.map((faq) => (
           <div key={faq.question}>
             <dt className="font-semibold text-[var(--brand-navy)]">{faq.question}</dt>
-            <dd className="mt-1 text-sm leading-relaxed text-[var(--muted)]">{faq.answer}</dd>
+            <dd className="mt-1 text-sm leading-relaxed text-[var(--muted)]">
+              <p>{faq.directAnswer}</p>
+              {faq.explanation ? <p className="mt-2">{faq.explanation}</p> : null}
+            </dd>
           </div>
         ))}
       </dl>

@@ -1,10 +1,12 @@
 import Link from "next/link";
 import {
   getBrowseHref,
+  getListForSaleHref,
   getListPropertyHref,
   getSupplyLandingHref,
   type SupplyIntent,
 } from "@/lib/seo-links";
+import type { TransactionType } from "@/lib/transaction-type";
 
 export type ListPropertyCTAVariant = "hero" | "inline" | "bottom" | "blog";
 
@@ -14,6 +16,7 @@ interface Props {
   categoryName?: string;
   intent?: SupplyIntent;
   variant?: ListPropertyCTAVariant;
+  transactionType?: TransactionType;
   browseHref?: string;
   listHref?: string;
   citySlug?: string;
@@ -24,7 +27,7 @@ interface Props {
   supplyLandingHref?: string;
 }
 
-const TRUST_POINTS = [
+const RENT_TRUST_POINTS = [
   "Free listing",
   "Direct renter inquiries",
   "Map-based discovery",
@@ -32,14 +35,24 @@ const TRUST_POINTS = [
   "Manage listings from the app",
 ] as const;
 
+const SALE_TRUST_POINTS = [
+  "Free listing",
+  "Direct buyer inquiries",
+  "Curated sale map",
+  "Flats, villas, plots and independent houses",
+  "Owner-direct discovery",
+] as const;
+
 function headline({
   cityName,
   areaName,
   intent,
   variant,
-}: Pick<Props, "cityName" | "areaName" | "intent" | "variant">): string {
+  transactionType,
+}: Pick<Props, "cityName" | "areaName" | "intent" | "variant" | "transactionType">): string {
+  const isSale = transactionType === "sale";
   if (variant === "blog") {
-    return "Have a property in this area?";
+    return isSale ? "Selling property in this area?" : "Have a property in this area?";
   }
   if (intent === "pg" || intent === "hostel") {
     if (areaName?.toLowerCase().includes("chandigarh university")) {
@@ -63,9 +76,9 @@ function headline({
     return `Own a flat, PG or house in ${areaName}?`;
   }
   if (cityName) {
-    return `Own a property in ${cityName}?`;
+    return isSale ? `Selling property in ${cityName}?` : `Own a property in ${cityName}?`;
   }
-  return "Own a rental property?";
+  return isSale ? "Selling a property?" : "Own a rental property?";
 }
 
 function bodyCopy({
@@ -74,12 +87,23 @@ function bodyCopy({
   categoryName,
   intent,
   variant,
-}: Pick<Props, "cityName" | "areaName" | "categoryName" | "intent" | "variant">): string {
+  transactionType,
+}: Pick<
+  Props,
+  "cityName" | "areaName" | "categoryName" | "intent" | "variant" | "transactionType"
+>): string {
+  const isSale = transactionType === "sale";
   if (variant === "blog") {
-    return "List it on RentalPins and connect directly with tenants.";
+    return isSale
+      ? "List for sale on RentalPins Buy and connect directly with buyers."
+      : "List it on RentalPins and connect directly with tenants.";
   }
 
   const place = areaName && cityName && areaName !== cityName ? areaName : cityName ?? "your area";
+
+  if (isSale) {
+    return `List your flat, villa, or plot in ${place} for sale on RentalPins Buy. Buyers browse map pins and message sellers directly.`;
+  }
 
   if (intent === "pg" || intent === "hostel") {
     if (areaName?.toLowerCase().includes("chandigarh university")) {
@@ -119,6 +143,7 @@ export default function ListPropertyCTA({
   categoryName,
   intent = "general",
   variant = "inline",
+  transactionType = "rent",
   browseHref,
   listHref,
   citySlug,
@@ -128,8 +153,24 @@ export default function ListPropertyCTA({
   bodyOverride,
   supplyLandingHref: supplyLandingHrefProp,
 }: Props) {
-  const browse = browseHref ?? getBrowseHref({ placeQuery: areaName ?? cityName });
-  const list = listHref ?? getListPropertyHref({ citySlug, areaSlug, intent });
+  const isSale = transactionType === "sale";
+  const browse =
+    browseHref ??
+    getBrowseHref({
+      placeQuery: areaName ?? cityName,
+      transactionType,
+    });
+  const list =
+    listHref ??
+    (isSale
+      ? getListForSaleHref({ citySlug, areaSlug, intent })
+      : getListPropertyHref({ citySlug, areaSlug, intent }));
+  const trustPoints = isSale ? SALE_TRUST_POINTS : RENT_TRUST_POINTS;
+  const listCta = isSale ? "list-for-sale" : "list-property-free";
+  const browseCta = isSale ? "browse-sale-listings" : "browse-rentals";
+  const listLabel = isSale ? "List for Sale" : "List Property Free";
+  const browseLabel = isSale ? "Explore Sale Map" : "Browse Rentals";
+  const ownerEyebrow = isSale ? "For property sellers" : "For property owners";
   const supplyLanding =
     supplyLandingHrefProp ??
     getSupplyLandingHref({
@@ -143,10 +184,10 @@ export default function ListPropertyCTA({
   const isCompact = variant === "blog" || variant === "bottom";
   const resolvedHeadline =
     headlineOverride ??
-    headline({ cityName, areaName, intent, variant });
+    headline({ cityName, areaName, intent, variant, transactionType });
   const resolvedBody =
     bodyOverride ??
-    bodyCopy({ cityName, areaName, categoryName, intent, variant });
+    bodyCopy({ cityName, areaName, categoryName, intent, variant, transactionType });
 
   return (
     <section
@@ -163,7 +204,7 @@ export default function ListPropertyCTA({
         }
       >
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--accent)]">
-          For property owners
+          {ownerEyebrow}
         </p>
         <h2
           id={`list-property-cta-${locationAttr}`}
@@ -179,7 +220,7 @@ export default function ListPropertyCTA({
 
         {!isCompact ? (
           <ul className="mt-5 grid gap-2 sm:grid-cols-2">
-            {TRUST_POINTS.map((point) => (
+            {trustPoints.map((point) => (
               <li
                 key={point}
                 className="flex items-start gap-2 text-sm text-[var(--muted)]"
@@ -196,34 +237,34 @@ export default function ListPropertyCTA({
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href={list}
-            data-cta="list-property-free"
-            data-cta-location={locationAttr}
+            data-cta={listCta}
+            data-location={locationAttr}
             data-city={citySlug ?? ""}
             data-area={areaSlug ?? ""}
             data-intent={intent}
             className="rp-btn rp-btn-primary px-6 py-2.5"
           >
-            List Property Free
+            {listLabel}
           </Link>
           <Link
             href={browse}
-            data-cta="browse-rentals-map"
-            data-cta-location={locationAttr}
+            data-cta={browseCta}
+            data-location={locationAttr}
             data-city={citySlug ?? ""}
             data-area={areaSlug ?? ""}
             data-intent={intent}
             className="rp-btn rp-btn-secondary px-6 py-2.5"
           >
-            Browse Rentals on Map
+            {browseLabel}
           </Link>
         </div>
 
-        {variant !== "blog" && cityName ? (
+        {variant !== "blog" && cityName && !isSale ? (
           <p className="mt-4 text-sm text-[var(--muted)]">
             <Link
               href={supplyLanding}
               data-cta="supply-landing-link"
-              data-cta-location={locationAttr}
+              data-location={locationAttr}
               data-city={citySlug ?? ""}
               data-area={areaSlug ?? ""}
               data-intent={intent}

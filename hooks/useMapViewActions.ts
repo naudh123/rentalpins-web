@@ -34,12 +34,14 @@ interface Options {
   filtersRef: MutableRefObject<ListingFilters>;
   placeQueryRef: MutableRefObject<string>;
   textQueryRef: MutableRefObject<string>;
+  semanticQueryRef: MutableRefObject<string>;
   selectedIdRef: MutableRefObject<string | null>;
   drawnShapeRef: MutableRefObject<MapAreaShape | null>;
   lastKeywordSyncedRef: MutableRefObject<string>;
   setFilters: React.Dispatch<React.SetStateAction<ListingFilters>>;
   setPlaceQuery: React.Dispatch<React.SetStateAction<string>>;
   setTextQuery: React.Dispatch<React.SetStateAction<string>>;
+  setSemanticQuery: React.Dispatch<React.SetStateAction<string>>;
   setSelectedId: React.Dispatch<React.SetStateAction<string | null>>;
   setDrawnShape: React.Dispatch<React.SetStateAction<MapAreaShape | null>>;
   setDrawMode: React.Dispatch<React.SetStateAction<DrawMode | null>>;
@@ -57,12 +59,14 @@ export function useMapViewActions({
   filtersRef,
   placeQueryRef,
   textQueryRef,
+  semanticQueryRef,
   selectedIdRef,
   drawnShapeRef,
   lastKeywordSyncedRef,
   setFilters,
   setPlaceQuery,
   setTextQuery,
+  setSemanticQuery,
   setSelectedId,
   setDrawnShape,
   setDrawMode,
@@ -104,6 +108,8 @@ export function useMapViewActions({
     placeQueryRef.current = "";
     setTextQuery("");
     textQueryRef.current = "";
+    setSemanticQuery("");
+    semanticQueryRef.current = "";
     lastKeywordSyncedRef.current = "";
     setSelectedId(null);
     selectedIdRef.current = null;
@@ -136,10 +142,12 @@ export function useMapViewActions({
     setPlaceQuery,
     setSelectedId,
     setTextQuery,
+    setSemanticQuery,
     skipMapSyncRef,
     skipNextIdleFetchRef,
     syncUrlNow,
     textQueryRef,
+    semanticQueryRef,
   ]);
 
   const fitAllListings = useCallback(

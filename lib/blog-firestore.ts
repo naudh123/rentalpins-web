@@ -1,5 +1,6 @@
 import { adminDb } from "./firebase-admin";
 import { parseBlogTags, parseBlogFaqs } from "./blog-validation";
+import { parseBlogVertical } from "@/lib/blog-vertical";
 import { estimateReadTime } from "./seo";
 import type { BlogPost, BlogPostSummary } from "./blog-types";
 
@@ -27,6 +28,7 @@ function mapDoc(id: string, data: Record<string, unknown>): BlogPost {
     title: (data.title as string) || "",
     date: created.slice(0, 10),
     excerpt: (data.excerpt as string) || "",
+    vertical: parseBlogVertical(data.vertical),
     category: (data.category as string) || "General",
     coverImage: (data.coverImage as string) || undefined,
     author: (data.authorName as string) || "RentalPins User",

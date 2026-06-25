@@ -192,4 +192,30 @@ export const MARKETING_CATEGORY_EXTRA_SECTIONS: Record<string, MarketingSeoSecti
       "Confirm operator requirements, transport to site, and deposit terms with owners — equipment listings need explicit spec notes before hire.",
     ]
   ),
+  "apartment-rental-listings": withPeakSection(
+    categorySections(
+      "apartment rental listings",
+      "filter Property → Apartments / Flats and compare pins by neighbourhood on the map",
+      "Mohali, Delhi, Ludhiana, Jaipur, and Chandigarh Tricity flat hubs"
+    ),
+    "Comparing apartment listings before you visit",
+    [
+      "Open three to five apartment pins on the same map viewport — compare rent, furnishing, and exact sector before scheduling visits.",
+      "Apartment rental listings on RentalPins are owner-posted — message listers directly without broker search commission.",
+      "Landlords list apartments free to reach renters already searching apartment rental listings by city and area.",
+    ]
+  ),
+  "where-to-find-apartments": withPeakSection(
+    categorySections(
+      "apartments for rent",
+      "start at your city hub, pan to your target locality, then filter flats and apartments",
+      "Mohali phases, Delhi belts, Ludhiana Model Town, and Jaipur Malviya Nagar"
+    ),
+    "Where renters find apartments in 2026",
+    [
+      "Map-first search beats scrolling broker duplicates — see apartment location before you pay unlock fees on classified boards.",
+      "City flat hubs under Mohali, Delhi, Ludhiana, and Jaipur link from this guide to live owner inventory on RentalPins.",
+      "Owners list apartments free — appear in the same search renters use when asking where to find apartments for rent.",
+    ]
+  ),
 };

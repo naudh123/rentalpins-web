@@ -11,6 +11,7 @@ function post(
     title: slug,
     date: "2026-01-01",
     excerpt: "Excerpt",
+    vertical: "rent",
     category: "General",
     ...overrides,
   };

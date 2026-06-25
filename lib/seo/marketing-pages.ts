@@ -868,18 +868,119 @@ export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
       { title: "Group flat option", desc: "Compare PG with shared flats for batchmate groups." },
       { title: "Session timing tips", desc: "Long-form guide sections for admission-week search." },
       { title: "Vehicle rentals", desc: "Pair PG pins with bike rentals on the same map." },
+      { title: "Flats and hostel links", desc: "Cross-compare flats, hostels, and PG on linked CGC campus pages before session deposit." },
+      { title: "List PG free", desc: "Owners and PG operators post at no listing fee and receive direct student inquiries on the map." },
     ],
     faqs: [
       { q: "Are girls PG options available near CGC?", a: "Yes, depending on listing availability and owner preference." },
       { q: "Does RentalPins cover Landran and Kharar?", a: "Yes — both area maps share Tricity PG inventory relevant to CGC students." },
       { q: "Can I find hostels as well as PG?", a: "Yes — filter PG/Hostels on the map for both managed PG and hostel-style listings." },
       { q: "How do I avoid broker duplicates?", a: "Message owners from RentalPins pins — broker reposts of owner PG photos are common near Landran colleges." },
+      { q: "Where do CGC students compare PG, flats, and hostels?", a: "Use linked flats near CGC, hostel near CGC, and student accommodation pages alongside this PG landing on the same Kharar map." },
     ],
     relatedLinks: [
       { label: "Kharar area hub", href: appPath("/rentals/in/chandigarh/kharar") },
       { label: "Chandigarh Tricity hub", href: appPath(rentalCityPath("in", "chandigarh")) },
       { label: "PG for rent", href: appPath("/pg-for-rent") },
       { label: "PG near CU", href: appPath("/pg-near-chandigarh-university") },
+      { label: "Flats near CGC", href: appPath("/flats-near-cgc-landran") },
+      { label: "Hostel near CGC", href: appPath("/hostel-near-cgc-landran") },
+      { label: "Student accommodation", href: appPath("/student-accommodation-near-cgc-landran") },
+    ],
+  },
+  "flats-near-cgc-landran": {
+    slug: "flats-near-cgc-landran",
+    title: "Flats Near CGC Landran — Student Rentals | RentalPins",
+    description:
+      "Find flats and shared apartments near CGC Landran on the Kharar–Landran corridor. Browse owner map listings and list your flat free on RentalPins.",
+    h1: "Flats near CGC Landran",
+    intro:
+      "Groups of CGC, IKGPTU, and Landran college students often prefer shared 2–3 BHK flats over managed PG rules. Compare owner-listed flats along Kharar–Landran road and Landran town on the RentalPins map — filter by budget, contact owners directly, and list your flat free if you are a landlord.",
+    benefits: [
+      { title: "Group-friendly flats", desc: "2–3 BHK options for batchmate groups splitting rent." },
+      { title: "Map distance check", desc: "See how far each flat sits from CGC before visiting." },
+      { title: "Owner-direct", desc: "Message owners on WhatsApp without broker search fees." },
+      { title: "PG alternative", desc: "Compare flats with PG near CGC on the same map." },
+      { title: "Kharar corridor", desc: "Linked to Kharar and Landran area rental hubs." },
+      { title: "List your flat", desc: "Owners post free and reach student renters on the map." },
+      { title: "Furnishing clarity", desc: "Confirm appliances and Wi‑Fi with owners before token." },
+      { title: "Deposit checklist", desc: "Agree notice period and refund rules in writing on WhatsApp." },
+    ],
+    faqs: [
+      { q: "Are furnished flats available near CGC Landran?", a: "Yes — many owner listings include basic furnishing. Confirm appliances and Wi‑Fi with the owner before token." },
+      { q: "How many students typically share a flat?", a: "Most groups take 2–3 BHK with two to four occupants. Agree on rent split and house rules before signing." },
+      { q: "Is PG or flat better near CGC?", a: "PG suits first-year students who want meals and fixed costs. Flats suit groups who cook together and want more privacy." },
+      { q: "Can I list my flat near CGC for free?", a: "Yes — owners post on RentalPins at no listing fee in supported cities and receive direct tenant inquiries." },
+    ],
+    relatedLinks: [
+      { label: "PG near CGC Landran", href: appPath("/pg-near-cgc-landran") },
+      { label: "Hostel near CGC", href: appPath("/hostel-near-cgc-landran") },
+      { label: "Student accommodation guide", href: appPath("/student-accommodation-near-cgc-landran") },
+      { label: "Kharar rentals", href: appPath("/rentals/in/chandigarh/kharar") },
+    ],
+  },
+  "hostel-near-cgc-landran": {
+    slug: "hostel-near-cgc-landran",
+    title: "Hostel Near CGC Landran — Student Housing | RentalPins",
+    description:
+      "Find hostels and managed student housing near CGC Landran. Map-based owner listings with direct contact on RentalPins.",
+    h1: "Hostel near CGC Landran",
+    intro:
+      "Hostels and managed student housing along the Kharar–Landran belt serve CGC, IKGPTU, and nearby institutes. Browse PG/Hostel filters on the map, compare food plans, curfew rules, and room sharing with other students, then contact owners directly — or list your hostel beds free on RentalPins if you operate student housing near the college corridor.",
+    benefits: [
+      { title: "Campus-belt hostels", desc: "Inventory along Kharar–Landran road and Landran town." },
+      { title: "Managed housing", desc: "Warden-run hostels alongside owner PG listings." },
+      { title: "Food-plan compare", desc: "Ask owners about meals, curfew, and laundry upfront." },
+      { title: "Direct contact", desc: "No brokerage to browse or inquire on RentalPins." },
+      { title: "PG cross-link", desc: "Compare hostel with PG near CGC options." },
+      { title: "List hostel beds", desc: "Operators post free and reach students on the map." },
+      { title: "Curfew clarity", desc: "Confirm warden rules and guest policy before deposit." },
+      { title: "Mess quality", desc: "Taste food on visit — hostel meals vary sharply near colleges." },
+    ],
+    faqs: [
+      { q: "What is the difference between hostel and PG near CGC?", a: "Hostels often have stricter rules and batch-style management. PG may offer more flexible sharing and meal plans — confirm with each owner." },
+      { q: "Are girls hostels listed near CGC?", a: "Yes — depending on live inventory. Filter PG/Hostels on the map and confirm suitability in your first message." },
+      { q: "When should CGC students book hostel rooms?", a: "Start two to four weeks before session intake. Peak weeks fill popular corridors quickly." },
+      { q: "How do I avoid broker duplicates?", a: "Shortlist on RentalPins and message owners from listing pins — broker reposts are common near college belts." },
+      { q: "Can hostel operators list beds for free?", a: "Yes — hostel and PG operators post on RentalPins at no listing fee in supported cities and receive direct student inquiries from map search." },
+    ],
+    relatedLinks: [
+      { label: "PG near CGC Landran", href: appPath("/pg-near-cgc-landran") },
+      { label: "Flats near CGC", href: appPath("/flats-near-cgc-landran") },
+      { label: "Student accommodation", href: appPath("/student-accommodation-near-cgc-landran") },
+      { label: "Kharar area hub", href: appPath("/rentals/in/chandigarh/kharar") },
+    ],
+  },
+  "student-accommodation-near-cgc-landran": {
+    slug: "student-accommodation-near-cgc-landran",
+    title: "Student Accommodation Near CGC Landran | RentalPins",
+    description:
+      "Compare PG, hostels, and shared flats near CGC Landran. Map-first student housing search with owner-direct contact on RentalPins.",
+    h1: "Student accommodation near CGC Landran",
+    intro:
+      "CGC Landran students choose between PG, hostels, and shared flats depending on budget, food preferences, and roommate plans. RentalPins maps owner-posted inventory across the Kharar–Landran corridor so you compare options by location before visiting — owners can list PG, hostel beds, or flats free. Use linked campus pages below to compare PG near CGC, flats for groups, and hostel rules before session deposit.",
+    benefits: [
+      { title: "All student types", desc: "PG, hostel, room, and shared flat filters on one map." },
+      { title: "Corridor context", desc: "Kharar–Landran road and adjoining sectors on the map." },
+      { title: "Owner-direct", desc: "WhatsApp owners without broker search commission." },
+      { title: "Compare before paying", desc: "Shortlist three pins and visit in daylight." },
+      { title: "Linked campus pages", desc: "PG, flat, and hostel guides cross-linked." },
+      { title: "Free owner listings", desc: "Landlords and PG operators post at no search fee to tenants." },
+      { title: "Parent-friendly search", desc: "Shortlist map pins remotely before a single visit trip." },
+      { title: "CGC cross-links", desc: "PG, flat, and hostel campus pages interlinked for comparison." },
+    ],
+    faqs: [
+      { q: "What student accommodation is common near CGC?", a: "PG and hostels dominate the Kharar–Landran belt. Groups of friends often take shared flats in Kharar town or Landran sectors." },
+      { q: "How far is CGC from Kharar town?", a: "Most students commute by auto or college bus from Kharar–Landran road corridors. Use map pins to judge walk or ride time before booking." },
+      { q: "Can parents search accommodation remotely?", a: "Yes — shortlist pins on RentalPins, confirm photos and rules on video call, then visit before paying deposit." },
+      { q: "Can I list student housing near CGC?", a: "Yes — PG owners, hostel operators, and flat landlords list free on RentalPins in live cities." },
+      { q: "Should I compare PG, hostel, and flat on one map?", a: "Yes — filter each category on the Kharar map, shortlist three pins per type, then decide based on total monthly cost and house rules." },
+    ],
+    relatedLinks: [
+      { label: "PG near CGC Landran", href: appPath("/pg-near-cgc-landran") },
+      { label: "Flats near CGC", href: appPath("/flats-near-cgc-landran") },
+      { label: "Hostel near CGC", href: appPath("/hostel-near-cgc-landran") },
+      { label: "PG near Chandigarh University", href: appPath("/pg-near-chandigarh-university") },
     ],
   },
   "pg-near-pec": {
@@ -996,6 +1097,72 @@ export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Ludhiana rentals", href: appPath(rentalCityPath("in", "ludhiana")) },
       { label: "PG near PAU", href: appPath("/pg-near-pau") },
       { label: "PG near GNDEC", href: appPath("/pg-near-gndec") },
+    ],
+  },
+};
+
+/** High-impression apartment search queries from GSC (June 2026). */
+export const APARTMENT_SEARCH_PAGES: Record<string, MarketingPageConfig> = {
+  "apartment-rental-listings": {
+    slug: "apartment-rental-listings",
+    title: "Apartment Rental Listings – Browse Flats, Apartments & Houses Near You",
+    description:
+      "Browse apartment rental listings on RentalPins map — compare flats and houses by location, budget, and owner contact. List your property free.",
+    h1: "Apartment rental listings",
+    intro:
+      "Apartment rental listings on RentalPins are owner-posted map pins — not broker boards. Compare flats, apartments, and houses by neighbourhood, open listing details for photos and rent, then contact owners directly. Property owners can list apartments free to reach renters already searching by area.",
+    benefits: [
+      { title: "Map-first listings", desc: "See apartment pins by area before shortlisting visits." },
+      { title: "Owner-direct contact", desc: "Message owners on WhatsApp from listing pages." },
+      { title: "BHK and budget filters", desc: "Narrow apartment search on the live map." },
+      { title: "City flat hubs", desc: "Drill into Mohali, Delhi, Ludhiana, and Jaipur flat pages." },
+      { title: "No search brokerage", desc: "Browse apartment listings without tenant commission." },
+      { title: "Free owner posts", desc: "Landlords list apartments at no listing fee in live cities." },
+    ],
+    faqs: [
+      { q: "How do apartment rental listings work on RentalPins?", a: "Owners post pins on the map with photos, rent, and location. You browse, compare nearby listings, and contact owners directly." },
+      { q: "Are apartment listings broker-free?", a: "Many are owner-direct. RentalPins connects you to the lister without a search commission." },
+      { q: "Which cities have apartment listings?", a: "Chandigarh Tricity, Mohali, Delhi, Ludhiana, Jaipur, and other live city hubs on RentalPins." },
+      { q: "Can I list my apartment for rent?", a: "Yes — owners post free on RentalPins and appear in map search for their area." },
+    ],
+    relatedLinks: [
+      { label: "Flats in Mohali", href: appPath("/rentals/in/chandigarh/mohali/flats") },
+      { label: "Flats in Delhi", href: appPath("/rentals/in/delhi/flats") },
+      { label: "Flats in Ludhiana", href: appPath("/rentals/in/ludhiana/flats") },
+      { label: "Flats in Jaipur", href: appPath("/rentals/in/jaipur/flats") },
+      { label: "Where to find apartments", href: appPath("/where-to-find-apartments") },
+      { label: "Flats for rent", href: appPath("/flats-for-rent") },
+    ],
+  },
+  "where-to-find-apartments": {
+    slug: "where-to-find-apartments",
+    title: "Where to Find Apartments for Rent in 2026",
+    description:
+      "Learn where to find apartments for rent — search by map location, compare listings, inspect details, and contact owners directly on RentalPins.",
+    h1: "Where to find apartments for rent",
+    intro:
+      "The best place to find apartments for rent is a map that shows real owner listings in your target neighbourhood — not endless broker duplicates. On RentalPins, start with your city hub, filter flats and apartments, compare pins by budget and BHK, read listing details, then contact owners before visiting. Landlords can list apartments free to appear in the same search.",
+    benefits: [
+      { title: "Search by location", desc: "Pan the map to your sector, phase, or locality first." },
+      { title: "Compare before visiting", desc: "Shortlist three to five apartment pins on the map." },
+      { title: "Inspect listing details", desc: "Photos, rent, furnishing, and owner contact on each page." },
+      { title: "Contact owners directly", desc: "WhatsApp or call from the listing — no broker unlock fee." },
+      { title: "City-specific guides", desc: "Mohali, Delhi, Ludhiana, and Jaipur flat hubs linked." },
+      { title: "List your apartment", desc: "Owners post free and reach renters searching by area." },
+    ],
+    faqs: [
+      { q: "Where should I start looking for apartments?", a: "Open RentalPins map search, set your city or neighbourhood, and filter Property → Flats/Apartments." },
+      { q: "How do I avoid broker-heavy apartment boards?", a: "Use owner-posted map pins and contact listers directly from RentalPins listing pages." },
+      { q: "What should I check before paying deposit?", a: "Visit in person, confirm furnishing and utilities, verify owner identity, and compare at least three listings." },
+      { q: "Can apartment owners list for free?", a: "Yes — RentalPins supports free owner listings in live cities with map-based discovery." },
+    ],
+    relatedLinks: [
+      { label: "Apartment rental listings", href: appPath("/apartment-rental-listings") },
+      { label: "Flats in Mohali", href: appPath("/rentals/in/chandigarh/mohali/flats") },
+      { label: "Flats in Delhi", href: appPath("/rentals/in/delhi/flats") },
+      { label: "Flats in Ludhiana", href: appPath("/rentals/in/ludhiana/flats") },
+      { label: "Flats in Jaipur", href: appPath("/rentals/in/jaipur/flats") },
+      { label: "Browse map", href: appPath("/search") },
     ],
   },
 };

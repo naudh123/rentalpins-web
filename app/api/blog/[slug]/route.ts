@@ -53,6 +53,7 @@ export async function GET(request: Request, { params }: RouteParams) {
     title: post.title,
     excerpt: post.excerpt,
     content: post.content,
+    vertical: post.vertical,
     category: post.category,
     coverImage: post.coverImage ?? "",
     tags: post.tags ?? [],
@@ -87,6 +88,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     title: typeof body.title === "string" ? body.title : existing.title,
     excerpt: typeof body.excerpt === "string" ? body.excerpt : existing.excerpt,
     content: typeof body.content === "string" ? body.content : existing.content,
+    vertical: body.vertical ?? existing.vertical ?? "rent",
     category: typeof body.category === "string" ? body.category : existing.category,
     coverImage:
       typeof body.coverImage === "string" ? body.coverImage : existing.coverImage ?? "",
@@ -132,6 +134,7 @@ export async function PUT(request: Request, { params }: RouteParams) {
     title: data.title,
     excerpt: data.excerpt,
     content: data.content,
+    vertical: data.vertical,
     category: data.category,
     coverImage: data.coverImage || null,
     tags: data.tags,

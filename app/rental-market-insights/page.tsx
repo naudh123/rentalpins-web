@@ -1,0 +1,6 @@
+import { geoPageExports } from "@/lib/seo/geo-page-factory";
+
+const { generateMetadata, default: Page } = geoPageExports("/rental-market-insights");
+
+export { generateMetadata };
+export default Page;

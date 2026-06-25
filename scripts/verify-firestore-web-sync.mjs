@@ -47,7 +47,12 @@ if (missing.length) {
 }
 
 const rulesText = fs.readFileSync(rentitRulesPath, "utf8");
-const requiredRules = ["saved_searches", "search_alerts", "listing_reviews"];
+const requiredRules = [
+  "saved_searches",
+  "search_alerts",
+  "listing_reviews",
+  "buyer_requirements",
+];
 const missingRules = requiredRules.filter((name) => !rulesText.includes(`/${name}/`));
 if (missingRules.length) {
   console.error("Firestore rules sync FAILED — missing collections in rentit_clean:");

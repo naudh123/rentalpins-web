@@ -116,6 +116,34 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Sale map Mohali", href: appPath(`${BUY_SEARCH_PATH}?lat=30.7046&lng=76.7179&zoom=12&category=Property`) },
     ],
   },
+  "commercial-property-for-sale": {
+    slug: "commercial-property-for-sale",
+    title: "Commercial Property for Sale | RentalPins Buy",
+    description:
+      "Shops, showrooms, office space, and warehouses for sale in Chandigarh Tricity — owner-direct commercial listings on the RentalPins buy map.",
+    h1: "Commercial property for sale",
+    intro:
+      "Browse owner-listed shops, showrooms, offices, and warehouses on the RentalPins buy map. Filter by commercial sub-type and contact sellers directly — starting in Chandigarh Tricity.",
+    benefits: [
+      { title: "Commercial sub-types", desc: "Shops, showrooms, office space, and warehouse pins on the sale map." },
+      { title: "Owner-direct", desc: "No brokerage to search or shortlist commercial inventory." },
+      { title: "Tricity corridors", desc: "Mohali IT Park, Zirakpur VIP Road, and Kharar growth belts." },
+      { title: "List commercial for sale", desc: "Owners post with accurate map pins and asking price." },
+      { title: "Due diligence", desc: "Verify title, approvals, and use permissions before token." },
+    ],
+    faqs: [
+      { q: "Which commercial types can I buy on RentalPins?", a: "Shops, showrooms, office space, and warehouses listed under Property for sale. Filter by sub-type on the buy map." },
+      { q: "Is commercial sale available outside Tricity?", a: "We launch in Chandigarh Tricity first. More cities follow as owner inventory grows." },
+      { q: "How do I list my shop for sale?", a: "Use List for sale, choose Property, pick Shops or Showroom, and drop an accurate map pin." },
+      { q: "Can I compare commercial with residential?", a: "Residential and commercial sale listings share the buy map — use sub-type filters to focus." },
+    ],
+    relatedLinks: [
+      { label: "Sale map", href: appPath(`${BUY_SEARCH_PATH}?category=Property&sub=Shops`) },
+      { label: "Mohali buy hub", href: appPath(buyHubPath("mohali")) },
+      { label: "Property for sale", href: appPath("/property-for-sale") },
+      { label: "List for sale", href: appPath("/list-for-sale") },
+    ],
+  },
 };
 
 export function getSaleMarketingSlugs(): string[] {

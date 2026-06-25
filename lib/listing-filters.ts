@@ -234,12 +234,14 @@ export function applyTextSearchFilter(
 
   return listings.filter((l) => {
     const combined = [
+      l.searchText,
       l.title,
       l.description,
       l.locationName,
       l.category,
       l.subCategory,
     ]
+      .filter(Boolean)
       .join(" ")
       .toLowerCase();
     return words.every((w) => combined.includes(w));

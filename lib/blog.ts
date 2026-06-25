@@ -2,6 +2,8 @@
 import path from "path";
 import matter from "gray-matter";
 import { getFirestorePostBySlug, getFirestorePosts } from "./blog-firestore";
+import { resolveBlogAuthorName } from "@/lib/seo/blog-author";
+import { parseBlogVertical } from "@/lib/blog-vertical";
 import { estimateReadTime, slugify } from "./seo";
 import type { BlogPost, BlogPostSummary } from "./blog-types";
 
@@ -38,9 +40,10 @@ function parseMdxFile(filename: string): BlogPost | null {
     title: (data.title as string) ?? "",
     date: (data.date as string) ?? "",
     excerpt: (data.excerpt as string) ?? "",
+    vertical: parseBlogVertical(data.vertical),
     category: (data.category as string) ?? "General",
     coverImage: (data.coverImage as string) ?? undefined,
-    author: (data.author as string) ?? "RentalPins Team",
+    author: resolveBlogAuthorName((data.author as string) ?? undefined),
     readTime: (data.readTime as string) ?? estimateReadTime(content),
     content,
     source: "mdx",

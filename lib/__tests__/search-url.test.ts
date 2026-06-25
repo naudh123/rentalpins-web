@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyBuySearchDefaults,
   normalizeSearchQueryString,
   parseSearchUrlState,
   searchUrlQueryString,
@@ -59,5 +60,16 @@ describe("search-url", () => {
     expect(qs).toContain("area=p%3A30.7%2C76.7_30.8%2C76.8_30.6%2C76.9");
     const again = parseSearchUrlState(new URLSearchParams(qs));
     expect(again.drawnArea).toEqual(state.drawnArea);
+  });
+
+  it("applyBuySearchDefaults locks sale + Property regardless of URL", () => {
+    const state = applyBuySearchDefaults(
+      parseSearchUrlState(
+        new URLSearchParams({ category: "PG", transaction: "rent", tenant: "Boys Only" })
+      )
+    );
+    expect(state.filters.transactionType).toBe("sale");
+    expect(state.filters.category).toBe("Property");
+    expect(state.filters.tenantPreference).toBe("");
   });
 });

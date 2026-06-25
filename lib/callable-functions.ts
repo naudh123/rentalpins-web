@@ -60,6 +60,28 @@ export function parseSearchQueryCallable(
   );
 }
 
+export function semanticRankListingsCallable(
+  data: Record<string, unknown>
+): Promise<Record<string, unknown>> {
+  return callHttpsFunction<Record<string, unknown>>(
+    "semanticRankListings",
+    data,
+    CALLABLE_REGION_ASIA,
+    { ...AI_SEARCH_OPTS, allowAnonymous: true }
+  );
+}
+
+export function indexListingForSearchCallable(
+  listingId: string
+): Promise<Record<string, unknown>> {
+  return callHttpsFunction<Record<string, unknown>>(
+    "indexListingForSearch",
+    { listingId },
+    CALLABLE_REGION_ASIA,
+    { timeoutMs: 50_000, refreshAuthToken: true }
+  );
+}
+
 export function restoreListingForEditing(listingId: string): Promise<{ success?: boolean }> {
   return callHttpsFunction<{ success?: boolean }>(
     "restoreListingForEditing",

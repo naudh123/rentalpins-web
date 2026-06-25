@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import type { BlogPostSummary } from "@/lib/blog-types";
+import { verticalBadgeClass, verticalLabel } from "@/lib/blog-vertical";
 import { appPath } from "@/lib/config";
 
 interface Props {
@@ -22,9 +23,16 @@ export default function BlogCard({ post }: Props) {
         </div>
       )}
       <div className="flex flex-1 flex-col p-5">
-        <span className="text-xs font-semibold uppercase tracking-wider text-[#E8501A]">
-          {post.category}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${verticalBadgeClass(post.vertical)}`}
+          >
+            {verticalLabel(post.vertical)}
+          </span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#E8501A]">
+            {post.category}
+          </span>
+        </div>
         <h2 className="mt-2 font-serif text-xl font-bold leading-snug text-slate-900 transition group-hover:text-[#1E3A6E]">
           {post.title}
         </h2>

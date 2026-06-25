@@ -1,5 +1,7 @@
-import { BLOG_CATEGORIES, BLOG_LIMITS } from "./blog-config";
+import { BLOG_LIMITS } from "./blog-config";
 import type { BlogFaqItem } from "./blog-types";
+import type { BlogVertical } from "./blog-config";
+import { normalizeBlogCategory, parseBlogVertical } from "./blog-vertical";
 import { estimateReadTime, slugify } from "./seo";
 
 export type { BlogFaqItem } from "./blog-types";
@@ -8,6 +10,7 @@ export interface BlogPostInput {
   title: string;
   excerpt: string;
   content: string;
+  vertical: BlogVertical;
   category: string;
   coverImage: string;
   slug: string;
@@ -29,13 +32,8 @@ function trimString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function normalizeCategory(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) return "General";
-  const match = BLOG_CATEGORIES.find(
-    (c) => c.toLowerCase() === trimmed.toLowerCase()
-  );
-  return match ?? trimmed.slice(0, 60);
+function normalizeCategory(value: string, vertical: BlogVertical): string {
+  return normalizeBlogCategory(value, vertical);
 }
 
 /** Parse comma- or newline-separated tags into a deduped list. */
@@ -220,7 +218,8 @@ export function normalizeBlogPostBody(
   const title = trimString(body.title);
   let excerpt = trimString(body.excerpt);
   const content = trimString(body.content);
-  const category = normalizeCategory(trimString(body.category) || "General");
+  const vertical = parseBlogVertical(body.vertical);
+  const category = normalizeCategory(trimString(body.category) || "General", vertical);
   const coverImage = trimString(body.coverImage);
   const metaTitle = trimString(body.metaTitle);
   const metaDescription = trimString(body.metaDescription);
@@ -315,6 +314,7 @@ export function normalizeBlogPostBody(
       title,
       excerpt,
       content,
+      vertical,
       category,
       coverImage,
       slug,

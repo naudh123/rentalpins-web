@@ -1,9 +1,11 @@
 import Link from "next/link";
 import {
   getBrowseHref,
+  getListForSaleHref,
   getListPropertyHref,
   type SupplyIntent,
 } from "@/lib/seo-links";
+import type { TransactionType } from "@/lib/transaction-type";
 
 interface Props {
   browseHref?: string;
@@ -12,6 +14,7 @@ interface Props {
   areaSlug?: string;
   intent?: SupplyIntent;
   placeQuery?: string;
+  transactionType?: TransactionType;
 }
 
 /** Mobile-only sticky dual CTA for SEO landing pages. */
@@ -22,9 +25,21 @@ export default function StickySeoCTA({
   areaSlug,
   intent = "general",
   placeQuery,
+  transactionType = "rent",
 }: Props) {
-  const browse = browseHref ?? getBrowseHref({ placeQuery });
-  const list = listHref ?? getListPropertyHref({ citySlug, areaSlug, intent });
+  const isSale = transactionType === "sale";
+  const browse =
+    browseHref ??
+    getBrowseHref({ placeQuery, transactionType });
+  const list =
+    listHref ??
+    (isSale
+      ? getListForSaleHref({ citySlug, areaSlug, intent })
+      : getListPropertyHref({ citySlug, areaSlug, intent }));
+  const listCta = isSale ? "list-for-sale" : "list-property-free";
+  const browseCta = isSale ? "browse-sale-listings" : "browse-rentals";
+  const listLabel = isSale ? "List for Sale" : "List Property Free";
+  const browseLabel = isSale ? "Explore Sale Map" : "Browse Rentals";
 
   return (
     <>
@@ -36,29 +51,28 @@ export default function StickySeoCTA({
         <div className="mx-auto flex max-w-lg gap-2">
           <Link
             href={browse}
-            data-cta="sticky-browse-rentals"
-            data-cta-location="sticky"
+            data-cta={browseCta}
+            data-location="sticky"
             data-city={citySlug ?? ""}
             data-area={areaSlug ?? ""}
             data-intent={intent}
             className="rp-btn rp-btn-secondary min-h-11 flex-1 px-3 py-2.5 text-sm"
           >
-            Browse
+            {browseLabel}
           </Link>
           <Link
             href={list}
-            data-cta="sticky-list-property"
-            data-cta-location="sticky"
+            data-cta={listCta}
+            data-location="sticky"
             data-city={citySlug ?? ""}
             data-area={areaSlug ?? ""}
             data-intent={intent}
             className="rp-btn rp-btn-primary min-h-11 flex-1 px-3 py-2.5 text-sm"
           >
-            List Free
+            {listLabel}
           </Link>
         </div>
       </div>
-      {/* Prevent sticky bar covering footer on mobile */}
       <div className="h-20 md:hidden" aria-hidden />
     </>
   );
