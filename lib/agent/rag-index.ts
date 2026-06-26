@@ -6,6 +6,27 @@ import { embedTexts } from "./embeddings";
 import { chunkMarkdown } from "./rag-chunker";
 
 const COLLECTION = "agent_knowledge_chunks";
+const WRITE_BATCH_SIZE = 12;
+const EMBED_BATCH_SIZE = 24;
+
+async function commitChunkBatch(
+  chunkMeta: Omit<KnowledgeChunkDocument, "embedding">[],
+  embeddings: number[][]
+): Promise<void> {
+  const col = adminDb.collection(COLLECTION);
+  const batch = adminDb.batch();
+
+  for (let i = 0; i < chunkMeta.length; i++) {
+    const meta = chunkMeta[i];
+    batch.set(col.doc(meta.id), {
+      ...meta,
+      embedding: embeddings[i],
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
+  await batch.commit();
+}
 
 export interface KnowledgeChunkDocument {
   id: string;
@@ -68,21 +89,18 @@ export async function indexBlogKnowledge(): Promise<{
       return { success: true, indexed: 0, posts: 0 };
     }
 
-    const embeddings = await embedTexts(chunkMeta.map((c) => c.content));
-    const batch = adminDb.batch();
-    const col = adminDb.collection(COLLECTION);
-
-    for (let i = 0; i < chunkMeta.length; i++) {
-      const meta = chunkMeta[i];
-      const ref = col.doc(meta.id);
-      batch.set(ref, {
-        ...meta,
-        embedding: embeddings[i],
-        updatedAt: FieldValue.serverTimestamp(),
-      });
+    const embeddings: number[][] = [];
+    for (let i = 0; i < chunkMeta.length; i += EMBED_BATCH_SIZE) {
+      const slice = chunkMeta.slice(i, i + EMBED_BATCH_SIZE);
+      const vectors = await embedTexts(slice.map((c) => c.content));
+      embeddings.push(...vectors);
     }
 
-    await batch.commit();
+    for (let i = 0; i < chunkMeta.length; i += WRITE_BATCH_SIZE) {
+      const metaSlice = chunkMeta.slice(i, i + WRITE_BATCH_SIZE);
+      const embedSlice = embeddings.slice(i, i + WRITE_BATCH_SIZE);
+      await commitChunkBatch(metaSlice, embedSlice);
+    }
 
     return { success: true, indexed: chunkMeta.length, posts: posts.length };
   } catch (err) {
