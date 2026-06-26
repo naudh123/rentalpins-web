@@ -1,6 +1,7 @@
 import type { AgentSurface } from "./types";
 
 export const agentToolLabels: Record<string, string> = {
+  searchKnowledge: "Knowledge search",
   searchAreaGuides: "Area guides",
   searchRentGuides: "Rent guides",
   compareAreas: "Compare areas",

@@ -19,6 +19,7 @@ export interface AgentRunParams {
   surface: AgentSurface;
   transactionType: "rent" | "sale";
   callbacks?: AgentToolCallbacks;
+  userContextPrompt?: string;
 }
 
 export function buildAgentTools(
@@ -40,6 +41,7 @@ export async function streamAgentChat(params: AgentRunParams) {
     system: buildAgentSystemPrompt({
       surface: params.surface,
       transactionType: params.transactionType,
+      userContextPrompt: params.userContextPrompt,
     }),
     messages: await convertToModelMessages(params.messages),
     tools,
@@ -54,6 +56,7 @@ export async function runAgentTurn(params: AgentRunParams) {
     system: buildAgentSystemPrompt({
       surface: params.surface,
       transactionType: params.transactionType,
+      userContextPrompt: params.userContextPrompt,
     }),
     messages: await convertToModelMessages(params.messages),
     tools,

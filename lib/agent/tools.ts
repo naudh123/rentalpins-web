@@ -23,6 +23,7 @@ import {
 } from "./knowledge";
 import { buildAgentMapUrl } from "./map-url";
 import { parseNaturalLanguageSearch } from "./parse-query-server";
+import { searchKnowledge } from "./rag";
 import type { AgentSurface } from "./types";
 
 function boundsAround(lat: number, lng: number, delta = 0.06) {
@@ -40,6 +41,7 @@ export interface AgentToolCallbacks {
 
 const SURFACE_TOOL_NAMES: Record<AgentSurface, string[]> = {
   advisor: [
+    "searchKnowledge",
     "searchAreaGuides",
     "searchRentGuides",
     "compareAreas",
@@ -56,6 +58,7 @@ const SURFACE_TOOL_NAMES: Record<AgentSurface, string[]> = {
     "scheduleContact",
   ],
   map: [
+    "searchKnowledge",
     "buildMapSearch",
     "searchAreaGuides",
     "searchRentGuides",
@@ -68,6 +71,7 @@ const SURFACE_TOOL_NAMES: Record<AgentSurface, string[]> = {
     "searchProjects",
   ],
   showcase: [
+    "searchKnowledge",
     "getPlatformOverview",
     "getDeveloperOffering",
     "recommendNextStep",
@@ -96,6 +100,16 @@ export function createPropertyAgentTools(
   callbacks: AgentToolCallbacks = {}
 ) {
   const allTools = {
+    searchKnowledge: tool({
+      description:
+        "Semantic search over full blog MDX content (vector RAG) with keyword fallback — due diligence, rent/buy guides, locality depth.",
+      inputSchema: z.object({
+        query: z.string().describe("Topic or question to search guides"),
+        limit: z.number().min(1).max(8).optional(),
+      }),
+      execute: async ({ query, limit }) => searchKnowledge(query, limit ?? 5),
+    }),
+
     searchAreaGuides: tool({
       description:
         "Search Tricity buy area guides (Mohali, Kharar, Zirakpur, Panchkula) — headlines, highlights, FAQs.",

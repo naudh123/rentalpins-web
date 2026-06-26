@@ -7,6 +7,7 @@ import {
 import { isAgentConfigured } from "@/lib/agent/env";
 import { extractMapPathFromMessages } from "@/lib/agent/lead-scoring";
 import { checkAgentRateLimit, getAgentClientKey } from "@/lib/agent/rate-limit";
+import { resolveAgentAuthContext } from "@/lib/agent/resolve-request-context";
 import { runAgentTurn } from "@/lib/agent/run-agent";
 import type { AgentChatRequestBody, AgentSurface } from "@/lib/agent/types";
 
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
     const surface = parseSurface(body.surface);
     const transactionType = parseTransactionType(body.transactionType);
     const sessionId = String(body.sessionId ?? "anonymous").slice(0, 120);
+    const { userId, userContextPrompt } = await resolveAgentAuthContext(request);
 
     let handoffInterest: string | undefined;
     let handoffSummary: string | undefined;
@@ -50,6 +52,7 @@ export async function POST(request: Request) {
       messages,
       surface,
       transactionType,
+      userContextPrompt,
       callbacks: {
         onContactHandoff: (params) => {
           handoffInterest = params.interest;
@@ -61,6 +64,7 @@ export async function POST(request: Request) {
     await saveAgentConversation({
       sessionId,
       ipHash: hashIpForAgent(clientKey),
+      userId,
       surface,
       transactionType,
       messages: result.allMessages,

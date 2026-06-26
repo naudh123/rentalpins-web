@@ -72,6 +72,7 @@ export function scoreAgentConversation(params: {
 
   const toolPoints: Record<string, number> = {
     scheduleContact: 50,
+    searchKnowledge: 12,
     buildMapSearch: 20,
     compareAreas: 12,
     matchBuyerRequirement: 25,

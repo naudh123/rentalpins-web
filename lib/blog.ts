@@ -110,3 +110,14 @@ export function isMdxSlugTaken(slug: string): boolean {
 export function getStaticBlogSlugs(): string[] {
   return getMdxPosts().map((p) => p.slug);
 }
+
+/** Full MDX posts with body — for RAG indexing. */
+export function getAllMdxPostsFull(): BlogPost[] {
+  if (!fs.existsSync(BLOG_DIR)) return [];
+  return fs
+    .readdirSync(BLOG_DIR)
+    .filter((f) => f.endsWith(".mdx"))
+    .map((filename) => parseMdxFile(filename))
+    .filter((p): p is BlogPost => p !== null)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}

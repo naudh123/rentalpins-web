@@ -17,6 +17,7 @@ const COLLECTION = "agent_conversations";
 export interface SaveAgentConversationInput {
   sessionId: string;
   ipHash?: string;
+  userId?: string;
   surface: AgentSurface;
   transactionType: "rent" | "sale";
   messages: UIMessage[];
@@ -54,6 +55,7 @@ export async function saveAgentConversation(
     {
       sessionId,
       ipHash: input.ipHash ?? null,
+      userId: input.userId ?? null,
       surface: input.surface,
       transactionType: input.transactionType,
       messageCount: input.messages.length,

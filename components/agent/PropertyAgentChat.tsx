@@ -5,7 +5,11 @@ import { DefaultChatTransport } from "ai";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useRef, useEffect, useState, type ReactNode } from "react";
+import { useAuth } from "@/components/providers/AuthProvider";
+import AgentListingCards from "@/components/agent/AgentListingCards";
+import { extractListingPreviewsFromParts } from "@/lib/agent/chat-ui";
 import { appPath } from "@/lib/config";
+import { getClientAuth } from "@/lib/firebase-client";
 import { agentToolLabels } from "@/lib/agent/prompts";
 import { extractMapPathFromText } from "@/lib/agent/map-url";
 import type { AgentSurface } from "@/lib/agent/types";
@@ -53,6 +57,7 @@ export default function PropertyAgentChat({
   onApplyMapPath,
 }: Props) {
   const router = useRouter();
+  const { user } = useAuth();
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -60,9 +65,13 @@ export default function PropertyAgentChat({
     () =>
       new DefaultChatTransport({
         api: appPath("/api/agent/chat"),
-        prepareSendMessagesRequest: ({ id, messages }) => ({
-          body: { messages, sessionId: id, surface, transactionType },
-        }),
+        prepareSendMessagesRequest: async ({ id, messages }) => {
+          const token = await getClientAuth().currentUser?.getIdToken();
+          return {
+            body: { messages, sessionId: id, surface, transactionType },
+            headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+          };
+        },
       }),
     [surface, transactionType]
   );
@@ -110,6 +119,7 @@ export default function PropertyAgentChat({
             <p className="mt-2">
               Ask about areas, budgets, projects, or say &ldquo;show me on the map&rdquo; — I use live
               RentalPins tools, not guesses.
+              {user ? " Signed in — I can use your saved searches and prior chats." : ""}
             </p>
           </div>
         )}
@@ -117,6 +127,7 @@ export default function PropertyAgentChat({
         {messages.map((message) => {
           const text = getMessageText(message.parts);
           const toolParts = getToolParts(message.parts);
+          const listingPreviews = extractListingPreviewsFromParts(message.parts);
           const mapPath = text ? extractMapPathFromText(text) : null;
 
           return (
@@ -162,6 +173,13 @@ export default function PropertyAgentChat({
                   <div className="whitespace-pre-wrap [&_a]:text-[var(--accent)]">
                     {renderTextWithLinks(text)}
                   </div>
+                )}
+
+                {listingPreviews.length > 0 && message.role === "assistant" && (
+                  <AgentListingCards
+                    listings={listingPreviews}
+                    transactionType={transactionType}
+                  />
                 )}
 
                 {mapPath && message.role === "assistant" && (

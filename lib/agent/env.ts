@@ -15,3 +15,14 @@ export const agentDailyMessageLimit = Number.parseInt(
 );
 
 export const agentMaxSteps = Number.parseInt(cleanEnv(process.env.AI_AGENT_MAX_STEPS, "8"), 10);
+
+export const agentEmbeddingModel = cleanEnv(
+  process.env.AI_EMBEDDING_MODEL,
+  "text-embedding-3-small"
+);
+
+export const agentIndexSecret = cleanEnv(process.env.AGENT_INDEX_SECRET);
+
+export const mcpApiKey = cleanEnv(process.env.MCP_API_KEY);
+
+export const isMcpConfigured = Boolean(mcpApiKey);

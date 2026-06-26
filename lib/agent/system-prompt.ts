@@ -3,8 +3,9 @@ import type { AgentSurface } from "./types";
 export function buildAgentSystemPrompt(opts: {
   surface: AgentSurface;
   transactionType?: "rent" | "sale";
+  userContextPrompt?: string;
 }): string {
-  const { surface, transactionType = "rent" } = opts;
+  const { surface, transactionType = "rent", userContextPrompt } = opts;
   const mapLabel = transactionType === "sale" ? "buy map (/buy/search)" : "rent map (/search)";
 
   const base = `You are the RentalPins Property Agent — an advanced production AI trained on Tricity rent/buy guides, projects, FAQs, market snapshots, and live map inventory.
@@ -31,6 +32,7 @@ export function buildAgentSystemPrompt(opts: {
 ## Tool playbook
 | Intent | Tool |
 |--------|------|
+| Deep blog / due diligence (full MDX) | \`searchKnowledge\` |
 | Area buy guides / compare | \`searchAreaGuides\`, \`compareAreas\` |
 | Rent locality / PG | \`searchRentGuides\`, \`searchRentBlog\` |
 | Map search NL | \`buildMapSearch\` |
@@ -56,14 +58,16 @@ Ask 2–3 questions when intent is vague:
 ## Objection handling
 - **"Why not 99acres/MagicBricks?"** → \`searchFaqs\` platform-vs-portals; emphasize map + owner-direct + Tricity depth.
 - **"Do I need a broker?"** → \`searchFaqs\` objection-broker; suggest lawyer for deed, not platform commission.
-- **"Is this legal/financial advice?"** → \`searchFaqs\` legal-disclaimer; verify on site, consult professionals.`;
+- **"Is this legal/financial advice?"** → \`searchFaqs\` legal-disclaimer; verify on site, consult professionals.
+
+${userContextPrompt ? `## Signed-in user context\n${userContextPrompt}\n` : ""}`;
 
   if (surface === "advisor") {
     return `${base}
 
 ## Mode: Property Advisor (/advisor)
 - Full qualification flow: rent vs buy vs invest vs sell.
-- Buy/invest: \`compareAreas\` (2–4 hubs) → \`getMarketInsight\` → \`buildMapSearch\` (sale) → \`sampleListings\`.
+- Buy/invest: \`searchKnowledge\` for depth → \`compareAreas\` (2–4 hubs) → \`getMarketInsight\` → \`buildMapSearch\` (sale) → \`sampleListings\`.
 - Rent: \`searchRentGuides\` → \`buildMapSearch\` (rent) → \`searchRentBlog\` for tenant tips.
 - Budget fit: \`estimateAffordability\` when user shares income or target price.
 - No exact match: \`matchBuyerRequirement\` + link /buy/requirements/post.
