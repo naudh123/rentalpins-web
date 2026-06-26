@@ -52,6 +52,7 @@ const requiredRules = [
   "search_alerts",
   "listing_reviews",
   "buyer_requirements",
+  "agent_conversations",
 ];
 const missingRules = requiredRules.filter((name) => !rulesText.includes(`/${name}/`));
 if (missingRules.length) {

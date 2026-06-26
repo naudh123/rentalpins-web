@@ -46,6 +46,14 @@ const prodChecks = [
     !process.env.CRON_SECRET?.trim()
       ? "Set CRON_SECRET — saved-search alerts cron returns 401 without it"
       : null,
+  () =>
+    !process.env.RESEND_API_KEY?.trim()
+      ? "Set RESEND_API_KEY to email high-intent /developers agent leads"
+      : null,
+  () =>
+    !process.env.LEAD_NOTIFICATION_EMAIL?.trim()
+      ? "Set LEAD_NOTIFICATION_EMAIL (e.g. admin@rentalpins.com) for agent lead alerts"
+      : null,
 ];
 
 function loadEnvLocal() {

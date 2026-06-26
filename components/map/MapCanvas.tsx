@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useEffect, type RefObject } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { GoogleMap } from "@react-google-maps/api";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
@@ -36,6 +37,8 @@ import MapMobileViewSwitcher, { type MapMobileView } from "@/components/map/MapM
 import MapViewModeToggle from "@/components/map/MapViewModeToggle";
 import MapLocationSearch from "@/components/map/MapLocationSearch";
 import AiSearchBar from "@/components/map/AiSearchBar";
+import MapAgentCopilot from "@/components/agent/MapAgentCopilot";
+import { appPath } from "@/lib/config";
 
 const DEFAULT_ZOOM = DEFAULT_MAP_ZOOM;
 
@@ -181,6 +184,7 @@ export default function MapCanvas({
   onSelectBuildingUnit,
   onMobileViewChange,
 }: MapCanvasProps) {
+  const router = useRouter();
   const mapContainerStyle = { width: "100%", height: "100%" };
   const mapTransaction = saleMode ? "sale" : "rent";
   const mapOptions = useMemo(
@@ -372,6 +376,10 @@ export default function MapCanvas({
           disabled={loading}
           variant={saleMode ? "sale" : "rent"}
           feedbackMessage={aiSearchFeedbackMessage}
+        />
+        <MapAgentCopilot
+          transactionType={saleMode ? "sale" : "rent"}
+          onApplyMapPath={(path) => router.push(appPath(path))}
         />
         <MapKeywordChip keywords={textQuery} onClear={onClearKeywords} />
       </div>
