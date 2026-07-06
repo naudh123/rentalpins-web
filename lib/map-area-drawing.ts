@@ -50,3 +50,11 @@ export const MAP_AREA_PREVIEW_STYLE: google.maps.RectangleOptions = {
   draggable: false,
   zIndex: 2,
 };
+
+export const MAP_AREA_PREVIEW_STROKE: google.maps.PolylineOptions = {
+  strokeColor: "#E8501A",
+  strokeOpacity: 0.95,
+  strokeWeight: 3,
+  clickable: false,
+  zIndex: 3,
+};

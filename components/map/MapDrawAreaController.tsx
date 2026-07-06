@@ -11,6 +11,7 @@ import {
   isMeaningfulRectBounds,
   isNearFirstPoint,
   MAP_AREA_PREVIEW_STYLE,
+  MAP_AREA_PREVIEW_STROKE,
 } from "@/lib/map-area-drawing";
 import type { MapDrawProgress } from "@/lib/map-draw-ui";
 import { isMobileMapLayout } from "@/lib/map-gestures";
@@ -113,7 +114,10 @@ export default function MapDrawAreaController({
     let clickTimer: ReturnType<typeof setTimeout> | null = null;
     const previousDraggable = map.get("draggable") !== false;
     const previousDblClickZoom = map.get("disableDoubleClickZoom") !== true;
-    let preview: google.maps.Rectangle | google.maps.Polygon | null = null;
+    let preview: google.maps.Rectangle | google.maps.Polygon | google.maps.Polyline | null =
+      null;
+    let rubberLine: google.maps.Polyline | null = null;
+    let closeHint: google.maps.Circle | null = null;
 
     const clearClickTimer = () => {
       if (clickTimer) clearTimeout(clickTimer);
@@ -123,6 +127,10 @@ export default function MapDrawAreaController({
     const clearPreview = () => {
       preview?.setMap(null);
       preview = null;
+      rubberLine?.setMap(null);
+      rubberLine = null;
+      closeHint?.setMap(null);
+      closeHint = null;
     };
 
     const finish = () => {
@@ -259,12 +267,59 @@ export default function MapDrawAreaController({
       const undoPoint = () => {
         if (path.length === 0) return;
         path.pop();
-        if (path.length === 0) {
-          clearPreview();
-        } else if (preview) {
-          preview.setPath(path);
-        }
+        updatePolyPreview(null);
         reportPolyProgress();
+      };
+
+      const updatePolyPreview = (cursor: LatLngPoint | null) => {
+        preview?.setMap(null);
+        preview = null;
+        rubberLine?.setMap(null);
+        rubberLine = null;
+        closeHint?.setMap(null);
+        closeHint = null;
+
+        if (path.length === 0) return;
+
+        if (path.length < 3) {
+          const linePath = cursor ? [...path, cursor] : path;
+          if (linePath.length >= 2) {
+            preview = new google.maps.Polyline({
+              ...MAP_AREA_PREVIEW_STROKE,
+              path: linePath,
+              map,
+            });
+          }
+          return;
+        }
+
+        preview = new google.maps.Polygon({
+          ...MAP_AREA_PREVIEW_STYLE,
+          paths: path,
+          map,
+        });
+
+        if (cursor) {
+          rubberLine = new google.maps.Polyline({
+            ...MAP_AREA_PREVIEW_STROKE,
+            strokeOpacity: 0.55,
+            strokeWeight: 2,
+            path: [path[path.length - 1]!, cursor],
+            map,
+          });
+        }
+
+        closeHint = new google.maps.Circle({
+          center: path[0],
+          radius: 22,
+          fillColor: "#E8501A",
+          fillOpacity: 1,
+          strokeColor: "#ffffff",
+          strokeWeight: 2,
+          map,
+          zIndex: 4,
+          clickable: false,
+        });
       };
 
       if (drawActionsRef) {
@@ -290,17 +345,14 @@ export default function MapDrawAreaController({
             return;
           }
           path.push(point);
-          if (!preview) {
-            preview = new google.maps.Polygon({
-              ...MAP_AREA_PREVIEW_STYLE,
-              map,
-              paths: path,
-            });
-          } else {
-            preview.setPath(path);
-          }
+          updatePolyPreview(null);
           reportPolyProgress();
         }, 180);
+      };
+
+      const onMouseMove = (e: google.maps.MapMouseEvent) => {
+        if (!e.latLng || path.length === 0) return;
+        updatePolyPreview({ lat: e.latLng.lat(), lng: e.latLng.lng() });
       };
 
       const onDblClick = (e: google.maps.MapMouseEvent) => {
@@ -311,9 +363,11 @@ export default function MapDrawAreaController({
 
       const clickListener = map.addListener("click", onClick);
       const dblClickListener = map.addListener("dblclick", onDblClick);
+      const moveListener = map.addListener("mousemove", onMouseMove);
       cleanups.push(
         () => google.maps.event.removeListener(clickListener),
-        () => google.maps.event.removeListener(dblClickListener)
+        () => google.maps.event.removeListener(dblClickListener),
+        () => google.maps.event.removeListener(moveListener)
       );
     }
 
