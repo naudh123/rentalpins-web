@@ -129,7 +129,11 @@ export function middleware(request: NextRequest) {
   const propertyLocality = decoded.match(
     /^\/rentals\/(property|appliances|electronics|equipment|furniture|vehicles)\/([^/]+)\/([^/]+)$/
   );
-  if (propertyLocality && propertyLocality[2] !== "locality") {
+  if (
+    propertyLocality &&
+    propertyLocality[2] !== "locality" &&
+    propertyLocality[3] !== "opengraph-image"
+  ) {
     const [, segment, city, locality] = propertyLocality;
     const url = request.nextUrl.clone();
     url.pathname = `/rentals/${segment}/locality/${city}/${locality}`;

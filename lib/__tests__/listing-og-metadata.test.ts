@@ -44,12 +44,13 @@ describe("listingShareMetadata", () => {
     const ogImages = meta.openGraph?.images;
     const ogImage = Array.isArray(ogImages) ? ogImages[0] : ogImages;
     expect(ogImage).toMatchObject({
-      url: "https://firebasestorage.googleapis.com/v0/b/demo/o/cover.jpg",
+      url: "https://www.rentalpins.com/api/listing-og/bm9sbcUVt1wENj3nlxXT",
       width: 1200,
       height: 630,
+      type: "image/jpeg",
     });
     expect(meta.twitter?.images).toEqual([
-      "https://firebasestorage.googleapis.com/v0/b/demo/o/cover.jpg",
+      "https://www.rentalpins.com/api/listing-og/bm9sbcUVt1wENj3nlxXT",
     ]);
   });
 

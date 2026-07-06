@@ -71,10 +71,10 @@ describe("listing-share", () => {
 
   it("uses direct Firebase cover photo URL for crawlers when available", () => {
     expect(listingOgImageAbsoluteUrl(baseListing)).toBe(
-      "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg"
+      "https://www.rentalpins.com/api/listing-og/abc123def45678901"
     );
     expect(resolveListingOgImageAbsoluteUrl(baseListing)).toBe(
-      "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg"
+      "https://www.rentalpins.com/api/listing-og/abc123def45678901"
     );
   });
 

@@ -56,11 +56,21 @@ export function defaultListingOgImageAbsoluteUrl(): string {
   return `${publicSiteUrl()}${appPath(DEFAULT_LISTING_OG_IMAGE_PATH)}`;
 }
 
-/** Absolute OG preview image — listing cover photo, else site default. */
+/** Stable, WhatsApp-safe preview image on RentalPins (1200×630 JPEG). */
+export function listingSocialPreviewImageAbsoluteUrl(
+  listing: ListingDetail | Pick<ListingDetail, "id">
+): string {
+  return `${publicSiteUrl()}${appPath(`/api/listing-og/${listing.id}`)}`;
+}
+
+/** Absolute OG preview image — optimized social JPEG, else site default. */
 export function resolveListingOgImageAbsoluteUrl(
   listing: ListingDetail | null | undefined
 ): string {
-  return pickListingCoverImageUrl(listing) ?? defaultListingOgImageAbsoluteUrl();
+  if (listing?.id && pickListingCoverImageUrl(listing)) {
+    return listingSocialPreviewImageAbsoluteUrl(listing);
+  }
+  return defaultListingOgImageAbsoluteUrl();
 }
 
 /**
@@ -103,7 +113,10 @@ export function listingOgImageOpenGraphEntry(listing: ListingDetail | null | und
   const { width, height } = listingOgImageMetadataDimensions();
   const title =
     listing?.title?.trim() || DEFAULT_LISTING_SHARE_TITLE;
-  const type = inferOgImageMimeType(url);
+  const type =
+    url.includes("/api/listing-og/")
+      ? "image/jpeg"
+      : inferOgImageMimeType(url);
 
   return {
     url,
