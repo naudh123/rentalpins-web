@@ -12,7 +12,22 @@ export default function robots(): MetadataRoute.Robots {
     };
   }
 
-  const disallow = ["/api/", "/chat/", "/profile/", "/auth/", "/post/", "/saved-listings/", "/saved-searches/"];
+  const disallow = [
+    "/api/",
+    "/admin/",
+    "/chat/",
+    "/profile/",
+    "/auth/",
+    "/post/",
+    "/buy/post/",
+    "/blog/write/",
+    "/my-projects/",
+    "/saved-listings/",
+    "/saved-searches/",
+    "/invest/shortlist/",
+    "/invest/requirements/post/",
+    "/buy/requirements/post/",
+  ];
 
   return {
     rules: [

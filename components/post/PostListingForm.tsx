@@ -17,6 +17,7 @@ import MapsApiKeyMissingNotice, {
   isGoogleMapsConfigured,
 } from "@/components/MapsApiKeyMissingNotice";
 import LocationPicker, { type PickedLocation } from "@/components/post/LocationPicker";
+import PostListingIntentSwitch from "@/components/post/PostListingIntentSwitch";
 import AccountUnavailable from "@/components/auth/AccountUnavailable";
 import { useAuth } from "@/components/providers/AuthProvider";
 import {
@@ -67,6 +68,7 @@ import {
   POST_LISTING_TITLE_MAX,
   POST_LISTING_TITLE_MIN,
 } from "@/lib/post-listing-limits";
+import { rentFlowLooksLikeSaleListing } from "@/lib/post-listing-intent";
 
 const POST_FLOW_VERSION = "2026-05-post-flow-v1";
 const POST_FLOW_BATCH = 82;
@@ -121,6 +123,8 @@ export default function PostListingForm({
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [priceUnit, setPriceUnit] = useState(isSale ? "total" : "per month");
+  const saleMisfileWarning =
+    !isSale && rentFlowLooksLikeSaleListing(title, price, priceUnit);
   const [contactMobile, setContactMobile] = useState("+91 ");
   const [location, setLocation] = useState<PickedLocation | null>(null);
   const [photoSlots, setPhotoSlots] = useState<ListingPhotoSlot[]>([]);
@@ -896,7 +900,7 @@ export default function PostListingForm({
             : "Edit draft"
           : isSale
             ? "List property for sale"
-            : "Post a listing"}
+            : "Post for rent"}
       </h1>
       <p className="mt-2 text-sm text-[var(--muted)]">
         {isSale
@@ -906,9 +910,38 @@ export default function PostListingForm({
             : isEditMode
               ? "Update your draft, then continue to activation and payment."
               : allowUnverifiedOwnerContact
-                ? "Step 1: save draft with your WhatsApp number · Step 2: activate to go live. OTP verification is optional."
-                : "Step 1: save draft · Step 2: choose plan & pay to go live (same as the app)."}
+                ? "Renters see this on the rent map — use monthly rent, not a sale price. Step 1: save draft · Step 2: activate."
+                : "Renters see this on the rent map — use monthly rent, not a sale price. Step 1: save draft · Step 2: activate and pay."}
       </p>
+
+      {!isEditMode || !editingLiveListing ? (
+        <div className="mt-5">
+          <PostListingIntentSwitch
+            value={transactionType}
+            listingId={listingId}
+            locked={isEditMode && editingLiveListing}
+          />
+        </div>
+      ) : null}
+
+      {!isSale && saleMisfileWarning ? (
+        <div
+          className="mt-4 rounded-xl border border-amber-300/80 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          role="status"
+        >
+          <p className="font-semibold">This looks like a property for sale</p>
+          <p className="mt-1 text-xs leading-relaxed text-amber-900/90">
+            Sale prices belong on the buy map. Switch to{" "}
+            <strong>Sell property</strong> above so buyers find your listing in the right place.
+          </p>
+          <Link
+            href={appPath(listingId ? `/buy/post?listingId=${listingId}` : "/buy/post")}
+            className="mt-2 inline-block text-xs font-semibold text-[var(--brand-navy)] underline"
+          >
+            List for sale instead →
+          </Link>
+        </div>
+      ) : null}
 
       {!isGoogleMapsConfigured() && (
         <MapsApiKeyMissingNotice className="mt-4" />

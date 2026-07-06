@@ -3,30 +3,29 @@
 import { Suspense } from "react";
 import ListingBackLink from "@/components/listings/ListingBackLink";
 import ListingShareBar from "@/components/listings/ListingShareBar";
+import type { ListingDetail } from "@/lib/types/listing";
 
 interface Props {
-  listingId: string;
-  title: string;
-  listingUrl: string;
+  listing: ListingDetail;
 }
 
-function NavInner({ listingId, title, listingUrl }: Props) {
+function NavInner({ listing }: Props) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <ListingBackLink listingId={listingId} />
-      <ListingShareBar listingId={listingId} title={title} url={listingUrl} />
+      <ListingBackLink listingId={listing.id} />
+      <ListingShareBar listing={listing} />
     </div>
   );
 }
 
-export default function ListingDetailNav(props: Props) {
+export default function ListingDetailNav({ listing }: Props) {
   return (
     <Suspense
       fallback={
         <span className="text-sm text-[var(--muted)]">Loading…</span>
       }
     >
-      <NavInner {...props} />
+      <NavInner listing={listing} />
     </Suspense>
   );
 }

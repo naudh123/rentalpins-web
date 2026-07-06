@@ -4,7 +4,7 @@ import { HOME_INVESTMENT_INTEL } from "@/lib/seo/home-page-content";
 
 export default function HomeInvestmentIntelSection() {
   return (
-    <section className="rp-home-section border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]">
+    <section className="rp-home-section">
       <div className="rp-home-section-inner">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--invest-emerald)]">
@@ -21,22 +21,36 @@ export default function HomeInvestmentIntelSection() {
         <ul className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {HOME_INVESTMENT_INTEL.areas.map((area) => (
             <li key={area.name}>
-              <article className="rp-home-area-card h-full text-center">
-                <h3 className="font-serif text-base text-[var(--brand-navy)]">{area.name}</h3>
-                <p className="mt-2 text-xs font-medium uppercase tracking-wide text-[var(--invest-emerald)]">
-                  {area.tag}
-                </p>
-              </article>
+              <Link href={appPath(area.href)} className="block h-full no-underline">
+                <article className="rp-home-area-card rp-home-area-card--invest h-full text-center transition">
+                  <h3 className="font-serif text-base text-[var(--brand-navy)]">{area.name}</h3>
+                  <p className="mt-2 text-xs font-medium uppercase tracking-wide text-[var(--invest-emerald)]">
+                    {area.tag}
+                  </p>
+                </article>
+              </Link>
             </li>
           ))}
         </ul>
 
-        <div className="mt-8 text-center">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href={appPath(HOME_INVESTMENT_INTEL.cta.href)}
-            className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--invest-emerald)_35%,var(--border))] px-6 py-3 text-sm font-semibold text-[var(--invest-emerald)] transition hover:border-[var(--invest-emerald)]"
+            className="inline-flex rounded-full bg-[var(--invest-emerald)] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
           >
             {HOME_INVESTMENT_INTEL.cta.label}
+          </Link>
+          <Link
+            href={appPath(HOME_INVESTMENT_INTEL.advisorCta.href)}
+            className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--invest-emerald)_35%,var(--border))] px-6 py-3 text-sm font-semibold text-[var(--invest-emerald)] transition hover:border-[var(--invest-emerald)]"
+          >
+            {HOME_INVESTMENT_INTEL.advisorCta.label}
+          </Link>
+          <Link
+            href={appPath(HOME_INVESTMENT_INTEL.projectsCta.href)}
+            className="text-sm font-semibold text-[var(--brand-navy)] underline-offset-2 hover:underline"
+          >
+            {HOME_INVESTMENT_INTEL.projectsCta.label}
           </Link>
         </div>
       </div>

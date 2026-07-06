@@ -6,6 +6,10 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { useSavedListings } from "@/components/providers/SavedListingsProvider";
 import { appPath } from "@/lib/config";
 import { trackEvent } from "@/lib/ga4";
+import {
+  addToInvestShortlist,
+  removeFromInvestShortlist,
+} from "@/lib/invest/saved-invest-shortlist";
 
 interface Props {
   listingId: string;
@@ -13,6 +17,12 @@ interface Props {
   className?: string;
   /** Optional: if provided, uses this as the post-login redirect. */
   nextUrl?: string;
+  /** When set, syncs to invest shortlist on save (sale / invest flow). */
+  investShortlistMeta?: {
+    title: string;
+    priceLabel: string | null;
+    locality: string | null;
+  };
 }
 
 function HeartIcon({ filled }: { filled: boolean }) {
@@ -38,6 +48,7 @@ export default function ListingSaveButton({
   size = "md",
   className = "",
   nextUrl,
+  investShortlistMeta,
 }: Props) {
   const router = useRouter();
   const { user } = useAuth();
@@ -69,7 +80,19 @@ export default function ListingSaveButton({
       const currentlySaved = saved;
       await toggleSaved(listingId);
       if (!currentlySaved) {
-        // saved event is already tracked in saveListing()
+        if (investShortlistMeta) {
+          addToInvestShortlist({
+            listingId,
+            title: investShortlistMeta.title,
+            priceLabel: investShortlistMeta.priceLabel,
+            locality: investShortlistMeta.locality,
+            notes: "",
+            targetYieldPercent: null,
+            corridorId: null,
+          });
+        }
+      } else if (investShortlistMeta) {
+        removeFromInvestShortlist(listingId);
       }
     } finally {
       setBusy(false);

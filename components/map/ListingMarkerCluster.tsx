@@ -25,7 +25,7 @@ import {
   coLocatedPinIndexById,
   markerDisplayPosition,
 } from "@/lib/map-pin-offset";
-import { buildPriceMarkerIcon, buildHoverRingIcon, buildUnitCountMarkerIcon, formatPinPrice } from "@/lib/map-pins";
+import { buildPriceMarkerIcon, buildHoverRingIcon, buildUnitCountMarkerIcon, formatMapPinLabel } from "@/lib/map-pins";
 import { resolveHoverRingPosition } from "@/lib/map-hover-ring-position";
 import {
   afterFitBoundsClampMobile,
@@ -63,33 +63,29 @@ interface Props {
   onSelect: (listing: ListingCardData) => void;
 }
 
+function isSalePin(listing: ListingCardData, saleMode = false): boolean {
+  if (saleMode) return true;
+  if (listing.transactionType === "sale") return true;
+  return (listing.priceUnit ?? "").trim().toLowerCase() === "total";
+}
+
 function markerIcon(
   listing: ListingCardData,
   selectedId: string | null,
   highlightedId: string | null,
-  labelTier: MapPinLabelTier
+  labelTier: MapPinLabelTier,
+  saleMode = false
 ): google.maps.Icon | undefined {
   if (typeof google === "undefined") return undefined;
-  const detailed = labelTier === "detailed";
-  const label = detailed
-    ? listing.price > 0
-      ? listing.price.toLocaleString(
-          listing.homeIso === "IN" ? "en-IN" : undefined,
-          { maximumFractionDigits: 0 }
-        )
-      : "Ask"
-    : formatPinPrice(listing.price, listing.homeIso, {
-        category: listing.category,
-        priceUnit: listing.priceUnit,
-        transactionType: listing.transactionType,
-      });
+  const sale = isSalePin(listing, saleMode);
+  const label = formatMapPinLabel(listing, labelTier);
   return buildPriceMarkerIcon(
     label,
     {
       selected: listing.id === selectedId,
       highlighted: listing.id === highlightedId && listing.id !== selectedId,
       promoted: listing.isPromoted,
-      sale: listing.transactionType === "sale",
+      sale,
     },
     google.maps
   );
@@ -107,19 +103,7 @@ function markerZIndex(
 }
 
 function markerTitle(listing: ListingCardData, labelTier: MapPinLabelTier): string {
-  const detailed = labelTier === "detailed";
-  const priceLabel = detailed
-    ? listing.price > 0
-      ? listing.price.toLocaleString(
-          listing.homeIso === "IN" ? "en-IN" : undefined,
-          { maximumFractionDigits: 0 }
-        )
-      : "Ask"
-    : formatPinPrice(listing.price, listing.homeIso, {
-        category: listing.category,
-        priceUnit: listing.priceUnit,
-        transactionType: listing.transactionType,
-      });
+  const priceLabel = formatMapPinLabel(listing, labelTier);
   const location = listing.locationName ? `, ${listing.locationName}` : "";
   return `${listing.title}${location}, ${priceLabel}`;
 }
@@ -145,9 +129,11 @@ function applyListingMarkerVisual(
     position: { lat: number; lng: number };
     stateMap: Map<string, MarkerVisualState>;
     listingId: string;
+    saleMode?: boolean;
   }
 ) {
-  const { selectedId, highlightedId, labelTier, position, stateMap, listingId } = opts;
+  const { selectedId, highlightedId, labelTier, position, stateMap, listingId, saleMode = false } =
+    opts;
   const svgKey = listingMarkerSvgKey(listing, labelTier);
   const styleKey = listingMarkerStyleKey(listing.id, selectedId, highlightedId);
   const hoverOnly = isListingHoverOnlyHighlight(listing.id, selectedId, highlightedId);
@@ -159,7 +145,7 @@ function applyListingMarkerVisual(
   }
   const iconStyleChanged = listingMarkerIconStyleChanged(prev?.styleKey, styleKey, hoverOnly);
   if (!prev || prev.svgKey !== svgKey || iconStyleChanged) {
-    marker.setIcon(markerIcon(listing, selectedId, highlightedId, labelTier));
+    marker.setIcon(markerIcon(listing, selectedId, highlightedId, labelTier, saleMode));
   }
   if (!prev || prev.title !== title) marker.setTitle(title);
   if (!prev || prev.z !== z) marker.setZIndex(z);
@@ -377,6 +363,7 @@ export default function ListingMarkerCluster({
             position,
             stateMap: markerStateRef.current,
             listingId: id,
+            saleMode,
           });
         }
         for (const key of buildingKeysForAffectedListings(buildingGroups, affected)) {
@@ -433,7 +420,7 @@ export default function ListingMarkerCluster({
         marker = new google.maps.Marker({
           position,
           title,
-          icon: markerIcon(listing, selectedId, highlightedId, labelTier),
+          icon: markerIcon(listing, selectedId, highlightedId, labelTier, saleMode),
           zIndex: z,
           optimized: true,
           clickable: true,
@@ -463,6 +450,7 @@ export default function ListingMarkerCluster({
           position,
           stateMap: markerStateRef.current,
           listingId: listing.id,
+          saleMode,
         });
       }
     }

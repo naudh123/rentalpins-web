@@ -71,6 +71,18 @@ export function scoreAgentConversation(params: {
   const signals: string[] = [];
 
   const toolPoints: Record<string, number> = {
+    captureConversationLead: 60,
+    submitProjectEnquiry: 55,
+    scheduleSiteVisit: 50,
+    connectToSales: 35,
+    lookupProjectDetails: 18,
+    listProjectUnits: 15,
+    compareSimilarProjects: 12,
+    getProjectDetails: 10,
+    searchTricityProjects: 10,
+    estimateProjectEmi: 12,
+    searchProjectFaqs: 8,
+    getAreaContext: 8,
     scheduleContact: 50,
     searchKnowledge: 12,
     buildMapSearch: 20,
@@ -110,6 +122,9 @@ export function scoreAgentConversation(params: {
     .toLowerCase();
 
   const patterns: { re: RegExp; pts: number; signal: string }[] = [
+    { re: /\b[\w.+-]+@[\w-]+\.[a-z]{2,}\b/i, pts: 20, signal: "email_shared" },
+    { re: /\b[6-9]\d{9}\b/, pts: 18, signal: "phone_shared" },
+    { re: /\b(call me|my number|whatsapp me|contact me)\b/i, pts: 15, signal: "callback_requested" },
     { re: /\b(lakh|crore|₹|budget|under \d)/i, pts: 12, signal: "budget_mentioned" },
     { re: /\b(invest|investment|roi|rental yield)/i, pts: 10, signal: "invest_intent" },
     { re: /\b(white.?label|build|develop|platform|portal)/i, pts: 15, signal: "dev_client_intent" },
@@ -131,12 +146,22 @@ export function scoreAgentConversation(params: {
 
   const highIntent =
     score >= 40 ||
+    params.toolsUsed.includes("captureConversationLead") ||
     params.toolsUsed.includes("scheduleContact") ||
+    params.toolsUsed.includes("submitProjectEnquiry") ||
+    params.toolsUsed.includes("scheduleSiteVisit") ||
     params.toolsUsed.includes("matchBuyerRequirement") ||
-    (params.surface === "showcase" && score >= 30);
+    (params.surface === "showcase" && score >= 30) ||
+    (params.surface === "project" && score >= 35);
 
   let interest: string | undefined;
-  if (params.toolsUsed.includes("scheduleContact")) {
+  if (
+    params.toolsUsed.includes("submitProjectEnquiry") ||
+    params.toolsUsed.includes("scheduleSiteVisit") ||
+    params.toolsUsed.includes("captureConversationLead")
+  ) {
+    interest = "Project site visit / enquiry";
+  } else if (params.toolsUsed.includes("scheduleContact")) {
     interest = params.surface === "showcase" ? "PropTech strategy call" : "Agent follow-up";
   } else if (params.surface === "showcase") interest = "PropTech development";
   else if (params.toolsUsed.includes("matchBuyerRequirement")) interest = "Buy requirement";

@@ -21,6 +21,20 @@ import {
   searchRentBlogInsights,
   searchRentGuides,
 } from "./knowledge";
+import {
+  formatTricityAreaProfile,
+  searchTricityAreas,
+} from "./tricity-area-knowledge";
+import {
+  formatInvestmentPlaybook,
+  matchInvestmentsByCriteria,
+  searchTricityInvestments,
+} from "./tricity-investment-knowledge";
+import { formatPlanningTopic, searchTricityPlanning } from "./tricity-planning-knowledge";
+import {
+  formatTransactionGuide,
+  searchPropertyTransactionGuides,
+} from "./tricity-transaction-knowledge";
 import { buildAgentMapUrl } from "./map-url";
 import { parseNaturalLanguageSearch } from "./parse-query-server";
 import { searchKnowledge } from "./rag";
@@ -43,6 +57,10 @@ const SURFACE_TOOL_NAMES: Record<AgentSurface, string[]> = {
   advisor: [
     "searchKnowledge",
     "searchAreaGuides",
+    "searchTricityAreas",
+    "searchTricityInvestments",
+    "searchTricityPlanning",
+    "searchPropertyTransactionGuides",
     "searchRentGuides",
     "compareAreas",
     "buildMapSearch",
@@ -61,6 +79,10 @@ const SURFACE_TOOL_NAMES: Record<AgentSurface, string[]> = {
     "searchKnowledge",
     "buildMapSearch",
     "searchAreaGuides",
+    "searchTricityAreas",
+    "searchTricityInvestments",
+    "searchTricityPlanning",
+    "searchPropertyTransactionGuides",
     "searchRentGuides",
     "sampleListings",
     "searchFaqs",
@@ -82,6 +104,20 @@ const SURFACE_TOOL_NAMES: Record<AgentSurface, string[]> = {
     "compareAreas",
     "getMarketInsight",
     "searchBuyGuides",
+  ],
+  project: [
+    "lookupProjectDetails",
+    "getProjectDetails",
+    "listProjectUnits",
+    "compareSimilarProjects",
+    "searchTricityProjects",
+    "estimateProjectEmi",
+    "searchProjectFaqs",
+    "getAreaContext",
+    "submitProjectEnquiry",
+    "scheduleSiteVisit",
+    "connectToSales",
+    "captureConversationLead",
   ],
 };
 
@@ -118,6 +154,100 @@ export function createPropertyAgentTools(
       }),
       execute: async ({ query }) => ({
         guides: searchAreaGuides(query, 4),
+      }),
+    }),
+
+    searchTricityAreas: tool({
+      description:
+        "Deep Tricity locality profiles — core hubs AND outer belts (Kurali, Banur, Chunni, Rajpura, Landran, Derabassi, Lalru, Siswan, GMADA roads). Returns commute anchors, rent/buy notes, indicative price bands, map centre, and FAQs.",
+      inputSchema: z.object({
+        query: z
+          .string()
+          .describe(
+            "Locality name or corridor, e.g. Kurali plots, PG near Banur, Chunni Kalan, Derabassi rent"
+          ),
+        limit: z.number().min(1).max(6).optional(),
+      }),
+      execute: async ({ query, limit }) => ({
+        areas: searchTricityAreas(query, limit ?? 4).map(formatTricityAreaProfile),
+      }),
+    }),
+
+    searchTricityInvestments: tool({
+      description:
+        "Tricity investment playbooks — best yield, appreciation, and budget-band strategies in and around Chandigarh Tricity. Covers Mohali/Aerocity professional yield, Zirakpur commuter, Kharar–CU and Jhanjeri student PG, New Chandigarh plots, Kurali/Banur GMADA entry, projects/RERA, and under-₹40L / ₹40–90L / ₹1Cr+ bands. Never invent ROI — returns thesis, risks, and map search tips.",
+      inputSchema: z.object({
+        query: z
+          .string()
+          .describe(
+            "Investment question, e.g. best yield under 50 lakh, plots for appreciation, student PG invest Kharar, Aerocity vs Zirakpur"
+          ),
+        budgetLakh: z.number().optional().describe("Optional budget cap in lakh for matching"),
+        strategy: z
+          .enum([
+            "rental-yield",
+            "capital-appreciation",
+            "plot-long-hold",
+            "student-yield",
+            "end-user-liquidity",
+            "project-entry",
+            "mixed",
+          ])
+          .optional(),
+        limit: z.number().min(1).max(6).optional(),
+      }),
+      execute: async ({ query, budgetLakh, strategy, limit }) => {
+        const fromQuery = searchTricityInvestments(query, limit ?? 4);
+        const fromCriteria =
+          budgetLakh != null || strategy
+            ? matchInvestmentsByCriteria({ budgetLakh, strategy })
+            : [];
+        const seen = new Set<string>();
+        const merged = [...fromQuery, ...fromCriteria].filter((p) => {
+          if (seen.has(p.id)) return false;
+          seen.add(p.id);
+          return true;
+        });
+        return {
+          playbooks: merged.slice(0, limit ?? 4).map(formatInvestmentPlaybook),
+          disclaimer:
+            "Indicative bands only — cross-check live buy/rent map pins. Not financial or legal advice.",
+        };
+      },
+    }),
+
+    searchTricityPlanning: tool({
+      description:
+        "Tricity urban planning & land-use — GMADA master plan, MC limits, residential vs mixed-use vs industrial zoning, PSIEC industrial estates, Mohali IT Park (STPI) vs IT City (Sector 82/83), CLU. Use when users ask about master plan, municipal limits, PSIEC, warehouse zones, SCO mixed-use, or IT Park/City confusion.",
+      inputSchema: z.object({
+        query: z
+          .string()
+          .describe(
+            "Planning topic, e.g. GMADA master plan, MC limits Mohali, PSIEC Rajpura, IT Park vs IT City, mixed use SCO, industrial plot Banur"
+          ),
+        limit: z.number().min(1).max(6).optional(),
+      }),
+      execute: async ({ query, limit }) => ({
+        topics: searchTricityPlanning(query, limit ?? 4).map(formatPlanningTopic),
+        disclaimer: "Planning guidance only — verify zoning, CLU, and approvals with authorities and a lawyer.",
+      }),
+    }),
+
+    searchPropertyTransactionGuides: tool({
+      description:
+        "Sale agreements (ATS), sale deeds, SRO registration, ownership transfer, society NOC, mutation, token precautions, POA risks, RERA builder flow — plus how RentalPins guides buyers/sellers through these steps (not legal advice; recommend advocate for drafting).",
+      inputSchema: z.object({
+        query: z
+          .string()
+          .describe(
+            "Transaction question, e.g. how sale deed is written, agreement to sell steps, ownership transfer, token precautions, society NOC, RentalPins help with registration"
+          ),
+        limit: z.number().min(1).max(6).optional(),
+      }),
+      execute: async ({ query, limit }) => ({
+        guides: searchPropertyTransactionGuides(query, limit ?? 4).map(formatTransactionGuide),
+        rentalPinsNote:
+          "RentalPins guides discovery and due diligence — engage a Tricity property advocate for ATS/deed drafting and Sub-Registrar registration.",
       }),
     }),
 

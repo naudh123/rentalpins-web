@@ -48,11 +48,11 @@ const prodChecks = [
       : null,
   () =>
     !process.env.RESEND_API_KEY?.trim()
-      ? "Set RESEND_API_KEY to email high-intent /developers agent leads"
+      ? "Set RESEND_API_KEY to email project leads + /developers agent leads"
       : null,
   () =>
     !process.env.LEAD_NOTIFICATION_EMAIL?.trim()
-      ? "Set LEAD_NOTIFICATION_EMAIL (e.g. admin@rentalpins.com) for agent lead alerts"
+      ? "Set LEAD_NOTIFICATION_EMAIL (e.g. admin@rentalpins.com) for all lead alerts"
       : null,
 ];
 

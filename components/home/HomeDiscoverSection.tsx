@@ -33,7 +33,7 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-orange)]">
-              For renters & buyers
+              For renters
             </p>
             <h2
               id="home-renter-heading"

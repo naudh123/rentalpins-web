@@ -31,10 +31,15 @@ function renderClusterBubble(
   const dense = count >= 25;
   const fill = dense ? palette.denseFill : palette.sparseFill;
   const stroke = dense ? palette.denseStroke : palette.sparseStroke;
+  const labelColor = dense ? "#ffffff" : sale ? "#1E3A6E" : "#ffffff";
+  const countLabel = count >= 1000 ? `${Math.round(count / 100) / 10}k` : String(count);
+  const fontSize = count >= 100 ? 10 : 12;
+  const textY = size / 2 + fontSize * 0.35;
 
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
   <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 2}" fill="${fill}" fill-opacity="0.92" stroke="${stroke}" stroke-width="2"/>
   <circle cx="${size / 2}" cy="${size / 2}" r="${size / 2 - 5}" fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="1"/>
+  <text x="${size / 2}" y="${textY}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="${fontSize}" font-weight="400" fill="${labelColor}">${countLabel}</text>
 </svg>`;
 
   const title = clusterTooltip(count, sale);
@@ -49,17 +54,11 @@ function renderClusterBubble(
       scaledSize: new google.maps.Size(size, size),
       anchor: new google.maps.Point(size / 2, size / 2),
     },
-    label: {
-      text: count >= 1000 ? `${Math.round(count / 100) / 10}k` : String(count),
-      color: "#ffffff",
-      fontSize: count >= 100 ? "10px" : "12px",
-      fontWeight: "700",
-    },
     zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
   });
 }
 
-/** Brand-styled cluster bubbles (navy default, orange when dense). */
+/** Rent clusters — production navy (dense = orange). */
 export const rentalPinsClusterRenderer: Renderer = {
   render(cluster: Cluster) {
     return renderClusterBubble(cluster, {
@@ -71,16 +70,16 @@ export const rentalPinsClusterRenderer: Renderer = {
   },
 };
 
-/** Sale map clusters — navy default, champagne gold when dense. */
+/** Sale map clusters — amber pin identity. */
 export const salePinsClusterRenderer: Renderer = {
   render(cluster: Cluster) {
     return renderClusterBubble(
       cluster,
       {
-        sparseFill: "#1E3A6E",
-        sparseStroke: "#0F2554",
-        denseFill: "#C9A227",
-        denseStroke: "#B8922A",
+        sparseFill: "#fbb316",
+        sparseStroke: "#e5a010",
+        denseFill: "#1E3A6E",
+        denseStroke: "#0F2554",
       },
       true
     );

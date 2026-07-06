@@ -1,30 +1,31 @@
 import { getLiveCities } from "@/lib/cities-config";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
+import { getStaticRentalCityHubSitemapPaths } from "@/lib/seo/sitemap-config";
 
 export const revalidate = 86400;
 
 export async function GET() {
   const now = new Date().toISOString();
   const cities = getLiveCities();
-  const urls = [
-    ...cities.map((city) =>
-      toSitemapEntry(`/rentals/${city.countrySlug}/${city.slug}`, {
-        lastmod: now,
-        changefreq: "daily",
-        priority: 0.9,
-      })
-    ),
-    ...cities.flatMap((city) =>
-      RENTAL_CATEGORIES.map((cat) =>
-        toSitemapEntry(`/rentals/${city.countrySlug}/${city.slug}/${cat.slug}`, {
-          lastmod: now,
-          changefreq: "daily",
-          priority: 0.75,
-        })
-      )
-    ),
-  ];
+  const pathSet = new Set<string>(getStaticRentalCityHubSitemapPaths());
+  for (const city of cities) {
+    pathSet.add(`/rentals/${city.countrySlug}/${city.slug}`);
+    for (const cat of RENTAL_CATEGORIES) {
+      pathSet.add(`/rentals/${city.countrySlug}/${city.slug}/${cat.slug}`);
+    }
+  }
+
+  const urls = [...pathSet].map((path) => {
+    const segments = path.split("/").filter(Boolean);
+    const isCategory = segments.length === 4;
+    const isStaticHub = segments.length === 2 && segments[0] === "rentals";
+    return toSitemapEntry(path, {
+      lastmod: now,
+      changefreq: "daily",
+      priority: isCategory ? 0.75 : isStaticHub ? 0.88 : 0.9,
+    });
+  });
   return new Response(buildSitemapXml(urls), {
     headers: { "Content-Type": "application/xml; charset=utf-8" },
   });

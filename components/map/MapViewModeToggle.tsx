@@ -15,11 +15,11 @@ const MODES: { id: MapViewMode; label: string; title: string }[] = [
   { id: "satellite", label: "Sat", title: "Always show satellite imagery" },
 ];
 
-/** Zillow-style map surface picker — bottom-right on desktop, above mobile sheet. */
+/** Zillow-style map surface picker — left of Google zoom/fullscreen (desktop), above mobile sheet. */
 export default function MapViewModeToggle({ mode, onChange, showingSatellite }: Props) {
   return (
     <div
-      className="pointer-events-auto absolute bottom-[max(5.5rem,env(safe-area-inset-bottom))] right-3 z-20 flex rounded-full border border-[var(--border)] bg-[var(--surface)]/95 p-0.5 shadow-[0_8px_32px_rgba(30,58,110,0.12)] backdrop-blur-sm md:bottom-4"
+      className="pointer-events-auto absolute bottom-[max(5.5rem,env(safe-area-inset-bottom))] right-3 z-20 flex rounded-full border border-[var(--border)] bg-[var(--surface)]/95 p-0.5 shadow-[0_8px_32px_rgba(30,58,110,0.12)] backdrop-blur-sm md:bottom-4 md:right-14"
       role="group"
       aria-label="Map view mode"
     >

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { canonicalUrl } from "@/lib/seo";
+import { isProtectedRoute } from "@/lib/seo/protectedRoutes";
 import {
   getProgrammaticPageIndexability,
   resolveCanonicalParentPath,
@@ -21,6 +22,13 @@ export interface ProgrammaticMetadataInput {
 export function applyProgrammaticIndexability(
   input: ProgrammaticMetadataInput
 ): Metadata {
+  if (isProtectedRoute(input.path)) {
+    return {
+      ...input.base,
+      robots: { index: true, follow: true },
+    };
+  }
+
   const policy = getProgrammaticPageIndexability({
     isCityLevel: input.isCityLevel,
     area: input.areaSlug,

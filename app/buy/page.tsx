@@ -46,6 +46,30 @@ export default function BuyIndexPage() {
           <Link href={appPath("/flats-for-sale")} className="rp-btn rp-btn-secondary px-6 py-3">
             Flats for sale
           </Link>
+          <Link href={appPath("/projects")} className="rp-btn rp-btn-secondary px-6 py-3">
+            New projects
+          </Link>
+        </div>
+
+        <div className="mt-14 rounded-2xl border border-[color-mix(in_srgb,var(--sale-gold)_30%,white)] bg-[color-mix(in_srgb,var(--sale-gold)_8%,white)] p-6 sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--sale-gold)]">
+            Developer launches
+          </p>
+          <h2 className="mt-2 font-serif text-2xl text-[var(--brand-navy)]">
+            Premium project microsites
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-[var(--muted)]">
+            Browse RERA projects across Mohali, Zirakpur, Kharar, and Tricity — live plot inventory,
+            master plans, and private site-visit enquiries.
+          </p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link href={appPath("/projects")} className="rp-btn rp-btn-primary px-5 py-2.5">
+              Explore projects
+            </Link>
+            <Link href={appPath("/builders")} className="rp-btn rp-btn-secondary px-5 py-2.5">
+              Verified builders
+            </Link>
+          </div>
         </div>
 
         <div className="mt-14">

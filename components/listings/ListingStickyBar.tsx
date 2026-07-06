@@ -2,11 +2,41 @@
 
 import { useEffect, useState } from "react";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
+import ListingShareBar from "@/components/listings/ListingShareBar";
 import { trackLeadStarted, trackLeadSubmitted } from "@/lib/ga4";
+import type { ListingDetail } from "@/lib/types/listing";
 
 const SENTINEL_ID = "listing-detail-sentinel";
 
+type ShareListing = Pick<
+  ListingDetail,
+  | "id"
+  | "title"
+  | "price"
+  | "priceUnit"
+  | "category"
+  | "subCategory"
+  | "locationName"
+  | "transactionType"
+  | "homeIso"
+  | "attributes"
+  | "imageUrls"
+  | "imageUrl"
+  | "urlSlug"
+  | "lat"
+  | "lng"
+  | "description"
+  | "isPromoted"
+  | "viewsCount"
+  | "inquiryCount"
+  | "ownerPhone"
+  | "ownerUid"
+  | "createdAt"
+  | "updatedAt"
+>;
+
 interface Props {
+  listing: ShareListing;
   listingId: string;
   title: string;
   priceLabel: string;
@@ -15,6 +45,7 @@ interface Props {
 }
 
 function StickyBarInner({
+  listing,
   listingId,
   title,
   priceLabel,
@@ -44,6 +75,7 @@ function StickyBarInner({
           </p>
         </div>
         <ListingSaveButton listingId={listingId} size="sm" />
+        <ListingShareBar listing={listing} iconOnly />
         {!isMobile && telHref ? (
           <a
             href={telHref}

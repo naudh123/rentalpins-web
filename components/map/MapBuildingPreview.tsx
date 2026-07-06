@@ -6,10 +6,19 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard } from "@/lib/types/listing";
-import { listingDetailHref } from "@/lib/listing-links";
+import { listingDetailHref, persistListingReturnPath } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import { primaryListingInGroup, unitPriceChips } from "@/lib/map-building-groups";
+import ListingShareBar from "@/components/listings/ListingShareBar";
+
+function listingForShare(listing: ListingCard) {
+  return {
+    ...listing,
+    imageUrls: listing.imageUrl ? [listing.imageUrl] : [],
+    ownerUid: "",
+  };
+}
 
 interface Props {
   listings: ListingCard[];
@@ -67,16 +76,18 @@ export default function MapBuildingPreview({
     >
       <div className="rp-glass overflow-hidden rounded-[var(--radius-xl)] shadow-[var(--shadow-card)] ring-1 ring-[var(--brand-navy)]/8">
         <div className="relative p-3">
-          <button
-            ref={closeRef}
-            type="button"
-            onClick={onClose}
-            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-elevated)] text-sm text-[var(--muted)] hover:text-[var(--text)]"
-            aria-label="Close preview"
-          >
-            ×
-          </button>
-          <p className="pr-8 font-medium leading-snug text-[var(--brand-navy)]">{title}</p>
+          <div className="absolute right-2 top-2">
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={onClose}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-elevated)] text-sm text-[var(--muted)] hover:text-[var(--text)]"
+              aria-label="Close preview"
+            >
+              ×
+            </button>
+          </div>
+          <p className="pr-6 font-medium leading-snug text-[var(--brand-navy)]">{title}</p>
           <p className="mt-0.5 text-xs text-[var(--muted)]">
             {listings.length} rentals at this address — pick a unit
           </p>
@@ -84,8 +95,7 @@ export default function MapBuildingPreview({
             {chips.map((chip) => {
               const listing = listings.find((l) => l.id === chip.listingId);
               const href = listingDetailHref(
-                listing ? listingToSlugInput(listing) : chip.listingId,
-                returnPathFor(chip.listingId)
+                listing ? listingToSlugInput(listing) : chip.listingId
               );
               return (
                 <button
@@ -102,16 +112,19 @@ export default function MapBuildingPreview({
               );
             })}
           </div>
-          <Link
-            href={listingDetailHref(
-              listingToSlugInput(primary),
-              returnPathFor(primary.id)
-            )}
-            onClick={() => trackListingClick(primary.id, "map")}
-            className="rp-btn rp-btn-primary mt-3 w-full py-2.5 text-sm no-underline"
-          >
-            View all {listings.length} listings
-          </Link>
+          <div className="mt-3 flex items-center gap-2">
+            <Link
+              href={listingDetailHref(listingToSlugInput(primary))}
+              onClick={() => {
+                persistListingReturnPath(returnPathFor(primary.id));
+                trackListingClick(primary.id, "map");
+              }}
+              className="rp-btn rp-btn-primary min-w-0 flex-1 py-2.5 text-sm no-underline"
+            >
+              View all {listings.length} listings
+            </Link>
+            <ListingShareBar listing={listingForShare(primary)} iconOnly />
+          </div>
         </div>
       </div>
     </motion.div>

@@ -44,7 +44,7 @@ export function marketingPageExports(slug: string) {
   const resolvedConfig: MarketingPageConfig = enrichMarketingPageConfig(config);
   const competitor = COMPETITOR_PAGES[slug];
   const metadata = marketingMetadata(resolvedConfig);
-  function Page() {
+  async function Page() {
     return (
       <MarketingLandingPage
         config={resolvedConfig}

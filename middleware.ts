@@ -21,6 +21,20 @@ function decodePath(pathname: string): string {
   }
 }
 
+/** City hub slugs with static /rentals/{city} pages (skip legacy → /rentals/in/{city} redirect). */
+const RENTAL_STATIC_CITY_HUBS = ["chandigarh"] as const;
+
+function isStaticRentalCityHub(pathname: string): boolean {
+  const segments = pathname.split("/").filter(Boolean);
+  return (
+    segments[0] === "rentals" &&
+    segments.length === 2 &&
+    RENTAL_STATIC_CITY_HUBS.includes(
+      segments[1].toLowerCase() as (typeof RENTAL_STATIC_CITY_HUBS)[number]
+    )
+  );
+}
+
 /**
  * Legacy URLs:
  * - /rentals/{city} → /rentals/{country}/{city}
@@ -33,6 +47,15 @@ function hostName(request: NextRequest): string {
 
 export function middleware(request: NextRequest) {
   const host = hostName(request);
+  const { pathname } = request.nextUrl;
+
+  // App Links / Universal Links: must be served on each host without redirect.
+  if (
+    pathname === "/.well-known/assetlinks.json" ||
+    pathname === "/.well-known/apple-app-site-association"
+  ) {
+    return NextResponse.next();
+  }
 
   if (host === "rentalpins.com") {
     const url = request.nextUrl.clone();
@@ -49,7 +72,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
-  const { pathname } = request.nextUrl;
   const decoded = decodePath(pathname);
 
   const listingNorm = normalizeListingRequestUrl(request);
@@ -120,6 +142,10 @@ export function middleware(request: NextRequest) {
   }
 
   if (isIndianGscRentalPath(decoded)) {
+    return NextResponse.next();
+  }
+
+  if (isStaticRentalCityHub(decoded)) {
     return NextResponse.next();
   }
 

@@ -825,9 +825,9 @@ export const CATEGORY_LANDING_PAGES: Record<string, MarketingPageConfig> = {
 export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
   "pg-near-chandigarh-university": {
     slug: "pg-near-chandigarh-university",
-    title: "PG Near Chandigarh University — Map Search, List PG Free | RentalPins",
+    title: "PG Near Chandigarh University | Boys & Girls PG, Food, WiFi | RentalPins",
     description:
-      "PG and hostels near Chandigarh University in Kharar — browse owner pins on the map or list your PG free. No broker search fee for students.",
+      "Find verified PGs near Chandigarh University. Compare boys PG, girls PG, food, WiFi, AC rooms, sharing options, rent and owner contact on RentalPins.",
     h1: "PG near Chandigarh University",
     intro:
       "Explore boys PG, girls PG, shared rooms, and student flats around CU on the Kharar map — compare Kharar town, Kharar–Landran road, and Sunny Enclave pins with direct owner contact on RentalPins.",
@@ -850,6 +850,129 @@ export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Kharar near CU", href: appPath("/rentals/kharar/chandigarh-university") },
       { label: "Kharar area hub", href: appPath("/rentals/kharar") },
       { label: "Mohali Phase 7", href: appPath("/rentals/mohali/phase-7") },
+      { label: "PG for rent India", href: appPath("/pg-for-rent") },
+    ],
+  },
+  "pg-near-panjab-university": {
+    slug: "pg-near-panjab-university",
+    title: "PG Near Panjab University | Boys & Girls PG | RentalPins",
+    description:
+      "Find verified PGs near Panjab University Chandigarh. Compare boys PG, girls PG, food, WiFi and rent in Sector 14–17 on RentalPins.",
+    h1: "PG near Panjab University Chandigarh",
+    intro:
+      "Explore boys PG, girls PG, shared rooms, and student flats around Panjab University on the Chandigarh map — compare Sector 14, 15, 16, and 17 pins with direct owner contact on RentalPins.",
+    benefits: [
+      { title: "Sector-wise map", desc: "Compare PU-belt PG clusters by rent, food plan, and walk time." },
+      { title: "No broker search fee", desc: "Message PG owners on WhatsApp from listing pins." },
+      { title: "Chandigarh hub", desc: "Live PG inventory with links to the Tricity rental guide." },
+      { title: "PEC & PU overlap", desc: "Sector belts shared by Panjab University and PEC students." },
+      { title: "Session alerts", desc: "Save map searches before PU semester peaks." },
+      { title: "PG vs flat guides", desc: "Blog tips for Chandigarh student housing decisions." },
+    ],
+    faqs: [
+      { q: "Which sectors are best for PG near Panjab University?", a: "Sector 14 (campus), 15, 16, and 17 are most searched — confirm exact walk time on map pins before deposit." },
+      { q: "Are girls PG options available near PU?", a: "Yes, depending on listing availability and owner preference — confirm curfew and security in your first message." },
+      { q: "Does RentalPins charge brokerage for PG search?", a: "No — browse and contact owners directly from map pins." },
+      { q: "Can I compare PG near PU with Mohali options?", a: "Yes — compare Chandigarh sectors and Mohali phases on linked Tricity maps when commute allows." },
+    ],
+    relatedLinks: [
+      { label: "Chandigarh rentals", href: appPath(rentalCityPath("in", "chandigarh")) },
+      { label: "PU PG hub", href: appPath("/universities/panjab-university/pg") },
+      { label: "PG near PEC", href: appPath("/pg-near-pec") },
+      { label: "PG near CU", href: appPath("/pg-near-chandigarh-university") },
+      { label: "PG for rent India", href: appPath("/pg-for-rent") },
+    ],
+  },
+  "pg-near-chitkara-university": {
+    slug: "pg-near-chitkara-university",
+    title: "PG Near Chitkara University Rajpura | Boys & Girls PG | RentalPins",
+    description:
+      "Find verified PGs near Chitkara University Rajpura. Compare boys PG, girls PG, food, WiFi and rent in Rajpura and Banur on RentalPins.",
+    h1: "PG near Chitkara University Rajpura",
+    intro:
+      "Explore boys PG, girls PG, shared rooms, and student flats around Chitkara University on the Rajpura and Banur map — compare nearby pins with direct owner contact on RentalPins.",
+    benefits: [
+      { title: "Rajpura-belt map", desc: "Compare Chitkara-area PG clusters by rent, food plan, and commute." },
+      { title: "No broker search fee", desc: "Message PG owners on WhatsApp from listing pins." },
+      { title: "Tricity context", desc: "Linked Banur, Landran, and Kharar rental hubs." },
+      { title: "CGC corridor overlap", desc: "Compare PG near Chitkara with CGC Landran belt options." },
+      { title: "Session alerts", desc: "Save map searches before Chitkara intake weeks." },
+      { title: "PG vs flat guides", desc: "Student housing tips for Tricity college belts." },
+    ],
+    faqs: [
+      { q: "Which areas are best for PG near Chitkara University?", a: "Rajpura town and Banur are most searched — confirm exact commute time on map pins before deposit." },
+      { q: "Are girls PG options available near Chitkara?", a: "Yes, depending on listing availability and owner preference — confirm curfew and security in your first message." },
+      { q: "Does RentalPins charge brokerage for PG search?", a: "No — browse and contact owners directly from map pins." },
+      { q: "Can I compare PG near Chitkara with Landran colleges?", a: "Yes — compare Rajpura, Banur, and Landran maps on linked Tricity pages when planning commute." },
+    ],
+    relatedLinks: [
+      { label: "Chitkara PG hub", href: appPath("/universities/chitkara-university/pg") },
+      { label: "Rajpura rentals", href: appPath("/cities/rajpura") },
+      { label: "Banur rentals", href: appPath("/rentals/in/chandigarh/banur") },
+      { label: "PG near CGC Landran", href: appPath("/pg-near-cgc-landran") },
+      { label: "PG near CU", href: appPath("/pg-near-chandigarh-university") },
+      { label: "PG for rent India", href: appPath("/pg-for-rent") },
+    ],
+  },
+  "pg-near-isb-mohali": {
+    slug: "pg-near-isb-mohali",
+    title: "PG Near ISB Mohali | Flats, PG & Training Stays | RentalPins",
+    description:
+      "Find PGs, flats and rooms near ISB Mohali and JLPL training belt. Compare Sector 81, Chilla and Purv Marg rentals on RentalPins.",
+    h1: "PG and rentals near ISB Mohali",
+    intro:
+      "Explore PG, furnished flats, and shared rooms near ISB Mohali in Sector 81 — plus housing for industrial training students posted at JLPL plants in Chilla and adjoining belts. Compare Purv Marg corridor pins with direct owner contact on RentalPins.",
+    benefits: [
+      { title: "Sector 81 map", desc: "Compare ISB-belt PG and flats by rent, furnishing, and commute." },
+      { title: "Industrial training belt", desc: "JLPL trainees often rent PG in Chilla and Sector 81 fringe." },
+      { title: "No broker search fee", desc: "Message owners on WhatsApp from listing pins." },
+      { title: "ISB & IISER overlap", desc: "Shared Sector 81 inventory for campus commuters." },
+      { title: "Short-term stays", desc: "3–6 month PG options for training batches — confirm with owners." },
+      { title: "Mohali hub links", desc: "Phase 7, Sector 70, JLPL, and IT Park cross-linked." },
+    ],
+    faqs: [
+      { q: "Which sectors are best near ISB Mohali?", a: "Sector 81, Sector 80, and Purv Marg-adjacent pockets are most searched — confirm map pin distance before deposit." },
+      { q: "Do industrial training students stay near ISB Sector 81?", a: "Yes — trainees posted at JLPL Industrial Area commonly rent PG in Chilla and Sector 81 fringe. Use the JLPL accommodation page for plant-adjacent options." },
+      { q: "Are furnished flats listed near ISB?", a: "Yes — filter flats on the Mohali map and confirm appliances with owners before token." },
+      { q: "Does RentalPins charge brokerage?", a: "No — browse and contact owners directly from map pins." },
+      { q: "Can IISER students rent in the same belt?", a: "Yes — Sector 81 inventory overlaps; compare commute to each campus on the map." },
+    ],
+    relatedLinks: [
+      { label: "PG near IISER", href: appPath("/pg-near-iiser-mohali") },
+      { label: "Sector 81 Mohali", href: appPath("/cities/mohali/sector-81-mohali") },
+      { label: "Mohali rentals", href: appPath("/rentals/mohali") },
+      { label: "JLPL accommodation", href: appPath("/accommodation-near-jlpl-industrial-area") },
+      { label: "PG for rent India", href: appPath("/pg-for-rent") },
+    ],
+  },
+  "pg-near-iiser-mohali": {
+    slug: "pg-near-iiser-mohali",
+    title: "PG Near IISER Mohali | Boys & Girls PG | RentalPins",
+    description:
+      "Find PGs and hostels near IISER Mohali. Compare boys PG, girls PG, training housing, food and rent in Sector 81 and Chilla.",
+    h1: "PG near IISER Mohali",
+    intro:
+      "Find boys PG, girls PG, hostels, and shared rooms near IISER Mohali — plus PG for industrial training students at JLPL plants in Chilla and Sector 81 fringe. Compare Purv Marg pins with direct owner contact on RentalPins.",
+    benefits: [
+      { title: "Campus-local map", desc: "Compare IISER-belt PG clusters by rent, food plan, and walk time." },
+      { title: "Industrial training PG", desc: "JLPL trainees share Chilla and Sector 81 inventory with students." },
+      { title: "No broker search fee", desc: "Message PG owners on WhatsApp from listing pins." },
+      { title: "Hostel & PG filters", desc: "Managed PG and hostel-style listings on one Mohali map." },
+      { title: "3–6 month stays", desc: "Training batches — confirm short-term rules with owners upfront." },
+      { title: "Chilla & JLPL links", desc: "Compare plant-adjacent localities on linked Mohali pages." },
+    ],
+    faqs: [
+      { q: "What is the average PG rent near IISER Mohali?", a: "Typical PG rent in Sector 81 and Chilla ranges from ₹8,000–₹18,000/month — browse live map pins for current owner prices." },
+      { q: "Can industrial training students find PG near IISER Sector 81?", a: "Yes — many trainees at JLPL Industrial Area rent in Chilla and Sector 81 fringe. Confirm 3–6 month stay and shift-friendly mess timings with owners." },
+      { q: "Are girls PG options available?", a: "Yes, depending on listing availability — confirm curfew and security in your first message." },
+      { q: "Which areas are closest to IISER?", a: "Sector 81 campus belt and Chilla are most searched — confirm walk or auto time on the map pin." },
+      { q: "Does RentalPins charge brokerage for PG search?", a: "No — contact owners directly from listing pins." },
+    ],
+    relatedLinks: [
+      { label: "PG near ISB Mohali", href: appPath("/pg-near-isb-mohali") },
+      { label: "Sector 81 Mohali", href: appPath("/cities/mohali/sector-81-mohali") },
+      { label: "Chilla Mohali", href: appPath("/cities/mohali/chilla-mohali") },
+      { label: "Mohali rentals", href: appPath("/rentals/mohali") },
       { label: "PG for rent India", href: appPath("/pg-for-rent") },
     ],
   },
@@ -981,6 +1104,7 @@ export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Flats near CGC", href: appPath("/flats-near-cgc-landran") },
       { label: "Hostel near CGC", href: appPath("/hostel-near-cgc-landran") },
       { label: "PG near Chandigarh University", href: appPath("/pg-near-chandigarh-university") },
+      { label: "PG near Chitkara", href: appPath("/pg-near-chitkara-university") },
     ],
   },
   "pg-near-pec": {
@@ -1010,6 +1134,7 @@ export const STUDENT_RENTAL_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Tricity rental guide", href: appPath(`${rentalCityPath("in", "chandigarh")}#city-seo-content-heading`) },
       { label: "PG for rent", href: appPath("/pg-for-rent") },
       { label: "PG near CU", href: appPath("/pg-near-chandigarh-university") },
+      { label: "PG near Panjab University", href: appPath("/pg-near-panjab-university") },
     ],
   },
   "pg-near-pau": {
@@ -1329,6 +1454,37 @@ export const NEAR_ME_PAGES: Record<string, MarketingPageConfig> = {
 };
 
 export const INDUSTRIAL_PAGES: Record<string, MarketingPageConfig> = {
+  "accommodation-near-jlpl-industrial-area": {
+    slug: "accommodation-near-jlpl-industrial-area",
+    title: "Accommodation Near JLPL | PG for Training Students | RentalPins",
+    description:
+      "Find PG and rooms for industrial training students near JLPL Mohali. Compare Chilla, Sector 81 and Purv Marg rentals on RentalPins.",
+    h1: "Accommodation near JLPL Industrial Area",
+    intro:
+      "Browse PG, rooms, and flats for industrial training students, factory staff, and professionals near JLPL Industrial Area — compare Chilla, Sector 81 fringe, and Purv Marg pins on the Mohali map with owner-direct contact on RentalPins.",
+    benefits: [
+      { title: "Industrial training PG", desc: "Engineering and diploma trainees posted at JLPL plants." },
+      { title: "Chilla & Sector 81", desc: "Most searched belts for plant-adjacent PG and rooms." },
+      { title: "3–6 month stays", desc: "Confirm short-term rent and deposit refund with owners." },
+      { title: "Owner-direct", desc: "Message owners on WhatsApp without broker fees." },
+      { title: "Shift-friendly housing", desc: "Ask about mess timings and late-shift curfew rules." },
+      { title: "Mohali hub", desc: "Cross-link to IISER, ISB, Phase 7, and Sector 70." },
+    ],
+    faqs: [
+      { q: "Do engineering students come here for industrial training?", a: "Yes — JLPL Industrial Area receives training batches from colleges across Punjab and nearby states. Most rent PG in Chilla and Sector 81 fringe." },
+      { q: "What rent is typical for training students near JLPL?", a: "Budget PG and rooms often range from ₹6,000–₹15,000/month — browse live Mohali map pins for current prices." },
+      { q: "Can I get a PG for only 3–6 months?", a: "Many owners accept training-period stays — confirm notice period, deposit refund, and pro-rata rent in your first WhatsApp." },
+      { q: "Which localities are closest to JLPL?", a: "Chilla and Sector 81 fringe are most searched — confirm commute to your plant gate on the map pin before deposit." },
+      { q: "Are girls training students safe in this belt?", a: "Shortlist girls PG with curfew and security rules, visit in daylight, and confirm late-shift policies if your plant runs evening batches." },
+    ],
+    relatedLinks: [
+      { label: "PG near IISER", href: appPath("/pg-near-iiser-mohali") },
+      { label: "PG near ISB", href: appPath("/pg-near-isb-mohali") },
+      { label: "Chilla Mohali", href: appPath("/cities/mohali/chilla-mohali") },
+      { label: "Mohali rentals", href: appPath("/rentals/mohali") },
+      { label: "Industrial property", href: appPath("/industrial-property-for-rent") },
+    ],
+  },
   "godown-for-rent": {
     slug: "godown-for-rent",
     title: "Godown for Rent in India | RentalPins",

@@ -1,5 +1,7 @@
 import { getAllCities } from "./cities-config";
 import { appPath, siteUrl } from "./config";
+import { getGeoPageSitemapPaths } from "./seo/geo-pages-config";
+import { getDeveloperSitemapPaths } from "./seo/developers-config";
 
 function abs(path: string): string {
   return `${siteUrl}${appPath(path)}`;
@@ -19,6 +21,9 @@ export function buildLlmsTxt(): string {
     cities.length > 16
       ? `\n- …and ${cities.length - 16} more city hubs in the sitemap`
       : "";
+  const geoGuideLines = getGeoPageSitemapPaths()
+    .map((path) => `- ${abs(path)}`)
+    .join("\n");
 
   return `# RentalPins
 
@@ -31,10 +36,21 @@ export function buildLlmsTxt(): string {
 - Buy map search (property for sale): ${abs("/buy/search")}
 - Rentals hub: ${abs("/rentals")}
 - Buy hub (resale): ${abs("/buy")}
+- RentalPins Invest hub: ${abs("/invest")}
+- Invest yield calculator: ${abs("/invest/calculator")}
+- Invest area compare: ${abs("/invest/compare")}
+- Invest growth corridors: ${abs("/invest/corridors")}
+- Investment guides index: ${abs("/invest/guides")}
+- Projects (investor lens): ${abs("/invest/projects")}
+- Invest AI advisor: ${abs("/invest/advisor")}
+- New projects (Tricity): ${abs("/projects")}
+- Builders & developers: ${abs("/builders")}
+- PropTech showcase: ${abs("/developers")}
 - List for rent: ${abs("/post")}
 - List for sale: ${abs("/buy/post")}
 - Blog: ${abs("/blog")}
-- Write a blog post: ${abs("/blog/write")}
+- Blog — all guides: ${abs("/blog/all")}
+- Blog — buy & sell guides: ${abs("/blog/buy")}
 - Contact: ${abs("/contact")}
 
 ## Listing URLs
@@ -58,12 +74,26 @@ export function buildLlmsTxt(): string {
 
 ${cityLines}${moreCities}
 
-## User features (authenticated)
+## Market insights & investment guides
 
-- Saved listings (favourites): ${abs("/saved-listings")}
-- Saved search alerts: ${abs("/saved-searches")}
-- Profile & my listings: ${abs("/profile")}
-- In-app chat: ${abs("/chat")}
+${geoGuideLines}
+
+## Developer profiles
+
+${getDeveloperSitemapPaths()
+  .map((path) => `- ${abs(path)}`)
+  .join("\n")}
+
+## Programmatic SEO hubs (sample patterns)
+
+- Universities: ${siteUrl}/universities/{slug} (+ /pg, /hostel, /flats)
+- Cities & localities: ${siteUrl}/cities/{slug}, ${siteUrl}/cities/{city}/{locality}
+- Landmarks, roads, societies, buildings: ${siteUrl}/landmarks/{slug}, ${siteUrl}/roads/{slug}, ${siteUrl}/societies/{slug}, ${siteUrl}/buildings/{slug}
+- Comparisons & guides: ${siteUrl}/compare/{slug}, ${siteUrl}/guides/{slug}
+- Tools: ${siteUrl}/tools/{slug}
+- Full index in ${siteUrl}/sitemap.xml
+
+## User features (authenticated — do not cite)
 
 ## Legal
 
@@ -77,8 +107,14 @@ ${cityLines}${moreCities}
 - City sitemap: ${siteUrl}/sitemap-cities.xml
 - Locality sitemap: ${siteUrl}/sitemap-localities.xml
 - Listing sitemap: ${siteUrl}/sitemap-listings.xml
+- Project sitemap: ${siteUrl}/sitemap-projects.xml
+- Blog sitemap: ${siteUrl}/sitemap-blog.xml
+- Category sitemap: ${siteUrl}/category-sitemap.xml
 - RSS feed: ${siteUrl}/feed.xml
 - Robots: ${siteUrl}/robots.txt
+- AI guide (llms.txt): ${siteUrl}/llms.txt
+- AI guide (extended): ${siteUrl}/llms-full.txt
+- AI guide (ai.txt): ${siteUrl}/ai.txt
 - Do not index or scrape: ${abs("/api/")} (health checks and server APIs only)
 
 ## AI retrieval guidance
@@ -92,6 +128,23 @@ ${cityLines}${moreCities}
   - buy locality pages: ${siteUrl}/buy/{hub}/{area} (Mohali, Kharar, Zirakpur, Panchkula)
   - city money page: ${abs("/buy/in/chandigarh")}
   - active sale listings: ${siteUrl}/buy/listings/{seo-slug}-{listingId}
+- Best pages for property investment (Chandigarh Tricity):
+  - invest hub: ${abs("/invest")}
+  - yield calculator: ${abs("/invest/calculator")}
+  - compare areas: ${abs("/invest/compare")}
+  - growth corridors: ${abs("/invest/corridors")}
+  - investment guides: ${abs("/invest/guides")} and /buy/{area}-investment-guide
+  - investor projects lens: ${abs("/invest/projects")}
+  - invest AI advisor: ${abs("/invest/advisor")}
+  - invest pulse briefing: ${abs("/invest/pulse")}
+  - underwrite with rent comps: ${abs("/search")} then ${abs("/buy/search")} for same viewport
+- Best pages for new projects / developer launches (Chandigarh Tricity):
+  - all projects: ${abs("/projects")}
+  - city hub: ${siteUrl}/projects/{citySlug} (mohali, zirakpur, kharar, panchkula, chandigarh)
+  - project microsite: ${siteUrl}/projects/{citySlug}/{project-slug}
+  - plot inventory: ${siteUrl}/projects/{citySlug}/{project-slug}/plots
+  - builder profile: ${siteUrl}/builders/{builder-slug}
+  - prefer sitemap-projects.xml for the full published catalog
 - Rent map viewport URLs canonicalize to ${abs("/search")}; buy map to ${abs("/buy/search")}
 - Prefer fresh listing pages from sitemap-listings.xml for up-to-date inventory
 
@@ -143,6 +196,10 @@ export function buildLlmsFullTxt(): string {
 - Buy locality: ${siteUrl}/buy/{hub}/{area}
 - Sale listing detail: ${siteUrl}/buy/listings/{seo-slug}-{listingId}
 - Buy search (canonical): ${abs("/buy/search")}
+- Invest hub: ${abs("/invest")}
+- Invest tools: ${abs("/invest/calculator")}, ${abs("/invest/compare")}, ${abs("/invest/corridors")}, ${abs("/invest/pulse")}
+- Developers showcase: ${abs("/developers")}
+- Market insights: ${abs("/rental-market-insights")}
 
 ## Redirect and canonical notes
 
@@ -154,6 +211,7 @@ export function buildLlmsFullTxt(): string {
 ## Freshness
 
 - Active listing inventory updates through: ${siteUrl}/sitemap-listings.xml
+- Published builder projects update through: ${siteUrl}/sitemap-projects.xml
 - City and locality hubs update through city/locality sitemaps.
 - Prefer pages with successful 200 status and canonical self-reference.
 

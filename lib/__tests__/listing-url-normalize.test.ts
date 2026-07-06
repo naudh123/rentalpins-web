@@ -16,14 +16,14 @@ describe("normalizeListingRequestUrl", () => {
     expect(result?.pathname).toBe("/listings/foo-bar-id1234567890123");
   });
 
-  it("strips utm params from listing paths", () => {
+  it("strips utm and from params from listing paths", () => {
     const result = normalizeListingRequestUrl(
       mockRequest(
         "/listings/foo-bar-id1234567890123",
         "?utm_source=google&from=%2Fsearch"
       )
     );
-    expect(result?.search).toBe("?from=%2Fsearch");
+    expect(result?.search).toBe("");
   });
 
   it("ignores non-listing paths without trailing slash", () => {

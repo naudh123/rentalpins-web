@@ -7,20 +7,7 @@ import { HubFaqSection } from "@/components/seo/MarketInsightsBlock";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
 import { appPath, siteUrl } from "@/lib/config";
-
-const DEVELOPERS: Record<
-  string,
-  { name: string; cities: string[]; projects: { name: string; city: string }[] }
-> = {
-  "tricity-builders": {
-    name: "Tricity Builders",
-    cities: ["Mohali", "Zirakpur", "Panchkula"],
-    projects: [
-      { name: "Green Valley Residences", city: "Mohali" },
-      { name: "Tricity Heights", city: "Zirakpur" },
-    ],
-  },
-};
+import { getDeveloperBySlug } from "@/lib/seo/developers-config";
 
 export async function generateMetadata({
   params,
@@ -28,7 +15,7 @@ export async function generateMetadata({
   params: Promise<{ "developer-slug": string }>;
 }): Promise<Metadata> {
   const { "developer-slug": slug } = await params;
-  const dev = DEVELOPERS[slug];
+  const dev = getDeveloperBySlug(slug);
   if (!dev) return { title: "Developer" };
   return buildPageMetadata({
     title: `${dev.name} | Developers`,
@@ -43,7 +30,7 @@ export default async function DeveloperDetailPage({
   params: Promise<{ "developer-slug": string }>;
 }) {
   const { "developer-slug": slug } = await params;
-  const dev = DEVELOPERS[slug];
+  const dev = getDeveloperBySlug(slug);
   if (!dev) notFound();
 
   const faqs = buildConversationalFaqs("developers", {});

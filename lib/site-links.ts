@@ -26,6 +26,8 @@ export const COMPANY_LINKS = [
 export const EXPLORE_LINKS = [
   { label: "Rent map", href: appPath("/search") },
   { label: "Buy map", href: appPath("/buy/search") },
+  { label: "New projects", href: appPath("/projects") },
+  { label: "Builders", href: appPath("/builders") },
   { label: "Browse by city", href: appPath("/rentals") },
   { label: "Investment areas", href: appPath("/invest") },
   { label: "Sign in", href: appPath("/auth/login") },
@@ -34,6 +36,8 @@ export const EXPLORE_LINKS = [
 
 export const BUY_EXPLORE_LINKS = [
   { label: "Buy map", href: appPath("/buy/search") },
+  { label: "New projects", href: appPath("/projects") },
+  { label: "Builders", href: appPath("/builders") },
   { label: "Post property", href: appPath("/buy/post") },
   { label: "Post requirement", href: appPath("/buy/requirements") },
   { label: "Mohali for sale", href: appPath("/buy/mohali") },

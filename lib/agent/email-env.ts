@@ -14,7 +14,7 @@ export function getResendApiKey(): string {
   return cleanEnv(process.env.RESEND_API_KEY);
 }
 
-/** Inbox for high-intent showcase agent leads (same env as RudderTech contact form). */
+/** Inbox for project + showcase agent leads (defaults to admin@rentalpins.com). */
 export function getAgentLeadNotificationEmail(): string {
   return (
     firstEnv("LEAD_NOTIFICATION_EMAIL", "AGENT_LEAD_NOTIFICATION_EMAIL") ||

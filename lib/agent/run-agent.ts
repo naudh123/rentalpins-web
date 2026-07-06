@@ -12,7 +12,10 @@ import {
   createPropertyAgentTools,
   type AgentToolCallbacks,
 } from "@/lib/agent/tools";
+import { createProjectAgentTools } from "@/lib/agent/project-agent-tools";
+import type { ProjectAgentBundle } from "@/lib/agent/project-agent-knowledge";
 import type { AgentSurface } from "@/lib/agent/types";
+import type { BuilderProject } from "@/lib/types/builder-microsite";
 
 export interface AgentRunParams {
   messages: UIMessage[];
@@ -20,11 +23,27 @@ export interface AgentRunParams {
   transactionType: "rent" | "sale";
   callbacks?: AgentToolCallbacks;
   userContextPrompt?: string;
+  projectBundle?: ProjectAgentBundle | null;
+  citySlug?: string | null;
+  projectsIndexContext?: string;
+  sessionId?: string;
+  projectCatalog?: BuilderProject[];
 }
 
 export function buildAgentTools(
-  params: Pick<AgentRunParams, "surface" | "transactionType" | "callbacks">
+  params: Pick<
+    AgentRunParams,
+    "surface" | "transactionType" | "callbacks" | "projectBundle" | "citySlug" | "sessionId" | "projectCatalog"
+  >
 ) {
+  if (params.surface === "project") {
+    return createProjectAgentTools(
+      params.projectBundle ?? null,
+      params.citySlug ?? null,
+      { ...(params.callbacks ?? {}), sessionId: params.sessionId },
+      params.projectCatalog ?? []
+    );
+  }
   return createPropertyAgentTools(
     {
       surface: params.surface,
@@ -42,6 +61,8 @@ export async function streamAgentChat(params: AgentRunParams) {
       surface: params.surface,
       transactionType: params.transactionType,
       userContextPrompt: params.userContextPrompt,
+      projectBundle: params.projectBundle,
+      projectsIndexContext: params.projectsIndexContext,
     }),
     messages: await convertToModelMessages(params.messages),
     tools,
@@ -57,6 +78,8 @@ export async function runAgentTurn(params: AgentRunParams) {
       surface: params.surface,
       transactionType: params.transactionType,
       userContextPrompt: params.userContextPrompt,
+      projectBundle: params.projectBundle,
+      projectsIndexContext: params.projectsIndexContext,
     }),
     messages: await convertToModelMessages(params.messages),
     tools,

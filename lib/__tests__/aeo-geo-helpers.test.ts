@@ -22,6 +22,17 @@ describe("listing-price", () => {
     expect(label).not.toMatch(/1\.3K/i);
   });
 
+  it("treats suspicious low property rent as price on request", () => {
+    const listing = {
+      price: 80,
+      priceUnit: "per month",
+      category: "Property",
+      homeIso: "IN",
+    };
+    expect(formatListingPrice(listing)).toBe("Price on request");
+    expect(formatListingPrice(listing, { compact: true })).toBe("Price on request");
+  });
+
   it("flags suspicious low property rent", () => {
     expect(
       isSuspiciousPropertyPrice({

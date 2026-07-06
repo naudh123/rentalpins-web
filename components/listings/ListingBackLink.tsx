@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { appPath } from "@/lib/config";
-import { safeReturnPath } from "@/lib/listing-links";
+import { safeReturnPath, readListingReturnPath } from "@/lib/listing-links";
 import { trackEvent } from "@/lib/ga4";
 
 interface Props {
@@ -35,7 +35,7 @@ function backMeta(href: string): { label: string; destination: string } {
 
 export default function ListingBackLink({ listingId }: Props) {
   const searchParams = useSearchParams();
-  const from = searchParams.get("from");
+  const from = searchParams.get("from") ?? readListingReturnPath();
   const href = safeReturnPath(from);
   const { label, destination } = backMeta(href);
 

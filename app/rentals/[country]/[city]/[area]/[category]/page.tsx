@@ -11,6 +11,8 @@ import { getAllAreas, RENTAL_COUNTRY_SLUGS } from "@/lib/cities-config";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import { isRentalCategorySlug } from "@/lib/seo/categories";
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   return getAllAreas().flatMap((area) =>
     RENTAL_CATEGORIES.map((cat) => ({

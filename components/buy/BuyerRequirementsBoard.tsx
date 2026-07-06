@@ -14,9 +14,11 @@ import { BUY_REQUIREMENTS_PATH } from "@/lib/sale/buy-app-paths";
 
 interface Props {
   city?: string;
+  /** When set, only show requirements with this purpose. */
+  purposeFilter?: "Investment" | "Self use" | "Both";
 }
 
-export default function BuyerRequirementsBoard({ city }: Props) {
+export default function BuyerRequirementsBoard({ city, purposeFilter }: Props) {
   const { user } = useAuth();
   const [requirements, setRequirements] = useState<BuyerRequirement[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,18 +28,25 @@ export default function BuyerRequirementsBoard({ city }: Props) {
     setLoading(true);
     const unsub = subscribePublicRequirements(
       (items) => {
-        setRequirements(items);
+        const filtered = purposeFilter
+          ? items.filter(
+              (r) =>
+                r.purpose === purposeFilter ||
+                (purposeFilter === "Investment" && r.purpose === "Both")
+            )
+          : items;
+        setRequirements(filtered);
         setLoading(false);
         setError("");
       },
-      { city, max: 24 },
+      { city, max: 48 },
       () => {
         setLoading(false);
         setError("Could not load requirements. Try again later.");
       }
     );
     return unsub;
-  }, [city]);
+  }, [city, purposeFilter]);
 
   async function handleDeactivate(id: string) {
     if (!user) return;

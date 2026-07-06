@@ -28,12 +28,18 @@ export default function HomeDeveloperSection() {
           ))}
         </ul>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
           <Link
             href={appPath(HOME_DEVELOPER_TEASER.cta.href)}
             className="rounded-full bg-[var(--sale-gold)] px-6 py-3 text-sm font-semibold text-[var(--brand-navy)] transition hover:bg-[var(--sale-gold-hover)]"
           >
             {HOME_DEVELOPER_TEASER.cta.label}
+          </Link>
+          <Link
+            href={appPath(HOME_DEVELOPER_TEASER.projectsCta.href)}
+            className="rounded-full border border-white/25 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:border-[var(--sale-gold)] hover:bg-white/15"
+          >
+            {HOME_DEVELOPER_TEASER.projectsCta.label}
           </Link>
           <Link
             href={appPath(HOME_DEVELOPER_TEASER.secondaryCta.href)}

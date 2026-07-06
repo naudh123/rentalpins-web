@@ -33,25 +33,25 @@ describe("listing-canonical", () => {
     ).toBe(`https://www.rentalpins.com/buy/property/${slug}`);
   });
 
-  it("preserves only from in navigation query", () => {
+  it("buildListingNavigationQuery no longer appends from param", () => {
     expect(
       buildListingNavigationQuery({
         from: "/search",
         utm_source: "google",
-        gclid: "abc",
       })
-    ).toBe("?from=%2Fsearch");
+    ).toBe("");
   });
 
-  it("detects tracking params that should be stripped", () => {
+  it("strips from and tracking params from listing URLs", () => {
     const params = new URLSearchParams("utm_source=google&from=%2Fsearch");
     expect(listingPathNeedsSeoQueryCleanup(params)).toBe(true);
+    expect(cleanedListingSearchParams(params).toString()).toBe("");
   });
 
-  it("keeps clean from-only query", () => {
+  it("treats from-only query as needing cleanup", () => {
     const params = new URLSearchParams("from=%2Fsearch");
-    expect(listingPathNeedsSeoQueryCleanup(params)).toBe(false);
-    expect(cleanedListingSearchParams(params).toString()).toBe("from=%2Fsearch");
+    expect(listingPathNeedsSeoQueryCleanup(params)).toBe(true);
+    expect(cleanedListingSearchParams(params).toString()).toBe("");
   });
 
   it("detects wrong slug and ID-only paths needing 308 redirect", () => {

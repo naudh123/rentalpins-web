@@ -1,15 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import MarketingShell from "@/components/MarketingShell";
-import FAQSchema from "@/components/seo/FAQSchema";
-import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 import TrustStats from "@/components/seo/TrustStats";
 import NationalFunnelCityGrid from "@/components/seo/NationalFunnelCityGrid";
 import NationalFunnelGuides from "@/components/seo/NationalFunnelGuides";
 import CitySeoBlogLinks from "@/components/seo/CitySeoBlogLinks";
+import SchemaJsonLd from "@/components/seo/SchemaJsonLd";
 import { getMdxPosts } from "@/lib/blog";
 import { appPath } from "@/lib/config";
-import { canonicalUrl } from "@/lib/seo";
 import { PLAY_STORE_URL } from "@/lib/site-links";
 import type { MarketingPageConfig } from "@/lib/seo/marketing-pages";
 import {
@@ -21,7 +19,26 @@ import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
 import SeoSupplyBlocks from "@/components/seo/SeoSupplyBlocks";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
 import { intentFromMarketingSlug } from "@/lib/seo-links";
+import { buildSeoPageSchemaBundle, breadcrumbItemsFromPaths } from "@/lib/seo/schema";
 import PgCuOwnerSupplyBlock from "@/components/seo/PgCuOwnerSupplyBlock";
+import PgCuProgrammaticExpansion from "@/components/seo/PgCuProgrammaticExpansion";
+import PgPuOwnerSupplyBlock from "@/components/seo/PgPuOwnerSupplyBlock";
+import PgPuProgrammaticExpansion from "@/components/seo/PgPuProgrammaticExpansion";
+import PgChitkaraOwnerSupplyBlock from "@/components/seo/PgChitkaraOwnerSupplyBlock";
+import PgChitkaraProgrammaticExpansion from "@/components/seo/PgChitkaraProgrammaticExpansion";
+
+import MohaliCampusPgOwnerSupplyBlock from "@/components/seo/MohaliCampusPgOwnerSupplyBlock";
+import MohaliCampusPgExpansion from "@/components/seo/MohaliCampusPgExpansion";
+import { campusIdFromSlug } from "@/lib/seo/mohali-sector81-seo-config";
+
+const CAMPUS_PG_LANDING_SLUGS = new Set([
+  "pg-near-chandigarh-university",
+  "pg-near-panjab-university",
+  "pg-near-chitkara-university",
+  "pg-near-isb-mohali",
+  "pg-near-iiser-mohali",
+  "accommodation-near-jlpl-industrial-area",
+]);
 
 interface Props {
   config: MarketingPageConfig;
@@ -31,28 +48,35 @@ interface Props {
   funnelKind?: NationalFunnelKind;
 }
 
-export default function MarketingLandingPage({
+export default async function MarketingLandingPage({
   config,
   showAppCta = false,
   comparisonRows,
   competitorName,
   funnelKind,
 }: Props) {
-  const pageUrl = canonicalUrl(`/${config.slug}`);
-  const breadcrumbs = [
-    { name: "Home", url: canonicalUrl("/") },
-    { name: config.h1, url: pageUrl },
-  ];
+  const pagePath = `/${config.slug}`;
   const guidePlaceName = marketingLandingPlaceName(config.slug);
   const guideBlogPosts = guidePlaceName
     ? pickMarketingLandingBlogPosts(config.slug, getMdxPosts(), 3)
     : [];
   const supplyIntent = intentFromMarketingSlug(config.slug);
+  const mohaliCampusId = campusIdFromSlug(config.slug);
+  const schemaBundle = buildSeoPageSchemaBundle({
+    pageName: config.h1,
+    description: config.description,
+    path: pagePath,
+    breadcrumbs: breadcrumbItemsFromPaths([
+      { name: "Home", path: "/" },
+      { name: config.h1, path: pagePath },
+    ]),
+    faqs: config.faqs.map((f) => ({ question: f.q, answer: f.a })),
+    listings: [],
+  });
 
   return (
     <MarketingShell>
-      <BreadcrumbSchema items={breadcrumbs} />
-      <FAQSchema faqs={config.faqs.map((f) => ({ question: f.q, answer: f.a }))} />
+      <SchemaJsonLd schemas={schemaBundle} />
 
       <article className="rp-gradient-hero px-4 py-12">
         <div className="mx-auto max-w-3xl">
@@ -89,7 +113,7 @@ export default function MarketingLandingPage({
         </div>
       </article>
 
-      {config.slug !== "pg-near-chandigarh-university" ? (
+      {!CAMPUS_PG_LANDING_SLUGS.has(config.slug) ? (
         <ListPropertyCTA
           variant="hero"
           cityName={guidePlaceName ?? undefined}
@@ -113,6 +137,18 @@ export default function MarketingLandingPage({
 
       {config.slug === "pg-near-chandigarh-university" ? (
         <PgCuOwnerSupplyBlock />
+      ) : null}
+
+      {config.slug === "pg-near-panjab-university" ? (
+        <PgPuOwnerSupplyBlock />
+      ) : null}
+
+      {config.slug === "pg-near-chitkara-university" ? (
+        <PgChitkaraOwnerSupplyBlock />
+      ) : null}
+
+      {mohaliCampusId ? (
+        <MohaliCampusPgOwnerSupplyBlock campus={mohaliCampusId} />
       ) : null}
 
       {config.benefits.length > 0 && (
@@ -248,6 +284,20 @@ export default function MarketingLandingPage({
           ))}
         </ul>
       </section>
+
+      {config.slug === "pg-near-chandigarh-university" ? (
+        <PgCuProgrammaticExpansion />
+      ) : null}
+
+      {config.slug === "pg-near-panjab-university" ? (
+        <PgPuProgrammaticExpansion />
+      ) : null}
+
+      {config.slug === "pg-near-chitkara-university" ? (
+        <PgChitkaraProgrammaticExpansion />
+      ) : null}
+
+      {mohaliCampusId ? <MohaliCampusPgExpansion campus={mohaliCampusId} /> : null}
 
       <StickySeoCTA intent={supplyIntent} placeQuery={guidePlaceName ?? undefined} />
     </MarketingShell>

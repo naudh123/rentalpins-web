@@ -99,6 +99,44 @@ export const agentFaqs: AgentKnowledgeEntry[] = [
     priority: true,
   },
   {
+    id: "outer-kurali-banur-belt",
+    category: "buy",
+    title: "Kurali, Banur, and Kharar–Banur GMADA belt — who should buy or rent?",
+    content:
+      "Kurali (northwest of Kharar on NH-205) suits budget plot buyers and GMADA expressway townships. Banur and Kharar–Banur Road suit affordable plots and student-adjacent rent near Chitkara/Landran. GMADA sectors 115/127 sit mid-corridor with mixed premium and entry projects. Use searchTricityAreas for profiles, then buy map with corridor-centred search. Verify layout approval and road access on site.",
+    url: "/buy/kharar",
+    tags: ["kurali", "banur", "gmada", "plots", "outer", "kharar", "buy", "invest"],
+    priority: true,
+  },
+  {
+    id: "outer-chunni-rajpura",
+    category: "student",
+    title: "Jhanjeri, Chunni, Rajpura, and Banur — Landran–Chunni student belt",
+    content:
+      "Jhanjeri on Landran–Chunni road is an emerging student hub with growing PG/hostel inventory between Landran and Chunni — popular for CU, CGC Landran, and Chitkara-belt students seeking newer options below Kharar town rents. Chunni Kalan, Rajpura, and Banur form the budget fringe further east/south. Compare food plan, curfew, and campus ride time on the rent map. Use searchTricityAreas for Jhanjeri/Chunni profiles and map centres.",
+    tags: [
+      "jhanjeri",
+      "chunni",
+      "chunni kalan",
+      "landran chunni",
+      "rajpura",
+      "banur",
+      "chitkara",
+      "pg",
+      "student",
+      "outer",
+    ],
+    priority: true,
+  },
+  {
+    id: "outer-derabassi-lalru",
+    category: "rent",
+    title: "Derabassi and Lalru — NH corridor worker and entry buy market",
+    content:
+      "Derabassi (Dera Bassi) on the Ambala–Chandigarh NH suits budget flats for industrial workers and entry buyers who accept highway commute. Lalru is industrial fringe beyond Derabassi — worker rooms, not family premium. Compare with Zirakpur if Chandigarh commute matters. Use rent/buy map centred on Derabassi via buildMapSearch after searchTricityAreas.",
+    tags: ["derabassi", "dera bassi", "lalru", "nh", "affordable", "outer", "rent", "buy"],
+  },
+  {
     id: "buy-due-diligence",
     category: "due-diligence",
     title: "Buyer due diligence checklist (Tricity resale)",
@@ -125,6 +163,69 @@ export const agentFaqs: AgentKnowledgeEntry[] = [
       "Owners post at /buy/post with map pin, photos, price, and BHK. Listing activation uses Razorpay. Accurate society, phase, and sector in the title improves map discovery. AI listing improve helps polish descriptions. Resale and project inventory both appear on the gold buy map.",
     url: "/buy/post",
     tags: ["sell", "list", "owner", "post"],
+  },
+  {
+    id: "invest-tricity-framework",
+    category: "invest",
+    title: "How to pick the best Tricity investment (yield vs appreciation)",
+    content:
+      "First qualify: monthly yield goal vs 5–10 year appreciation, budget in lakh, and tenant type (professional, student PG, family). Yield leaders: Mohali Aerocity/Phase belts (professionals), Zirakpur VIP (commuters), Kharar–CU and Jhanjeri (student PG if compliant). Appreciation/long-hold: New Chandigarh plots, Kurali–Banur GMADA. Under ₹40L → outer plots/fringe flats; ₹40–90L → 2 BHK Zirakpur/Phase 9; ₹1Cr+ → Aerocity/Phase 7/projects. Always cross-check buy map sale pins AND rent map comps — use searchTricityInvestments tool. Never guarantee ROI.",
+    url: "/buy/mohali-investment-guide",
+    tags: ["invest", "yield", "appreciation", "tricity", "framework", "best investment"],
+    priority: true,
+  },
+  {
+    id: "invest-budget-bands-tricity",
+    category: "invest",
+    title: "Tricity investment by budget band (indicative)",
+    content:
+      "Under ₹40L: Kurali/Banur GMADA plots, Jhanjeri/Derabassi fringe flats, Kharar resale 1–2 BHK — higher diligence, slower liquidity. ₹40–90L: Zirakpur VIP 2 BHK, Mohali Phase 9/11 resale, Kharar investor flats — balanced yield and exit. ₹90L–₹1Cr: Phase 7, Aerocity entry, Panchkula sectors. ₹1Cr+: Aerocity premium, New Chandigarh plots/villas, top projects on /projects. Filter live buy map — bands shift with inventory.",
+    tags: ["invest", "budget", "40 lakh", "90 lakh", "1 crore", "tricity"],
+    priority: true,
+  },
+  {
+    id: "invest-student-vs-professional",
+    category: "invest",
+    title: "Student PG yield vs professional rental yield in Tricity",
+    content:
+      "Professional yield: furnish 2 BHK in Aerocity, Phase 7/9, or VIP Zirakpur — fewer tenants, higher ticket, society rules simpler. Student PG yield: Kharar town, Jhanjeri/Landran–Chunni, Banur/Chitkara belt — higher gross potential per sq ft but needs PG operator model, RWA compliance, and session vacancy planning. Compare rent map PG density before buying. searchTricityInvestments returns playbooks for both.",
+    tags: ["invest", "pg", "student", "professional", "yield", "kharar", "jhanjeri", "aerocity"],
+    priority: true,
+  },
+  {
+    id: "planning-it-park-vs-it-city",
+    category: "buy",
+    title: "Mohali IT Park vs IT City — critical difference for buyers",
+    content:
+      "Mohali IT Park (Rajiv Gandhi Technology Park) is the legacy STPI tech campus belt near Sector 67 / Phase 11 with Infosys, DLF IT Park — office campuses. IT City Mohali is GMADA's Sector 82A/83 Alpha/JLPL belt near Aerocity and airport — residential plots and towers. Professionals often work in IT Park but buy/rent in Phase 7/9, Aerocity, or IT City residential. Agents must clarify commute vs purchase zone; use searchTricityPlanning.",
+    tags: ["it park", "it city", "jlpl", "sector 82", "aerocity", "stpi", "planning"],
+    priority: true,
+  },
+  {
+    id: "planning-psiec-industrial",
+    category: "buy",
+    title: "PSIEC industrial estates vs residential buying",
+    content:
+      "PSIEC (Punjab Small Industries & Export Corporation) develops industrial focal points and estates — e.g. SIEL Rajpura NH-44, Tepla Road Banur, MK Technology Park Landran–Banur. These are for MSME, warehouse, and manufacturing — not family residential. Do not confuse with Ludhiana locality name 'Focal Point'. Residential investors should use GMADA/MC residential sectors instead. searchTricityPlanning for estate examples.",
+    tags: ["psiec", "industrial", "warehouse", "siel", "rajpura", "banur", "planning"],
+    priority: true,
+  },
+  {
+    id: "planning-mc-limits-gmada",
+    category: "due-diligence",
+    title: "MC limits vs GMADA fringe — what buyers must verify",
+    content:
+      "Inside MC Chandigarh/Mohali/Panchkula/Kharar/Zirakpur limits: municipal property tax, bylaws, and utilities apply. Outside MC on GMADA or panchayat fringe (Jhanjeri, Chunni, Kurali extensions): CLU and layout approval matter more. Ask seller which MC or authority sanctions building plans. Cheap plotted deals often sit outside MC — not automatically illegal but higher diligence. searchTricityPlanning for MC limits topic.",
+    tags: ["mc limits", "municipal corporation", "gmada", "clu", "planning", "due diligence"],
+    priority: true,
+  },
+  {
+    id: "planning-mixed-use-sco",
+    category: "buy",
+    title: "Mixed-use townships and SCO plots in Tricity",
+    content:
+      "Mixed-use RERA projects combine residential with commercial SCO/high-street (Velora Urbano Banur, TDI City, Emaar Hills, Homeland Sector 75, VIP Zirakpur retail). Verify commercial unit is legally demarcated in RERA — not a ground-floor flat converted to shop. SCO investors check FAR, parking, and MC trade licence path. searchTricityPlanning mixed-use topic.",
+    tags: ["mixed use", "sco", "commercial", "township", "planning", "rera"],
   },
   {
     id: "invest-new-chandigarh",
@@ -195,8 +296,46 @@ export const agentFaqs: AgentKnowledgeEntry[] = [
     category: "legal",
     title: "Legal and financial disclaimer",
     content:
-      "RentalPins AI provides discovery guidance only — not legal, tax, stamp duty, or loan advice. Verify all prices and availability on live map pins. RERA and title verification require qualified professionals. Past rental yields do not guarantee future returns.",
-    tags: ["legal", "disclaimer", "advice"],
+      "RentalPins AI guides discovery and explains sale agreements, deeds, transfer steps, and precautions — but is not a law firm. Engage a qualified Tricity property advocate for ATS/sale deed drafting, stamp duty, and Sub-Registrar registration. Title verification, RERA, and tax (TDS/capital gains) require lawyers and CAs. Verify all prices on live map pins.",
+    tags: ["legal", "disclaimer", "advice", "sale deed", "sale agreement"],
+  },
+  {
+    id: "txn-rentalpins-guidance",
+    category: "legal",
+    title: "Does RentalPins help with sale agreements and sale deeds?",
+    content:
+      "Yes — RentalPins guides you: find owner-direct listings on the buy map, use Ask AI for step-by-step explainers on Agreement to Sell, Sale Deed registration, society NOC, mutation, and token precautions. We provide due diligence checklists and blog resources. Your advocate drafts and registers documents at SRO — RentalPins does not execute registry or certify title. Use searchPropertyTransactionGuides in chat.",
+    url: "/blog/property-due-diligence-checklist-tricity-buyers",
+    tags: ["sale agreement", "sale deed", "transfer", "rentalpins", "guide", "legal", "registry"],
+    priority: true,
+  },
+  {
+    id: "txn-sale-agreement-steps",
+    category: "legal",
+    title: "How is a sale agreement (Agreement to Sell) made?",
+    content:
+      "After token, a property advocate drafts the Agreement to Sell (ATS) with price, payment schedule, possession date, and documents seller must deliver. It is stamped and signed by both parties — it commits to the future Sale Deed but does not alone transfer ownership. RentalPins AI explains typical clauses and precautions; advocate drafts the actual ATS. Never sign without property schedule matching registry records.",
+    tags: ["sale agreement", "ats", "agreement to sell", "token", "legal"],
+    priority: true,
+  },
+  {
+    id: "txn-sale-deed-registration",
+    category: "legal",
+    title: "How is a sale deed written and registered?",
+    content:
+      "After title diligence, advocate drafts the Sale Deed with buyer/seller names, consideration, and property description on stamp paper. Parties appear at Sub-Registrar Office (SRO), pay stamp duty and registration fee (Punjab/Haryana/UT rates — verify current), execute deed, and receive registered copy — this transfers legal ownership. RentalPins guides the process; SRO registration is done by your advocate, not the platform.",
+    tags: ["sale deed", "registration", "sro", "stamp duty", "registry", "conveyance"],
+    priority: true,
+  },
+  {
+    id: "txn-ownership-transfer-precautions",
+    category: "legal",
+    title: "Ownership transfer precautions for Tricity buyers",
+    content:
+      "Before token: verify title chain, Encumbrance Certificate, society NOC path, property tax, and seller ID matches listing. At ATS: clear payment schedule and refund if title fails. At deed: bank payments, read deed at SRO, collect original registered deed. After registry: society transfer (flats) or mutation (plots). Beware unregistered POA sellers and industrial-zoned plots sold as residential. RentalPins lists owners — your lawyer verifies title.",
+    url: "/blog/property-due-diligence-checklist-tricity-buyers",
+    tags: ["ownership transfer", "precautions", "due diligence", "noc", "mutation", "buyer"],
+    priority: true,
   },
   {
     id: "map-nl-search",
@@ -448,6 +587,17 @@ export function buildContactHandoff(params: {
       contactUrl: `https://rudder.tech/contact?${qs.toString()}`,
       message:
         "I've prepared a strategy call request with your PropTech requirements. Continue to Rudder Tech contact to complete details.",
+    };
+  }
+
+  if (params.surface === "project") {
+    const waText = encodeURIComponent(
+      `Hi RentalPins, I was chatting with the project AI concierge. ${params.summary.slice(0, 400)}`
+    );
+    return {
+      contactUrl: `https://wa.me/919915061640?text=${waText}`,
+      message:
+        "Continue on WhatsApp with our sales team at +91 9915061640 — I've included your conversation summary.",
     };
   }
 

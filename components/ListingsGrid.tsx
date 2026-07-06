@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { BRAND, UI } from "@/lib/brand";
 import { listingPublicPath } from "@/lib/listing-path";
 import { listingToSlugInput } from "@/lib/listing-path";
+import { listingDetailNavigate } from "@/lib/listing-links";
 import type { SeoListingCard } from "@/lib/seo-listings";
 import { formatListingPrice } from "@/lib/listing-price";
 
@@ -66,11 +67,12 @@ function ListingCardItem({
   const showUnitSuffix = !priceLine.startsWith("See ");
   // Link directly to Flutter app with listing ID as query param.
   // Same tab (no target="_blank"). Flutter reads ?listing= and opens detail.
-  const detailUrl = `${listingPublicPath(listingToSlugInput(listing))}?from=${encodeURIComponent(fromUrl)}`;
+  const detailUrl = listingPublicPath(listingToSlugInput(listing));
 
   return (
     <a
       href={detailUrl}
+      onClick={listingDetailNavigate(fromUrl)}
       style={{
         display: "block",
         background: "#fff",

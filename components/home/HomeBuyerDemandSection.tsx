@@ -4,7 +4,7 @@ import { HOME_BUYER_DEMAND } from "@/lib/seo/home-page-content";
 
 export default function HomeBuyerDemandSection() {
   return (
-    <section className="rp-home-section">
+    <section className="rp-home-section sale-theme">
       <div className="rp-home-section-inner">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--sale-gold)]">

@@ -13,6 +13,9 @@ import { categoryAuthoritySitemapPaths } from "@/lib/seo/category-authority-page
 import { LISTING_CATEGORY_SEGMENTS } from "@/lib/seo/listing-category-segments";
 import { getAllCities } from "@/lib/cities-config";
 import { getGeoPageSitemapPaths } from "@/lib/seo/geo-pages-config";
+import { getProgrammaticSeoSitemapPaths } from "@/lib/seo/seoData";
+import { getInvestSitemapPaths } from "@/lib/invest/invest-sitemap";
+import { getDeveloperSitemapPaths } from "@/lib/seo/developers-config";
 
 /** Core sitemap — city/locality/listing/blog URLs live in dedicated XML routes (daily revalidate). */
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -28,8 +31,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: canonicalUrl("/buy/requirements"), lastModified: now, changeFrequency: "weekly", priority: 0.72 },
     { url: canonicalUrl("/buy/projects"), lastModified: now, changeFrequency: "weekly", priority: 0.74 },
     { url: canonicalUrl("/advisor"), lastModified: now, changeFrequency: "monthly", priority: 0.65 },
+    ...getInvestSitemapPaths().map((path, index) => ({
+      url: canonicalUrl(path),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: index === 0 ? 0.86 : 0.78,
+    })),
     { url: canonicalUrl("/projects"), lastModified: now, changeFrequency: "weekly", priority: 0.7 },
+    { url: canonicalUrl("/builders"), lastModified: now, changeFrequency: "weekly", priority: 0.68 },
     { url: canonicalUrl("/developers"), lastModified: now, changeFrequency: "weekly", priority: 0.68 },
+    ...getDeveloperSitemapPaths().map((path) => ({
+      url: canonicalUrl(path),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.66,
+    })),
     ...getAllCities()
       .filter((c) => c.status === "live")
       .flatMap((c) => [
@@ -116,6 +132,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.74,
+    })),
+    ...getProgrammaticSeoSitemapPaths().map(({ path, priority }) => ({
+      url: canonicalUrl(path),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority,
     })),
   ];
 

@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
-import { listingDetailHref } from "@/lib/listing-links";
+import { listingDetailHref, persistListingReturnPath } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import type { MapListingDisplayItem } from "@/lib/map-building-groups";
@@ -38,9 +38,8 @@ export default function MapResultsList({
 
   function openListing(listing: ListingCardData) {
     trackListingClick(listing.id, "map");
-    router.push(
-      listingDetailHref(listingToSlugInput(listing), returnPathFor(listing.id))
-    );
+    persistListingReturnPath(returnPathFor(listing.id));
+    router.push(listingDetailHref(listingToSlugInput(listing)));
   }
 
   return (

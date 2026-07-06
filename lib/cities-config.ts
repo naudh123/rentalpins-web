@@ -217,6 +217,34 @@ export const CITIES: CityConfig[] = [
         ctaHeading: "Have something to rent in Landran?",
         ctaBody: "List your PG, industrial equipment, or vehicle in minutes. Reach students and businesses across Landran. Free to list.",
       },
+      {
+        slug: "banur",
+        name: "Banur",
+        tagline: "Banur · Chitkara belt · Rajpura corridor",
+        badge: "NOW LIVE — BANUR",
+        primaryFocus: "Student PG Near Chitkara",
+        heroDescription:
+          "Banur sits on the Rajpura–Chandigarh corridor with strong demand from Chitkara University students and adjoining college belts. Find PG, shared rooms, and budget flats on the RentalPins map with owner-direct contact.",
+        coordinates: { lat: 30.553, lng: 76.718 },
+        popularAreas: ["Banur village", "Rajpura road", "Chitkara belt", "Landran road"],
+        topCategories: [
+          { name: "Property", color: "#7B1FA2", icon: "🏠", desc: "Student PG, shared rooms, and budget flats near Chitkara University and Banur." },
+          { name: "Vehicles", color: "#1976D2", icon: "🚗", desc: "Bikes and scooters for commute between Banur, Rajpura, and Chandigarh Tricity." },
+          { name: "Electronics & Gadgets", color: "#FF8F00", icon: "💻", desc: "Laptops and projectors for short-term student and training needs." },
+        ],
+        popularSearches: [
+          "PG in Banur", "PG near Chitkara University", "Room for rent Banur",
+          "Flat for rent Banur", "Rentals in Banur", "PG near Rajpura",
+          "Student PG Banur", "Girls PG Banur",
+        ],
+        faqs: [
+          { q: "Is Banur good for PG near Chitkara University?", a: "Yes — Banur and the adjoining Rajpura corridor are common PG belts for Chitkara students. Compare map pin distance to campus gates before paying deposit." },
+          { q: "What rent is typical in Banur?", a: "Budget PG and rooms often range from ₹5,500–₹10,000/month depending on sharing and food plan — browse live map pins for current owner prices." },
+          { q: "How far is Banur from Rajpura?", a: "Banur village and Rajpura town are a short ride apart — confirm exact commute on the map pin before shortlisting." },
+        ],
+        ctaHeading: "Have something to rent in Banur?",
+        ctaBody: "List your PG or room in minutes. Reach Chitkara and Rajpura-belt students on the RentalPins map. Free to list.",
+      },
     ],
   },
 

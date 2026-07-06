@@ -30,6 +30,8 @@ const OG_LOCALE: Record<string, string> = {
   ng: "en_NG",
 };
 
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   return getAllCities().map((city) => ({
     country: city.countrySlug,

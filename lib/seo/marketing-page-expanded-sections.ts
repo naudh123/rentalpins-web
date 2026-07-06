@@ -402,4 +402,62 @@ export const MARKETING_PAGE_EXTRA_SECTIONS: Record<string, MarketingSeoSection[]
       ],
     },
   ],
+  "accommodation-near-jlpl-industrial-area": [
+    {
+      title: "Industrial training students near JLPL Industrial Area",
+      paragraphs: [
+        "JLPL Industrial Area in Mohali is a major destination for engineering, diploma, and ITI industrial training — outstation students typically rent budget PG or shared rooms in Chilla, Sector 81 fringe, and Purv Marg-adjacent lanes within auto or bike distance of their assigned plant.",
+        "Training batches need 3–6 month stays with flexible move-in around college schedules — confirm session dates, notice period, and deposit refund with owners before paying advance rent.",
+        "Filter PG and rooms on the Mohali hub map and compare map pin distance to your factory gate, not vague 'near JLPL' titles on classified boards.",
+      ],
+    },
+    {
+      title: "Chilla and Sector 81 for training commutes",
+      paragraphs: [
+        "Chilla village and adjoining grids often offer lower headline PG rent with a short ride to JLPL plots — compare total monthly cost including commute and mess.",
+        "Sector 81 fringe inventory overlaps with ISB and IISER student belts — training students should confirm boys, girls, or co-ed suitability and shift-friendly curfew rules.",
+        "Purv Marg corridor links JLPL to Knowledge City institutes — useful reference when judging distance on the map for trainees who also attend campus sessions.",
+      ],
+    },
+    {
+      title: "Worker and staff housing near JLPL",
+      paragraphs: [
+        "Factory and logistics staff also rent rooms and PG in the same belt — filter PG and rooms on the Mohali hub map before shortlisting owner pins.",
+        "RentalPins connects tenants with owners directly — no brokerage to browse or message from listing detail.",
+        "Confirm auto or bike time to your plant gate on the map pin before paying deposit.",
+      ],
+    },
+    {
+      title: "Rooms vs PG for training students",
+      paragraphs: [
+        "Most training students choose PG with meals for predictable monthly costs during a 3–6 month stint — cooking in a flat is rarely practical for short industrial postings.",
+        "Confirm mess timings align with factory shift hours — many trainees leave before hostel breakfast unless the owner adjusts meal slots.",
+        "Ask about Wi‑Fi, laundry, and electricity billing in the first WhatsApp — older industrial-adjacent buildings vary on utility quality.",
+      ],
+    },
+    {
+      title: "Visit and handover checklist for JLPL belt",
+      paragraphs: [
+        "Inspect street lighting, building access, and water pressure in person — industrial-adjacent lanes differ sharply once you visit at shift-change hours.",
+        "Photograph existing wear at handover and agree deposit refund rules on WhatsApp before paying advance rent.",
+        "For girls trainees, confirm curfew, visitor rules, and whether the building allows late shifts before signing.",
+      ],
+    },
+    {
+      title: "Linked Mohali student and professional belts",
+      paragraphs: [
+        "PG near IISER and PG near ISB pages link to overlapping Sector 81 inventory — useful when training students and campus students share the same commute corridor.",
+        "Mohali Phase 7 and Sector 70 appear on the hub map for families who prefer planned sectors over village-adjacent rooms.",
+        "Industrial property for rent covers sheds and units — keep housing search separate from commercial leasing filters.",
+      ],
+    },
+    {
+      title: "Listing accommodation near JLPL",
+      paragraphs: [
+        "Owners and PG operators can post free on RentalPins and reach JLPL-area searchers including industrial training students on the Mohali map.",
+        "Include distance notes to JLPL gates, furnishing, short-term stay rules, and tenant preference in descriptions — trainees shortlist faster with explicit terms.",
+        "Accurate map pins reduce wasted visits for students arriving with fixed training start dates.",
+      ],
+    },
+  ],
 };

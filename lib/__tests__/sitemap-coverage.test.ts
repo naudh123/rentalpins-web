@@ -7,8 +7,13 @@ import {
 } from "@/lib/seo/marketing-page-content";
 import {
   getCoreMarketingSitemapSlugs,
+  getMandatoryRentalAreaSitemapPaths,
   getPublicSitemapUrls,
+  getStaticRentalCityHubSitemapPaths,
 } from "@/lib/seo/sitemap-config";
+import { getInvestSitemapPaths } from "@/lib/invest/invest-sitemap";
+import { getGeoPageSitemapPaths } from "@/lib/seo/geo-pages-config";
+import { getDeveloperSitemapPaths } from "@/lib/seo/developers-config";
 
 describe("sitemap coverage", () => {
   it("lists priority broker and PG landings in core sitemap slugs", () => {
@@ -57,12 +62,60 @@ describe("sitemap coverage", () => {
     }
   });
 
+  it("includes protected static hubs and canonical rental areas in sitemap helpers", () => {
+    expect(getStaticRentalCityHubSitemapPaths()).toContain("/rentals/chandigarh");
+    expect(getMandatoryRentalAreaSitemapPaths()).toContain(
+      "/rentals/in/chandigarh/banur"
+    );
+    expect(getMandatoryRentalAreaSitemapPaths()).toContain(
+      "/rentals/in/chandigarh/landran"
+    );
+  });
+
+  it("includes new campus PG and JLPL landings in core sitemap slugs", () => {
+    const slugs = new Set(getCoreMarketingSitemapSlugs());
+    for (const slug of [
+      "pg-near-chitkara-university",
+      "pg-near-isb-mohali",
+      "pg-near-iiser-mohali",
+      "accommodation-near-jlpl-industrial-area",
+    ]) {
+      expect(slugs.has(slug)).toBe(true);
+    }
+  });
+
+  it("includes RentalPins Invest hub and tools in invest sitemap helper", () => {
+    const paths = getInvestSitemapPaths();
+    expect(paths).toContain("/invest");
+    expect(paths).toContain("/invest/calculator");
+    expect(paths).toContain("/invest/compare");
+    expect(paths).not.toContain("/invest/shortlist");
+    expect(paths).not.toContain("/invest/requirements/post");
+  });
+
+  it("includes new investment geo guides in geo sitemap paths", () => {
+    const paths = getGeoPageSitemapPaths();
+    expect(paths).toContain("/buy/zirakpur-investment-guide");
+    expect(paths).toContain("/buy/aerocity-investment-guide");
+    expect(paths).toContain("/rental-market-insights/mohali");
+    expect(paths).toContain("/property-market-insights/chandigarh-tricity");
+  });
+
+  it("includes developer profile pages in developer sitemap helper", () => {
+    const paths = getDeveloperSitemapPaths();
+    expect(paths).toContain("/developers/green-valley-builders");
+    expect(paths).toContain("/developers/tricity-builders");
+  });
+
   it("exposes deduped public sitemap URLs for robots", () => {
     const urls = getPublicSitemapUrls();
     expect(new Set(urls).size).toBe(urls.length);
-    expect(urls).toHaveLength(6);
+    expect(urls).toHaveLength(7);
     expect(urls.some((url) => url.endsWith("/sitemap.xml"))).toBe(true);
     expect(urls.some((url) => url.endsWith("/sitemap-localities.xml"))).toBe(
+      true
+    );
+    expect(urls.some((url) => url.endsWith("/sitemap-projects.xml"))).toBe(
       true
     );
     expect(urls.some((url) => url.endsWith("/city-sitemap.xml"))).toBe(false);

@@ -7,17 +7,26 @@ import { useRouter } from "next/navigation";
 import { useMemo, useRef, useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import AgentListingCards from "@/components/agent/AgentListingCards";
-import { extractListingPreviewsFromParts } from "@/lib/agent/chat-ui";
+import { extractListingPreviewsFromParts, formatAgentChatError } from "@/lib/agent/chat-ui";
 import { appPath } from "@/lib/config";
 import { getClientAuth } from "@/lib/firebase-client";
 import { agentToolLabels } from "@/lib/agent/prompts";
 import { extractMapPathFromText } from "@/lib/agent/map-url";
 import type { AgentSurface } from "@/lib/agent/types";
 import AgentSuggestedPrompts from "./AgentSuggestedPrompts";
+import AgentQuickLeadForm from "./AgentQuickLeadForm";
+import { extractContactFromMessages } from "@/lib/agent/contact-extraction";
 
 interface Props {
   surface?: AgentSurface;
   transactionType?: "rent" | "sale";
+  /** When surface=project on a microsite */
+  projectId?: string;
+  projectSlug?: string;
+  citySlug?: string;
+  projectName?: string;
+  /** When false, chat is disabled (OPENAI_API_KEY missing on server). */
+  agentEnabled?: boolean;
   compact?: boolean;
   className?: string;
   onApplyMapPath?: (path: string) => void;
@@ -52,6 +61,11 @@ function renderTextWithLinks(text: string): ReactNode {
 export default function PropertyAgentChat({
   surface = "advisor",
   transactionType = "rent",
+  projectId,
+  projectSlug,
+  citySlug,
+  projectName,
+  agentEnabled = true,
   compact = false,
   className = "",
   onApplyMapPath,
@@ -67,17 +81,37 @@ export default function PropertyAgentChat({
         api: appPath("/api/agent/chat"),
         prepareSendMessagesRequest: async ({ id, messages }) => {
           const token = await getClientAuth().currentUser?.getIdToken();
+          const body: Record<string, unknown> = {
+            messages,
+            sessionId: id,
+            surface,
+            transactionType: surface === "project" ? "sale" : transactionType,
+          };
+          if (surface === "project") {
+            if (projectId) body.projectId = projectId;
+            else if (projectSlug && citySlug) {
+              body.projectSlug = projectSlug;
+              body.citySlug = citySlug;
+            } else if (citySlug) {
+              body.citySlug = citySlug;
+            }
+          }
           return {
-            body: { messages, sessionId: id, surface, transactionType },
+            body,
             headers: token ? { Authorization: `Bearer ${token}` } : undefined,
           };
         },
       }),
-    [surface, transactionType]
+    [surface, transactionType, projectId, projectSlug, citySlug]
   );
 
-  const { messages, sendMessage, status, error } = useChat({ transport });
+  const { messages, sendMessage, status, error, id: sessionId } = useChat({ transport });
   const isLoading = status === "submitted" || status === "streaming";
+
+  const inferredBudget = useMemo(
+    () => extractContactFromMessages(messages).budgetRange ?? "",
+    [messages]
+  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -85,6 +119,7 @@ export default function PropertyAgentChat({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!agentEnabled) return;
     const text = input.trim();
     if (!text || isLoading) return;
     sendMessage({ text });
@@ -103,6 +138,24 @@ export default function PropertyAgentChat({
 
   return (
     <div className={`flex flex-col ${className}`}>
+      {!agentEnabled && (
+        <div
+          className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"
+          role="status"
+        >
+          <p className="font-semibold">AI concierge offline</p>
+          <p className="mt-1 text-amber-900/90">
+            Set <code className="text-xs">OPENAI_API_KEY</code> in{" "}
+            <code className="text-xs">.env.local</code> (or Vercel production env), then restart
+            the dev server. You can still enquire via the form or call{" "}
+            <a href="tel:+919915061640" className="font-semibold underline">
+              +91 9915061640
+            </a>
+            .
+          </p>
+        </div>
+      )}
+
       <div
         ref={scrollRef}
         className={
@@ -117,8 +170,18 @@ export default function PropertyAgentChat({
               ✦
             </span>
             <p className="mt-2">
-              Ask about areas, budgets, projects, or say &ldquo;show me on the map&rdquo; — I use live
-              RentalPins tools, not guesses.
+              {surface === "project" ? (
+                <>
+                  Ask about plots, pricing, EMI, RERA, or book a site visit
+                  {projectName ? ` at ${projectName}` : " across Tricity projects"} — I use live
+                  inventory and project tools, not guesses.
+                </>
+              ) : (
+                <>
+                  Ask about areas, budgets, projects, or say &ldquo;show me on the map&rdquo; — I use
+                  live RentalPins tools, not guesses.
+                </>
+              )}
               {user ? " Signed in — I can use your saved searches and prior chats." : ""}
             </p>
           </div>
@@ -202,17 +265,30 @@ export default function PropertyAgentChat({
 
         {error && (
           <p className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800">
-            {error.message || "Something went wrong. Check OPENAI_API_KEY or try again."}
+            {formatAgentChatError(error.message)}
           </p>
         )}
       </div>
 
-      {messages.length === 0 && (
+      {messages.length === 0 && agentEnabled && (
         <AgentSuggestedPrompts
           surface={surface}
           transactionType={transactionType}
+          projectName={projectName}
           onSelect={(prompt) => sendMessage({ text: prompt })}
           disabled={isLoading}
+          className="mt-4"
+        />
+      )}
+
+      {surface === "project" && (
+        <AgentQuickLeadForm
+          sessionId={sessionId}
+          projectId={projectId}
+          citySlug={citySlug}
+          projectSlug={projectSlug}
+          projectName={projectName}
+          defaultBudget={inferredBudget}
           className="mt-4"
         />
       )}
@@ -223,17 +299,21 @@ export default function PropertyAgentChat({
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
-            surface === "showcase"
-              ? "Ask about RentalPins as a PropTech platform…"
-              : "Budget, area, BHK, rent or buy…"
+            !agentEnabled
+              ? "AI concierge unavailable — add OPENAI_API_KEY to enable"
+              : surface === "showcase"
+                ? "Ask about RentalPins as a PropTech platform…"
+                : surface === "project"
+                  ? "Budget, plot size, site visit date, or compare projects…"
+                  : "Budget, area, BHK, rent or buy…"
           }
-          disabled={isLoading}
+          disabled={isLoading || !agentEnabled}
           aria-label="Message the property agent"
           className="min-w-0 flex-1 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm outline-none focus:border-[var(--accent)] disabled:opacity-50"
         />
         <button
           type="submit"
-          disabled={isLoading || !input.trim()}
+          disabled={isLoading || !agentEnabled || !input.trim()}
           className="rp-btn rp-btn-primary shrink-0 rounded-xl px-4 py-3 text-sm disabled:opacity-50"
         >
           {isLoading ? "…" : "Send"}

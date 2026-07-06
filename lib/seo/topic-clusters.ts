@@ -59,14 +59,17 @@ export const BUYER_REQUIREMENT_CLUSTER: TopicCluster = {
 export const INVESTMENT_CLUSTER: TopicCluster = {
   id: "investment",
   name: "Investment intelligence",
-  hubPath: "/property-market-insights/chandigarh-tricity",
+  hubPath: "/invest",
   links: [
+    { label: "Invest hub", href: "/invest" },
+    { label: "Yield calculator", href: "/invest/calculator" },
+    { label: "Compare areas", href: "/invest/compare" },
+    { label: "Growth corridors", href: "/invest/corridors" },
     { label: "New Chandigarh investment", href: "/buy/new-chandigarh-investment-guide" },
-    { label: "Mohali PR7", href: "/buy/mohali/pr7-corridor" },
-    { label: "Airport Road", href: "/buy/mohali/airport-road" },
-    { label: "Commercial property", href: "/rentals/in/chandigarh/commercial" },
-    { label: "New projects", href: "/projects" },
     { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
+    { label: "Zirakpur investment guide", href: "/buy/zirakpur-investment-guide" },
+    { label: "Kharar investment guide", href: "/buy/kharar-investment-guide" },
+    { label: "New projects", href: "/invest/projects" },
   ],
 };
 

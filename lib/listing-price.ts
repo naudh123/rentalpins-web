@@ -61,7 +61,7 @@ export function rentThresholdForIso(homeIso?: string): number {
   return PROPERTY_RENT_MIN_THRESHOLD_BY_COUNTRY[iso] ?? PROPERTY_RENT_MIN_THRESHOLD_BY_COUNTRY.IN!;
 }
 
-/** True when a property rent/sale price is likely bad data — hide from UI and Offer schema. */
+/** True when a property rent/sale price is likely bad data — treat as no price in UI/schema. */
 export function isSuspiciousPropertyPrice(listing: ListingPriceInput): boolean {
   if (!isPropertyListing(listing)) return false;
   if (listing.price <= 0) return false;
@@ -78,6 +78,13 @@ export function isSuspiciousPropertyPrice(listing: ListingPriceInput): boolean {
   return listing.price < rentThresholdForIso(listing.homeIso);
 }
 
+/** Price for display — suspicious low property prices become 0 (Ask / price on request). */
+export function effectiveListingPrice(listing: ListingPriceInput): number {
+  if (listing.price <= 0) return 0;
+  if (isSuspiciousPropertyPrice(listing)) return 0;
+  return listing.price;
+}
+
 export interface FormatListingPriceOptions {
   sale?: boolean;
   /** Compact labels for map pins only — never use on listing cards. */
@@ -92,23 +99,20 @@ export function formatListingPrice(
   listing: ListingPriceInput,
   options: FormatListingPriceOptions = {}
 ): string {
-  if (listing.price <= 0) return "Price on request";
-
-  if (isSuspiciousPropertyPrice(listing)) {
-    return "Verify price with owner";
-  }
+  const price = effectiveListingPrice(listing);
+  if (price <= 0) return "Price on request";
 
   const isProperty = isPropertyListing(listing);
 
   if (isProperty && !options.compact) {
-    return formatPrice(listing.price, listing.priceUnit ?? "per month", listing.homeIso);
+    return formatPrice(price, listing.priceUnit ?? "per month", listing.homeIso);
   }
 
   if (options.compact) {
-    return formatCompactPrice(listing.price, listing.homeIso, options.sale);
+    return formatCompactPrice(price, listing.homeIso, options.sale);
   }
 
-  return formatPrice(listing.price, listing.priceUnit ?? "per month", listing.homeIso);
+  return formatPrice(price, listing.priceUnit ?? "per month", listing.homeIso);
 }
 
 function formatCompactPrice(

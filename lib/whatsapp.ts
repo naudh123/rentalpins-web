@@ -29,8 +29,7 @@ export function listingWhatsAppMessage(title: string, listingUrl: string): strin
   return `Hi, I'm interested in your listing "${title}" on RentalPins:\n${listingUrl}`;
 }
 
-/** Share a listing link with friends (opens WhatsApp with preview URL). */
-export function whatsappListingShareUrl(title: string, listingUrl: string): string {
-  const text = `Check out this rental on RentalPins — ${title}\n${listingUrl}`;
-  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+/** Share a listing link with friends (opens WhatsApp with preview-friendly URL on its own line). */
+export function whatsappListingShareUrl(message: string): string {
+  return `https://wa.me/?text=${encodeURIComponent(message)}`;
 }

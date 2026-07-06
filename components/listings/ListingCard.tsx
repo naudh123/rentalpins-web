@@ -5,12 +5,10 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
 import { formatListingPrice } from "@/lib/listing-price";
-import { listingDetailHref } from "@/lib/listing-links";
+import { listingDetailHref, persistListingReturnPath } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
-import ContactNotVerifiedBadge from "@/components/listings/ContactNotVerifiedBadge";
-import { showContactNotVerifiedBadge } from "@/lib/listing-contact";
 
 interface Props {
   listing: ListingCardType;
@@ -70,6 +68,7 @@ export default function ListingCard({
     const target = e.target as HTMLElement;
     if (target.closest("button")) return;
     e.preventDefault();
+    if (returnPath) persistListingReturnPath(returnPath);
     router.push(href);
   }
 
@@ -89,7 +88,19 @@ export default function ListingCard({
       }`}
     >
       <div className={`absolute z-10 ${isStack ? "right-2 top-2" : "right-3 top-3"}`}>
-        <ListingSaveButton listingId={listing.id} size="sm" />
+        <ListingSaveButton
+          listingId={listing.id}
+          size="sm"
+          investShortlistMeta={
+            listing.transactionType === "sale"
+              ? {
+                  title: listing.title,
+                  priceLabel: priceLabel,
+                  locality: listing.locationName || null,
+                }
+              : undefined
+          }
+        />
       </div>
       <div
         className={`relative shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-[var(--bg-elevated)] ${
@@ -135,20 +146,9 @@ export default function ListingCard({
             </p>
           );
         })()}
-        <div className="mt-2 flex items-center gap-2">
-          <p className="font-serif text-base leading-none text-[var(--brand-orange)]">
-            {priceLabel}
-          </p>
-          <span
-            className="inline-flex items-center gap-0.5 rounded-full border border-emerald-200 bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-emerald-700"
-            title="Rent directly from the owner — no brokerage"
-          >
-            <span aria-hidden>₹</span>No brokerage
-          </span>
-          {showContactNotVerifiedBadge(listing) && (
-            <ContactNotVerifiedBadge />
-          )}
-        </div>
+        <p className="mt-2 font-serif text-base leading-none text-[var(--brand-orange)]">
+          {priceLabel}
+        </p>
       </div>
     </Link>
   );

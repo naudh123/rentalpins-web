@@ -9,8 +9,9 @@ import {
 import { listingToSlugInput } from "@/lib/listing-path";
 import type { ListingDetail } from "@/lib/types/listing";
 
-/** Query params stripped from listing canonical URLs (tracking / pagination noise). */
+/** Query params stripped from listing canonical URLs (tracking / navigation noise). */
 export const LISTING_SEO_STRIP_PARAMS = [
+  "from",
   "utm_source",
   "utm_medium",
   "utm_campaign",
@@ -27,8 +28,8 @@ export const LISTING_SEO_STRIP_PARAMS = [
   "_gl",
 ] as const;
 
-/** Allowed on listing detail URLs for UX (not part of canonical). */
-export const LISTING_NAV_QUERY_KEYS = ["from"] as const;
+/** @deprecated Listing return paths use sessionStorage — never append ?from= to URLs. */
+export const LISTING_NAV_QUERY_KEYS = [] as const;
 
 export function listingCanonicalSegment(
   listing: ListingSlugInput | ListingDetail
@@ -85,36 +86,22 @@ export function legacyListingSlugSegment(
   return buildListingSlugSegment(input);
 }
 
-/** Preserve only safe navigation params when redirecting slug variants. */
+/** @deprecated Return paths are stored client-side; redirects must not preserve ?from=. */
 export function buildListingNavigationQuery(
-  searchParams: Record<string, string | string[] | undefined>
+  _searchParams: Record<string, string | string[] | undefined>
 ): string {
-  const from = searchParams.from;
-  if (typeof from !== "string" || !from.startsWith("/") || from.startsWith("//")) {
-    return "";
-  }
-  return `?from=${encodeURIComponent(from)}`;
+  return "";
 }
 
 export function listingPathNeedsSeoQueryCleanup(searchParams: URLSearchParams): boolean {
   for (const key of LISTING_SEO_STRIP_PARAMS) {
     if (searchParams.has(key)) return true;
   }
-  const allowed = new URLSearchParams();
-  const from = searchParams.get("from");
-  if (from?.startsWith("/") && !from.startsWith("//")) {
-    allowed.set("from", from);
-  }
-  return searchParams.toString() !== allowed.toString();
+  return searchParams.toString().length > 0;
 }
 
 export function cleanedListingSearchParams(
-  searchParams: URLSearchParams
+  _searchParams: URLSearchParams
 ): URLSearchParams {
-  const allowed = new URLSearchParams();
-  const from = searchParams.get("from");
-  if (from?.startsWith("/") && !from.startsWith("//")) {
-    allowed.set("from", from);
-  }
-  return allowed;
+  return new URLSearchParams();
 }

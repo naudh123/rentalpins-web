@@ -53,9 +53,9 @@ export default function HomeOwnerListingSection() {
         <div className="mx-auto max-w-5xl">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-orange)]">
-                Post listing
-              </p>
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-orange)]">
+              List on RentalPins
+            </p>
               <h2
                 id="home-listing-steps-heading"
                 className="mt-3 font-serif text-2xl text-[var(--brand-navy)] md:text-3xl"
@@ -66,13 +66,19 @@ export default function HomeOwnerListingSection() {
                 {HOME_LISTING_STEPS.subtitle}
               </p>
               <Link
-                href={appPath("/post")}
+                href={appPath(HOME_LISTING_STEPS.rentCta.href)}
                 data-cta="list-property-free"
                 data-cta-location="home-listing-steps"
                 data-intent="general"
                 className="rp-btn rp-btn-primary mt-8 px-7 py-3"
               >
-                Start free listing
+                {HOME_LISTING_STEPS.rentCta.label}
+              </Link>
+              <Link
+                href={appPath(HOME_LISTING_STEPS.saleCta.href)}
+                className="rp-btn rp-btn-secondary sale-theme mt-3 inline-flex px-7 py-3"
+              >
+                {HOME_LISTING_STEPS.saleCta.label}
               </Link>
             </div>
 

@@ -55,6 +55,6 @@ export function clientIpFromRequest(request: Request): string {
 }
 
 export const LISTINGS_API_RATE_LIMIT = {
-  limit: 120,
+  limit: process.env.NODE_ENV === "development" ? 600 : 120,
   windowMs: 60_000,
 } as const;

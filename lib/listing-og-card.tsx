@@ -1,11 +1,14 @@
 import { ImageResponse } from "next/og";
 import type { ListingDetail } from "@/lib/types/listing";
-import { formatPrice } from "@/lib/format";
+import { formatListingPrice } from "@/lib/listing-price";
 import { LISTING_OG_HEIGHT, LISTING_OG_WIDTH } from "@/lib/listing-share-constants";
 
-const NAVY = "#1e3a6e";
-const NAVY_DARK = "#0f2554";
-const ORANGE = "#e8501a";
+const RENT_NAVY = "#1e3a6e";
+const RENT_NAVY_DEEP = "#0a1628";
+const RENT_ORANGE = "#e8501a";
+const SALE_GOLD = "#fbb316";
+const SALE_GOLD_DEEP = "#9a7b1a";
+const SALE_IVORY = "#faf8f5";
 const MUTED = "#b8c4dc";
 
 function pickOgPhoto(listing: ListingDetail | null): string | null {
@@ -29,20 +32,42 @@ function truncate(text: string, max: number): string {
   return `${t.slice(0, max - 1)}…`;
 }
 
+function specChips(listing: ListingDetail | null): string[] {
+  if (!listing) return [];
+  const chips: string[] = [];
+  const bhk = listing.attributes?.bhk?.trim();
+  if (bhk) chips.push(bhk);
+  const furnish = listing.attributes?.furnishing?.trim();
+  if (furnish) chips.push(furnish);
+  if (listing.subCategory?.trim()) chips.push(listing.subCategory.trim());
+  return chips.slice(0, 3);
+}
+
 export function generateListingOgImageResponse(
   listing: ListingDetail | null
 ): ImageResponse {
-  const title = truncate(listing?.title ?? "Rental listing", 72);
+  const isSale = listing?.transactionType === "sale";
+  const title = truncate(listing?.title ?? "Property listing", 64);
   const priceLabel = listing
-    ? formatPrice(listing.price, listing.priceUnit, listing.homeIso)
+    ? formatListingPrice({
+        price: listing.price,
+        priceUnit: listing.priceUnit,
+        category: listing.category,
+        subCategory: listing.subCategory,
+        transactionType: listing.transactionType,
+        homeIso: listing.homeIso,
+      })
     : "View on RentalPins";
-  const location = truncate(listing?.locationName ?? "", 48);
-  const category = truncate(
-    [listing?.category, listing?.subCategory].filter(Boolean).join(" · ") ||
-      "Rental",
-    36
-  );
+  const location = truncate(listing?.locationName ?? "", 44);
+  const chips = specChips(listing);
   const photo = pickOgPhoto(listing);
+
+  const accent = isSale ? SALE_GOLD : RENT_ORANGE;
+  const bgDeep = isSale ? "#1a1408" : RENT_NAVY_DEEP;
+  const bgMid = isSale ? "#2a2210" : RENT_NAVY;
+  const brandLabel = isSale ? "RentalPins Buy" : "RentalPins";
+  const modeBadge = isSale ? "For sale · Owner direct" : "For rent · Owner direct";
+  const cta = isSale ? "View photos & enquire" : "View photos & contact";
 
   return new ImageResponse(
     (
@@ -51,7 +76,7 @@ export function generateListingOgImageResponse(
           display: "flex",
           width: "100%",
           height: "100%",
-          background: `linear-gradient(135deg, ${NAVY_DARK} 0%, ${NAVY} 55%, #2a4f8f 100%)`,
+          background: `linear-gradient(145deg, ${bgDeep} 0%, ${bgMid} 48%, ${isSale ? "#3d3218" : "#2a4f8f"} 100%)`,
           fontFamily:
             'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
         }}
@@ -59,7 +84,7 @@ export function generateListingOgImageResponse(
         <div
           style={{
             display: "flex",
-            width: "58%",
+            width: "62%",
             height: "100%",
             position: "relative",
             overflow: "hidden",
@@ -82,13 +107,13 @@ export function generateListingOgImageResponse(
                 display: "flex",
                 width: "100%",
                 height: "100%",
-                background: `linear-gradient(160deg, ${ORANGE} 0%, ${NAVY} 100%)`,
+                background: `linear-gradient(160deg, ${accent} 0%, ${bgMid} 100%)`,
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: 120,
+                fontSize: 96,
               }}
             >
-              📍
+              🏡
             </div>
           )}
           <div
@@ -96,76 +121,99 @@ export function generateListingOgImageResponse(
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(90deg, transparent 55%, rgba(15,37,84,0.92) 100%)",
+                "linear-gradient(90deg, transparent 40%, rgba(10,15,30,0.94) 100%)",
             }}
           />
+          <div
+            style={{
+              position: "absolute",
+              top: 28,
+              left: 28,
+              display: "flex",
+              padding: "10px 18px",
+              borderRadius: 999,
+              background: "rgba(0,0,0,0.45)",
+              border: `2px solid ${accent}`,
+              color: "#fff",
+              fontSize: 15,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+            }}
+          >
+            {modeBadge}
+          </div>
         </div>
 
         <div
           style={{
             display: "flex",
             flexDirection: "column",
-            width: "42%",
+            width: "38%",
             height: "100%",
-            padding: "44px 40px",
+            padding: "36px 32px",
             justifyContent: "space-between",
             color: "#ffffff",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div
                 style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  background: ORANGE,
+                  width: 40,
+                  height: 40,
+                  borderRadius: 12,
+                  background: accent,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 18,
-                  fontWeight: 700,
+                  fontSize: 20,
+                  fontWeight: 800,
+                  color: isSale ? bgDeep : "#fff",
                 }}
               >
                 R
               </div>
               <span
                 style={{
-                  fontSize: 26,
+                  fontSize: 24,
                   fontWeight: 700,
                   letterSpacing: "-0.02em",
                 }}
               >
-                RentalPins
+                {brandLabel}
               </span>
             </div>
-            <span
-              style={{
-                fontSize: 14,
-                fontWeight: 600,
-                color: MUTED,
-                textTransform: "uppercase",
-                letterSpacing: "0.12em",
-              }}
-            >
-              {category}
-            </span>
+            {chips.length > 0 ? (
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {chips.map((chip) => (
+                  <span
+                    key={chip}
+                    style={{
+                      display: "flex",
+                      padding: "6px 12px",
+                      borderRadius: 999,
+                      background: "rgba(255,255,255,0.1)",
+                      border: "1px solid rgba(255,255,255,0.18)",
+                      fontSize: 13,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {chip}
+                  </span>
+                ))}
+              </div>
+            ) : null}
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div
               style={{
-                fontSize: 38,
+                fontSize: 32,
                 fontWeight: 700,
-                lineHeight: 1.15,
+                lineHeight: 1.12,
                 letterSpacing: "-0.02em",
-                maxHeight: 180,
+                maxHeight: 148,
                 overflow: "hidden",
               }}
             >
@@ -173,10 +221,10 @@ export function generateListingOgImageResponse(
             </div>
             <div
               style={{
-                fontSize: 34,
+                fontSize: 36,
                 fontWeight: 800,
-                color: ORANGE,
-                lineHeight: 1.1,
+                color: accent,
+                lineHeight: 1.05,
               }}
             >
               {priceLabel}
@@ -184,7 +232,7 @@ export function generateListingOgImageResponse(
             {location ? (
               <div
                 style={{
-                  fontSize: 20,
+                  fontSize: 18,
                   color: MUTED,
                   display: "flex",
                   alignItems: "center",
@@ -197,28 +245,34 @@ export function generateListingOgImageResponse(
             ) : null}
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              fontSize: 15,
-              color: MUTED,
-            }}
-          >
-            <span>www.rentalpins.com</span>
-            <span
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div
               style={{
-                background: "rgba(255,255,255,0.12)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: accent,
+                color: isSale ? bgDeep : "#fff",
                 borderRadius: 999,
-                padding: "8px 16px",
-                color: "#fff",
-                fontWeight: 600,
-                fontSize: 14,
+                padding: "14px 22px",
+                fontSize: 16,
+                fontWeight: 800,
+                letterSpacing: "0.02em",
               }}
             >
-              View listing →
-            </span>
+              {cta} →
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                fontSize: 14,
+                color: isSale ? SALE_IVORY : MUTED,
+                opacity: 0.85,
+              }}
+            >
+              www.rentalpins.com
+            </div>
           </div>
         </div>
       </div>

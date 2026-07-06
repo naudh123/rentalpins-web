@@ -78,6 +78,33 @@ export const CHANDIGARH_AREAS: AreaConfig[] = [
     radiusKm: 5,
     description: "Browse rental listings in Landran — near Chandigarh University and beyond.",
   },
+  {
+    slug: "banur",
+    name: "Banur",
+    city: "Chandigarh Tricity",
+    geohashPrefixes: ["ttqw3", "ttqw4", "ttqw6", "ttqw7", "ttqw2", "ttqw8"],
+    center: { lat: 30.553, lng: 76.718 },
+    radiusKm: 5,
+    description: "PG and flats near Banur — Chitkara University belt and Rajpura corridor.",
+  },
+  {
+    slug: "sector-81-mohali",
+    name: "Sector 81 Mohali",
+    city: "Chandigarh Tricity",
+    geohashPrefixes: ["ttqw4", "ttqw5", "ttqw1", "ttqw0", "ttqwh", "ttqwj"],
+    center: { lat: 30.655, lng: 76.735 },
+    radiusKm: 4,
+    description: "PG and flats near ISB and IISER Mohali in Sector 81.",
+  },
+  {
+    slug: "chilla-mohali",
+    name: "Chilla Mohali",
+    city: "Chandigarh Tricity",
+    geohashPrefixes: ["ttqw5", "ttqw4", "ttqwh", "ttqwg", "ttqw1", "ttqw0"],
+    center: { lat: 30.682, lng: 76.742 },
+    radiusKm: 4,
+    description: "Budget PG and rooms in Chilla — JLPL industrial training belt.",
+  },
 ];
 
 // ─── Ludhiana ────────────────────────────────────────────────────────────────

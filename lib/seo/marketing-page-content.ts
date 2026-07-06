@@ -28,6 +28,10 @@ export const PRIORITY_BROKER_LANDING_SLUGS = [
 /** Student PG campus landings expanded in batch 2 — guarded by word-count tests. */
 export const PRIORITY_PG_LANDING_SLUGS = [
   "pg-near-chandigarh-university",
+  "pg-near-panjab-university",
+  "pg-near-chitkara-university",
+  "pg-near-isb-mohali",
+  "pg-near-iiser-mohali",
   "pg-near-cgc-landran",
   "flats-near-cgc-landran",
   "hostel-near-cgc-landran",
@@ -58,6 +62,7 @@ export const PRIORITY_SECONDARY_LANDING_SLUGS = [
   "industrial-property-ludhiana",
   "warehouse-chandigarh",
   "warehouse-mohali",
+  "accommodation-near-jlpl-industrial-area",
 ] as const;
 
 /** National category funnel landings expanded in batch 4. */

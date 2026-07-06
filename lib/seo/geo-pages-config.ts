@@ -156,6 +156,106 @@ export const GEO_PAGES: GeoPageConfig[] = [
     relatedPaths: ["/buy/new-chandigarh-investment-guide", "/rental-market-insights/mohali"],
     clusterId: "mohali-property",
   },
+  {
+    path: "/buy/zirakpur-investment-guide",
+    title: "Zirakpur Property Investment Guide | RentalPins Buy",
+    description:
+      "Zirakpur VIP Road and commuter corridor investment context — rental yield, entry pricing, and owner-direct sale discovery on RentalPins.",
+    answerSummary:
+      "RentalPins Buy helps investors explore Zirakpur resale along VIP Road and Patiala Highway with lower entry than prime Mohali. Cross-check rent comps on the rent map before underwriting commuter yield.",
+    geoExplanation:
+      "Zirakpur captures Chandigarh commuters trading drive time for lower all-in cost. RentalPins links buy and rent hubs so investors compare furnished vs unfurnished rent achieved near target societies.",
+    entityLinks: [
+      { label: "Zirakpur buy hub", href: "/buy/zirakpur" },
+      { label: "Zirakpur rentals", href: "/rentals/in/chandigarh/zirakpur" },
+      { label: "Zirakpur projects", href: "/projects/zirakpur" },
+      { label: "Yield calculator", href: "/invest/calculator" },
+    ],
+    faqs: [
+      {
+        question: "Is Zirakpur good for rental investment?",
+        directAnswer:
+          "Zirakpur VIP Road suits investors seeking commuter rental yield at lower ticket sizes than Mohali Aerocity. Use RentalPins rent map for live comps and the invest yield calculator — do not rely on invented ROI figures.",
+      },
+    ],
+    relatedPaths: ["/buy/mohali-investment-guide", "/invest/corridors"],
+    clusterId: "investment",
+  },
+  {
+    path: "/buy/kharar-investment-guide",
+    title: "Kharar & CU Belt Investment Guide | RentalPins Buy",
+    description:
+      "Kharar, Chandigarh University, and Jhanjeri student-yield investment context — PG demand, multi-tenant models, and buy map discovery.",
+    answerSummary:
+      "RentalPins covers Kharar resale and rent inventory near Chandigarh University and the emerging Jhanjeri corridor. Student PG yield requires society compliance checks — verify RWA rules before buying.",
+    geoExplanation:
+      "Kharar town and Landran road host Tricity's densest student rental demand. Investors compare PG pin density on the rent map and 2–3 BHK buy inventory before committing.",
+    entityLinks: [
+      { label: "Kharar buy hub", href: "/buy/kharar" },
+      { label: "Kharar PG rentals", href: "/rentals/kharar" },
+      { label: "CU area rentals", href: "/rentals/chandigarh-university" },
+      { label: "Compare areas", href: "/invest/compare" },
+    ],
+    faqs: [
+      {
+        question: "Can I buy a flat in Kharar for PG business?",
+        directAnswer:
+          "Many investors target Kharar flats for PG conversion near CU. Confirm society/RWA allows multi-tenant use, fire safety, and occupancy limits before purchase. Browse PG rent density on RentalPins rent map.",
+      },
+    ],
+    relatedPaths: ["/buy/zirakpur-investment-guide", "/invest/guides"],
+    clusterId: "investment",
+  },
+  {
+    path: "/buy/kurali-banur-investment-guide",
+    title: "Kurali–Banur GMADA Plot Investment Guide | RentalPins",
+    description:
+      "Kurali and Banur GMADA plot investment context — long-hold appreciation, CLU diligence, and mapped sale inventory on RentalPins Buy.",
+    answerSummary:
+      "Kurali–Banur GMADA sectors attract plot investors with lower tickets and infrastructure-led appreciation thesis. Liquidity is slower than ready flats — budget 7–15 year holds and full title/CLU verification.",
+    geoExplanation:
+      "Outer GMADA belts along the Kharar–Banur axis suit plot long-hold strategies. RentalPins buy map surfaces owner-direct plot and land listings — always validate change of land use with your advocate.",
+    entityLinks: [
+      { label: "Kharar buy hub", href: "/buy/kharar" },
+      { label: "Planning guides", href: "/invest/advisor" },
+      { label: "New Chandigarh guide", href: "/buy/new-chandigarh-investment-guide" },
+      { label: "Invest corridors", href: "/invest/corridors" },
+    ],
+    faqs: [
+      {
+        question: "Are Kurali GMADA plots good for long-term investment?",
+        directAnswer:
+          "Kurali–Banur GMADA plots suit investors with long horizons who accept slower liquidity. Verify CLU, possession, and developer/seller title on every deal — RentalPins lists inventory but does not certify legal clearance.",
+      },
+    ],
+    relatedPaths: ["/buy/new-chandigarh-investment-guide", "/buy/kharar-investment-guide"],
+    clusterId: "investment",
+  },
+  {
+    path: "/buy/aerocity-investment-guide",
+    title: "Aerocity & Airport Road Investment Guide | RentalPins Buy",
+    description:
+      "Mohali Aerocity and Airport Road professional rental yield — furnished tenant demand, premium societies, and buy/rent map discovery.",
+    answerSummary:
+      "Aerocity and Airport Road attract premium furnished tenants from the airport and hospitality corridor. RentalPins pairs buy locality pages with Mohali rent hubs for yield underwriting on live pins.",
+    geoExplanation:
+      "The airport belt commands higher furnished rents than commuter Zirakpur but at higher entry tickets. Compare Aerocity societies on rent map before assuming net yield.",
+    entityLinks: [
+      { label: "Airport Road buy", href: "/buy/mohali/airport-road" },
+      { label: "Mohali rentals", href: "/rentals/in/chandigarh/mohali" },
+      { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
+      { label: "Yield calculator", href: "/invest/calculator" },
+    ],
+    faqs: [
+      {
+        question: "What rent can I expect in Aerocity Mohali?",
+        directAnswer:
+          "Furnished 2 BHK in prime Aerocity/Airport Road belts often falls in a wide band depending on society and furnishing — sample live rent pins on RentalPins rent map centred on your target tower before underwriting.",
+      },
+    ],
+    relatedPaths: ["/buy/mohali-investment-guide", "/buy/zirakpur-investment-guide"],
+    clusterId: "investment",
+  },
 ];
 
 export function getGeoPageConfig(path: string): GeoPageConfig | undefined {

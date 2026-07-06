@@ -4,11 +4,10 @@ import { fetchListingById } from "@/lib/listings";
 import { appPath } from "@/lib/config";
 import {
   listingCanonicalUrl,
-  listingOgImagePath,
+  listingOgImageAbsoluteUrl,
   listingShareDescription,
 } from "@/lib/listing-share";
 import { listingPublicPathFromCard } from "@/lib/listing-path";
-import { buildListingNavigationQuery } from "@/lib/listing-canonical";
 
 interface Props {
   params: Promise<{ listingId: string }>;
@@ -33,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = listing.title;
   const description = listingShareDescription(listing);
-  const ogImage = listingOgImagePath(listing);
+  const ogImage = listingOgImageAbsoluteUrl(listing);
 
   return {
     title,
@@ -63,7 +62,5 @@ export default async function LegacyListingPage({ params, searchParams }: Props)
   const listing = await fetchListingById(listingId);
   if (!listing) notFound();
 
-  const sp = await searchParams;
-  const suffix = buildListingNavigationQuery(sp);
-  permanentRedirect(appPath(`${listingPublicPathFromCard(listing)}${suffix}`));
+  permanentRedirect(appPath(listingPublicPathFromCard(listing)));
 }

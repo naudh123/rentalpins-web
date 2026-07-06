@@ -69,6 +69,14 @@ export default function HomeModeGateway() {
                     {buy.tertiary.label}
                   </Link>
                 ) : null}
+                {"quaternary" in buy && buy.quaternary ? (
+                  <Link
+                    href={appPath(buy.quaternary.href)}
+                    className="text-sm font-semibold text-[var(--sale-gold)] underline-offset-2 hover:underline"
+                  >
+                    {buy.quaternary.label}
+                  </Link>
+                ) : null}
               </div>
             </div>
             <ul className="mt-4 flex flex-wrap gap-2" aria-label="Popular buy areas">
@@ -86,21 +94,42 @@ export default function HomeModeGateway() {
           </article>
 
           <article className="rp-home-mode-card rp-home-mode-card--invest flex flex-col p-5 sm:p-6">
-            <div className="flex flex-wrap items-center gap-2">
-              <ProductBadge variant="invest" />
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
-                Coming soon
-              </span>
-            </div>
+            <ProductBadge variant="invest" />
             <h3 className="mt-3 font-serif text-lg text-[var(--brand-navy)]">{invest.title}</h3>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--muted)]">{invest.copy}</p>
-            <div className="mt-4">
+            <div className="mt-4 flex flex-col gap-2">
               <Link
                 href={appPath(invest.primary.href)}
-                className="inline-flex rounded-full border border-[color-mix(in_srgb,var(--invest-emerald)_35%,var(--border))] px-5 py-2.5 text-sm font-semibold text-[var(--invest-emerald)] transition hover:border-[var(--invest-emerald)]"
+                className="inline-flex justify-center rounded-full bg-[var(--invest-emerald)] px-5 py-2.5 text-center text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
               >
                 {invest.primary.label}
               </Link>
+              <div className="flex flex-col gap-1">
+                {"secondary" in invest && invest.secondary ? (
+                  <Link
+                    href={appPath(invest.secondary.href)}
+                    className="text-sm font-semibold text-[var(--invest-emerald)] underline-offset-2 hover:underline"
+                  >
+                    {invest.secondary.label}
+                  </Link>
+                ) : null}
+                {"tertiary" in invest && invest.tertiary ? (
+                  <Link
+                    href={appPath(invest.tertiary.href)}
+                    className="text-sm font-semibold text-[var(--invest-emerald)] underline-offset-2 hover:underline"
+                  >
+                    {invest.tertiary.label}
+                  </Link>
+                ) : null}
+                {"quaternary" in invest && invest.quaternary ? (
+                  <Link
+                    href={appPath(invest.quaternary.href)}
+                    className="text-sm font-semibold text-[var(--muted)] underline-offset-2 hover:text-[var(--brand-navy)]"
+                  >
+                    {invest.quaternary.label}
+                  </Link>
+                ) : null}
+              </div>
             </div>
           </article>
         </div>

@@ -33,6 +33,24 @@ export default function BuyerRequirementCard({
           <dt className="text-[var(--muted)]">Purpose</dt>
           <dd>{requirement.purpose}</dd>
         </div>
+        {requirement.purpose === "Investment" && requirement.holdPeriod && (
+          <div>
+            <dt className="text-[var(--muted)]">Hold period</dt>
+            <dd>{requirement.holdPeriod}</dd>
+          </div>
+        )}
+        {requirement.purpose === "Investment" && requirement.targetYield && (
+          <div>
+            <dt className="text-[var(--muted)]">Target yield</dt>
+            <dd>{requirement.targetYield}</dd>
+          </div>
+        )}
+        {requirement.purpose === "Investment" && requirement.tenantType && (
+          <div>
+            <dt className="text-[var(--muted)]">Tenant type</dt>
+            <dd>{requirement.tenantType}</dd>
+          </div>
+        )}
       </dl>
       {requirement.notes && (
         <p className="mt-3 text-sm text-[var(--muted)]">{requirement.notes}</p>

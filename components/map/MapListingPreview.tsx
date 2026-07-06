@@ -8,10 +8,19 @@ import { useFocusTrap } from "@/hooks/useFocusTrap";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard } from "@/lib/types/listing";
 import { formatListingPrice } from "@/lib/listing-price";
-import { listingDetailHref } from "@/lib/listing-links";
+import { listingDetailHref, persistListingReturnPath } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
+import ListingShareBar from "@/components/listings/ListingShareBar";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
+
+function listingForShare(card: ListingCard) {
+  return {
+    ...card,
+    imageUrls: card.imageUrl ? [card.imageUrl] : [],
+    ownerUid: "",
+  };
+}
 
 interface Props {
   listing: ListingCard;
@@ -45,7 +54,7 @@ export default function MapListingPreview({ listing, onClose }: Props) {
     const qs = p.toString();
     return `${pathname}${qs ? `?${qs}` : ""}`;
   })();
-  const href = listingDetailHref(listingToSlugInput(listing), returnPath);
+  const href = listingDetailHref(listingToSlugInput(listing));
 
   const motionProps = reduceMotion
     ? {}
@@ -68,21 +77,26 @@ export default function MapListingPreview({ listing, onClose }: Props) {
     >
       <div className="rp-glass overflow-hidden rounded-[var(--radius-xl)] shadow-[var(--shadow-card)] ring-1 ring-[var(--brand-navy)]/8">
         <div className="relative p-3">
-          <button
-            ref={closeRef}
-            type="button"
-            onClick={onClose}
-            className="absolute right-2 top-2 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-elevated)] text-sm text-[var(--muted)] hover:text-[var(--text)]"
-            aria-label="Close preview"
-          >
-            ×
-          </button>
+          <div className="absolute right-2 top-2">
+            <button
+              ref={closeRef}
+              type="button"
+              onClick={onClose}
+              className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-elevated)] text-sm text-[var(--muted)] hover:text-[var(--text)]"
+              aria-label="Close preview"
+            >
+              ×
+            </button>
+          </div>
           <div className="absolute left-2 top-2 z-10">
             <ListingSaveButton listingId={listing.id} size="sm" />
           </div>
           <Link
             href={href}
-            onClick={() => trackListingClick(listing.id, "map")}
+            onClick={() => {
+              persistListingReturnPath(returnPath);
+              trackListingClick(listing.id, "map");
+            }}
             className="flex gap-3 no-underline"
           >
             <div className="relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-[var(--radius-md)] bg-[var(--bg-elevated)]">
@@ -98,21 +112,29 @@ export default function MapListingPreview({ listing, onClose }: Props) {
                 <div className="flex h-full items-center justify-center text-xl opacity-40">📷</div>
               )}
             </div>
-            <div className="min-w-0 flex-1 pr-8">
-              <p className="truncate font-medium leading-snug">{listing.title}</p>
+            <div className="min-w-0 flex-1 pr-6">
+              <p className="line-clamp-2 font-medium leading-snug text-[var(--brand-navy)]">
+                {listing.title}
+              </p>
               <p className="mt-0.5 truncate text-xs text-[var(--muted)]">
                 {listing.locationName || listing.category}
               </p>
-              <p className="mt-1.5 font-serif text-[var(--accent)]">{priceLabel}</p>
+              <p className="mt-1.5 font-serif text-[var(--brand-navy)]">{priceLabel}</p>
             </div>
           </Link>
-          <Link
-            href={href}
-            onClick={() => trackListingClick(listing.id, "map")}
-            className="rp-btn rp-btn-primary mt-3 w-full py-2.5 text-sm"
-          >
-            View listing
-          </Link>
+          <div className="mt-3 flex items-center gap-2">
+            <Link
+              href={href}
+              onClick={() => {
+                persistListingReturnPath(returnPath);
+                trackListingClick(listing.id, "map");
+              }}
+              className="rp-btn rp-btn-primary min-w-0 flex-1 py-2.5 text-sm"
+            >
+              View listing
+            </Link>
+            <ListingShareBar listing={listingForShare(listing)} iconOnly />
+          </div>
         </div>
       </div>
     </motion.div>

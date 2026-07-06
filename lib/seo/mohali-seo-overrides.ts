@@ -39,6 +39,8 @@ export const MOHALI_GSC_LINKS: MohaliGscLink[] = [
   { label: "Phase 7 Mohali", href: "/rentals/mohali/phase-7" },
   { label: "Mohali flats (map)", href: "/rentals/in/chandigarh/mohali/flats" },
   { label: "PG near CU", href: "/pg-near-chandigarh-university" },
+  { label: "PG near ISB Mohali", href: "/pg-near-isb-mohali" },
+  { label: "PG near IISER Mohali", href: "/pg-near-iiser-mohali" },
 ];
 
 export const CU_PG_CROSS_LINKS: MohaliGscLink[] = [

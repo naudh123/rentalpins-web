@@ -103,7 +103,7 @@ describe("buy core flows", () => {
     it("builds map card hrefs to buy property detail", () => {
       const href = listingDetailHref(sampleSaleListing, "/buy/search?lat=30.7");
       expect(href).toContain("/buy/property/");
-      expect(href).toContain("from=%2Fbuy%2Fsearch");
+      expect(href).not.toContain("from=");
     });
 
     it("computes valuation band from comparable prices", () => {
@@ -178,6 +178,10 @@ describe("buy core flows", () => {
       const paths = GEO_PAGES.map((p) => p.path);
       expect(paths).toContain("/buy/mohali-investment-guide");
       expect(paths).toContain("/buy/new-chandigarh-investment-guide");
+      expect(paths).toContain("/buy/zirakpur-investment-guide");
+      expect(paths).toContain("/buy/kharar-investment-guide");
+      expect(paths).toContain("/buy/kurali-banur-investment-guide");
+      expect(paths).toContain("/buy/aerocity-investment-guide");
     });
 
     it("has buy-vertical blog posts for /blog/buy index", () => {
@@ -214,7 +218,7 @@ describe("buy core flows", () => {
       const mapReturn = `${BUY_SEARCH_PATH}?lat=30.7333&lng=76.7794&selected=abc123xyz`;
       const detailHref = listingDetailHref(sampleSaleListing, mapReturn);
       expect(detailHref).toMatch(/\/buy\/property\/.+/);
-      expect(detailHref).toContain("from=");
+      expect(detailHref).not.toContain("from=");
     });
   });
 });

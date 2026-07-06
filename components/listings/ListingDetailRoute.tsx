@@ -43,7 +43,6 @@ import {
 } from "@/lib/listing-slug";
 import { listingToSlugInput } from "@/lib/listing-path";
 import {
-  buildListingNavigationQuery,
   listingCanonicalRelPath,
   listingSlugNeedsRedirect,
 } from "@/lib/listing-canonical";
@@ -92,27 +91,25 @@ export default async function ListingDetailRoute({
 
   const seo = normalizeListingSeo(listing);
   const isSale = listing.transactionType === "sale";
-  const sp = await searchParams;
-  const suffix = buildListingNavigationQuery(sp);
   const canonicalPath = appPath(listingCanonicalRelPath(listing));
 
   if (channel === "rent" && isSale) {
-    permanentRedirect(`${canonicalPath}${suffix}`);
+    permanentRedirect(canonicalPath);
   }
   if (channel === "buy" && !isSale) {
-    permanentRedirect(`${canonicalPath}${suffix}`);
+    permanentRedirect(canonicalPath);
   }
 
   if (expectedSegment && seo.categorySegment && seo.categorySegment !== expectedSegment) {
-    permanentRedirect(`${canonicalPath}${suffix}`);
+    permanentRedirect(canonicalPath);
   }
 
   if (!expectedSegment && seo.categorySegment) {
-    permanentRedirect(`${canonicalPath}${suffix}`);
+    permanentRedirect(canonicalPath);
   }
 
   if (listingSlugNeedsRedirect(slugParam, listing)) {
-    permanentRedirect(`${canonicalPath}${suffix}`);
+    permanentRedirect(canonicalPath);
   }
   const [ownerTrust, similarListings, ownerListings, reviewSummary, saleIntel] =
     await Promise.all([
@@ -203,8 +200,9 @@ export default async function ListingDetailRoute({
         reviewCount={reviewSummary?.count ?? 0}
       />
       <Breadcrumbs className="mb-3" items={breadcrumbItems.ui} />
-      <ListingDetailNav listingId={listingId} title={listing.title} listingUrl={listingUrl} />
+      <ListingDetailNav listing={listing} />
       <ListingStickyBar
+        listing={listing}
         listingId={listingId}
         title={listing.title}
         priceLabel={priceLabel}

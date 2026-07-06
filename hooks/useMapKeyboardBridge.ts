@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { trackListingClick } from "@/lib/ga4";
-import { listingDetailHref } from "@/lib/listing-links";
+import { listingDetailHref, persistListingReturnPath } from "@/lib/listing-links";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
 import { useMapKeyboardShortcuts } from "@/hooks/useMapKeyboardShortcuts";
 import type { RefObject } from "react";
@@ -43,7 +43,8 @@ export function useMapKeyboardBridge({
       const qs = p.toString();
       const returnPath = `${pathname}${qs ? `?${qs}` : ""}`;
       trackListingClick(listingId, "map");
-      router.push(listingDetailHref(listingId, returnPath));
+      persistListingReturnPath(returnPath);
+      router.push(listingDetailHref(listingId));
     },
     [pathname, router, searchParams]
   );

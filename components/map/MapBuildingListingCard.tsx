@@ -5,13 +5,11 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import type { ListingCard as ListingCardType } from "@/lib/types/listing";
 import { formatPrice } from "@/lib/format";
-import { listingDetailHref } from "@/lib/listing-links";
+import { listingDetailHref, persistListingReturnPath } from "@/lib/listing-links";
 import { listingToSlugInput } from "@/lib/listing-path";
 import { trackListingClick } from "@/lib/ga4";
 import { primaryListingInGroup, unitPriceChips } from "@/lib/map-building-groups";
 import ListingSaveButton from "@/components/listings/ListingSaveButton";
-import ContactNotVerifiedBadge from "@/components/listings/ContactNotVerifiedBadge";
-import { showContactNotVerifiedBadge } from "@/lib/listing-contact";
 
 interface Props {
   listings: ListingCardType[];
@@ -45,10 +43,7 @@ export default function MapBuildingListingCard({
     return `${pathname}${qs ? `?${qs}` : ""}`;
   }
 
-  const primaryHref = listingDetailHref(
-    listingToSlugInput(primary),
-    returnPathFor(primary.id)
-  );
+  const primaryHref = listingDetailHref(listingToSlugInput(primary));
 
   return (
     <article
@@ -68,7 +63,10 @@ export default function MapBuildingListingCard({
       </div>
       <Link
         href={primaryHref}
-        onClick={() => trackListingClick(primary.id, source)}
+        onClick={() => {
+          persistListingReturnPath(returnPathFor(primary.id));
+          trackListingClick(primary.id, source);
+        }}
         className="relative block aspect-[16/10] w-full overflow-hidden bg-[var(--bg-elevated)] no-underline"
       >
         {primary.imageUrl ? (
@@ -89,7 +87,10 @@ export default function MapBuildingListingCard({
       <div className="space-y-2 p-3">
         <Link
           href={primaryHref}
-          onClick={() => trackListingClick(primary.id, source)}
+          onClick={() => {
+          persistListingReturnPath(returnPathFor(primary.id));
+          trackListingClick(primary.id, source);
+        }}
           className="block no-underline"
         >
           <p className="truncate font-semibold leading-snug text-[var(--brand-navy)]">{title}</p>
@@ -102,21 +103,22 @@ export default function MapBuildingListingCard({
             {priceLabel}
             {listings.length > 1 ? "+" : ""}
           </p>
-          {showContactNotVerifiedBadge(primary) && <ContactNotVerifiedBadge />}
         </div>
         {chips.length > 1 && (
           <div className="flex flex-wrap gap-1.5">
             {chips.map((chip) => {
               const unit = listings.find((l) => l.id === chip.listingId);
               const href = listingDetailHref(
-                unit ? listingToSlugInput(unit) : chip.listingId,
-                returnPathFor(chip.listingId)
+                unit ? listingToSlugInput(unit) : chip.listingId
               );
               return (
                 <Link
                   key={chip.listingId}
                   href={href}
-                  onClick={() => trackListingClick(chip.listingId, source)}
+                  onClick={() => {
+                    persistListingReturnPath(returnPathFor(chip.listingId));
+                    trackListingClick(chip.listingId, source);
+                  }}
                   className="rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[11px] font-semibold text-[var(--brand-navy)] no-underline hover:border-[var(--brand-navy)]"
                 >
                   {chip.label}
@@ -127,7 +129,10 @@ export default function MapBuildingListingCard({
         )}
         <Link
           href={primaryHref}
-          onClick={() => trackListingClick(primary.id, source)}
+          onClick={() => {
+          persistListingReturnPath(returnPathFor(primary.id));
+          trackListingClick(primary.id, source);
+        }}
           className="rp-btn rp-btn-primary mt-1 w-full py-2.5 text-sm no-underline"
         >
           View {listings.length} listings

@@ -1,20 +1,21 @@
 /** Homepage copy — honest, SEO-friendly, owner-listing focused. */
 
-export const HOME_HERO = {
-  /** Umbrella H1 — neutral, covers rent, buy, and invest positioning. */
-  headline:
-    "Discover Rentals, Properties for Sale, and Investment Opportunities on the Map",
-  subhead:
-    "RentalPins helps people rent, buy, sell, and discover property directly through live map-based listings.",
-} as const;
+export type HomeTricityLane = "rent" | "buy" | "invest";
 
-/** Premium trust signals — qualitative only, no invented metrics. */
+export type HomeAdvisorMode = "Rent" | "Buy" | "Invest" | "Commercial";
+
+/** Premium trust signals — lane-neutral on hero (lane tags live on gateway cards). */
 export const HOME_TRUST_PILLS = [
   "Map-based discovery",
   "Owner direct",
-  "Rent + buy",
+  "Free to list",
   "India + global hubs",
 ] as const;
+
+export const HOME_HERO = {
+  headline: "RentalPins",
+  subhead: "Rent, Buy, Sell, Invest Property AI Solution",
+} as const;
 
 export const HOME_MODE_GATEWAY = {
   headline: "Discover property on the map",
@@ -31,12 +32,15 @@ export const HOME_MODE_GATEWAY = {
     primary: { label: "Browse for sale", href: "/buy/search" },
     secondary: { label: "List for sale", href: "/buy/post" },
     tertiary: { label: "Post requirement", href: "/buy/requirements" },
+    quaternary: { label: "New projects", href: "/projects" },
   },
   invest: {
     title: "Invest",
-    copy: "Explore growth corridors, investment hotspots, and market intelligence.",
-    primary: { label: "Explore investments", href: "/invest" },
-    comingSoon: true,
+    copy: "Compare growth corridors, read market insights, and shortlist investment-ready areas.",
+    primary: { label: "Tricity market insights", href: "/property-market-insights/chandigarh-tricity" },
+    secondary: { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
+    tertiary: { label: "New Chandigarh corridor", href: "/buy/new-chandigarh-investment-guide" },
+    quaternary: { label: "Ask AI advisor", href: "/advisor" },
   },
 } as const;
 
@@ -67,6 +71,7 @@ export const HOME_BUY_LANE = {
   primaryCta: { label: "Browse for sale", href: "/buy/search" },
   secondaryCta: { label: "List for sale", href: "/buy/post" },
   tertiaryCta: { label: "Post requirement", href: "/buy/requirements" },
+  projectsCta: { label: "New projects", href: "/projects" },
 } as const;
 
 /**
@@ -87,47 +92,105 @@ export const HOME_PLATFORM_PILLS = [
   { label: "Owner contact", value: "Direct" },
 ] as const;
 
+export const HOME_TRICITY_LANES = {
+  rent: {
+    label: "Rent",
+    subtitle: "Owner-direct rentals across Chandigarh, Mohali, Panchkula, Zirakpur, and New Chandigarh.",
+  },
+  buy: {
+    label: "Buy",
+    subtitle: "Resale properties for sale and new launch projects across the Tricity.",
+  },
+  invest: {
+    label: "Invest",
+    subtitle: "Growth corridors, market reports, and project-led investment entry points.",
+  },
+} as const satisfies Record<
+  HomeTricityLane,
+  { label: string; subtitle: string }
+>;
+
+type TricityLaneLinks = Record<HomeTricityLane, readonly { label: string; href: string }[]>;
+
+export const HOME_TRICITY_CITIES: readonly {
+  name: string;
+  lanes: TricityLaneLinks;
+}[] = [
+  {
+    name: "Chandigarh",
+    lanes: {
+      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh" }],
+      buy: [
+        { label: "Properties for sale", href: "/buy/in/chandigarh" },
+        { label: "New projects", href: "/projects/chandigarh" },
+      ],
+      invest: [
+        { label: "Tricity market insights", href: "/property-market-insights/chandigarh-tricity" },
+        { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
+      ],
+    },
+  },
+  {
+    name: "Mohali",
+    lanes: {
+      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/mohali" }],
+      buy: [
+        { label: "Properties for sale", href: "/buy/mohali" },
+        { label: "New projects", href: "/projects/mohali" },
+      ],
+      invest: [
+        { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
+        { label: "Airport Road projects", href: "/projects/mohali" },
+      ],
+    },
+  },
+  {
+    name: "Panchkula",
+    lanes: {
+      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/panchkula" }],
+      buy: [
+        { label: "Properties for sale", href: "/buy/panchkula" },
+        { label: "New projects", href: "/projects/panchkula" },
+      ],
+      invest: [
+        { label: "Panchkula projects", href: "/projects/panchkula" },
+        { label: "Tricity market insights", href: "/property-market-insights/chandigarh-tricity" },
+      ],
+    },
+  },
+  {
+    name: "Zirakpur",
+    lanes: {
+      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/zirakpur" }],
+      buy: [
+        { label: "Properties for sale", href: "/buy/zirakpur" },
+        { label: "New projects", href: "/projects/zirakpur" },
+      ],
+      invest: [
+        { label: "VIP Road corridor", href: "/projects/zirakpur" },
+        { label: "Commercial potential", href: "/buy/zirakpur" },
+      ],
+    },
+  },
+  {
+    name: "New Chandigarh",
+    lanes: {
+      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/kharar" }],
+      buy: [
+        { label: "Properties for sale", href: "/buy/mohali/new-chandigarh" },
+        { label: "New projects", href: "/projects/kharar" },
+      ],
+      invest: [
+        { label: "New Chandigarh guide", href: "/buy/new-chandigarh-investment-guide" },
+        { label: "Growth corridor projects", href: "/projects/kharar" },
+      ],
+    },
+  },
+];
+
 export const HOME_TRICITY_SECTION = {
   title: "Explore Chandigarh Tricity",
-  subtitle:
-    "Discover rentals, properties for sale, and investment opportunities across the region.",
-  cities: [
-    {
-      name: "Chandigarh",
-      rentalHref: "/rentals/in/chandigarh",
-      saleHref: "/buy/in/chandigarh",
-      investLabel: "Investment guide",
-      investHref: "/invest",
-    },
-    {
-      name: "Mohali",
-      rentalHref: "/rentals/in/chandigarh/mohali",
-      saleHref: "/buy/mohali",
-      investLabel: "Growth corridor",
-      investHref: "/invest",
-    },
-    {
-      name: "Panchkula",
-      rentalHref: "/rentals/in/chandigarh/panchkula",
-      saleHref: "/buy/panchkula",
-      investLabel: "Coming soon",
-      investHref: "/invest",
-    },
-    {
-      name: "Zirakpur",
-      rentalHref: "/rentals/in/chandigarh/zirakpur",
-      saleHref: "/buy/zirakpur",
-      investLabel: "Commercial potential",
-      investHref: "/invest",
-    },
-    {
-      name: "New Chandigarh",
-      rentalHref: "/rentals/in/chandigarh/kharar",
-      saleHref: "/buy/mohali/new-chandigarh",
-      investLabel: "New projects",
-      investHref: "/invest",
-    },
-  ],
+  cities: HOME_TRICITY_CITIES,
 } as const;
 
 export const HOME_BUYER_DEMAND = {
@@ -148,13 +211,40 @@ export const HOME_INVESTMENT_INTEL = {
   subtitle:
     "Compare locations, discover growth corridors, and explore investment-ready property opportunities.",
   areas: [
-    { name: "New Chandigarh", tag: "Growth corridor" },
-    { name: "Airport Road", tag: "Investor interest" },
-    { name: "Mohali PR7", tag: "New projects" },
-    { name: "Zirakpur", tag: "Commercial potential" },
-    { name: "Panchkula Extension", tag: "Growth corridor" },
+    {
+      name: "New Chandigarh",
+      tag: "Growth corridor",
+      href: "/buy/new-chandigarh-investment-guide",
+    },
+    {
+      name: "Mohali",
+      tag: "Investment guide",
+      href: "/buy/mohali-investment-guide",
+    },
+    {
+      name: "Tricity overview",
+      tag: "Market insights",
+      href: "/property-market-insights/chandigarh-tricity",
+    },
+    {
+      name: "Zirakpur",
+      tag: "Commuter yield",
+      href: "/buy/zirakpur-investment-guide",
+    },
+    {
+      name: "Yield calculator",
+      tag: "Underwrite",
+      href: "/invest/calculator",
+    },
+    {
+      name: "Invest hub",
+      tag: "RentalPins Invest",
+      href: "/invest",
+    },
   ],
-  cta: { label: "Explore investment areas", href: "/invest" },
+  cta: { label: "Explore invest hub", href: "/invest" },
+  advisorCta: { label: "Ask AI advisor", href: "/invest/advisor" },
+  projectsCta: { label: "Browse investor projects", href: "/invest/projects" },
 } as const;
 
 export const HOME_AI_ADVISOR = {
@@ -162,7 +252,31 @@ export const HOME_AI_ADVISOR = {
   subtitle:
     "Use RentalPins AI to shortlist locations based on your budget, purpose, and timeline.",
   modes: ["Rent", "Buy", "Invest", "Commercial"] as const,
-  cta: { label: "Ask AI advisor", href: "/advisor" },
+  modeLinks: {
+    Rent: {
+      label: "Ask about rentals",
+      href: "/advisor",
+      hint: "Shortlist rental areas and browse owner-direct pins on the rent map.",
+    },
+    Buy: {
+      label: "Ask about buying",
+      href: "/advisor",
+      hint: "Compare resale, projects, and BHK bands on the buy map.",
+    },
+    Invest: {
+      label: "Ask about investing",
+      href: "/advisor",
+      hint: "Explore growth corridors, yields, and project-led entry points.",
+    },
+    Commercial: {
+      label: "Ask about commercial",
+      href: "/advisor",
+      hint: "Shops, offices, warehouses, and commercial sale inventory.",
+    },
+  } satisfies Record<
+    HomeAdvisorMode,
+    { label: string; href: string; hint: string }
+  >,
 } as const;
 
 export const HOME_DEVELOPER_TEASER = {
@@ -176,8 +290,9 @@ export const HOME_DEVELOPER_TEASER = {
     "Brochure downloads",
     "Location-based discovery",
   ],
-  cta: { label: "List your project", href: "/buy/post" },
+  cta: { label: "List your project", href: "/projects/post" },
   secondaryCta: { label: "Developer hub", href: "/developers" },
+  projectsCta: { label: "Browse all projects", href: "/projects" },
 } as const;
 
 export const HOME_INVEST_PREVIEW = {
@@ -222,6 +337,8 @@ export const HOME_OWNER_VALUE = {
 export const HOME_LISTING_STEPS = {
   title: "List your property in three steps",
   subtitle: "Most owners complete a first draft in a few minutes.",
+  rentCta: { label: "Post rental", href: "/post" },
+  saleCta: { label: "List for sale", href: "/buy/post" },
   steps: [
     {
       step: "01",
@@ -270,6 +387,7 @@ export const HOME_BUY_SECTION = {
   title: "Explore property for sale",
   subtitle: "Tricity buy guides, corridors, and sector pages on RentalPins Buy.",
   links: [
+    { label: "New projects (Tricity)", href: "/projects" },
     { label: "Mohali for sale", href: "/buy/mohali" },
     { label: "Kharar for sale", href: "/buy/kharar" },
     { label: "Zirakpur for sale", href: "/buy/zirakpur" },
@@ -288,6 +406,10 @@ export const HOME_SEO_LINKS = {
     { label: "Buy in Chandigarh", href: "/buy/in/chandigarh" },
     { label: "Delhi flats", href: "/rentals/in/delhi/flats" },
     { label: "PG near CU", href: "/pg-near-chandigarh-university" },
+    { label: "PG near PU", href: "/pg-near-panjab-university" },
+    { label: "PG near Chitkara", href: "/pg-near-chitkara-university" },
+    { label: "PG near ISB Mohali", href: "/pg-near-isb-mohali" },
+    { label: "PG near IISER Mohali", href: "/pg-near-iiser-mohali" },
     { label: "Rent without broker", href: "/rent-without-broker" },
     { label: "List property free", href: "/post" },
   ],

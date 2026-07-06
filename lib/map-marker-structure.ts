@@ -4,7 +4,7 @@ export function listingMarkerSvgKey(
   listing: { price: number; isPromoted?: boolean; homeIso?: string | null },
   labelTier: MapPinLabelTier
 ): string {
-  return `${labelTier}|${listing.price}|${listing.isPromoted ? 1 : 0}|${listing.homeIso ?? ""}`;
+  return `v7|${labelTier}|${listing.price}|${listing.isPromoted ? 1 : 0}|${listing.homeIso ?? ""}`;
 }
 
 export function listingMarkerStyleKey(

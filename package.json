@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -H 127.0.0.1",
+    "dev": "next dev -H 127.0.0.1",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -12,7 +12,12 @@
     "check:env": "node scripts/check-env.mjs",
     "check:env:prod": "node scripts/check-env.mjs --production",
     "check:firestore-sync": "node scripts/verify-firestore-web-sync.mjs",
-    "check:seo-content": "node scripts/check-seo-content-thresholds.mjs"
+    "check:seo-content": "node scripts/check-seo-content-thresholds.mjs",
+    "seed:builders": "node -e \"fetch('http://127.0.0.1:3000/api/builders/seed').then(r=>r.json()).then(console.log).catch(console.error)\"",
+    "seed:tricity": "node -e \"fetch('http://127.0.0.1:3000/api/builders/seed-tricity').then(r=>r.json()).then(console.log).catch(console.error)\"",
+    "seed:platform-builder": "node scripts/seed-platform-builder.mjs",
+    "geocode:tricity": "node scripts/geocode-tricity-projects.mjs",
+    "promote:admin": "node scripts/promote-admin.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.0",

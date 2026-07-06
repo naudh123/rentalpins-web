@@ -47,6 +47,36 @@ describe("agent lead scoring", () => {
     expect(score.score).toBeGreaterThan(40);
   });
 
+  it("scores high intent for project enquiry tool", () => {
+    const messages: UIMessage[] = [
+      { id: "u1", role: "user", parts: [{ type: "text", text: "Book site visit Saturday, budget 1.2 crore" }] },
+    ];
+    const score = scoreAgentConversation({
+      messages,
+      toolsUsed: ["submitProjectEnquiry", "listProjectUnits"],
+      surface: "project",
+    });
+    expect(score.highIntent).toBe(true);
+    expect(score.interest).toContain("site visit");
+  });
+
+  it("scores high intent for captureConversationLead", () => {
+    const messages: UIMessage[] = [
+      {
+        id: "u1",
+        role: "user",
+        parts: [{ type: "text", text: "Rahul, 9876543210, rahul@gmail.com" }],
+      },
+    ];
+    const score = scoreAgentConversation({
+      messages,
+      toolsUsed: ["captureConversationLead", "searchTricityProjects"],
+      surface: "project",
+    });
+    expect(score.highIntent).toBe(true);
+    expect(score.signals).toContain("email_shared");
+  });
+
   it("serializes transcript", () => {
     const messages: UIMessage[] = [
       { id: "u1", role: "user", parts: [{ type: "text", text: "Hello" }] },

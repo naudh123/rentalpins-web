@@ -9,6 +9,7 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
 import { appPath, siteUrl } from "@/lib/config";
 import { BUY_PROJECTS } from "@/lib/sale/buy-projects-config";
+import { DEVELOPER_PROFILES } from "@/lib/seo/developers-config";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "PropTech platform showcase | RentalPins for developers",
@@ -17,21 +18,6 @@ export const metadata: Metadata = buildPageMetadata({
   path: "/developers",
   robots: { index: true, follow: true },
 });
-
-const DEVELOPERS = [
-  {
-    slug: "green-valley-builders",
-    name: "Green Valley Builders",
-    cities: ["Mohali"],
-    projects: 1,
-  },
-  {
-    slug: "tricity-builders",
-    name: "Tricity Builders",
-    cities: ["Mohali", "Zirakpur", "Panchkula"],
-    projects: 3,
-  },
-];
 
 const SHOWCASE_METRICS = [
   { label: "Automated tests", value: "390+" },
@@ -155,11 +141,16 @@ export default function DevelopersPage() {
           Sample inventory on <Link href={appPath("/buy/projects")} className="text-[var(--accent)] underline">/buy/projects</Link> — {BUY_PROJECTS.length} launch projects.
         </p>
         <ul className="mt-4 space-y-3">
-          {DEVELOPERS.map((dev) => (
+          {DEVELOPER_PROFILES.map((dev) => (
             <li key={dev.slug} className="rounded-xl border border-[var(--border)] p-4">
-              <p className="font-semibold text-[var(--brand-navy)]">{dev.name}</p>
+              <Link
+                href={appPath(`/developers/${dev.slug}`)}
+                className="font-semibold text-[var(--brand-navy)] hover:underline"
+              >
+                {dev.name}
+              </Link>
               <p className="mt-1 text-sm text-[var(--muted)]">
-                {dev.projects} project(s) · {dev.cities.join(", ")}
+                {dev.projects.length} project(s) · {dev.cities.join(", ")}
               </p>
             </li>
           ))}

@@ -52,6 +52,172 @@ export const MARKETING_PG_EXTRA_SECTIONS: Record<string, MarketingSeoSection[]> 
       ],
     },
   ],
+  "pg-near-chitkara-university": [
+    {
+      title: "PG near Chitkara University on the Rajpura map",
+      paragraphs: [
+        "Chitkara University sits near Rajpura on the Patiala–Chandigarh corridor — filter PG/Hostels on the Tricity map and pan toward Rajpura and Banur student belts before shortlisting owner pins.",
+        "Chitkara students often compare Rajpura town PG with Banur and nearby corridor options — use map distance to campus gates, not vague 'near Chitkara' titles on classified boards.",
+        "RentalPins connects you with PG owners directly — no brokerage to browse, save searches, or inquire on WhatsApp from listing detail.",
+      ],
+    },
+    {
+      title: "Boys PG, girls PG, and shared rooms near Chitkara",
+      paragraphs: [
+        "Listings note suitability where owners specify boys, girls, or co-ed PG — confirm curfew, visitor rules, and laundry in the first message before paying semester deposit.",
+        "Shared rooms split rent across two or three students — verify AC surcharges, Wi‑Fi, and electricity top-ups that often sit outside headline PG rent.",
+        "Groups of friends sometimes take a Rajpura flat instead of separate PG rooms — confirm society occupancy limits and owner approval before signing.",
+      ],
+    },
+    {
+      title: "Rajpura vs Banur rent and commute trade-offs",
+      paragraphs: [
+        "Rajpura town PG often balances Chitkara proximity with walkable or short auto rides — Banur suits students who find slightly lower rent with a modest commute premium.",
+        "Compare pins on one Tricity map with Landran and Kharar belts when your class schedule allows flexible travel — total monthly cost matters more than lowest headline PG rent.",
+        "Build a monthly budget table: PG rent plus meals, laundry, Wi‑Fi, electricity, and bus or bike commute — effective cost often exceeds advertised PG price.",
+      ],
+    },
+    {
+      title: "PG vs flat decisions near Chitkara",
+      paragraphs: [
+        "Managed PG with meals suits first-year students new to the Rajpura belt — shared flats split better for stable groups after first semester once you know commute patterns.",
+        "Compare total monthly cost including AC, laundry, and Wi‑Fi — Chitkara-area PG pricing shifts once utilities and meals are included or excluded from headline rent.",
+        "Cross-link with PG near CGC Landran and flats near CGC pages when your group is undecided before session deposit.",
+      ],
+    },
+    {
+      title: "Session timing near Chitkara intake",
+      paragraphs: [
+        "Chitkara admission weeks compress PG availability — start map search two to four weeks before move-in and save searches for fresh owner posts.",
+        "Parents visiting for admission should shortlist three map pins and visit in one trip — inspect food quality, security, and ventilation before semester deposit.",
+        "Owners who refresh listing photos after vacancy regain visibility faster than stale pins during peak Tricity student weeks.",
+      ],
+    },
+    {
+      title: "Broker-free PG search near Chitkara University",
+      paragraphs: [
+        "Shortlist on RentalPins and message owners from listing pins — broker reposts of owner PG photos remain common near Rajpura and Banur student belts.",
+        "Confirm the unit matches the map pin before semester deposit — duplicate broker listings of genuine owner inventory are frequent in corridor PG markets.",
+        "Photograph existing wear at handover and share timestamped images on WhatsApp — deposit disputes are easier to avoid than resolve after exams.",
+      ],
+    },
+  ],
+  "pg-near-isb-mohali": [
+    {
+      title: "Rentals near ISB Mohali on the Sector 81 map",
+      paragraphs: [
+        "Indian School of Business sits in Knowledge City, Sector 81 — filter PG and flats on the Mohali hub map and pan toward Purv Marg and Sector 80 before shortlisting owner pins.",
+        "ISB visitors, fellows, and nearby institute students share Sector 81 inventory — use map distance to the ISB campus gate, not vague locality titles on classified boards.",
+        "RentalPins connects you with owners directly — no brokerage to browse, save searches, or inquire on WhatsApp from listing detail.",
+      ],
+    },
+    {
+      title: "Furnished flats and PG near Knowledge City",
+      paragraphs: [
+        "Many ISB-belt listings include furnishing — confirm appliances, Wi‑Fi, parking, and society rules with the owner before token.",
+        "Shared flats suit small groups of batchmates or colleagues — agree rent split and guest policy before signing.",
+        "Compare PG with meals against cooking in a flat when your stay is longer than one trimester.",
+      ],
+    },
+    {
+      title: "Sector 80, 81 and Purv Marg commute context",
+      paragraphs: [
+        "Purv Marg is the main artery through the ISB–IISER belt — two listings with similar rent can differ in daily commute once you see exact map position.",
+        "Sector 80 pockets sometimes offer quieter residential options at a modest premium or discount versus central Sector 81.",
+        "Save map searches before ISB intake peaks — fresh owner posts appear as pins without broker unlock fees.",
+      ],
+    },
+    {
+      title: "ISB and IISER inventory overlap",
+      paragraphs: [
+        "Sector 81 PG and flat inventory serves both ISB and IISER commuters — compare pins for each campus if your schedule spans both institutes.",
+        "Link to PG near IISER Mohali when comparing student housing options in the same belt before session deposit.",
+        "Mohali Phase 7 and Sector 70 are farther but sometimes chosen for family-style flats — factor total commute plus rent.",
+      ],
+    },
+    {
+      title: "Industrial training students in the Sector 81 belt",
+      paragraphs: [
+        "Engineering, diploma, and ITI students posted at JLPL Industrial Area plants often rent PG in Chilla and Sector 81 fringe — the same inventory ISB and IISER students browse on the Mohali map.",
+        "Training batches typically need 3–6 month stays — tell owners your exact training start and end dates in the first WhatsApp and confirm deposit refund if your plant assignment ends early.",
+        "Use the accommodation near JLPL page when your training site is inside the industrial area; use ISB-belt PG when your programme anchor is Knowledge City but you still commute to JLPL occasionally.",
+      ],
+    },
+    {
+      title: "Broker-free search near ISB Mohali",
+      paragraphs: [
+        "Message owners from RentalPins listing pins — broker reposts of Sector 81 flats and PG photos remain common on external boards.",
+        "Confirm the unit matches the map pin before paying advance — duplicate listings of genuine owner inventory are frequent near Knowledge City.",
+        "Photograph existing wear at handover and clarify notice period on WhatsApp before token.",
+      ],
+    },
+    {
+      title: "Listing your property near ISB",
+      paragraphs: [
+        "Owners and PG operators can post free on RentalPins and reach ISB and IISER searchers on the Mohali map.",
+        "Include furnishing list, parking, and preferred tenant type in descriptions — professionals and students shortlist faster with explicit terms.",
+        "Accurate map pins at the building entrance reduce wasted visits during peak placement and admission weeks.",
+      ],
+    },
+  ],
+  "pg-near-iiser-mohali": [
+    {
+      title: "PG and hostels near IISER Mohali",
+      paragraphs: [
+        "IISER Mohali sits in Sector 81 — filter PG/Hostels on the Mohali map and compare pins near campus, Chilla, and Purv Marg before shortlisting visits.",
+        "Research students and undergraduates often compare managed PG with shared flats once they know lab and class schedules — map distance matters more than headline rent.",
+        "RentalPins lists owner-posted PG without broker search commission — contact on WhatsApp from listing detail after comparing food plans and room types.",
+      ],
+    },
+    {
+      title: "Boys, girls, and shared PG near IISER",
+      paragraphs: [
+        "Confirm boys, girls, or co-ed suitability in the first owner message — IISER-belt PG owners specify preferences when available.",
+        "Hostel-style listings may have stricter curfew than private PG — compare rules, mess quality, and bathroom sharing on visit.",
+        "Ask about mess timings, laundry, Wi‑Fi, and visitor rules before semester deposit — policies vary sharply once utilities are included or excluded.",
+      ],
+    },
+    {
+      title: "Chilla and Sector 81 rent trade-offs",
+      paragraphs: [
+        "Chilla village pockets can offer lower headline PG rent with a short auto ride to IISER — compare total monthly cost including commute.",
+        "Sector 81 campus-adjacent PG trades slightly higher rent for walkable classes — prioritize map pin accuracy before paying token.",
+        "JLPL industrial fringe suits industrial training students and project staff — cross-link accommodation near JLPL when your training plant is closer than the IISER campus gate.",
+      ],
+    },
+    {
+      title: "Industrial training near IISER Sector 81",
+      paragraphs: [
+        "Many outstation trainees posted at JLPL Industrial Area rent in Chilla and Sector 81 fringe while attending plants nearby — they share PG inventory with IISER students but need shorter leases and shift-friendly mess timings.",
+        "Confirm 3–6 month stay rules, pro-rata deposit refund, and whether the PG allows late returns after evening factory shifts before paying advance rent.",
+        "Girls trainees should shortlist dedicated girls PG with curfew and security rules — visit in daylight and ask about visitor policies in the first owner message.",
+      ],
+    },
+    {
+      title: "Session timing near IISER",
+      paragraphs: [
+        "Semester starts and conference weeks tighten PG supply — start map search two to four weeks before move-in and save searches for fresh owner posts.",
+        "Parents should shortlist three pins and visit in daylight — inspect ventilation, security, and food hygiene before paying advance rent.",
+        "Second-year students often shift from PG to shared flats in Sector 80 or Chilla — revisit the Mohali map each session rather than renewing blindly.",
+      ],
+    },
+    {
+      title: "Tricity context for IISER students",
+      paragraphs: [
+        "Some IISER students cross-shop Chandigarh sector PG for weekend access — compare total commute plus rent before session deposit.",
+        "Mohali IT Park and Phase 7 flats appear on the same hub map when internships anchor in SAS Nagar.",
+        "PG near ISB Mohali page links to overlapping Sector 81 inventory — read both guides when comparing professional and student housing mixes.",
+      ],
+    },
+    {
+      title: "Broker-free PG viewing near IISER",
+      paragraphs: [
+        "Shortlist on RentalPins and message owners from listing pins — broker reposts near The Dugout Arena and Sector 81 remain common.",
+        "Confirm who holds keys and whether the unit matches the map pin before semester deposit.",
+        "Keep timestamped WhatsApp images of room condition at handover — deposit disputes are easier to avoid than resolve after thesis submission peaks.",
+      ],
+    },
+  ],
   "pg-near-cgc-landran": [
     {
       title: "PG near CGC Landran on the map",
@@ -150,6 +316,56 @@ export const MARKETING_PG_EXTRA_SECTIONS: Record<string, MarketingSeoSection[]> 
         "Save map searches two to four weeks before semester start — PG inventory tightens quickly when Panjab University and PEC sessions overlap in Tricity.",
         "Owners who refresh listing photos after vacancy regain visibility faster than stale pins during peak student weeks — prioritize recently updated map pins.",
         "Use Chandigarh PG category hubs under the city page after setting your sector on the map — filters keep hostel, PG, and flat results aligned with visit plans.",
+      ],
+    },
+  ],
+  "pg-near-panjab-university": [
+    {
+      title: "PG near Panjab University on the Chandigarh map",
+      paragraphs: [
+        "Panjab University sits in Sector 14 — filter PG/Hostels on the Chandigarh hub map and pan toward Sector 14–17 student belts before shortlisting owner pins.",
+        "PU and PEC students often compare adjacent sector PG options — use map distance to campus gates, not vague 'near PU' titles on classified boards.",
+        "RentalPins connects you with PG owners directly — no brokerage to browse, save searches, or inquire on WhatsApp from listing detail.",
+      ],
+    },
+    {
+      title: "Boys PG, girls PG, and shared rooms near PU",
+      paragraphs: [
+        "Listings note suitability where owners specify boys, girls, or co-ed PG — confirm curfew, visitor rules, and laundry in the first message before paying semester deposit.",
+        "Shared rooms split rent across two or three students — verify AC surcharges, Wi‑Fi, and electricity top-ups that often sit outside headline PG rent.",
+        "Groups of friends sometimes take a Sector 15 or 17 flat instead of separate PG rooms — confirm society occupancy limits and owner approval before signing.",
+      ],
+    },
+    {
+      title: "Sector 14–17 rent and commute trade-offs",
+      paragraphs: [
+        "Sector 14 offers the shortest walk to PU campus but can carry a rent premium — Sector 15 and 16 often balance commute and monthly cost for daily classes.",
+        "Sector 17 suits students who also commute toward PEC or coaching belts — compare pins on one Chandigarh map rather than renewing blindly each semester.",
+        "Build a monthly budget table: PG rent plus meals, laundry, Wi‑Fi, electricity, and cycle or bus pass — effective cost often exceeds advertised PG price.",
+      ],
+    },
+    {
+      title: "PG vs flat decisions near Panjab University",
+      paragraphs: [
+        "Managed PG with meals suits first-year students new to Chandigarh — shared flats split better for stable groups after first semester once you know sector preferences.",
+        "Compare total monthly cost including AC, laundry, and Wi‑Fi — PU-area PG pricing shifts once utilities and meals are included or excluded from headline rent.",
+        "Blog guide PG vs flat for Chandigarh students links back to live sector pins — read for budget framing, then shortlist on the map the same day.",
+      ],
+    },
+    {
+      title: "Session timing near PU and PEC overlap",
+      paragraphs: [
+        "Panjab University and PEC semester starts compress PG availability — start map search two to four weeks before move-in and save searches for fresh owner posts.",
+        "Parents visiting for admission should shortlist three map pins and visit in one trip — inspect food quality, security, and ventilation before semester deposit.",
+        "Owners who refresh listing photos after vacancy regain visibility faster than stale pins during peak Tricity student weeks.",
+      ],
+    },
+    {
+      title: "Broker-free PG search near Panjab University",
+      paragraphs: [
+        "Shortlist on RentalPins and message owners from listing pins — broker reposts of owner PG photos remain common near Sector 14–17 student belts.",
+        "Confirm the unit matches the map pin before semester deposit — duplicate broker listings of genuine owner inventory are frequent in Chandigarh PG markets.",
+        "Photograph existing wear at handover and share timestamped images on WhatsApp — deposit disputes are easier to avoid than resolve after exams.",
       ],
     },
   ],

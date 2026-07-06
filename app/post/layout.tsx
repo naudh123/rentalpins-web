@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Post a listing",
-  description: "Create or edit a rental listing on RentalPins.",
+  title: "Post for rent",
+  description: "List your property for rent on the RentalPins rent map — PGs, flats, rooms, and commercial.",
   path: "/post",
   noIndex: true,
 });

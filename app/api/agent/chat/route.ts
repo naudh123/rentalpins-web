@@ -5,6 +5,12 @@ import {
   saveAgentConversation,
 } from "@/lib/agent/conversations";
 import { isAgentConfigured } from "@/lib/agent/env";
+import {
+  loadProjectAgentBundle,
+  loadProjectAgentBundleBySlug,
+  loadProjectCatalogForAgent,
+} from "@/lib/agent/project-agent-context";
+import { formatProjectsIndexContext } from "@/lib/agent/project-agent-knowledge";
 import { checkAgentRateLimit, getAgentClientKey } from "@/lib/agent/rate-limit";
 import { resolveAgentAuthContext } from "@/lib/agent/resolve-request-context";
 import { streamAgentChat } from "@/lib/agent/run-agent";
@@ -13,7 +19,9 @@ import type { AgentChatRequestBody, AgentSurface } from "@/lib/agent/types";
 export const maxDuration = 60;
 
 function parseSurface(value: unknown): AgentSurface {
-  if (value === "map" || value === "showcase" || value === "advisor") return value;
+  if (value === "map" || value === "showcase" || value === "advisor" || value === "project") {
+    return value;
+  }
   return "advisor";
 }
 
@@ -51,14 +59,40 @@ export async function POST(request: Request) {
     const sessionId = String(body.sessionId ?? "anonymous").slice(0, 120);
     const { userId, userContextPrompt } = await resolveAgentAuthContext(request);
 
+    let projectBundle = null;
+    let projectsIndexContext: string | undefined;
+    let projectId: string | null = null;
+    let projectName: string | null = null;
+    let projectCatalog: Awaited<ReturnType<typeof loadProjectCatalogForAgent>> = [];
+
+    if (surface === "project") {
+      projectCatalog = await loadProjectCatalogForAgent(body.citySlug);
+      if (body.projectId) {
+        projectBundle = await loadProjectAgentBundle(body.projectId);
+      } else if (body.projectSlug && body.citySlug) {
+        projectBundle = await loadProjectAgentBundleBySlug(body.citySlug, body.projectSlug);
+      }
+      if (projectBundle) {
+        projectId = projectBundle.project.id;
+        projectName = projectBundle.project.name;
+      } else {
+        projectsIndexContext = formatProjectsIndexContext(body.citySlug ?? null, projectCatalog);
+      }
+    }
+
     let handoffInterest: string | undefined;
     let handoffSummary: string | undefined;
 
     const result = await streamAgentChat({
       messages,
       surface,
-      transactionType,
+      transactionType: surface === "project" ? "sale" : transactionType,
       userContextPrompt,
+      projectBundle,
+      citySlug: body.citySlug ?? projectBundle?.project.citySlug ?? null,
+      projectsIndexContext,
+      sessionId,
+      projectCatalog,
       callbacks: {
         onContactHandoff: (params) => {
           handoffInterest = params.interest;
@@ -75,10 +109,14 @@ export async function POST(request: Request) {
           ipHash: hashIpForAgent(clientKey),
           userId,
           surface,
-          transactionType,
+          transactionType: surface === "project" ? "sale" : transactionType,
           messages: allMessages,
           handoffInterest,
           handoffSummary,
+          projectId,
+          projectName,
+          citySlug: body.citySlug ?? projectBundle?.project.citySlug ?? null,
+          projectSlug: body.projectSlug ?? projectBundle?.project.slug ?? null,
         }).catch((err) => console.error("[agent/chat] save failed", err));
       },
     });

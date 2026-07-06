@@ -125,6 +125,54 @@ export function trackListingShared(
   trackEvent("listing_shared", { listing_id: listingId, method });
 }
 
+export function trackProjectLeadStarted(input: {
+  projectId?: string;
+  projectSlug: string;
+  citySlug: string;
+  source: string;
+  placement?: string;
+}): void {
+  trackEvent("project_lead_started", {
+    ...(input.projectId ? { project_id: input.projectId } : {}),
+    project_slug: input.projectSlug,
+    city_slug: input.citySlug,
+    lead_source: input.source,
+    ...(input.placement ? { lead_placement: input.placement } : {}),
+  });
+}
+
+export function trackProjectLeadSubmitted(input: {
+  projectId?: string;
+  projectSlug: string;
+  citySlug: string;
+  source: string;
+  placement?: string;
+}): void {
+  trackEvent("project_lead_submitted", {
+    ...(input.projectId ? { project_id: input.projectId } : {}),
+    project_slug: input.projectSlug,
+    city_slug: input.citySlug,
+    lead_source: input.source,
+    ...(input.placement ? { lead_placement: input.placement } : {}),
+  });
+}
+
+export function trackProjectContactClicked(input: {
+  projectId?: string;
+  projectSlug: string;
+  citySlug: string;
+  mode: "call" | "whatsapp" | "enquire";
+  placement?: string;
+}): void {
+  trackEvent("project_contact_clicked", {
+    ...(input.projectId ? { project_id: input.projectId } : {}),
+    project_slug: input.projectSlug,
+    city_slug: input.citySlug,
+    contact_mode: input.mode,
+    ...(input.placement ? { lead_placement: input.placement } : {}),
+  });
+}
+
 export function trackSeoCtaClick(input: {
   cta: string;
   location?: string;

@@ -8,6 +8,8 @@ export async function GET() {
   const posts = await getAllPosts();
   const urls = [
     toSitemapEntry("/blog", { lastmod: now, changefreq: "weekly", priority: 0.6 }),
+    toSitemapEntry("/blog/all", { lastmod: now, changefreq: "weekly", priority: 0.58 }),
+    toSitemapEntry("/blog/buy", { lastmod: now, changefreq: "weekly", priority: 0.58 }),
     ...posts.map((post) =>
       toSitemapEntry(`/blog/${post.slug}`, {
         lastmod: post.updatedAt ?? post.date ?? now,

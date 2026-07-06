@@ -42,3 +42,26 @@ export function extractListingPreviewsFromParts(
     return true;
   });
 }
+
+/** Turn API / transport errors into user-facing copy (never raw JSON). */
+export function formatAgentChatError(message: string | undefined): string {
+  const raw = (message ?? "").trim();
+  if (!raw) {
+    return "Something went wrong. Please try again in a moment.";
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as { error?: string };
+    if (typeof parsed.error === "string" && parsed.error.trim()) {
+      return formatAgentChatError(parsed.error);
+    }
+  } catch {
+    // not JSON — use raw text below
+  }
+
+  if (/OPENAI_API_KEY|not configured|503/i.test(raw)) {
+    return "AI concierge is not available yet — OPENAI_API_KEY must be set on the server. Add it to .env.local (local) or Vercel env (production), then restart the dev server.";
+  }
+
+  return raw;
+}

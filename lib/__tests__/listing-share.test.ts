@@ -1,6 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
+import { buildListingSharePayload } from "@/lib/listing-share-copy";
 import {
   listingCanonicalUrl,
+  listingOgImageAbsoluteUrl,
   listingOgImagePath,
   listingShareDescription,
 } from "@/lib/listing-share";
@@ -56,8 +58,15 @@ describe("listing-share", () => {
   });
 
   it("points OG image at legacy listings opengraph-image route", () => {
+    const slug = buildSeoSlugSegment(baseListing);
     expect(listingOgImagePath(baseListing)).toBe(
-      `/listings/${baseListing.id}/opengraph-image`
+      `/listings/${slug}/opengraph-image`
+    );
+  });
+
+  it("uses absolute https OG image URL for crawlers", () => {
+    expect(listingOgImageAbsoluteUrl(baseListing)).toMatch(
+      /^https:\/\/www\.rentalpins\.com\/listings\/.+\/opengraph-image$/
     );
   });
 
@@ -65,5 +74,32 @@ describe("listing-share", () => {
     const d = listingShareDescription(baseListing);
     expect(d).toMatch(/Chandigarh|Sector/i);
     expect(d).toMatch(/RentalPins/i);
+  });
+});
+
+describe("listing-share-copy", () => {
+  beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_BASE_PATH", "");
+  });
+
+  it("puts canonical URL on its own line for WhatsApp preview", () => {
+    const payload = buildListingSharePayload(baseListing);
+    expect(payload.whatsAppText).toContain("https://www.rentalpins.com/");
+    expect(payload.whatsAppText.split("\n\n").pop()).toMatch(/^https:\/\//);
+    expect(payload.whatsAppText).toContain("Owner-direct");
+  });
+
+  it("uses buy branding for sale listings", () => {
+    const sale = {
+      ...baseListing,
+      transactionType: "sale" as const,
+      price: 5500000,
+      priceUnit: "total",
+    };
+    const payload = buildListingSharePayload(sale);
+    expect(payload.brandLabel).toBe("RentalPins Buy");
+    expect(payload.nativeShareTitle).toContain("For sale");
+    expect(payload.whatsAppText).toContain("RentalPins Buy");
   });
 });

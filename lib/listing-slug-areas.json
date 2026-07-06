@@ -54,6 +54,33 @@
     "radiusKm": 5
   },
   {
+    "slug": "banur",
+    "name": "Banur",
+    "center": {
+      "lat": 30.553,
+      "lng": 76.718
+    },
+    "radiusKm": 5
+  },
+  {
+    "slug": "sector-81-mohali",
+    "name": "Sector 81 Mohali",
+    "center": {
+      "lat": 30.655,
+      "lng": 76.735
+    },
+    "radiusKm": 4
+  },
+  {
+    "slug": "chilla-mohali",
+    "name": "Chilla Mohali",
+    "center": {
+      "lat": 30.682,
+      "lng": 76.742
+    },
+    "radiusKm": 4
+  },
+  {
     "slug": "ludhiana",
     "name": "Ludhiana",
     "center": {

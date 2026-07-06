@@ -6,6 +6,7 @@ import { suggestedPromptsForSurface } from "@/lib/agent/prompts";
 interface Props {
   surface: AgentSurface;
   transactionType?: "rent" | "sale";
+  projectName?: string;
   onSelect: (prompt: string) => void;
   disabled?: boolean;
   className?: string;
@@ -14,11 +15,12 @@ interface Props {
 export default function AgentSuggestedPrompts({
   surface,
   transactionType = "rent",
+  projectName,
   onSelect,
   disabled,
   className = "",
 }: Props) {
-  const prompts = suggestedPromptsForSurface(surface, transactionType);
+  const prompts = suggestedPromptsForSurface(surface, transactionType, projectName);
 
   return (
     <div className={`space-y-2 ${className}`}>

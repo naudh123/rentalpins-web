@@ -238,7 +238,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
               href={appPath("/post")}
               className="rp-btn rp-btn-secondary hidden px-4 py-2 text-xs lg:inline-flex"
             >
-              Post listing
+              Post rental
             </Link>
             {user ? (
               <>

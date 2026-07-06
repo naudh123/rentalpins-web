@@ -2,6 +2,7 @@ import { getIndexableAreas } from "@/lib/cities-config";
 import { getIndianGscSitemapPaths } from "@/lib/rental-area-config";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
 import { buildSitemapLocalityPaths } from "@/lib/seo/sitemap-locality-filter";
+import { getMandatoryRentalAreaSitemapPaths } from "@/lib/seo/sitemap-config";
 
 export const revalidate = 86400;
 
@@ -21,7 +22,8 @@ export async function GET() {
     ];
   }
 
-  const urls = paths.map((path) =>
+  const pathSet = new Set([...paths, ...getMandatoryRentalAreaSitemapPaths()]);
+  const urls = [...pathSet].map((path) =>
     toSitemapEntry(path, { lastmod: now, changefreq: "daily", priority: 0.8 })
   );
 
