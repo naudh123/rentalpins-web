@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type MutableRefObject } from "react";
 import {
   googleBoundsToMapBounds,
   mapBoundsToGoogleLiteral,
@@ -12,6 +12,8 @@ import {
   isNearFirstPoint,
   MAP_AREA_PREVIEW_STYLE,
 } from "@/lib/map-area-drawing";
+import type { MapDrawProgress } from "@/lib/map-draw-ui";
+import { isMobileMapLayout } from "@/lib/map-gestures";
 
 const SHARED_STYLE = {
   fillColor: "#E8501A",
@@ -39,6 +41,12 @@ const EDIT_DEBOUNCE_MS = 200;
 
 export type DrawMode = "rect" | "poly";
 
+export interface MapDrawActions {
+  cancel: () => void;
+  undoPoint: () => void;
+  finishPolygon: () => void;
+}
+
 interface Props {
   map: google.maps.Map | null;
   drawMode: DrawMode | null;
@@ -47,6 +55,8 @@ interface Props {
   paused?: boolean;
   onShapeChange: (shape: MapAreaShape | null) => void;
   onDrawComplete: () => void;
+  onDrawProgress?: (progress: MapDrawProgress | null) => void;
+  drawActionsRef?: MutableRefObject<MapDrawActions | null>;
 }
 
 function polygonPath(polygon: google.maps.Polygon): LatLngPoint[] {
@@ -63,11 +73,15 @@ export default function MapDrawAreaController({
   paused = false,
   onShapeChange,
   onDrawComplete,
+  onDrawProgress,
+  drawActionsRef,
 }: Props) {
   const onShapeChangeRef = useRef(onShapeChange);
   onShapeChangeRef.current = onShapeChange;
   const onDrawCompleteRef = useRef(onDrawComplete);
   onDrawCompleteRef.current = onDrawComplete;
+  const onDrawProgressRef = useRef(onDrawProgress);
+  onDrawProgressRef.current = onDrawProgress;
   const overlayRef = useRef<google.maps.Rectangle | google.maps.Polygon | null>(null);
   const lastEmittedKeyRef = useRef<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -87,82 +101,182 @@ export default function MapDrawAreaController({
   };
 
   useEffect(() => {
-    if (!map || paused || !drawMode) return;
+    if (!drawMode) {
+      onDrawProgressRef.current?.(null);
+      if (drawActionsRef) drawActionsRef.current = null;
+      return;
+    }
+
+    if (!map || paused) return;
 
     const cleanups: Array<() => void> = [];
     let clickTimer: ReturnType<typeof setTimeout> | null = null;
     const previousDraggable = map.get("draggable") !== false;
     const previousDblClickZoom = map.get("disableDoubleClickZoom") !== true;
+    let preview: google.maps.Rectangle | google.maps.Polygon | null = null;
 
     const clearClickTimer = () => {
       if (clickTimer) clearTimeout(clickTimer);
       clickTimer = null;
     };
 
+    const clearPreview = () => {
+      preview?.setMap(null);
+      preview = null;
+    };
+
     const finish = () => {
+      clearPreview();
+      onDrawProgressRef.current?.(null);
+      if (drawActionsRef) drawActionsRef.current = null;
       onDrawCompleteRef.current();
     };
 
+    const cancel = () => {
+      clearClickTimer();
+      clearPreview();
+      finish();
+    };
+
+    const reportRectProgress = () => {
+      onDrawProgressRef.current?.({
+        mode: "rect",
+        pointCount: 0,
+        canFinish: false,
+        canUndo: false,
+      });
+    };
+
+    if (drawActionsRef) {
+      drawActionsRef.current = {
+        cancel,
+        undoPoint: () => {},
+        finishPolygon: () => {},
+      };
+    }
+
+    const onKeyDown = (ev: KeyboardEvent) => {
+      if (ev.key === "Escape") cancel();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    cleanups.push(() => window.removeEventListener("keydown", onKeyDown));
+
     if (drawMode === "rect") {
-      let start: google.maps.LatLng | null = null;
-      let preview: google.maps.Rectangle | null = null;
-      map.setOptions({ draggable: false });
+      reportRectProgress();
+      const mobileTwoTap = isMobileMapLayout();
 
-      const onMouseDown = (e: google.maps.MapMouseEvent) => {
-        if (!e.latLng) return;
-        start = e.latLng;
-        preview?.setMap(null);
-        preview = new google.maps.Rectangle({
-          ...MAP_AREA_PREVIEW_STYLE,
-          map,
-          bounds: boundsFromCorners(start, start),
-        });
-      };
+      if (mobileTwoTap) {
+        let start: google.maps.LatLng | null = null;
 
-      const onMouseMove = (e: google.maps.MapMouseEvent) => {
-        if (!start || !e.latLng || !preview) return;
-        preview.setBounds(boundsFromCorners(start, e.latLng));
-      };
-
-      const onMouseUp = (e: google.maps.MapMouseEvent) => {
-        if (!start || !e.latLng) {
+        const onClick = (e: google.maps.MapMouseEvent) => {
+          if (!e.latLng) return;
+          if (!start) {
+            start = e.latLng;
+            preview = new google.maps.Rectangle({
+              ...MAP_AREA_PREVIEW_STYLE,
+              map,
+              bounds: boundsFromCorners(start, start),
+            });
+            return;
+          }
+          const bounds = new google.maps.LatLngBounds();
+          bounds.extend(start);
+          bounds.extend(e.latLng);
           start = null;
-          preview?.setMap(null);
-          preview = null;
-          return;
-        }
-        const bounds = new google.maps.LatLngBounds();
-        bounds.extend(start);
-        bounds.extend(e.latLng);
-        preview?.setMap(null);
-        preview = null;
-        start = null;
-        if (isMeaningfulRectBounds(bounds)) {
-          emitShape({ type: "rect", bounds: googleBoundsToMapBounds(bounds) });
-        }
-        finish();
-      };
+          clearPreview();
+          if (isMeaningfulRectBounds(bounds)) {
+            emitShape({ type: "rect", bounds: googleBoundsToMapBounds(bounds) });
+          }
+          finish();
+        };
 
-      const downListener = map.addListener("mousedown", onMouseDown);
-      const moveListener = map.addListener("mousemove", onMouseMove);
-      const upListener = map.addListener("mouseup", onMouseUp);
-      cleanups.push(
-        () => google.maps.event.removeListener(downListener),
-        () => google.maps.event.removeListener(moveListener),
-        () => google.maps.event.removeListener(upListener)
-      );
+        const clickListener = map.addListener("click", onClick);
+        cleanups.push(() => google.maps.event.removeListener(clickListener));
+      } else {
+        let start: google.maps.LatLng | null = null;
+        map.setOptions({ draggable: false });
+
+        const onMouseDown = (e: google.maps.MapMouseEvent) => {
+          if (!e.latLng) return;
+          start = e.latLng;
+          clearPreview();
+          preview = new google.maps.Rectangle({
+            ...MAP_AREA_PREVIEW_STYLE,
+            map,
+            bounds: boundsFromCorners(start, start),
+          });
+        };
+
+        const onMouseMove = (e: google.maps.MapMouseEvent) => {
+          if (!start || !e.latLng || !preview) return;
+          preview.setBounds(boundsFromCorners(start, e.latLng));
+        };
+
+        const onMouseUp = (e: google.maps.MapMouseEvent) => {
+          if (!start || !e.latLng) {
+            start = null;
+            clearPreview();
+            return;
+          }
+          const bounds = new google.maps.LatLngBounds();
+          bounds.extend(start);
+          bounds.extend(e.latLng);
+          start = null;
+          clearPreview();
+          if (isMeaningfulRectBounds(bounds)) {
+            emitShape({ type: "rect", bounds: googleBoundsToMapBounds(bounds) });
+          }
+          finish();
+        };
+
+        const downListener = map.addListener("mousedown", onMouseDown);
+        const moveListener = map.addListener("mousemove", onMouseMove);
+        const upListener = map.addListener("mouseup", onMouseUp);
+        cleanups.push(
+          () => google.maps.event.removeListener(downListener),
+          () => google.maps.event.removeListener(moveListener),
+          () => google.maps.event.removeListener(upListener)
+        );
+      }
     } else {
       const path: LatLngPoint[] = [];
-      let preview: google.maps.Polygon | null = null;
-      map.setOptions({ disableDoubleClickZoom: true });
+
+      const reportPolyProgress = () => {
+        onDrawProgressRef.current?.({
+          mode: "poly",
+          pointCount: path.length,
+          canFinish: path.length >= 3,
+          canUndo: path.length > 0,
+        });
+      };
 
       const completePolygon = () => {
         if (path.length < 3) return;
         emitShape({ type: "poly", path: [...path] });
-        preview?.setMap(null);
-        preview = null;
         finish();
       };
+
+      const undoPoint = () => {
+        if (path.length === 0) return;
+        path.pop();
+        if (path.length === 0) {
+          clearPreview();
+        } else if (preview) {
+          preview.setPath(path);
+        }
+        reportPolyProgress();
+      };
+
+      if (drawActionsRef) {
+        drawActionsRef.current = {
+          cancel,
+          undoPoint,
+          finishPolygon: completePolygon,
+        };
+      }
+
+      reportPolyProgress();
+      map.setOptions({ disableDoubleClickZoom: true });
 
       const onClick = (e: google.maps.MapMouseEvent) => {
         if (!e.latLng) return;
@@ -185,7 +299,8 @@ export default function MapDrawAreaController({
           } else {
             preview.setPath(path);
           }
-        }, 220);
+          reportPolyProgress();
+        }, 180);
       };
 
       const onDblClick = (e: google.maps.MapMouseEvent) => {
@@ -194,32 +309,26 @@ export default function MapDrawAreaController({
         if (path.length >= 3) completePolygon();
       };
 
-      const onKeyDown = (ev: KeyboardEvent) => {
-        if (ev.key === "Escape") {
-          preview?.setMap(null);
-          finish();
-        }
-      };
-
       const clickListener = map.addListener("click", onClick);
       const dblClickListener = map.addListener("dblclick", onDblClick);
       cleanups.push(
         () => google.maps.event.removeListener(clickListener),
-        () => google.maps.event.removeListener(dblClickListener),
-        () => window.removeEventListener("keydown", onKeyDown)
+        () => google.maps.event.removeListener(dblClickListener)
       );
-      window.addEventListener("keydown", onKeyDown);
     }
 
     return () => {
       clearClickTimer();
       cleanups.forEach((fn) => fn());
+      clearPreview();
       map.setOptions({
         draggable: previousDraggable,
         disableDoubleClickZoom: previousDblClickZoom,
       });
+      onDrawProgressRef.current?.(null);
+      if (drawActionsRef) drawActionsRef.current = null;
     };
-  }, [map, drawMode, paused]);
+  }, [map, drawMode, paused, drawActionsRef]);
 
   useEffect(() => {
     if (!map) return;
@@ -266,8 +375,8 @@ export default function MapDrawAreaController({
       const scheduleEmit = () => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
         debounceRef.current = setTimeout(() => {
-          const path = polygonPath(polygon);
-          if (path.length >= 3) emitShape({ type: "poly", path });
+          const nextPath = polygonPath(polygon);
+          if (nextPath.length >= 3) emitShape({ type: "poly", path: nextPath });
         }, EDIT_DEBOUNCE_MS);
       };
       const path = polygon.getPath();
