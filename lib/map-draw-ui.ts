@@ -19,12 +19,12 @@ export function drawAreaPrompt(
   if (opts.pointCount === 0) {
     return opts.mobile
       ? "Tap the map to add corners · use Done when finished"
-      : "Click to add corners · double-click or tap Done to finish";
+      : "Click to add corners · tap Done when finished";
   }
   if (opts.pointCount < 3) {
     return `Add ${3 - opts.pointCount} more point${3 - opts.pointCount === 1 ? "" : "s"} to close the shape`;
   }
   return opts.mobile
     ? "Tap the first point or Done to finish · Undo removes last point"
-    : "Double-click, tap the first point, or Done to finish";
+    : "Tap the orange first point or Done to finish";
 }

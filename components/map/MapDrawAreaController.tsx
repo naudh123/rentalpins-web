@@ -39,6 +39,8 @@ const POLY_STYLE: google.maps.PolygonOptions = {
 };
 
 const EDIT_DEBOUNCE_MS = 200;
+/** Let mouseup from finishing a draw finish before map/overlay drag is re-enabled. */
+const POST_DRAW_GESTURE_MS = 320;
 
 export type DrawMode = "rect" | "poly";
 
@@ -86,6 +88,7 @@ export default function MapDrawAreaController({
   const overlayRef = useRef<google.maps.Rectangle | google.maps.Polygon | null>(null);
   const lastEmittedKeyRef = useRef<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const restoreGestureTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const shapeRef = useRef(shape);
   shapeRef.current = shape;
 
@@ -110,10 +113,15 @@ export default function MapDrawAreaController({
 
     if (!map || paused) return;
 
+    if (restoreGestureTimerRef.current) {
+      clearTimeout(restoreGestureTimerRef.current);
+      restoreGestureTimerRef.current = null;
+    }
+
     const cleanups: Array<() => void> = [];
     let clickTimer: ReturnType<typeof setTimeout> | null = null;
     const previousDraggable = map.get("draggable") !== false;
-    const previousDblClickZoom = map.get("disableDoubleClickZoom") !== true;
+    const previousDisableDoubleClickZoom = Boolean(map.get("disableDoubleClickZoom"));
     let preview: google.maps.Rectangle | google.maps.Polygon | google.maps.Polyline | null =
       null;
     let rubberLine: google.maps.Polyline | null = null;
@@ -258,8 +266,12 @@ export default function MapDrawAreaController({
         });
       };
 
+      let finishing = false;
+
       const completePolygon = () => {
-        if (path.length < 3) return;
+        if (path.length < 3 || finishing) return;
+        finishing = true;
+        clearClickTimer();
         emitShape({ type: "poly", path: [...path] });
         finish();
       };
@@ -333,13 +345,24 @@ export default function MapDrawAreaController({
       reportPolyProgress();
       map.setOptions({ disableDoubleClickZoom: true });
 
+      const mapDiv = map.getDiv();
+      const blockDblClickZoom = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      };
+      mapDiv.addEventListener("dblclick", blockDblClickZoom, { capture: true });
+      cleanups.push(() =>
+        mapDiv.removeEventListener("dblclick", blockDblClickZoom, { capture: true })
+      );
+
       const onClick = (e: google.maps.MapMouseEvent) => {
-        if (!e.latLng) return;
+        if (!e.latLng || finishing) return;
         const point: LatLngPoint = { lat: e.latLng.lat(), lng: e.latLng.lng() };
 
         clearClickTimer();
         clickTimer = setTimeout(() => {
           clickTimer = null;
+          if (finishing) return;
           if (path.length >= 3 && isNearFirstPoint(map, point, path[0]!)) {
             completePolygon();
             return;
@@ -351,14 +374,13 @@ export default function MapDrawAreaController({
       };
 
       const onMouseMove = (e: google.maps.MapMouseEvent) => {
-        if (!e.latLng || path.length === 0) return;
+        if (!e.latLng || path.length === 0 || finishing) return;
         updatePolyPreview({ lat: e.latLng.lat(), lng: e.latLng.lng() });
       };
 
       const onDblClick = (e: google.maps.MapMouseEvent) => {
         e.stop();
         clearClickTimer();
-        if (path.length >= 3) completePolygon();
       };
 
       const clickListener = map.addListener("click", onClick);
@@ -375,10 +397,14 @@ export default function MapDrawAreaController({
       clearClickTimer();
       cleanups.forEach((fn) => fn());
       clearPreview();
-      map.setOptions({
-        draggable: previousDraggable,
-        disableDoubleClickZoom: previousDblClickZoom,
-      });
+      if (restoreGestureTimerRef.current) clearTimeout(restoreGestureTimerRef.current);
+      restoreGestureTimerRef.current = window.setTimeout(() => {
+        map.setOptions({
+          draggable: previousDraggable,
+          disableDoubleClickZoom: previousDisableDoubleClickZoom,
+        });
+        restoreGestureTimerRef.current = null;
+      }, POST_DRAW_GESTURE_MS);
       onDrawProgressRef.current?.(null);
       if (drawActionsRef) drawActionsRef.current = null;
     };
@@ -396,16 +422,29 @@ export default function MapDrawAreaController({
     const current = shapeRef.current;
     const cleanups: Array<() => void> = [];
 
+    const enableOverlayDragLater = (
+      overlay: google.maps.Rectangle | google.maps.Polygon
+    ) => {
+      const timer = window.setTimeout(() => {
+        if (overlayRef.current === overlay) {
+          overlay.setOptions({ draggable: true });
+        }
+      }, POST_DRAW_GESTURE_MS);
+      cleanups.push(() => clearTimeout(timer));
+    };
+
     if (current.type === "rect") {
       if (!(overlayRef.current instanceof google.maps.Rectangle)) {
         clearOverlay();
         const rect = new google.maps.Rectangle({
           ...RECT_STYLE,
+          draggable: false,
           bounds: mapBoundsToGoogleLiteral(current.bounds),
           map,
         });
         overlayRef.current = rect;
         lastEmittedKeyRef.current = encodeMapArea(current);
+        enableOverlayDragLater(rect);
 
         const listener = rect.addListener("bounds_changed", () => {
           if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -420,11 +459,13 @@ export default function MapDrawAreaController({
       clearOverlay();
       const polygon = new google.maps.Polygon({
         ...POLY_STYLE,
+        draggable: false,
         paths: current.path,
         map,
       });
       overlayRef.current = polygon;
       lastEmittedKeyRef.current = encodeMapArea(current);
+      enableOverlayDragLater(polygon);
 
       const scheduleEmit = () => {
         if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -445,9 +486,14 @@ export default function MapDrawAreaController({
 
     return () => {
       cleanups.forEach((fn) => fn());
-      clearOverlay();
     };
   }, [map, drawMode, paused, shape?.type, shape ? "on" : "off"]);
+
+  useEffect(() => {
+    return () => {
+      clearOverlay();
+    };
+  }, [map]);
 
   useEffect(() => {
     if (!map || paused || drawMode || !shape) return;

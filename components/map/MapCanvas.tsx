@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useEffect, useRef, useState, type RefObject } from "react";
+import { useMemo, useEffect, useState, type RefObject } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { GoogleMap } from "@react-google-maps/api";
 import type { ListingCard as ListingCardData } from "@/lib/types/listing";
@@ -29,18 +30,15 @@ import MapDensityLayer from "@/components/map/MapDensityLayer";
 import MapEmptyOverlay from "@/components/map/MapEmptyOverlay";
 import MapEmptyPeekHint from "@/components/map/MapEmptyPeekHint";
 import MapLowZoomHint from "@/components/map/MapLowZoomHint";
-import MapDrawAreaController, {
-  type DrawMode,
-  type MapDrawActions,
-} from "@/components/map/MapDrawAreaController";
+import MapDrawAreaController, { type DrawMode } from "@/components/map/MapDrawAreaController";
 import MapDrawAreaTool from "@/components/map/MapDrawAreaTool";
-import type { MapDrawProgress } from "@/lib/map-draw-ui";
 import MapKeyboardHelp from "@/components/map/MapKeyboardHelp";
 import MapMobileViewSwitcher, { type MapMobileView } from "@/components/map/MapMobileViewSwitcher";
 import MapViewModeToggle from "@/components/map/MapViewModeToggle";
 import MapLocationSearch from "@/components/map/MapLocationSearch";
 import AiSearchBar from "@/components/map/AiSearchBar";
-import InvestRentCompsBanner from "@/components/invest/InvestRentCompsBanner";
+import MapAgentCopilot from "@/components/agent/MapAgentCopilot";
+import { appPath } from "@/lib/config";
 
 const DEFAULT_ZOOM = DEFAULT_MAP_ZOOM;
 
@@ -186,10 +184,10 @@ export default function MapCanvas({
   onSelectBuildingUnit,
   onMobileViewChange,
 }: MapCanvasProps) {
+  const router = useRouter();
+  const [mapCameraReady, setMapCameraReady] = useState(false);
   const mapContainerStyle = { width: "100%", height: "100%" };
   const mapTransaction = saleMode ? "sale" : "rent";
-  const drawActionsRef = useRef<MapDrawActions | null>(null);
-  const [drawProgress, setDrawProgress] = useState<MapDrawProgress | null>(null);
   const mapOptions = useMemo(
     () => buildMapOptions(mapTransaction),
     [mapTransaction]
@@ -223,12 +221,13 @@ export default function MapCanvas({
       </span>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        center={initialMapView.center}
-        zoom={initialMapView.zoom}
+        center={mapCameraReady ? undefined : initialMapView.center}
+        zoom={mapCameraReady ? undefined : initialMapView.zoom}
         options={mapOptions}
         onLoad={(map) => {
           mapRef.current = map;
           onMapInstance(map);
+          setMapCameraReady(true);
           invalidateFetchCache();
           window.requestAnimationFrame(() => {
             google.maps.event.trigger(map, "resize");
@@ -273,13 +272,10 @@ export default function MapCanvas({
         paused={mapPinsPaused}
         onShapeChange={onDrawnShapeChange}
         onDrawComplete={() => onDrawModeChange(null)}
-        onDrawProgress={setDrawProgress}
-        drawActionsRef={drawActionsRef}
       />
 
       <MapDrawAreaTool
         drawMode={drawMode}
-        drawProgress={drawProgress}
         hasArea={Boolean(drawnShape)}
         filteredCount={listings.length}
         onStartDraw={(mode) => onDrawModeChange(mode)}
@@ -287,9 +283,6 @@ export default function MapCanvas({
           onDrawnShapeChange(null);
           onDrawModeChange(null);
         }}
-        onCancelDraw={() => drawActionsRef.current?.cancel()}
-        onUndoPoint={() => drawActionsRef.current?.undoPoint()}
-        onFinishShape={() => drawActionsRef.current?.finishPolygon()}
       />
 
       <MapDensityLayer
@@ -312,10 +305,6 @@ export default function MapCanvas({
         onClusterZoom={onClusterZoom}
         onSelect={onSelectListing}
       />
-
-      {saleMode && (urlState.bounds || urlState.centerLat != null) && (
-        <InvestRentCompsBanner urlState={urlState} />
-      )}
 
       {densityHint && (
         <MapDensityBanner
@@ -389,6 +378,10 @@ export default function MapCanvas({
           disabled={loading}
           variant={saleMode ? "sale" : "rent"}
           feedbackMessage={aiSearchFeedbackMessage}
+        />
+        <MapAgentCopilot
+          transactionType={saleMode ? "sale" : "rent"}
+          onApplyMapPath={(path) => router.push(appPath(path))}
         />
         <MapKeywordChip keywords={textQuery} onClear={onClearKeywords} />
       </div>

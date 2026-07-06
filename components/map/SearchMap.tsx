@@ -500,6 +500,28 @@ export default function SearchMap({
     clearKeywordFilter,
   });
 
+  const handleDrawModeChange = useCallback(
+    (mode: DrawMode | null) => {
+      if (mode === null) {
+        skipMapSyncRef.current = true;
+        skipNextIdleFetchRef.current = true;
+      }
+      setDrawMode(mode);
+    },
+    [skipMapSyncRef, skipNextIdleFetchRef]
+  );
+
+  const handleDrawnShapeChangeWithViewportLock = useCallback(
+    (shape: MapAreaShape | null) => {
+      if (shape) {
+        skipMapSyncRef.current = true;
+        skipNextIdleFetchRef.current = true;
+      }
+      handleDrawnShapeChange(shape);
+    },
+    [handleDrawnShapeChange, skipMapSyncRef, skipNextIdleFetchRef]
+  );
+
   const onFiltersChange = useCallback(
     (next: ListingFilters) => {
       handleFiltersChange(isBuySearch ? clampBuyListingFilters(next) : next);
@@ -635,8 +657,8 @@ export default function SearchMap({
     onSelectListing: (listing) => focusListingOnPage(listing, "pin"),
     drawMode,
     drawnShape,
-    onDrawnShapeChange: handleDrawnShapeChange,
-    onDrawModeChange: setDrawMode,
+    onDrawnShapeChange: handleDrawnShapeChangeWithViewportLock,
+    onDrawModeChange: handleDrawModeChange,
     densityHint,
     onDismissDensityBanner: dismissDensityBanner,
     showLowZoomHint,
