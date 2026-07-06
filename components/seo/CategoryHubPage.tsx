@@ -219,29 +219,40 @@ export default function CategoryHubPage({
         supplyLandingHref={supplyLandingHref}
       />
 
-      {listings.length > 0 && (
+      {listings.length > 0 ? (
         <section className="mx-auto max-w-5xl px-4 py-10">
           <h2 className="rp-section-title text-lg">Live listings</h2>
           <ListingsGrid listings={listings} areaName={placeName} />
         </section>
+      ) : (
+        <section className="mx-auto max-w-3xl px-4 py-10 text-center">
+          <h2 className="rp-section-title text-lg">
+            No {category.pluralLabel.toLowerCase()} listed in {placeName} yet
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
+            We don&apos;t have any {category.pluralLabel.toLowerCase()} on the map in{" "}
+            {placeName} right now. Browse all rentals nearby on the map, try another
+            category, or list yours free — owners pay no listing fee.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link href={mapHref} className="rp-btn rp-btn-primary px-6 py-2.5">
+              View on map
+            </Link>
+            <Link href={appPath("/post")} className="rp-btn rp-btn-secondary px-6 py-2.5">
+              Post free
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {listings.length > 0 && listings.length < 3 && (
+        <p className="mx-auto max-w-3xl px-4 pb-6 text-center text-sm text-[var(--muted)]">
+          RentalPins is still growing {category.pluralLabel.toLowerCase()} in {placeName}.
+          The listings above match this category — browse the map for more nearby options.
+        </p>
       )}
 
       <SeoContentSections sections={sections} />
-
-      <ListPropertyCTA
-        variant="inline"
-        cityName={ctaCityName}
-        areaName={ctaAreaName}
-        categoryName={category.pluralLabel}
-        intent={ctaIntent}
-        browseHref={mapHref}
-        citySlug={ctaCitySlug}
-        areaSlug={ctaAreaSlug}
-        categorySlug={category.slug}
-        headlineOverride={ctaOverride?.headline}
-        bodyOverride={ctaOverride?.body}
-        supplyLandingHref={supplyLandingHref}
-      />
 
       <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/60 px-4 py-12">
         <div className="mx-auto max-w-4xl">

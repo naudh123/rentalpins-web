@@ -1,4 +1,8 @@
 import type { BuilderProject, ProjectType } from "@/lib/types/builder-microsite";
+import {
+  canonicalProjectCitySlug,
+  tricityProjectCityFilterOptions,
+} from "@/lib/builders/project-city-slugs";
 
 /** Curated featured order for the /projects hero rail (premium Tricity launches). */
 export const FEATURED_PROJECT_SLUGS: string[] = [
@@ -89,7 +93,13 @@ export function filterProjects(
     PRICE_RANGE_FILTERS[0];
 
   return projects.filter((p) => {
-    if (filters.citySlug && p.citySlug !== filters.citySlug) return false;
+    if (
+      filters.citySlug &&
+      canonicalProjectCitySlug(p.citySlug, p.city, p.slug) !==
+        canonicalProjectCitySlug(filters.citySlug)
+    ) {
+      return false;
+    }
     if (filters.projectType !== "all" && p.projectType !== filters.projectType) {
       return false;
     }
@@ -140,16 +150,14 @@ export function pickFeaturedProjects(projects: BuilderProject[]): BuilderProject
 export function uniqueCityOptions(
   projects: BuilderProject[]
 ): { slug: string; name: string; count: number }[] {
-  const map = new Map<string, { name: string; count: number }>();
-  for (const p of projects) {
-    const existing = map.get(p.citySlug);
-    if (existing) {
-      existing.count += 1;
-    } else {
-      map.set(p.citySlug, { name: p.city, count: 1 });
-    }
-  }
-  return [...map.entries()]
-    .map(([slug, { name, count }]) => ({ slug, name, count }))
-    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+  return tricityProjectCityFilterOptions(projects);
+}
+
+export function excludeFeaturedFromGrid(
+  projects: BuilderProject[],
+  featured: BuilderProject[]
+): BuilderProject[] {
+  if (featured.length === 0) return projects;
+  const featuredIds = new Set(featured.map((p) => p.id));
+  return projects.filter((p) => !featuredIds.has(p.id));
 }

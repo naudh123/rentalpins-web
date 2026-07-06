@@ -43,10 +43,6 @@ import MarketInsightsBlock from "@/components/seo/MarketInsightsBlock";
 import { clustersForPlace } from "@/lib/seo/topic-clusters";
 import { buildCollectionPageSchema } from "@/lib/seo/schema-helpers";
 import StructuredData from "@/components/seo/StructuredData";
-import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
-import StickySeoCTA from "@/components/seo/StickySeoCTA";
-import { getBrowseHref, getListPropertyHref } from "@/lib/seo-links";
-
 const OG_LOCALE: Record<string, string> = {
   in: "en_IN",
   uk: "en_GB",
@@ -348,42 +344,7 @@ export default async function AreaPage({
       {seoConfig ? (
         <CitySeoContent config={seoConfig} relatedGuides={relatedGuides} />
       ) : null}
-      <ListPropertyCTA
-        variant="inline"
-        cityName={city.name}
-        areaName={area.name}
-        citySlug={city.slug}
-        areaSlug={area.slug}
-        browseHref={getBrowseHref({
-          citySlug: city.slug,
-          areaSlug: area.slug,
-          lat: area.coordinates.lat,
-          lng: area.coordinates.lng,
-          placeQuery: area.name,
-        })}
-        listHref={getListPropertyHref({ citySlug: city.slug, areaSlug: area.slug })}
-      />
-      <ListPropertyCTA
-        variant="bottom"
-        cityName={city.name}
-        areaName={area.name}
-        citySlug={city.slug}
-        areaSlug={area.slug}
-      />
       <AreaClient area={areaData} listingsCount={listings.length} />
-      <StickySeoCTA
-        citySlug={city.slug}
-        areaSlug={area.slug}
-        placeQuery={area.name}
-        browseHref={getBrowseHref({
-          citySlug: city.slug,
-          areaSlug: area.slug,
-          lat: area.coordinates.lat,
-          lng: area.coordinates.lng,
-          placeQuery: area.name,
-        })}
-        listHref={getListPropertyHref({ citySlug: city.slug, areaSlug: area.slug })}
-      />
     </>
   );
 }

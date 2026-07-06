@@ -6,6 +6,7 @@ import {
 } from "@/lib/cities-config";
 import { getAreaConfig } from "@/lib/area-config";
 import { fetchAreaListings } from "@/lib/seo-listings";
+import { filterListingsForRentalCategory } from "@/lib/seo/category-listing-filter";
 import {
   getRentalCategoryBySlug,
   type RentalCategoryConfig,
@@ -54,16 +55,10 @@ export async function resolveCategoryHub(
     : getAreaConfig(city.slug);
   if (!areaConfig) notFound();
 
-  const listings = await fetchAreaListings(areaConfig, 24);
-  const filtered = listings.filter((l) => {
-    if (l.category !== category.mainCategory) return false;
-    if (category.subCategories.length === 0) return true;
-    return category.subCategories.some(
-      (sub) =>
-        l.subCategory.toLowerCase().includes(sub.toLowerCase()) ||
-        sub.toLowerCase().includes(l.subCategory.toLowerCase())
-    );
+  const listings = await fetchAreaListings(areaConfig, 48, {
+    mainCategory: category.mainCategory,
   });
+  const filtered = filterListingsForRentalCategory(listings, category);
 
   const placeName = areaContent?.name ?? city.name;
   const mapHref = appPath(
@@ -85,7 +80,7 @@ export async function resolveCategoryHub(
     areaConfig,
     areaContent,
     mapHref,
-    listings: filtered.length > 0 ? filtered : listings.slice(0, 12),
+    listings: filtered,
   };
 }
 

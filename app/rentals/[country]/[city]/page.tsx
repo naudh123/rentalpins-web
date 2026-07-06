@@ -18,9 +18,6 @@ import CitySeoContent from "@/components/seo/CitySeoContent";
 import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
 import { pickCitySeoBlogPosts } from "@/lib/seo/city-seo-blog-links";
 import { getMdxPosts } from "@/lib/blog";
-import ListPropertyCTA from "@/components/seo/ListPropertyCTA";
-import StickySeoCTA from "@/components/seo/StickySeoCTA";
-import { getBrowseHref, getListPropertyHref } from "@/lib/seo-links";
 import AreaClient from "../../../rentals-shared/AreaClient";
 
 const OG_LOCALE: Record<string, string> = {
@@ -196,30 +193,6 @@ export default async function CityPage({
       {seoConfig ? (
         <CitySeoContent config={seoConfig} relatedGuides={relatedGuides} />
       ) : null}
-      <ListPropertyCTA
-        variant="inline"
-        cityName={city.name}
-        citySlug={city.slug}
-        browseHref={getBrowseHref({
-          citySlug: city.slug,
-          lat: city.coordinates.lat,
-          lng: city.coordinates.lng,
-          placeQuery: city.name,
-        })}
-        listHref={getListPropertyHref({ citySlug: city.slug })}
-      />
-      <ListPropertyCTA variant="bottom" cityName={city.name} citySlug={city.slug} />
-      <StickySeoCTA
-        citySlug={city.slug}
-        placeQuery={city.name}
-        browseHref={getBrowseHref({
-          citySlug: city.slug,
-          lat: city.coordinates.lat,
-          lng: city.coordinates.lng,
-          placeQuery: city.name,
-        })}
-        listHref={getListPropertyHref({ citySlug: city.slug })}
-      />
     </>
   );
 }

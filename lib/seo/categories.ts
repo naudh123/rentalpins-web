@@ -25,7 +25,7 @@ export const RENTAL_CATEGORIES: RentalCategoryConfig[] = [
     label: "House",
     pluralLabel: "Houses & Villas",
     mainCategory: "Property",
-    subCategories: ["House", "Villas", "Independent"],
+    subCategories: ["House", "Villas"],
     schemaType: "Residence",
     searchKeywords: ["house for rent", "villa for rent", "independent house"],
   },

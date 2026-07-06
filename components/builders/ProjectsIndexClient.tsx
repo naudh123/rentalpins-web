@@ -11,6 +11,7 @@ import {
   PRICE_RANGE_FILTERS,
   PROJECT_TYPE_FILTERS,
   filterProjects,
+  excludeFeaturedFromGrid,
   pickFeaturedProjects,
   sortFeaturedFirst,
   uniqueCityOptions,
@@ -51,6 +52,13 @@ export default function ProjectsIndexClient({
     };
     return sortFeaturedFirst(filterProjects(projects, active));
   }, [projects, filters, lockedCitySlug]);
+
+  const gridProjects = useMemo(() => {
+    if (showFeaturedRail) {
+      return excludeFeaturedFromGrid(filtered, featuredProjects);
+    }
+    return filtered;
+  }, [filtered, featuredProjects, showFeaturedRail]);
 
   const hasActiveFilters =
     filters.query.trim() !== "" ||
@@ -176,7 +184,7 @@ export default function ProjectsIndexClient({
               Clear filters
             </button>
             <p className="text-xs text-[var(--muted)]">
-              {filtered.length} of {projects.length} projects
+              {gridProjects.length} of {projects.length} projects
             </p>
           </div>
         )}
@@ -224,18 +232,13 @@ export default function ProjectsIndexClient({
                   : "Projects"}
             </h2>
             <p className="mt-1 text-sm text-[var(--muted)]">
-              {filtered.length} project{filtered.length === 1 ? "" : "s"}
+              {gridProjects.length} project{gridProjects.length === 1 ? "" : "s"}
               {hasActiveFilters ? " matching filters" : " · sorted by featured & latest"}
             </p>
           </div>
-          {!lockedCitySlug && (
-            <Link href={appPath("/projects/post")} className="lux-btn-gold text-sm">
-              List your project
-            </Link>
-          )}
         </div>
 
-        {filtered.length === 0 ? (
+        {gridProjects.length === 0 ? (
           <div className="lux-empty-state mt-8">
             <p className="font-serif text-xl font-bold text-[var(--lux-primary)]">
               No projects match your criteria
@@ -249,7 +252,7 @@ export default function ProjectsIndexClient({
           </div>
         ) : (
           <ul className="mt-6 grid items-stretch gap-4 sm:gap-5 lg:grid-cols-2">
-            {filtered.map((p) => (
+            {gridProjects.map((p) => (
               <ProjectListingCard
                 key={p.id}
                 project={p}

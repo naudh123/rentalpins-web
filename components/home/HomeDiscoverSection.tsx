@@ -19,11 +19,16 @@ const CATEGORY_ICONS: Record<string, string> = {
 };
 
 interface Props {
-  cities: CityConfig[];
+  liveIndiaCities: CityConfig[];
+  globalHubCities: CityConfig[];
   topCities: CityConfig[];
 }
 
-export default function HomeDiscoverSection({ cities, topCities }: Props) {
+export default function HomeDiscoverSection({
+  liveIndiaCities,
+  globalHubCities,
+  topCities,
+}: Props) {
   return (
     <>
       <section
@@ -142,14 +147,46 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
 
       <section className="border-t border-[var(--border-subtle)] px-4 py-14">
         <div className="mx-auto max-w-5xl">
-          <h2 className="rp-section-title text-center text-xl">Browse by city</h2>
+          <h2 className="rp-section-title text-center text-xl">Live India cities</h2>
           <p className="mt-2 text-center text-sm text-[var(--muted)]">
-            Area guides with map search and owner listing CTAs
+            {liveIndiaCities.length} cities with map search and owner listing CTAs
           </p>
           <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {cities.map((city) => {
-              const isLive = city.status === "live";
-              return (
+            {liveIndiaCities.map((city) => (
+              <Link
+                key={`${city.countrySlug}-${city.slug}`}
+                href={appPath(rentalCityPath(city.countrySlug, city.slug))}
+                className="rp-card-interactive group rounded-2xl p-4 no-underline"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">
+                    {city.name}
+                  </p>
+                  <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-800">
+                    Live
+                  </span>
+                </div>
+                <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--muted)]">
+                  {city.tagline}
+                </p>
+                <span className="mt-3 inline-block text-xs font-semibold text-[var(--brand-orange)]">
+                  View areas →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {globalHubCities.length > 0 && (
+        <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/40 px-4 py-14">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="rp-section-title text-center text-xl">Global hubs</h2>
+            <p className="mt-2 text-center text-sm text-[var(--muted)]">
+              International rental maps on RentalPins
+            </p>
+            <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {globalHubCities.map((city) => (
                 <Link
                   key={`${city.countrySlug}-${city.slug}`}
                   href={appPath(rentalCityPath(city.countrySlug, city.slug))}
@@ -159,14 +196,8 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
                     <p className="font-semibold text-[var(--brand-navy)] group-hover:text-[var(--brand-orange)]">
                       {city.name}
                     </p>
-                    <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
-                        isLive
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-gray-100 text-gray-600"
-                      }`}
-                    >
-                      {isLive ? "Live" : "Coming soon"}
+                    <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-800">
+                      Live
                     </span>
                   </div>
                   <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[var(--muted)]">
@@ -176,21 +207,22 @@ export default function HomeDiscoverSection({ cities, topCities }: Props) {
                     View areas →
                   </span>
                 </Link>
-              );
-            })}
+              ))}
+            </div>
           </div>
-          <p className="mt-8 text-center">
-            <Link
-              href={appPath("/rentals")}
-              className="text-sm font-semibold text-[var(--brand-orange)] hover:underline"
-            >
-              All cities →
-            </Link>
-          </p>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="border-t border-[var(--border-subtle)] bg-[var(--bg-elevated)]/50 px-4 py-12">
+      <p className="pb-4 text-center">
+        <Link
+          href={appPath("/rentals")}
+          className="text-sm font-semibold text-[var(--brand-orange)] hover:underline"
+        >
+          All cities →
+        </Link>
+      </p>
+
+      <section className="border-t border-[var(--border-subtle)] px-4 py-12">
         <div className="mx-auto max-w-4xl">
           <h2 className="rp-section-title text-center text-lg">{HOME_SEO_LINKS.title}</h2>
           <ul className="mt-5 flex flex-wrap justify-center gap-2">

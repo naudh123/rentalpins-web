@@ -1,6 +1,7 @@
 /** Chandigarh Tricity — primary market for RentalPins project microsites. */
 export const TRICITY_PROJECT_CITIES = [
   { slug: "mohali", label: "Mohali" },
+  { slug: "new-chandigarh", label: "New Chandigarh" },
   { slug: "chandigarh", label: "Chandigarh" },
   { slug: "panchkula", label: "Panchkula" },
   { slug: "zirakpur", label: "Zirakpur" },

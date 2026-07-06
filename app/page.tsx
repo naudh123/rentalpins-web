@@ -34,7 +34,7 @@ import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
 
 import StructuredData from "@/components/seo/StructuredData";
 
-import { getAllCities } from "@/lib/cities-config";
+import { getLiveCities } from "@/lib/cities-config";
 
 import AeoAnswerBox from "@/components/seo/AeoAnswerBox";
 
@@ -86,11 +86,10 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function HomePage() {
 
-  const cities = getAllCities();
-
-  const liveCount = cities.filter((c) => c.status === "live").length;
-
-  const topCities = cities.filter((c) => c.status === "live").slice(0, 8);
+  const liveCities = getLiveCities();
+  const liveIndiaCities = liveCities.filter((c) => c.countrySlug === "in");
+  const globalHubCities = liveCities.filter((c) => c.countrySlug !== "in");
+  const topCities = liveIndiaCities.slice(0, 8);
 
 
 
@@ -128,7 +127,7 @@ export default function HomePage() {
 
       <div className="rp-gradient-hero">
 
-        <HomeHero liveCityCount={liveCount} />
+        <HomeHero liveCityCount={liveCities.length} />
 
         <div className="mx-auto max-w-3xl px-4 pb-4">
 
@@ -170,7 +169,11 @@ export default function HomePage() {
 
         <HomeRecentlyViewed />
 
-        <HomeDiscoverSection cities={cities} topCities={topCities} />
+        <HomeDiscoverSection
+          liveIndiaCities={liveIndiaCities}
+          globalHubCities={globalHubCities}
+          topCities={topCities}
+        />
 
         <HomeFaqSection />
 

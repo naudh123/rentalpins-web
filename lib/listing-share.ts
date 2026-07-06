@@ -10,6 +10,10 @@ import {
   listingOgImageOpenGraphEntry,
   resolveListingOgImageAbsoluteUrl,
 } from "@/lib/listing-og-image";
+import {
+  listingShareMetaDescription,
+  listingShareMetaTitle,
+} from "@/lib/listing-share-meta-copy";
 import { buildSeoSlugSegment, normalizeListingSeo } from "@/lib/seo/listing-seo";
 import type { ListingSlugInput } from "@/lib/listing-slug";
 import { LISTING_OG_WIDTH, LISTING_OG_HEIGHT } from "@/lib/listing-share-constants";
@@ -65,16 +69,14 @@ export function listingOgImageAbsoluteUrl(
 }
 
 export function listingShareDescription(listing: ListingDetail): string {
-  const seo = normalizeListingSeo(listing);
-  return seo.seoDescription?.trim() || DEFAULT_LISTING_SHARE_DESCRIPTION;
+  return listingShareMetaDescription(listing);
 }
 
 export function listingShareMetadata(listing: ListingDetail): Metadata {
   const seo = normalizeListingSeo(listing);
   const canonical = seo.canonicalAbsoluteUrl;
-  const title = seo.seoTitle?.trim() || DEFAULT_LISTING_SHARE_TITLE;
-  const description =
-    seo.seoDescription?.trim() || DEFAULT_LISTING_SHARE_DESCRIPTION;
+  const title = listingShareMetaTitle(listing);
+  const description = listingShareMetaDescription(listing);
   const ogImage = listingOgImageOpenGraphEntry(listing);
   const isSale = listing.transactionType === "sale";
   const brandSuffix = isSale ? "RentalPins Buy" : "RentalPins";

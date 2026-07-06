@@ -53,7 +53,7 @@ function distanceKm(
 export async function fetchAreaListings(
   area: AreaConfig,
   limit = 20,
-  opts?: { transactionType?: "rent" | "sale" }
+  opts?: { transactionType?: "rent" | "sale"; mainCategory?: string }
 ): Promise<SeoListingCard[]> {
   if (!isFirebaseAdminConfigured()) return [];
 
@@ -84,6 +84,9 @@ export async function fetchAreaListings(
           opts?.transactionType &&
           !listingMatchesTransaction(tx, opts.transactionType)
         ) {
+          continue;
+        }
+        if (opts?.mainCategory && d.category !== opts.mainCategory) {
           continue;
         }
         const imageUrl = sanitizeListingImageUrl(

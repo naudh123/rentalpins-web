@@ -11,31 +11,32 @@ import {
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
 import { getCityBySlug } from "@/lib/cities-config";
-import {
-  getPublishedProjectBySlug,
-  listProjectsByCity,
-} from "@/lib/builders/builders-server";
+import { canonicalProjectCitySlug, projectCityLabel, projectMatchesCityHub } from "@/lib/builders/project-city-slugs";
+import { getPublishedProjectBySlug, listProjects } from "@/lib/builders/builders-server";
 import { projectPath } from "@/lib/builders/project-paths";
-import { tricityCityLabel } from "@/lib/builders/tricity-cities";
 import { appPath } from "@/lib/config";
 
 async function resolveCityHub(city: string) {
+  const canonical = canonicalProjectCitySlug(city);
   const cityConfig = getCityBySlug(city);
-  const projects = await listProjectsByCity(city);
+  const allProjects = await listProjects(true);
+  const projects = allProjects.filter((p) => projectMatchesCityHub(p, canonical));
 
-  if (cityConfig?.status === "live") {
+  if (cityConfig?.status === "live" && projects.length === 0) {
     return {
       name: cityConfig.name,
-      projects,
+      projects: [],
       indexable: true,
+      lockedSlug: canonical,
     };
   }
 
   if (projects.length > 0) {
     return {
-      name: tricityCityLabel(city),
+      name: projectCityLabel(canonical),
       projects,
       indexable: true,
+      lockedSlug: canonical,
     };
   }
 
@@ -100,7 +101,7 @@ export default async function ProjectsCityPage({
           {hub.projects.length > 0 ? (
             <ProjectsIndexClient
               projects={hub.projects}
-              lockedCitySlug={city}
+              lockedCitySlug={hub.lockedSlug}
               lockedCityName={hub.name}
               showFeatured={false}
             />

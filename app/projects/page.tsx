@@ -12,7 +12,7 @@ import {
 import { appPath, siteUrl } from "@/lib/config";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 import { buildConversationalFaqs } from "@/lib/seo/conversational-faqs";
-import { getAllCities } from "@/lib/cities-config";
+import { TRICITY_PROJECT_CITIES } from "@/lib/builders/tricity-cities";
 import { listProjects } from "@/lib/builders/builders-server";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -68,18 +68,15 @@ export default async function ProjectsIndexPage() {
           )}
 
           <div className="mt-12 flex flex-wrap gap-2">
-            {getAllCities()
-              .filter((c) => c.status === "live")
-              .slice(0, 7)
-              .map((c) => (
-                <Link
-                  key={c.slug}
-                  href={appPath(`/projects/${c.slug}`)}
-                  className="lux-city-pill"
-                >
-                  {c.name}
-                </Link>
-              ))}
+            {TRICITY_PROJECT_CITIES.map((c) => (
+              <Link
+                key={c.slug}
+                href={appPath(`/projects/${c.slug}`)}
+                className="lux-city-pill"
+              >
+                {c.label}
+              </Link>
+            ))}
           </div>
 
           <LuxuryFaqSection faqs={faqs} className="mt-16" />
