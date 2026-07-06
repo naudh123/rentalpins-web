@@ -6,6 +6,11 @@ import {
   listingOgImagePath,
   listingShareDescription,
 } from "@/lib/listing-share";
+import {
+  defaultListingOgImageAbsoluteUrl,
+  pickListingCoverImageUrl,
+  resolveListingOgImageAbsoluteUrl,
+} from "@/lib/listing-og-image";
 import { buildSeoSlugSegment } from "@/lib/seo/listing-seo";
 import type { ListingDetail } from "@/lib/types/listing";
 
@@ -57,16 +62,35 @@ describe("listing-share", () => {
     );
   });
 
-  it("points OG image at legacy listings opengraph-image route", () => {
+  it("points OG image path at canonical route opengraph-image", () => {
     const slug = buildSeoSlugSegment(baseListing);
     expect(listingOgImagePath(baseListing)).toBe(
-      `/listings/${slug}/opengraph-image`
+      `/rentals/property/${slug}/opengraph-image`
     );
   });
 
-  it("uses absolute https OG image URL for crawlers", () => {
-    expect(listingOgImageAbsoluteUrl(baseListing)).toMatch(
-      /^https:\/\/www\.rentalpins\.com\/listings\/.+\/opengraph-image$/
+  it("uses direct Firebase cover photo URL for crawlers when available", () => {
+    expect(listingOgImageAbsoluteUrl(baseListing)).toBe(
+      "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg"
+    );
+    expect(resolveListingOgImageAbsoluteUrl(baseListing)).toBe(
+      "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg"
+    );
+  });
+
+  it("falls back to og-default.jpg when listing has no cover photo", () => {
+    const noPhoto = { ...baseListing, imageUrl: "", imageUrls: [] };
+    expect(listingOgImageAbsoluteUrl(noPhoto)).toBe(
+      defaultListingOgImageAbsoluteUrl()
+    );
+    expect(defaultListingOgImageAbsoluteUrl()).toBe(
+      "https://www.rentalpins.com/og-default.jpg"
+    );
+  });
+
+  it("picks first https image from imageUrls", () => {
+    expect(pickListingCoverImageUrl(baseListing)).toBe(
+      "https://firebasestorage.googleapis.com/v0/b/x/o/y.jpg"
     );
   });
 

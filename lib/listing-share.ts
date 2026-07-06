@@ -3,6 +3,13 @@ import type { ListingDetail } from "@/lib/types/listing";
 import { appPath, publicSiteUrl } from "@/lib/config";
 import { listingCanonicalAbsoluteUrl } from "@/lib/listing-canonical";
 import { listingToSlugInput } from "@/lib/listing-path";
+import {
+  DEFAULT_LISTING_SHARE_DESCRIPTION,
+  DEFAULT_LISTING_SHARE_TITLE,
+  listingGeneratedOgImageAbsoluteUrl,
+  listingOgImageOpenGraphEntry,
+  resolveListingOgImageAbsoluteUrl,
+} from "@/lib/listing-og-image";
 import { buildSeoSlugSegment, normalizeListingSeo } from "@/lib/seo/listing-seo";
 import type { ListingSlugInput } from "@/lib/listing-slug";
 import { LISTING_OG_WIDTH, LISTING_OG_HEIGHT } from "@/lib/listing-share-constants";
@@ -31,33 +38,47 @@ function listingOgSlugSegment(
   return buildSeoSlugSegment(listingOrId) || listingOrId.id;
 }
 
-/** Relative path to dynamic OG image (stable /listings/… route). */
+/** Relative path to dynamic OG image on canonical listing route. */
 export function listingOgImagePath(
   listingOrId: string | ListingSlugInput | ListingDetail
 ): string {
-  const slug = listingOgSlugSegment(listingOrId);
-  return `${appPath(`/listings/${slug}`)}/opengraph-image`;
+  if (typeof listingOrId === "string") {
+    return `${appPath(`/listings/${listingOrId}`)}/opengraph-image`;
+  }
+  const seo = normalizeListingSeo(listingOrId);
+  return `${appPath(seo.canonicalPath)}/opengraph-image`;
 }
 
-/** Absolute OG image URL — required for WhatsApp, iMessage, Slack link previews. */
+/** Absolute OG image URL — cover photo for crawlers, or site default. */
 export function listingOgImageAbsoluteUrl(
   listingOrId: string | ListingSlugInput | ListingDetail
 ): string {
-  return `${publicSiteUrl()}${listingOgImagePath(listingOrId)}`;
+  if (typeof listingOrId === "string") {
+    return listingGeneratedOgImageAbsoluteUrl(`/listings/${listingOrId}`);
+  }
+  if ("imageUrls" in listingOrId) {
+    return resolveListingOgImageAbsoluteUrl(listingOrId);
+  }
+  return listingGeneratedOgImageAbsoluteUrl(
+    normalizeListingSeo(listingOrId).canonicalPath
+  );
 }
 
 export function listingShareDescription(listing: ListingDetail): string {
   const seo = normalizeListingSeo(listing);
-  return seo.seoDescription;
+  return seo.seoDescription?.trim() || DEFAULT_LISTING_SHARE_DESCRIPTION;
 }
 
 export function listingShareMetadata(listing: ListingDetail): Metadata {
   const seo = normalizeListingSeo(listing);
   const canonical = seo.canonicalAbsoluteUrl;
-  const title = seo.seoTitle;
-  const description = seo.seoDescription;
-  const ogImage = listingOgImageAbsoluteUrl(listing);
+  const title = seo.seoTitle?.trim() || DEFAULT_LISTING_SHARE_TITLE;
+  const description =
+    seo.seoDescription?.trim() || DEFAULT_LISTING_SHARE_DESCRIPTION;
+  const ogImage = listingOgImageOpenGraphEntry(listing);
   const isSale = listing.transactionType === "sale";
+  const brandSuffix = isSale ? "RentalPins Buy" : "RentalPins";
+  const pageTitle = title.includes("RentalPins") ? title : `${title} | ${brandSuffix}`;
 
   return {
     title,
@@ -66,27 +87,19 @@ export function listingShareMetadata(listing: ListingDetail): Metadata {
     alternates: { canonical },
     robots: { index: true, follow: true },
     openGraph: {
-      title: `${title} | ${isSale ? "RentalPins Buy" : "RentalPins"}`,
+      title: pageTitle,
       description,
       url: canonical,
-      siteName: isSale ? "RentalPins Buy" : "RentalPins",
+      siteName: brandSuffix,
       type: "website",
       locale: "en_IN",
-      images: [
-        {
-          url: ogImage,
-          width: LISTING_OG_WIDTH,
-          height: LISTING_OG_HEIGHT,
-          alt: `${title} — ${isSale ? "property for sale" : "rental listing"} on RentalPins`,
-          type: "image/png",
-        },
-      ],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | ${isSale ? "RentalPins Buy" : "RentalPins"}`,
+      title: pageTitle,
       description,
-      images: [ogImage],
+      images: [ogImage.url],
     },
   };
 }

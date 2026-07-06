@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import type { ListingDetail } from "@/lib/types/listing";
 import { formatListingPrice } from "@/lib/listing-price";
+import { pickListingCoverImageUrl } from "@/lib/listing-og-image";
 import { LISTING_OG_HEIGHT, LISTING_OG_WIDTH } from "@/lib/listing-share-constants";
 
 const RENT_NAVY = "#1e3a6e";
@@ -10,21 +11,6 @@ const SALE_GOLD = "#fbb316";
 const SALE_GOLD_DEEP = "#9a7b1a";
 const SALE_IVORY = "#faf8f5";
 const MUTED = "#b8c4dc";
-
-function pickOgPhoto(listing: ListingDetail | null): string | null {
-  if (!listing) return null;
-  const candidates = [
-    listing.imageUrls[0],
-    listing.imageUrl,
-    ...listing.imageUrls.slice(1),
-  ];
-  for (const raw of candidates) {
-    if (typeof raw !== "string") continue;
-    const u = raw.trim();
-    if (u.startsWith("https://")) return u;
-  }
-  return null;
-}
 
 function truncate(text: string, max: number): string {
   const t = text.replace(/\s+/g, " ").trim();
@@ -60,7 +46,7 @@ export function generateListingOgImageResponse(
     : "View on RentalPins";
   const location = truncate(listing?.locationName ?? "", 44);
   const chips = specChips(listing);
-  const photo = pickOgPhoto(listing);
+  const photo = pickListingCoverImageUrl(listing);
 
   const accent = isSale ? SALE_GOLD : RENT_ORANGE;
   const bgDeep = isSale ? "#1a1408" : RENT_NAVY_DEEP;
