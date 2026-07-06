@@ -1,4 +1,4 @@
-import { adminDb } from "./firebase-admin";
+import { isFirebaseAdminConfigured, safeAdminRead } from "./firebase-admin";
 import type { AreaConfig } from "./area-config";
 import { listingMatchesTransaction, parseTransactionType } from "./transaction-type";
 
@@ -55,8 +55,10 @@ export async function fetchAreaListings(
   limit = 20,
   opts?: { transactionType?: "rent" | "sale" }
 ): Promise<SeoListingCard[]> {
-  try {
-    const listingsRef = adminDb.collection("listings");
+  if (!isFirebaseAdminConfigured()) return [];
+
+  return safeAdminRead(async (db) => {
+    const listingsRef = db.collection("listings");
     const queryPromises = area.geohashPrefixes.map((prefix) =>
       listingsRef
         .where("isActive", "==", true)
@@ -131,8 +133,5 @@ export async function fetchAreaListings(
     });
 
     return allListings.slice(0, limit).map(({ _distance: _, ...listing }) => listing);
-  } catch (error) {
-    console.error("fetchAreaListings error:", error);
-    return [];
-  }
+  }, []);
 }

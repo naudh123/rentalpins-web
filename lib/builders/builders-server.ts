@@ -1,5 +1,6 @@
 import { FieldValue, type Timestamp } from "firebase-admin/firestore";
-import { adminDb } from "@/lib/firebase-admin";
+import type { Firestore } from "firebase-admin/firestore";
+import { adminDb, safeAdminRead } from "@/lib/firebase-admin";
 import { slugify } from "@/lib/builders/format";
 import { catalogCoordinates } from "@/lib/builders/tricity-coordinates";
 import { rankSimilarProjects } from "@/lib/builders/similar-projects";
@@ -26,6 +27,10 @@ export const PROJECTS_COL = "builder_projects";
 export const UNITS_COL = "project_units";
 export const LEADS_COL = "project_leads";
 export const MASTER_PLANS_COL = "project_master_plans";
+
+function readDb<T>(fn: (db: Firestore) => Promise<T>, fallback: T): Promise<T> {
+  return safeAdminRead(fn, fallback);
+}
 
 function tsToMs(v: unknown): number {
   if (v && typeof v === "object" && "toMillis" in v) {
@@ -258,45 +263,53 @@ function docToLead(id: string, data: Record<string, unknown>): ProjectLead {
 export async function getPublishedBuilderBySlug(
   slug: string
 ): Promise<Builder | null> {
-  const snap = await adminDb
-    .collection(BUILDERS_COL)
-    .where("slug", "==", slug)
-    .where("status", "==", "published")
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return docToBuilder(doc.id, doc.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(BUILDERS_COL)
+      .where("slug", "==", slug)
+      .where("status", "==", "published")
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    return docToBuilder(doc.id, doc.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function getBuilderBySlug(slug: string): Promise<Builder | null> {
-  const snap = await adminDb
-    .collection(BUILDERS_COL)
-    .where("slug", "==", slug)
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return docToBuilder(doc.id, doc.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(BUILDERS_COL)
+      .where("slug", "==", slug)
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    return docToBuilder(doc.id, doc.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function getBuilderById(id: string): Promise<Builder | null> {
-  const snap = await adminDb.collection(BUILDERS_COL).doc(id).get();
-  if (!snap.exists) return null;
-  return docToBuilder(snap.id, snap.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db.collection(BUILDERS_COL).doc(id).get();
+    if (!snap.exists) return null;
+    return docToBuilder(snap.id, snap.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function getBuilderByOwnerUserId(
   ownerUserId: string
 ): Promise<Builder | null> {
-  const snap = await adminDb
-    .collection(BUILDERS_COL)
-    .where("ownerUserId", "==", ownerUserId)
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return docToBuilder(doc.id, doc.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(BUILDERS_COL)
+      .where("ownerUserId", "==", ownerUserId)
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    return docToBuilder(doc.id, doc.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function linkBuilderUser(
@@ -322,12 +335,14 @@ export async function linkBuilderUser(
 }
 
 export async function listBuilders(publishedOnly = false): Promise<Builder[]> {
-  const snap = await adminDb.collection(BUILDERS_COL).limit(200).get();
-  let builders = snap.docs.map((d) => docToBuilder(d.id, d.data() as Record<string, unknown>));
-  if (publishedOnly) {
-    builders = builders.filter((b) => b.status === "published");
-  }
-  return sortByUpdatedAtMs(builders).slice(0, 100);
+  return readDb(async (db) => {
+    const snap = await db.collection(BUILDERS_COL).limit(200).get();
+    let builders = snap.docs.map((d) => docToBuilder(d.id, d.data() as Record<string, unknown>));
+    if (publishedOnly) {
+      builders = builders.filter((b) => b.status === "published");
+    }
+    return sortByUpdatedAtMs(builders).slice(0, 100);
+  }, []);
 }
 
 export async function createBuilder(
@@ -393,82 +408,94 @@ export async function updateBuilder(
 export async function getPublishedProjectBySlug(
   slug: string
 ): Promise<BuilderProject | null> {
-  const snap = await adminDb
-    .collection(PROJECTS_COL)
-    .where("slug", "==", slug)
-    .where("isPublished", "==", true)
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return docToProject(doc.id, doc.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(PROJECTS_COL)
+      .where("slug", "==", slug)
+      .where("isPublished", "==", true)
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    return docToProject(doc.id, doc.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function getProjectBySlugAndCity(
   citySlug: string,
   slug: string
 ): Promise<BuilderProject | null> {
-  const snap = await adminDb
-    .collection(PROJECTS_COL)
-    .where("citySlug", "==", citySlug)
-    .where("slug", "==", slug)
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  const project = docToProject(doc.id, doc.data() as Record<string, unknown>);
-  if (!project.isPublished) return null;
-  return project;
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(PROJECTS_COL)
+      .where("citySlug", "==", citySlug)
+      .where("slug", "==", slug)
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    const project = docToProject(doc.id, doc.data() as Record<string, unknown>);
+    if (!project.isPublished) return null;
+    return project;
+  }, null);
 }
 
 export async function getProjectById(id: string): Promise<BuilderProject | null> {
-  const snap = await adminDb.collection(PROJECTS_COL).doc(id).get();
-  if (!snap.exists) return null;
-  return docToProject(snap.id, snap.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db.collection(PROJECTS_COL).doc(id).get();
+    if (!snap.exists) return null;
+    return docToProject(snap.id, snap.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function listProjectsForBuilder(
   builderId: string,
   publishedOnly = false
 ): Promise<BuilderProject[]> {
-  const snap = await adminDb
-    .collection(PROJECTS_COL)
-    .where("builderId", "==", builderId)
-    .limit(100)
-    .get();
-  let projects = snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>));
-  if (publishedOnly) {
-    projects = projects.filter((p) => p.isPublished);
-  }
-  projects = await enrichProjectsBuilderSlug(projects);
-  return sortByUpdatedAtMs(projects).slice(0, 50);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(PROJECTS_COL)
+      .where("builderId", "==", builderId)
+      .limit(100)
+      .get();
+    let projects = snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>));
+    if (publishedOnly) {
+      projects = projects.filter((p) => p.isPublished);
+    }
+    projects = await enrichProjectsBuilderSlug(projects);
+    return sortByUpdatedAtMs(projects).slice(0, 50);
+  }, []);
 }
 
 export async function listProjects(publishedOnly = false): Promise<BuilderProject[]> {
-  const snap = await adminDb.collection(PROJECTS_COL).limit(200).get();
-  let projects = snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>));
-  if (publishedOnly) {
-    projects = projects.filter((p) => p.isPublished);
-  }
-  projects = await enrichProjectsBuilderSlug(projects);
-  return sortByUpdatedAtMs(projects).slice(0, 100);
+  return readDb(async (db) => {
+    const snap = await db.collection(PROJECTS_COL).limit(200).get();
+    let projects = snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>));
+    if (publishedOnly) {
+      projects = projects.filter((p) => p.isPublished);
+    }
+    projects = await enrichProjectsBuilderSlug(projects);
+    return sortByUpdatedAtMs(projects).slice(0, 100);
+  }, []);
 }
 
 export async function listProjectsByCity(
   citySlug: string,
   publishedOnly = true
 ): Promise<BuilderProject[]> {
-  const snap = await adminDb
-    .collection(PROJECTS_COL)
-    .where("citySlug", "==", citySlug.toLowerCase())
-    .limit(100)
-    .get();
-  let projects = snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>));
-  if (publishedOnly) {
-    projects = projects.filter((p) => p.isPublished);
-  }
-  projects = await enrichProjectsBuilderSlug(projects);
-  return sortByUpdatedAtMs(projects).slice(0, 50);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(PROJECTS_COL)
+      .where("citySlug", "==", citySlug.toLowerCase())
+      .limit(100)
+      .get();
+    let projects = snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>));
+    if (publishedOnly) {
+      projects = projects.filter((p) => p.isPublished);
+    }
+    projects = await enrichProjectsBuilderSlug(projects);
+    return sortByUpdatedAtMs(projects).slice(0, 50);
+  }, []);
 }
 
 export async function findSimilarProjects(
@@ -559,14 +586,16 @@ export async function createProject(
 export async function listProjectsForOwner(
   ownerUserId: string
 ): Promise<BuilderProject[]> {
-  const snap = await adminDb
-    .collection(PROJECTS_COL)
-    .where("ownerUserId", "==", ownerUserId)
-    .limit(100)
-    .get();
-  return sortByUpdatedAtMs(
-    snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>))
-  ).slice(0, 50);
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(PROJECTS_COL)
+      .where("ownerUserId", "==", ownerUserId)
+      .limit(100)
+      .get();
+    return sortByUpdatedAtMs(
+      snap.docs.map((d) => docToProject(d.id, d.data() as Record<string, unknown>))
+    ).slice(0, 50);
+  }, []);
 }
 
 export async function publishBuilderWhenProjectPublished(
@@ -601,20 +630,24 @@ export async function syncProjectUnitCounts(projectId: string): Promise<void> {
 // ── Units ──
 
 export async function listUnitsForProject(projectId: string): Promise<ProjectUnit[]> {
-  const snap = await adminDb
-    .collection(UNITS_COL)
-    .where("projectId", "==", projectId)
-    .get();
-  const units = snap.docs.map((d) => docToUnit(d.id, d.data() as Record<string, unknown>));
-  return units.sort((a, b) =>
-    (a.plotNumber || "").localeCompare(b.plotNumber || "", undefined, { numeric: true })
-  );
+  return readDb(async (db) => {
+    const snap = await db
+      .collection(UNITS_COL)
+      .where("projectId", "==", projectId)
+      .get();
+    const units = snap.docs.map((d) => docToUnit(d.id, d.data() as Record<string, unknown>));
+    return units.sort((a, b) =>
+      (a.plotNumber || "").localeCompare(b.plotNumber || "", undefined, { numeric: true })
+    );
+  }, []);
 }
 
 export async function getUnitById(id: string): Promise<ProjectUnit | null> {
-  const snap = await adminDb.collection(UNITS_COL).doc(id).get();
-  if (!snap.exists) return null;
-  return docToUnit(snap.id, snap.data() as Record<string, unknown>);
+  return readDb(async (db) => {
+    const snap = await db.collection(UNITS_COL).doc(id).get();
+    if (!snap.exists) return null;
+    return docToUnit(snap.id, snap.data() as Record<string, unknown>);
+  }, null);
 }
 
 export async function createUnit(input: CreateUnitInput): Promise<string> {
@@ -810,15 +843,17 @@ export async function createLead(input: CreateLeadInput): Promise<string> {
 }
 
 export async function listLeads(builderId?: string): Promise<ProjectLead[]> {
-  let q = adminDb.collection(LEADS_COL).orderBy("createdAt", "desc");
-  if (builderId) {
-    q = adminDb
-      .collection(LEADS_COL)
-      .where("builderId", "==", builderId)
-      .orderBy("createdAt", "desc");
-  }
-  const snap = await q.limit(200).get();
-  return snap.docs.map((d) => docToLead(d.id, d.data() as Record<string, unknown>));
+  return readDb(async (db) => {
+    let q = db.collection(LEADS_COL).orderBy("createdAt", "desc");
+    if (builderId) {
+      q = db
+        .collection(LEADS_COL)
+        .where("builderId", "==", builderId)
+        .orderBy("createdAt", "desc");
+    }
+    const snap = await q.limit(200).get();
+    return snap.docs.map((d) => docToLead(d.id, d.data() as Record<string, unknown>));
+  }, []);
 }
 
 export async function updateLead(
@@ -836,16 +871,18 @@ export async function updateLead(
 export async function getMasterPlan(
   projectId: string
 ): Promise<ProjectMasterPlan | null> {
-  const snap = await adminDb.collection(MASTER_PLANS_COL).doc(projectId).get();
-  if (!snap.exists) return null;
-  const data = snap.data() as Record<string, unknown>;
-  return {
-    projectId,
-    builderId: (data.builderId as string) || "",
-    defaultImageUrl: (data.defaultImageUrl as string) || null,
-    angles: Array.isArray(data.angles) ? (data.angles as ProjectMasterPlan["angles"]) : [],
-    updatedAtMs: tsToMs(data.updatedAt),
-  };
+  return readDb(async (db) => {
+    const snap = await db.collection(MASTER_PLANS_COL).doc(projectId).get();
+    if (!snap.exists) return null;
+    const data = snap.data() as Record<string, unknown>;
+    return {
+      projectId,
+      builderId: (data.builderId as string) || "",
+      defaultImageUrl: (data.defaultImageUrl as string) || null,
+      angles: Array.isArray(data.angles) ? (data.angles as ProjectMasterPlan["angles"]) : [],
+      updatedAtMs: tsToMs(data.updatedAt),
+    };
+  }, null);
 }
 
 export async function saveMasterPlan(
@@ -869,17 +906,21 @@ export async function saveMasterPlan(
 }
 
 export async function incrementProjectView(projectId: string): Promise<void> {
-  await adminDb
-    .collection(PROJECTS_COL)
-    .doc(projectId)
-    .update({ viewCount: FieldValue.increment(1) });
+  await safeAdminRead(async (db) => {
+    await db
+      .collection(PROJECTS_COL)
+      .doc(projectId)
+      .update({ viewCount: FieldValue.increment(1) });
+  }, undefined);
 }
 
 export async function incrementBuilderView(builderId: string): Promise<void> {
-  await adminDb
-    .collection(BUILDERS_COL)
-    .doc(builderId)
-    .update({ viewCount: FieldValue.increment(1) });
+  await safeAdminRead(async (db) => {
+    await db
+      .collection(BUILDERS_COL)
+      .doc(builderId)
+      .update({ viewCount: FieldValue.increment(1) });
+  }, undefined);
 }
 
 /** Self-service: any signed-in user posts a project; leads route to RentalPins. */

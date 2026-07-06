@@ -1,4 +1,4 @@
-import { adminDb } from "@/lib/firebase-admin";
+import { isFirebaseAdminConfigured, safeAdminRead } from "@/lib/firebase-admin";
 import type { ListingSlugInput } from "@/lib/listing-slug";
 import { parseListingAttributes } from "@/lib/listing-attributes";
 
@@ -24,19 +24,21 @@ function readCoords(raw: Record<string, unknown>): { lat: number; lng: number } 
 
 /** Active listing URLs for sitemap-listings.xml (revalidated daily via route). */
 export async function fetchListingSitemapEntries(): Promise<ListingSitemapEntry[]> {
-  try {
-    const snap = await adminDb
-      .collection("listings")
-      .where("isActive", "==", true)
-      .orderBy("updatedAtMs", "desc")
-      .limit(MAX_LISTINGS)
-      .get();
+  if (!isFirebaseAdminConfigured()) return [];
 
-    return snap.docs.map((doc) => mapSitemapEntry(doc.id, doc.data() as Record<string, unknown>));
-  } catch (err) {
-    console.error("fetchListingSitemapEntries:", err);
+  return safeAdminRead(async (db) => {
     try {
-      const fallback = await adminDb
+      const snap = await db
+        .collection("listings")
+        .where("isActive", "==", true)
+        .orderBy("updatedAtMs", "desc")
+        .limit(MAX_LISTINGS)
+        .get();
+
+      return snap.docs.map((doc) => mapSitemapEntry(doc.id, doc.data() as Record<string, unknown>));
+    } catch (err) {
+      console.error("fetchListingSitemapEntries:", err);
+      const fallback = await db
         .collection("listings")
         .where("isActive", "==", true)
         .limit(500)
@@ -44,10 +46,8 @@ export async function fetchListingSitemapEntries(): Promise<ListingSitemapEntry[
       return fallback.docs.map((doc) =>
         mapSitemapEntry(doc.id, doc.data() as Record<string, unknown>)
       );
-    } catch {
-      return [];
     }
-  }
+  }, []);
 }
 
 function mapSitemapEntry(id: string, d: Record<string, unknown>): ListingSitemapEntry {

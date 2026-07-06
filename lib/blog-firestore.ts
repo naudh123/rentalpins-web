@@ -1,4 +1,4 @@
-import { adminDb } from "./firebase-admin";
+import { adminDb, isFirebaseAdminConfigured, safeAdminRead } from "./firebase-admin";
 import { parseBlogTags, parseBlogFaqs } from "./blog-validation";
 import { parseBlogVertical } from "@/lib/blog-vertical";
 import { estimateReadTime } from "./seo";
@@ -48,8 +48,10 @@ function mapDoc(id: string, data: Record<string, unknown>): BlogPost {
 export async function getFirestorePosts(options?: {
   publishedOnly?: boolean;
 }): Promise<BlogPostSummary[]> {
-  try {
-    const base = adminDb.collection(COLLECTION);
+  if (!isFirebaseAdminConfigured()) return [];
+
+  return safeAdminRead(async (db) => {
+    const base = db.collection(COLLECTION);
     const snap =
       options?.publishedOnly !== false
         ? await base.where("published", "==", true).get()
@@ -61,17 +63,16 @@ export async function getFirestorePosts(options?: {
         return summary;
       })
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  } catch (err) {
-    console.error("getFirestorePosts:", err);
-    return [];
-  }
+  }, []);
 }
 
 export async function getFirestorePostBySlug(
   slug: string
 ): Promise<BlogPost | null> {
-  try {
-    const bySlug = await adminDb
+  if (!isFirebaseAdminConfigured()) return null;
+
+  return safeAdminRead(async (db) => {
+    const bySlug = await db
       .collection(COLLECTION)
       .where("slug", "==", slug)
       .limit(1)
@@ -80,15 +81,12 @@ export async function getFirestorePostBySlug(
       const doc = bySlug.docs[0];
       return mapDoc(doc.id, doc.data());
     }
-    const byId = await adminDb.collection(COLLECTION).doc(slug).get();
+    const byId = await db.collection(COLLECTION).doc(slug).get();
     if (byId.exists) {
       return mapDoc(byId.id, byId.data()!);
     }
     return null;
-  } catch (err) {
-    console.error("getFirestorePostBySlug:", err);
-    return null;
-  }
+  }, null);
 }
 
 export async function getFirestorePostDocId(slug: string): Promise<string | null> {
