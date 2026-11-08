@@ -174,6 +174,19 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
+    {
+      source:
+        "/((?!\\.well-known/|_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
+      has: [{ type: "host", value: "rentalpins.com" }],
+    },
+    {
+      source:
+        "/((?!\\.well-known/|_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
+      has: [{ type: "host", value: "app.rentalpins.com" }],
+    },
+    {
+      source:
+        "/((?!api/|\\.well-known/|.*opengraph-image$|_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|xml|txt)$).*)",
+    },
   ],
 };
