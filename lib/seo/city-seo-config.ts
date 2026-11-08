@@ -4,6 +4,9 @@
  */
 import { rentalAreaPath, rentalCityPath } from "@/lib/cities-config";
 import { CITY_SEO_EXTRA_SECTIONS } from "@/lib/seo/city-seo-expanded-sections";
+import { NEW_CITY_SEO_CONFIGS } from "@/lib/seo/city-seo-new-cities";
+import { NEW_CITY_SEO_EXTRAS } from "@/lib/seo/city-seo-new-cities-extras";
+import { NEW_CITY_SEO_COMPARE } from "@/lib/seo/city-seo-new-cities-compare";
 
 export interface CitySeoFaq {
   q: string;
@@ -784,13 +787,25 @@ export function getCitySeoConfig(
   const lookup = areaSlug
     ? key(countrySlug, citySlug, areaSlug)
     : key(countrySlug, citySlug);
-  const base = CITY_SEO_CONFIGS[lookup];
+  const base = CITY_SEO_CONFIGS[lookup] ?? newCityConfig(lookup);
   if (!base) return null;
 
   const sections = CITY_SEO_EXTRA_SECTIONS[lookup];
   return sections ? { ...base, sections } : base;
 }
 
+/** A Nov 2026 city guide with its locality guide, cost notes and extra FAQs merged in. */
+function newCityConfig(lookup: string): CitySEOConfig | undefined {
+  const base = NEW_CITY_SEO_CONFIGS[lookup];
+  if (!base) return undefined;
+  const extras = [NEW_CITY_SEO_EXTRAS[lookup], NEW_CITY_SEO_COMPARE[lookup]].filter(Boolean);
+  return {
+    ...base,
+    sections: [...(base.sections ?? []), ...extras.flatMap((e) => e!.sections)],
+    faq: [...base.faq, ...extras.flatMap((e) => e!.faq)],
+  };
+}
+
 export function listCitySeoConfigKeys(): string[] {
-  return Object.keys(CITY_SEO_CONFIGS);
+  return [...Object.keys(CITY_SEO_CONFIGS), ...Object.keys(NEW_CITY_SEO_CONFIGS)];
 }
