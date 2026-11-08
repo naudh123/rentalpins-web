@@ -344,6 +344,158 @@ export const MARKETING_PAGE_EXTRA_SECTIONS: Record<string, MarketingSeoSection[]
       ],
     },
   ],
+  "property-without-broker-gurugram": [
+    {
+      title: "Gurugram localities for owner-direct rentals",
+      paragraphs: [
+        "Sushant Lok, DLF Phase 3 and the MG Road belt suit people working in Cyber City, with builder floors and flats a short ride from the Yellow Line and Rapid Metro.",
+        "Golf Course Road and Sector 56 carry high-rise society apartments; Sohna Road offers gated societies with schools and markets at rents often below Golf Course Road.",
+        "Palam Vihar and the older sectors around Sector 14 have independent floors and rooms, popular with families and people who want quick access to Dwarka and the airport.",
+      ],
+    },
+    {
+      title: "Builder floors versus society flats",
+      paragraphs: [
+        "Builder floors usually mean one owner per floor, so ask who handles water, parking and power backup before paying a token amount.",
+        "Society flats come with maintenance charges, security and amenities; check whether maintenance is included in the quoted rent or paid separately.",
+        "Use the map to compare both types in the same area, then shortlist by commute and monthly cost rather than by the listing title alone.",
+      ],
+    },
+    {
+      title: "Broker-free viewing checklist in Gurugram",
+      paragraphs: [
+        "Confirm that the person you meet is the owner or an authorised family member, and that the flat matches the pin and photos on the listing.",
+        "Agree the security deposit, notice period and lock-in in writing before handover; Gurugram agreements commonly run for 11 months.",
+        "Photograph existing wear and appliance condition at move-in so the deposit refund is straightforward when you leave.",
+      ],
+    },
+    {
+      title: "Commute and connectivity in Gurugram",
+      paragraphs: [
+        "The Yellow Line runs from Delhi through MG Road and Huda City Centre, and the Rapid Metro loops through Cyber City and down Golf Course Road to Sector 55–56.",
+        "If you work in Cyber City, Sushant Lok, DLF phases and the MG Road belt keep the commute short; for Golf Course Extension or Sohna Road offices, the newer southern sectors are closer.",
+        "Traffic on NH-48 and Sohna Road peaks sharply at office hours, so check the route at your actual commute time before signing.",
+      ],
+    },
+    {
+      title: "When to search and what to expect",
+      paragraphs: [
+        "Flats move fastest at the start of each month and around appraisal and joining seasons, so save a search on RentalPins and get alerts for new listings.",
+        "Expect to be asked for ID proof, an employment letter and a police verification form; keep scanned copies ready to secure a good flat quickly.",
+        "Owners often accept a slightly lower rent for an 11-month agreement with a clean deposit record, so ask politely before you finalise.",
+      ],
+    },
+    {
+      title: "For owners in Gurugram",
+      paragraphs: [
+        "List your flat, floor or office free on RentalPins and pin the exact location, so renters searching near Cyber City or Golf Course Road find it on the map.",
+        "Clear photos, the floor, parking and power backup details help renters decide faster and reduce wasted visits.",
+        "Reply to enquiries quickly and keep the listing updated or mark it rented once it is let, so renters trust your future posts and you get fewer calls about a flat that is no longer free.",
+      ],
+    },
+  ],
+  "property-without-broker-bengaluru": [
+    {
+      title: "Bengaluru localities for owner-direct rentals",
+      paragraphs: [
+        "BTM Layout, Koramangala and HSR Layout form the city's busiest belt for PG, shared flats and 1 BHK apartments, close to Silk Board and Outer Ring Road offices.",
+        "Whitefield and Marathahalli suit people working at ITPL and the eastern tech parks, while Hebbal and Nagawara suit Manyata Tech Park.",
+        "JP Nagar and HSR Layout also have many independent floors and family apartments with parks and schools nearby.",
+      ],
+    },
+    {
+      title: "PG, shared flats and co-living",
+      paragraphs: [
+        "PG listings usually include food, cleaning and Wi-Fi; ask what is included and whether there is a lock-in before paying the deposit.",
+        "Shared flats give more privacy and a kitchen, and suit groups of colleagues; compare a shared 2 BHK against two PG beds for the same area.",
+        "Filter PG on the Bengaluru map and open several pins in the same block to compare rent, food and rules side by side.",
+      ],
+    },
+    {
+      title: "Broker-free viewing checklist in Bengaluru",
+      paragraphs: [
+        "Bengaluru deposits are often higher than in other cities, so agree the deposit, monthly rent and refund terms in writing before handover.",
+        "Check water supply, power backup and parking, which vary a lot between independent houses and apartment complexes.",
+        "Confirm the flat matches the map pin and photos, and photograph its condition at move-in to make the deposit refund simple.",
+      ],
+    },
+    {
+      title: "Commute and connectivity in Bengaluru",
+      paragraphs: [
+        "Outer Ring Road traffic shapes most choices: living within a few kilometres of your office in Bellandur, Marathahalli or Sarjapur Road can save hours each week.",
+        "The Purple Line connects Whitefield to the city centre, and new metro lines are extending towards Silk Board and Electronic City, so check the nearest station on the map.",
+        "If you work in Manyata Tech Park, Hebbal and Nagawara keep the commute short; for ITPL, Whitefield, Hoodi and Brookefield are the usual choices.",
+      ],
+    },
+    {
+      title: "When to search and what to expect",
+      paragraphs: [
+        "Demand rises with campus joining seasons and appraisal cycles, so save a search on RentalPins and get alerts as soon as owners post new listings.",
+        "Many owners ask for a deposit of several months' rent; agree the exact amount, the refund timeline and any painting charges before you pay.",
+        "Keep ID proof and an offer or employment letter ready, since owners and PG operators usually ask for them before handing over keys.",
+      ],
+    },
+    {
+      title: "For owners and PG operators in Bengaluru",
+      paragraphs: [
+        "List your flat, PG or house free on RentalPins and pin the exact location so renters searching near their office see it on the map.",
+        "Mention food, occupancy, gender policy and what the rent includes; PG renters compare these first.",
+        "Reply to enquiries quickly and mark beds or flats as filled when they are taken, so renters trust your listings and you only get calls about rooms that are actually free.",
+      ],
+    },
+  ],
+  "property-without-broker-hyderabad": [
+    {
+      title: "Hyderabad localities for owner-direct rentals",
+      paragraphs: [
+        "Kondapur, Madhapur and Gachibowli sit closest to HITEC City and the Financial District, with gated-community flats, independent houses and PG.",
+        "Kukatpally and Miyapur are popular for metro access to the IT corridor, while Secunderabad and Ameerpet suit people working in the central city.",
+        "Banjara Hills and Jubilee Hills carry premium apartments and independent homes for families and senior professionals.",
+        "On the eastern side, Uppal, LB Nagar and Dilsukhnagar offer independent houses and budget flats, popular with families and students who work or study in that part of the city.",
+        "Manikonda, Puppalaguda and Narsingi have grown quickly around the Financial District and Outer Ring Road, with newer apartment blocks that suit people moving to the Nanakramguda offices.",
+      ],
+    },
+    {
+      title: "Gated communities, houses and PG",
+      paragraphs: [
+        "Gated communities come with security, maintenance and amenities; check whether maintenance is included in the rent the owner quotes.",
+        "Independent houses often give more space for the same rent; confirm water supply, parking and who maintains the common areas.",
+        "PG around Madhapur and Kondapur suits new joiners; ask about food, cleaning and notice period before booking.",
+      ],
+    },
+    {
+      title: "Broker-free viewing checklist in Hyderabad",
+      paragraphs: [
+        "Agree the security deposit, rent, notice period and lock-in in writing before paying any advance.",
+        "Confirm the property matches the map pin and photos, and that the person you meet is the owner or authorised by them.",
+        "Photograph the condition of the flat and appliances at move-in so the deposit refund is straightforward.",
+      ],
+    },
+    {
+      title: "Commute and connectivity in Hyderabad",
+      paragraphs: [
+        "The Blue Line serves HITEC City and Madhapur, and the Red Line runs through Kukatpally, Ameerpet and LB Nagar, so many renters pick a home near one of these stations.",
+        "For Gachibowli and the Financial District, Kondapur, Gachibowli itself and Nanakramguda keep the commute short at peak hours.",
+        "Check the drive to your office at your actual commute time; the IT corridor roads are much slower at the start and end of the working day.",
+      ],
+    },
+    {
+      title: "When to search and what to expect",
+      paragraphs: [
+        "Listings move quickly around joining dates and the start of each month, so save a search on RentalPins and get alerts for new owner posts.",
+        "Gated communities may ask for a separate maintenance deposit or move-in fee; confirm all charges with the owner before you pay any advance.",
+        "Keep ID proof and an employment or offer letter ready, as owners and community associations usually ask for them during move-in.",
+      ],
+    },
+    {
+      title: "For owners in Hyderabad",
+      paragraphs: [
+        "List your flat, house or PG free on RentalPins and pin the exact location so renters searching near HITEC City or their metro station find it.",
+        "Include the community name, floor, parking and what the rent covers; renters in gated communities compare these first.",
+        "Reply to enquiries quickly and mark the flat as rented once it is let, so renters trust your future listings and you only get calls about homes that are actually available.",
+      ],
+    },
+  ],
   "property-without-broker-jaipur": [
     {
       title: "Jaipur localities for owner-direct rentals",

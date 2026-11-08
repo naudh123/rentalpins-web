@@ -329,7 +329,7 @@ export const HOME_OWNER_VALUE = {
     },
     {
       title: "Growing city hubs",
-      desc: "Live in Chandigarh Tricity, Delhi, Ludhiana, Jaipur, Lucknow, Mumbai and more — with new areas added regularly.",
+      desc: "Live in Chandigarh Tricity, Delhi NCR, Bengaluru, Hyderabad, Ludhiana, Jaipur, Lucknow, Pune, Mumbai and more — with new areas added regularly.",
     },
   ],
 } as const;
@@ -434,7 +434,7 @@ export const HOME_FAQS = [
   },
   {
     q: "Which cities are live on RentalPins?",
-    a: "Chandigarh Tricity, Ludhiana, Delhi, Jaipur, Lucknow, Mumbai, London, Nairobi, and Lagos — with Mohali, Kharar, and Delhi area guides on the site.",
+    a: "Chandigarh Tricity, Ludhiana, Delhi, Noida, Gurugram, Ghaziabad, Bengaluru, Hyderabad, Pune, Kolkata, Jaipur, Lucknow, Patna, Indore, Bhopal, Mumbai, London, Nairobi, and Lagos — with Mohali, Kharar, and Delhi area guides on the site.",
   },
   {
     q: "Can I buy property on RentalPins?",

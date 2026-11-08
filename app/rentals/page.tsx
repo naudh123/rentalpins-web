@@ -9,7 +9,7 @@ import MohaliGscHubLinks from "@/components/seo/MohaliGscHubLinks";
 export const metadata: Metadata = {
   title: "Rentals by City",
   description:
-    "Explore RentalPins city hubs — rooms, PG, flats, vehicles, electronics, furniture and equipment — in Chandigarh Tricity, Ludhiana, Delhi, Jaipur, Lucknow, Mumbai, London, Nairobi, Lagos and more.",
+    "Explore RentalPins city hubs — rooms, PG, flats, vehicles, electronics, furniture and equipment — in Chandigarh Tricity, Ludhiana, Delhi NCR, Bengaluru, Hyderabad, Jaipur, Lucknow, Pune, Kolkata, Mumbai, London, Nairobi, Lagos and more.",
   keywords: [
     "browse rentals by city",
     "RentalPins cities",

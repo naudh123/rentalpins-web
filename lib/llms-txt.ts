@@ -27,7 +27,7 @@ export function buildLlmsTxt(): string {
 
   return `# RentalPins
 
-> RentalPins is a map-first property discovery platform: rentals, resale (Buy), and owner-direct listings across India and global hubs. Users browse on a map, contact owners directly (often via WhatsApp), and list properties for free. Strong presence in Chandigarh Tricity (Mohali, Kharar, Zirakpur, Panchkula, New Chandigarh), Ludhiana, Delhi NCR, Jaipur, Lucknow, Mumbai, plus London, Nairobi and Lagos.
+> RentalPins is a map-first property discovery platform: rentals, resale (Buy), and owner-direct listings across India and global hubs. Users browse on a map, contact owners directly (often via WhatsApp), and list properties for free. Strong presence in Chandigarh Tricity (Mohali, Kharar, Zirakpur, Panchkula, New Chandigarh), Ludhiana, Delhi NCR (Delhi, Noida, Gurugram, Ghaziabad), Bengaluru, Hyderabad, Pune, Kolkata, Jaipur, Lucknow, Patna, Indore, Bhopal, Mumbai, plus London, Nairobi and Lagos.
 
 ## Canonical site
 

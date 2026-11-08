@@ -5,7 +5,7 @@ import { canonicalUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "About us",
   description:
-    "RentalPins is a map-first rental marketplace connecting renters with owners across India (Chandigarh Tricity, Ludhiana, Delhi, Jaipur, Lucknow, Mumbai and more) and hubs in the UK, Kenya and Nigeria.",
+    "RentalPins is a map-first rental marketplace connecting renters with owners across India (Chandigarh Tricity, Ludhiana, Delhi NCR, Bengaluru, Hyderabad, Jaipur, Lucknow, Pune, Kolkata, Mumbai and more) and hubs in the UK, Kenya and Nigeria.",
   keywords: [
     "RentalPins",
     "about RentalPins",
