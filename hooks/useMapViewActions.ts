@@ -82,7 +82,11 @@ export function useMapViewActions({
 
       skipMapSyncRef.current = true;
       skipNextIdleFetchRef.current = true;
-      if (state.bounds) {
+      if (state.centerLat != null && state.centerLng != null && state.zoom != null) {
+        // Exact camera first — fitBounds rounds zoom down and drifts outward.
+        map.setCenter({ lat: state.centerLat, lng: state.centerLng });
+        map.setZoom(state.zoom);
+      } else if (state.bounds) {
         const b = new google.maps.LatLngBounds(
           { lat: state.bounds.south, lng: state.bounds.west },
           { lat: state.bounds.north, lng: state.bounds.east }
@@ -90,7 +94,6 @@ export function useMapViewActions({
         map.fitBounds(b);
       } else if (state.centerLat != null && state.centerLng != null) {
         map.panTo({ lat: state.centerLat, lng: state.centerLng });
-        if (state.zoom != null) map.setZoom(state.zoom);
       }
       invalidateFetchCache();
     },

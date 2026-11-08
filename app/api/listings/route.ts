@@ -67,7 +67,13 @@ export async function GET(request: Request) {
         resultsMayBeIncomplete,
         prefixCapActive,
       },
-      { headers: rateLimitHeaders(rate) }
+      {
+        headers: {
+          ...rateLimitHeaders(rate),
+          // Identical viewports (e.g. the default opening map) are served from the CDN.
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
     );
   } catch (err) {
     console.error("GET /api/listings error:", err);

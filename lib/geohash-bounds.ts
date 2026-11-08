@@ -85,6 +85,58 @@ export function geohashPrefixesForViewport(
   return { prefixes: base, precision, gridSteps };
 }
 
+/** Most geohash cells one map fetch may query (Firestore cost guard). */
+export const MAP_COVER_MAX_CELLS = 32;
+
+/** Most pins one map fetch returns — Zillow-style "every listing in view" up to this cap. */
+export const MAP_PIN_TARGET = 500;
+
+/**
+ * Every geohash cell that intersects the bounds, at the finest precision that
+ * stays within `maxCells`. Unlike sampled grids, this covers the whole viewport,
+ * so a city-level view loads every listing in it.
+ */
+export function geohashCoverForBounds(
+  bounds: MapBounds,
+  maxCells = MAP_COVER_MAX_CELLS
+): { prefixes: string[]; precision: number } {
+  const south = Math.max(-90, Math.min(bounds.south, bounds.north));
+  const north = Math.min(90, Math.max(bounds.south, bounds.north));
+  // Antimeridian-crossing viewports are not used in RentalPins markets; clamp to a valid box.
+  const west = bounds.west <= bounds.east ? bounds.west : -180;
+  const east = bounds.west <= bounds.east ? bounds.east : 180;
+  for (let precision = 7; precision >= 1; precision--) {
+    const cells = ngeohash.bboxes(south, west, north, east, precision);
+    if (cells.length <= maxCells) return { prefixes: cells, precision };
+  }
+  return { prefixes: ngeohash.bboxes(south, west, north, east, 1), precision: 1 };
+}
+
+/** Most sub-cells one refinement pass may add (Firestore cost guard). */
+export const MAP_REFINE_MAX_CELLS = 48;
+
+/**
+ * Child cells (one precision finer) of a saturated cell that intersect the
+ * viewport — queried in a second pass so dense areas still load every pin.
+ */
+export function refineGeohashCell(cell: string, bounds: MapBounds): string[] {
+  const [minLat, minLng, maxLat, maxLng] = ngeohash.decode_bbox(cell);
+  const south = Math.max(minLat, bounds.south);
+  const north = Math.min(maxLat, bounds.north);
+  const west = Math.max(minLng, bounds.west);
+  const east = Math.min(maxLng, bounds.east);
+  if (south >= north || west >= east) return [];
+  return ngeohash
+    .bboxes(south, west, north, east, cell.length + 1)
+    .filter((child) => child.startsWith(cell));
+}
+
+/** Per-cell query limit so the whole cover reads at most ~2.4x the pin target. */
+export function limitPerCoverCell(cellCount: number): number {
+  if (cellCount <= 0) return 0;
+  return Math.max(60, Math.min(400, Math.ceil((MAP_PIN_TARGET * 2.4) / cellCount)));
+}
+
 /** Geohash prefixes covering map bounds. */
 export function geohashPrefixesForBounds(
   bounds: MapBounds,

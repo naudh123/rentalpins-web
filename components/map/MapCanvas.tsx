@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useEffect, useState, type RefObject } from "react";
+import { useMemo, useEffect, useRef, useState, type RefObject } from "react";
+import type { MapDrawProgress } from "@/lib/map-draw-ui";
 import { useRouter } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import { GoogleMap } from "@react-google-maps/api";
@@ -30,7 +31,10 @@ import MapDensityLayer from "@/components/map/MapDensityLayer";
 import MapEmptyOverlay from "@/components/map/MapEmptyOverlay";
 import MapEmptyPeekHint from "@/components/map/MapEmptyPeekHint";
 import MapLowZoomHint from "@/components/map/MapLowZoomHint";
-import MapDrawAreaController, { type DrawMode } from "@/components/map/MapDrawAreaController";
+import MapDrawAreaController, {
+  type DrawMode,
+  type MapDrawActions,
+} from "@/components/map/MapDrawAreaController";
 import MapDrawAreaTool from "@/components/map/MapDrawAreaTool";
 import MapKeyboardHelp from "@/components/map/MapKeyboardHelp";
 import MapMobileViewSwitcher, { type MapMobileView } from "@/components/map/MapMobileViewSwitcher";
@@ -186,6 +190,14 @@ export default function MapCanvas({
 }: MapCanvasProps) {
   const router = useRouter();
   const [mapCameraReady, setMapCameraReady] = useState(false);
+  /**
+   * Starting camera, frozen for the map's lifetime. Passing undefined after load made
+   * @react-google-maps call setZoom(undefined), leaving a map with no zoom (blank tiles,
+   * clusterer assertion). Constant props never re-fire the setters, so pans/zooms stick.
+   */
+  const initialCameraRef = useRef(initialMapView);
+  const [drawProgress, setDrawProgress] = useState<MapDrawProgress | null>(null);
+  const drawActionsRef = useRef<MapDrawActions | null>(null);
   const mapContainerStyle = { width: "100%", height: "100%" };
   const mapTransaction = saleMode ? "sale" : "rent";
   const mapOptions = useMemo(
@@ -221,10 +233,17 @@ export default function MapCanvas({
       </span>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        center={mapCameraReady ? undefined : initialMapView.center}
-        zoom={mapCameraReady ? undefined : initialMapView.zoom}
+        center={initialCameraRef.current.center}
+        zoom={initialCameraRef.current.zoom}
         options={mapOptions}
         onLoad={(map) => {
+          // A remount (React dev StrictMode) can create the map after the center/zoom
+          // props were cleared — without a camera Google draws no tiles and the
+          // clusterer's zoom assertion fails. Always start from the initial view.
+          if (!map.getCenter() || map.getZoom() == null) {
+            map.setCenter(initialMapView.center);
+            map.setZoom(initialMapView.zoom);
+          }
           mapRef.current = map;
           onMapInstance(map);
           setMapCameraReady(true);
@@ -232,7 +251,16 @@ export default function MapCanvas({
           window.requestAnimationFrame(() => {
             google.maps.event.trigger(map, "resize");
           });
-          if (urlState.bounds) {
+          if (
+            urlState.centerLat != null &&
+            urlState.centerLng != null &&
+            urlState.zoom != null
+          ) {
+            // Exact camera wins over bounds: fitBounds rounds the zoom down, so a
+            // reload or shared link would drift one level further out each time.
+            map.setCenter({ lat: urlState.centerLat, lng: urlState.centerLng });
+            map.setZoom(urlState.zoom);
+          } else if (urlState.bounds) {
             const b = new google.maps.LatLngBounds(
               { lat: urlState.bounds.south, lng: urlState.bounds.west },
               { lat: urlState.bounds.north, lng: urlState.bounds.east }
@@ -240,20 +268,25 @@ export default function MapCanvas({
             map.fitBounds(b);
           } else if (urlState.centerLat != null && urlState.centerLng != null) {
             map.panTo({ lat: urlState.centerLat, lng: urlState.centerLng });
-            if (urlState.zoom != null) map.setZoom(urlState.zoom);
           } else if (!urlHasViewport) {
             const persisted = loadPersistedMapView();
             if (persisted) {
               restoredFromStorageRef.current = true;
-              if (persisted.bounds) {
+              // Restore the exact camera: fitBounds on saved bounds rounds the zoom
+              // down, so each return visit used to open one level further out.
+              if (
+                Number.isFinite(persisted.centerLat) &&
+                Number.isFinite(persisted.centerLng) &&
+                Number.isFinite(persisted.zoom)
+              ) {
+                map.setCenter({ lat: persisted.centerLat, lng: persisted.centerLng });
+                map.setZoom(persisted.zoom);
+              } else if (persisted.bounds) {
                 const b = new google.maps.LatLngBounds(
                   { lat: persisted.bounds.south, lng: persisted.bounds.west },
                   { lat: persisted.bounds.north, lng: persisted.bounds.east }
                 );
                 map.fitBounds(b);
-              } else {
-                map.panTo({ lat: persisted.centerLat, lng: persisted.centerLng });
-                map.setZoom(persisted.zoom);
               }
             }
           }
@@ -272,10 +305,19 @@ export default function MapCanvas({
         paused={mapPinsPaused}
         onShapeChange={onDrawnShapeChange}
         onDrawComplete={() => onDrawModeChange(null)}
+        onDrawProgress={setDrawProgress}
+        drawActionsRef={drawActionsRef}
       />
 
       <MapDrawAreaTool
         drawMode={drawMode}
+        drawProgress={drawProgress}
+        onCancelDraw={() => {
+          if (drawActionsRef.current) drawActionsRef.current.cancel();
+          else onDrawModeChange(null);
+        }}
+        onUndoPoint={() => drawActionsRef.current?.undoPoint()}
+        onFinishShape={() => drawActionsRef.current?.finishPolygon()}
         hasArea={Boolean(drawnShape)}
         filteredCount={listings.length}
         onStartDraw={(mode) => onDrawModeChange(mode)}
