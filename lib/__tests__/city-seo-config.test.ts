@@ -24,7 +24,7 @@ describe("getCitySeoConfig", () => {
     expect(getCitySeoConfig("in", "chandigarh", "panchkula")).toBeNull();
   });
 
-  it("lists seven priority money-page keys", () => {
+  it("lists priority money-page keys", () => {
     expect(listCitySeoConfigKeys()).toEqual([
       "in/chandigarh",
       "in/chandigarh/mohali",
@@ -33,6 +33,15 @@ describe("getCitySeoConfig", () => {
       "in/jaipur",
       "in/noida",
       "in/delhi",
+      "in/bengaluru",
+      "in/gurugram",
+      "in/hyderabad",
+      "in/kolkata",
+      "in/ghaziabad",
+      "in/pune",
+      "in/patna",
+      "in/indore",
+      "in/bhopal",
     ]);
   });
 

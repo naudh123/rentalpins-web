@@ -9,6 +9,7 @@ import SupplyAudienceSection from "@/components/seo/SupplyAudienceSection";
 import AreaSupplyDemandSection from "@/components/seo/AreaSupplyDemandSection";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
 import MohaliGscHubLinks from "@/components/seo/MohaliGscHubLinks";
+import { NEW_CITY_AREA_LONGFORM } from "@/lib/seo/area-longform-new-cities";
 
 // ─── URLs (SINGLE SOURCE — change here, changes everywhere) ──────────────────
 const PLAY_URL =
@@ -1173,6 +1174,7 @@ const FOCUSED_LONGFORM_OVERRIDES: Record<string, LongFormSection[]> = {
       ],
     },
   ],
+  ...NEW_CITY_AREA_LONGFORM,
 };
 
 // ─── Cities data for navbar dropdown ──────────────────────────────────────────
