@@ -28,6 +28,15 @@ describe("Zillow-style map view", () => {
     }
   });
 
+  it("handles a whole-country view without enumerating tiny cells", () => {
+    const india = { north: 37.5, south: 6.5, east: 97.5, west: 68 };
+    const started = Date.now();
+    const { prefixes, precision } = geohashCoverForBounds(india);
+    expect(Date.now() - started).toBeLessThan(500);
+    expect(prefixes.length).toBeLessThanOrEqual(MAP_COVER_MAX_CELLS);
+    expect(precision).toBeLessThanOrEqual(3);
+  });
+
   it("uses finer cells for smaller viewports", () => {
     const small = { north: 30.71, south: 30.69, east: 76.73, west: 76.71 };
     expect(geohashCoverForBounds(small).precision).toBeGreaterThan(
@@ -35,10 +44,15 @@ describe("Zillow-style map view", () => {
     );
   });
 
-  it("keeps total reads bounded", () => {
-    for (const cells of [1, 6, 32]) {
-      expect(limitPerCoverCell(cells) * cells).toBeLessThanOrEqual(Math.max(400, MAP_PIN_TARGET * 2.4 + 60 * cells));
+  it("lets one dense cell answer in a single round, within a bounded cap", () => {
+    for (const cells of [1, 6, 20, 32]) {
+      const limit = limitPerCoverCell(cells);
+      // Dense Tricity (~230 listings) fits in one cell's first query.
+      expect(limit).toBeGreaterThanOrEqual(230);
+      expect(limit).toBeLessThanOrEqual(400);
+      expect(limit * cells).toBeLessThanOrEqual(400 * MAP_COVER_MAX_CELLS);
     }
+    expect(MAP_PIN_TARGET).toBe(500);
   });
 
   it("shows individual dots at city zoom and price pills closer in", () => {
@@ -50,5 +64,14 @@ describe("Zillow-style map view", () => {
 
   it("only groups pins when zoomed out past city level", () => {
     expect(MAP_CLUSTER_MAX_ZOOM).toBeLessThanOrEqual(10);
+  });
+});
+
+describe("sparse areas show prices", () => {
+  it("shows price pills at city zoom when few listings are in view", () => {
+    expect(mapPinLabelTier(12, 16)).toBe("compact");
+    expect(mapPinLabelTier(10, 60)).toBe("compact");
+    expect(mapPinLabelTier(12, 157)).toBe("dot");
+    expect(mapPinLabelTier(9, 5)).toBe("dot");
   });
 });

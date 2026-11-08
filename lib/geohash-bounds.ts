@@ -105,11 +105,32 @@ export function geohashCoverForBounds(
   // Antimeridian-crossing viewports are not used in RentalPins markets; clamp to a valid box.
   const west = bounds.west <= bounds.east ? bounds.west : -180;
   const east = bounds.west <= bounds.east ? bounds.east : 180;
+  // Estimate the cell count from cell size BEFORE enumerating: listing precision-7
+  // cells for a country-sized view means billions of entries (crashed at zoom 5).
   for (let precision = 7; precision >= 1; precision--) {
+    if (estimateGeohashCellCount(south, west, north, east, precision) > maxCells * 4) continue;
     const cells = ngeohash.bboxes(south, west, north, east, precision);
     if (cells.length <= maxCells) return { prefixes: cells, precision };
   }
   return { prefixes: ngeohash.bboxes(south, west, north, east, 1), precision: 1 };
+}
+
+/** Upper-bound estimate of geohash cells of a precision covering a box (no enumeration). */
+export function estimateGeohashCellCount(
+  south: number,
+  west: number,
+  north: number,
+  east: number,
+  precision: number
+): number {
+  const bits = precision * 5;
+  const lngBits = Math.ceil(bits / 2);
+  const latBits = Math.floor(bits / 2);
+  const cellLng = 360 / 2 ** lngBits;
+  const cellLat = 180 / 2 ** latBits;
+  const cols = Math.floor((east - west) / cellLng) + 2;
+  const rows = Math.floor((north - south) / cellLat) + 2;
+  return cols * rows;
 }
 
 /** Most sub-cells one refinement pass may add (Firestore cost guard). */
@@ -131,10 +152,21 @@ export function refineGeohashCell(cell: string, bounds: MapBounds): string[] {
     .filter((child) => child.startsWith(cell));
 }
 
-/** Per-cell query limit so the whole cover reads at most ~2.4x the pin target. */
+/**
+ * Per-cell query limit. Firestore bills only for documents returned, so a high
+ * limit costs nothing in sparse cells but lets one dense cell (e.g. Tricity in a
+ * state-level view) answer in a single round instead of 2–3 sequential
+ * refinement rounds (Punjab view: 14 s → one round).
+ */
+export const MAP_CELL_LIMIT_MIN = 250;
+export const MAP_CELL_LIMIT_MAX = 400;
+
 export function limitPerCoverCell(cellCount: number): number {
   if (cellCount <= 0) return 0;
-  return Math.max(60, Math.min(400, Math.ceil((MAP_PIN_TARGET * 2.4) / cellCount)));
+  return Math.max(
+    MAP_CELL_LIMIT_MIN,
+    Math.min(MAP_CELL_LIMIT_MAX, Math.ceil((MAP_PIN_TARGET * 2.4) / cellCount))
+  );
 }
 
 /** Geohash prefixes covering map bounds. */
