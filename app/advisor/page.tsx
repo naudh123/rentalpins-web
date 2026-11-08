@@ -6,7 +6,7 @@ import { appPath } from "@/lib/config";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "AI property advisor | RentalPins Buy",
+  title: "AI property advisor",
   description:
     "Chat with the RentalPins property agent or use the quick form — budget, purpose, and timeline in, map areas and listings out.",
   path: "/advisor",

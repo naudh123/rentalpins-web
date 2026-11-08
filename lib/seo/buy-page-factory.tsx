@@ -19,7 +19,7 @@ export function buyPageMetadata(
   const path = buyPagePath(hubSlug, areaSlug);
   const canonical = `${siteUrl}${appPath(path)}`;
   return {
-    title: `${page.headline} | RentalPins Buy`,
+    title: `${page.headline}`,
     description: page.subhead,
     alternates: { canonical },
     openGraph: {

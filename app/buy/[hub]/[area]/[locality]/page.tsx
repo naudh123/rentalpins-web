@@ -49,7 +49,7 @@ export async function generateMetadata({
   const path = buyAreaPath(hub, area, locality);
   const canonical = `${siteUrl}${appPath(path)}`;
   return {
-    title: `Property for sale in ${result.area.name} | RentalPins Buy`,
+    title: `Property for sale in ${result.area.name}`,
     description: `Buy flats, villas, and plots in ${result.area.name} — owner-direct sale listings on the map. ${seo.intro[0]?.slice(0, 120)}`,
     alternates: { canonical },
     openGraph: {

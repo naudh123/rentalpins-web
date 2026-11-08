@@ -23,9 +23,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { city } = await params;
   const cityConfig = getCityBySlug(city);
-  if (!cityConfig) return { title: "Projects | RentalPins Buy" };
+  if (!cityConfig) return { title: "Projects" };
   return buildPageMetadata({
-    title: `Projects for sale in ${cityConfig.name} | RentalPins Buy`,
+    title: `Projects for sale in ${cityConfig.name}`,
     description: `New and upcoming real estate projects in ${cityConfig.name}. Compare BHK options, amenities, and price ranges.`,
     path: `/buy/projects/${city}`,
   });

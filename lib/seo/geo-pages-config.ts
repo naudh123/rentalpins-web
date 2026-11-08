@@ -108,7 +108,7 @@ export const GEO_PAGES: GeoPageConfig[] = [
   },
   {
     path: "/buy/new-chandigarh-investment-guide",
-    title: "New Chandigarh Investment Guide | RentalPins Buy",
+    title: "New Chandigarh Investment Guide",
     description:
       "New Chandigarh property context for buyers — growth corridor, rental demand links, and owner-direct sale discovery on RentalPins Buy.",
     answerSummary:
@@ -133,7 +133,7 @@ export const GEO_PAGES: GeoPageConfig[] = [
   },
   {
     path: "/buy/mohali-investment-guide",
-    title: "Mohali Property Investment Guide | RentalPins Buy",
+    title: "Mohali Property Investment Guide",
     description:
       "Mohali buy and investment context — sectors, PR7, IT Park adjacency, and owner-direct sale listings on RentalPins.",
     answerSummary:
@@ -158,7 +158,7 @@ export const GEO_PAGES: GeoPageConfig[] = [
   },
   {
     path: "/buy/zirakpur-investment-guide",
-    title: "Zirakpur Property Investment Guide | RentalPins Buy",
+    title: "Zirakpur Property Investment Guide",
     description:
       "Zirakpur VIP Road and commuter corridor investment context — rental yield, entry pricing, and owner-direct sale discovery on RentalPins.",
     answerSummary:
@@ -183,7 +183,7 @@ export const GEO_PAGES: GeoPageConfig[] = [
   },
   {
     path: "/buy/kharar-investment-guide",
-    title: "Kharar & CU Belt Investment Guide | RentalPins Buy",
+    title: "Kharar & CU Belt Investment Guide",
     description:
       "Kharar, Chandigarh University, and Jhanjeri student-yield investment context — PG demand, multi-tenant models, and buy map discovery.",
     answerSummary:
@@ -233,7 +233,7 @@ export const GEO_PAGES: GeoPageConfig[] = [
   },
   {
     path: "/buy/aerocity-investment-guide",
-    title: "Aerocity & Airport Road Investment Guide | RentalPins Buy",
+    title: "Aerocity & Airport Road Investment Guide",
     description:
       "Mohali Aerocity and Airport Road professional rental yield — furnished tenant demand, premium societies, and buy/rent map discovery.",
     answerSummary:

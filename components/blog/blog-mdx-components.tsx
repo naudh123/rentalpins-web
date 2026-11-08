@@ -28,6 +28,16 @@ export function createBlogMdxComponents(toc: BlogTocEntry[]) {
   }
 
   return {
+    // The post title is the page's only <h1>; a "# Heading" inside the body becomes a section heading.
+    h1: ({ children, ...props }: ComponentPropsWithoutRef<"h1">) => (
+      <h2
+        id={nextId(2, headingText(children))}
+        className={HEADING_SCROLL_CLASS}
+        {...(props as ComponentPropsWithoutRef<"h2">)}
+      >
+        {children}
+      </h2>
+    ),
     h2: ({ children, ...props }: ComponentPropsWithoutRef<"h2">) => (
       <h2
         id={nextId(2, headingText(children))}

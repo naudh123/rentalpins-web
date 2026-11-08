@@ -3,9 +3,20 @@ import { canonicalUrl } from "@/lib/seo";
 
 export const SEO_BRAND_SUFFIX = " | RentalPins";
 
-/** Remove a trailing "| RentalPins" so the root layout title template does not duplicate it. */
+/**
+ * Remove a trailing brand segment ("| RentalPins", "| RentalPins Buy",
+ * "| RentalPins for developers") so the root layout template's " | RentalPins"
+ * is not doubled ("… | RentalPins Buy | RentalPins" pushed titles past 65 chars).
+ */
 export function stripBrandSuffix(title: string): string {
-  return title.replace(/\s*\|\s*RentalPins\s*$/i, "").trim();
+  let out = title.trim();
+  // Repeat: some titles carried two brand segments.
+  for (let i = 0; i < 3; i++) {
+    const next = out.replace(/\s*\|\s*RentalPins(?:\s+[^|]{1,30})?\s*$/i, "").trim();
+    if (next === out) break;
+    out = next;
+  }
+  return out;
 }
 
 /** Full title for Open Graph, Twitter, and absolute metadata. */

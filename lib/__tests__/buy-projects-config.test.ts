@@ -22,6 +22,8 @@ describe("buy-projects-config", () => {
   it("generates sitemap paths under /buy/projects", () => {
     const paths = getBuyProjectSitemapPaths();
     expect(paths).toContain("/buy/projects");
-    expect(paths).toContain("/buy/projects/mohali/green-valley-residences");
+    // Mohali is a Tricity area, not a top-level city: its project page 404s, so it must not be listed.
+    expect(paths).not.toContain("/buy/projects/mohali/green-valley-residences");
+    expect(paths).not.toContain("/buy/projects/mohali");
   });
 });

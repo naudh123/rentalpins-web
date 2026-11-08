@@ -16,7 +16,7 @@ import { TRICITY_PROJECT_CITIES } from "@/lib/builders/tricity-cities";
 import { listProjects } from "@/lib/builders/builders-server";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Real estate projects | RentalPins Buy",
+  title: "Real estate projects",
   description:
     "Explore new and upcoming real estate projects across India. Compare price ranges, amenities, and book site visits on RentalPins.",
   path: "/projects",

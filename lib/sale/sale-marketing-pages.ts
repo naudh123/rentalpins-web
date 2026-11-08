@@ -7,7 +7,7 @@ import { BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
   "flats-for-sale": {
     slug: "flats-for-sale",
-    title: "Flats for Sale in India | RentalPins Buy",
+    title: "Flats for Sale in India",
     description:
       "Find 1BHK, 2BHK and furnished flats for sale in Chandigarh Tricity — Mohali, Kharar, Zirakpur, and Panchkula with owner-direct map search.",
     h1: "Flats for sale in India",
@@ -36,7 +36,7 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
   },
   "property-for-sale": {
     slug: "property-for-sale",
-    title: "Property for Sale in India | RentalPins Buy",
+    title: "Property for Sale in India",
     description:
       "Owner-direct property for sale — flats, houses, plots, and villas on a curated map. Launching in Chandigarh Tricity.",
     h1: "Property for sale in India",
@@ -62,7 +62,7 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
   },
   "property-for-sale-chandigarh": {
     slug: "property-for-sale-chandigarh",
-    title: "Chandigarh Tricity Property for Sale | RentalPins Buy",
+    title: "Chandigarh Tricity Property for Sale",
     description:
       "Property for sale in Chandigarh Tricity — Mohali, Kharar, Panchkula, Zirakpur. Owner-direct flats, houses, and plots on the map.",
     h1: "Chandigarh Tricity property for sale",
@@ -92,7 +92,7 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
   },
   "property-for-sale-mohali": {
     slug: "property-for-sale-mohali",
-    title: "Mohali Property for Sale | RentalPins Buy",
+    title: "Mohali Property for Sale",
     description:
       "Flats, villas, and plots for sale in Mohali Phase 7–11, IT Park, Aerocity — owner-direct listings on the map.",
     h1: "Mohali property for sale",
@@ -118,7 +118,7 @@ export const SALE_MARKETING_PAGES: Record<string, MarketingPageConfig> = {
   },
   "commercial-property-for-sale": {
     slug: "commercial-property-for-sale",
-    title: "Commercial Property for Sale | RentalPins Buy",
+    title: "Commercial Property for Sale",
     description:
       "Shops, showrooms, office space, and warehouses for sale in Chandigarh Tricity — owner-direct commercial listings on the RentalPins buy map.",
     h1: "Commercial property for sale",

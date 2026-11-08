@@ -23,7 +23,7 @@ export async function buyRequirementsMetadata(
 ): Promise<Metadata> {
   if (!city) {
     return buildPageMetadata({
-      title: "Buyer requirements | RentalPins Buy",
+      title: "Buyer requirements",
       description:
         "Post your property buy requirement — budget, location, and property type. Connect with sellers and developers on RentalPins.",
       path: BUY_REQUIREMENTS_PATH,

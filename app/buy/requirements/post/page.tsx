@@ -3,7 +3,7 @@ import PostRequirementClient from "@/components/buy/PostRequirementClient";
 import { buildPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "Post buy requirement | RentalPins Buy",
+  title: "Post buy requirement",
   description:
     "Post your property buy requirement — budget, locality, and property type. Sellers respond through RentalPins.",
   path: "/buy/requirements/post",
