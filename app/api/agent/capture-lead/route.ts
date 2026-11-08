@@ -1,11 +1,25 @@
 import { NextResponse } from "next/server";
 import { persistConversationLead } from "@/lib/agent/persist-conversation-lead";
 import { normalizeIndianPhone } from "@/lib/agent/contact-extraction";
+import { getAgentClientKey, LEAD_CAPTURE_LIMIT } from "@/lib/agent/rate-limit";
+import { checkSharedRateLimit } from "@/lib/shared-rate-limit";
 
 export const maxDuration = 30;
 
 /** Direct lead capture from chat UI form — does not rely on the LLM calling tools. */
 export async function POST(request: Request) {
+  const rate = await checkSharedRateLimit(
+    `lead:${getAgentClientKey(request)}`,
+    LEAD_CAPTURE_LIMIT.limit,
+    LEAD_CAPTURE_LIMIT.windowMs
+  );
+  if (!rate.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests — please try again in a little while." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = (await request.json()) as {
       sessionId?: string;

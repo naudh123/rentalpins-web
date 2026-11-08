@@ -9,15 +9,12 @@ import type { ListingCard, ListingDetail, MapBounds } from "./types/listing";
 import { parseListingAttributes } from "./listing-attributes";
 import { parseTransactionType } from "./transaction-type";
 import {
-  bonusLimitPerPrefix,
-  capGeohashPrefixesNearCenter,
-  geohashMaxPrefixesForZoom,
-  GEOHASH_CENTER_BOOST_PREFIXES,
-  geohashPrefixesForViewport,
-  isLikelyGeohashPrefixCapped,
+  geohashCoverForBounds,
+  limitPerCoverCell,
+  MAP_REFINE_MAX_CELLS,
+  refineGeohashCell,
+  MAP_PIN_TARGET,
   sortGeohashPrefixesNearCenter,
-  isLikelyResultCapSaturated,
-  limitPerPrefixForZoom,
 } from "./geohash-bounds";
 import { logListingsFetchMetrics } from "./listings-fetch-metrics";
 
@@ -196,69 +193,83 @@ export async function fetchListingsInBounds(
   filters: ListingFilters = DEFAULT_LISTING_FILTERS,
   options?: { zoom?: number | null; limitPerPrefix?: number }
 ): Promise<ListingsInBoundsResult> {
-  const limitPerPrefix = options?.limitPerPrefix ?? limitPerPrefixForZoom(options?.zoom);
-  const { prefixes: rawPrefixes, gridSteps } = geohashPrefixesForViewport(
-    bounds,
-    options?.zoom
-  );
-  const prefixCapActive = isLikelyGeohashPrefixCapped(bounds, options?.zoom);
+  // Cover the WHOLE viewport (every intersecting geohash cell), not sampled points,
+  // so the first city-level view shows every listing — Zillow-style.
+  const { prefixes: rawPrefixes } = geohashCoverForBounds(bounds);
   const centerLat = (bounds.north + bounds.south) / 2;
   const centerLng = (bounds.west + bounds.east) / 2;
-  const sorted = sortGeohashPrefixesNearCenter(rawPrefixes, centerLat, centerLng);
-  const prefixes = capGeohashPrefixesNearCenter(
-    sorted,
-    centerLat,
-    centerLng,
-    geohashMaxPrefixesForZoom(options?.zoom)
-  );
+  const prefixes = sortGeohashPrefixesNearCenter(rawPrefixes, centerLat, centerLng);
+  const limitPerPrefix = options?.limitPerPrefix ?? limitPerCoverCell(prefixes.length);
   const listingsRef = adminDb.collection("listings");
 
   const seen = new Set<string>();
   const all: ListingCard[] = [];
-
-  const primaryWaveCount = 1;
   const snapshots = await fetchGeohashPrefixWave(prefixes, limitPerPrefix, listingsRef);
   mergeGeohashSnapshots(snapshots, bounds, seen, all);
 
-  let boostWaveCount = 0;
-  let boostLimitPerPrefix: number | undefined;
-  if (
-    all.length > 0 &&
-    isLikelyResultCapSaturated(all.length, gridSteps, limitPerPrefix)
-  ) {
-    const boostPrefixes = prefixes.slice(0, GEOHASH_CENTER_BOOST_PREFIXES);
-    boostLimitPerPrefix = bonusLimitPerPrefix(limitPerPrefix);
-    boostWaveCount = 1;
-    const boostSnaps = await fetchGeohashPrefixWave(
-      boostPrefixes,
-      boostLimitPerPrefix,
-      listingsRef
+  // A cell that returned exactly its limit may hold more listings than we read:
+  // split dense cells into their finer children inside the viewport and query those.
+  let saturated = prefixes.filter(
+    (_, i) => snapshots[i] != null && snapshots[i]!.size >= limitPerPrefix
+  );
+  let refineWaves = 0;
+  let refineLimit = limitPerPrefix;
+  while (saturated.length > 0 && refineWaves < 2 && !options?.limitPerPrefix) {
+    const children = [...new Set(saturated.flatMap((cell) => refineGeohashCell(cell, bounds)))]
+      .slice(0, MAP_REFINE_MAX_CELLS);
+    if (children.length === 0) break;
+    refineLimit = limitPerCoverCell(children.length);
+    const childSnaps = await fetchGeohashPrefixWave(children, refineLimit, listingsRef);
+    mergeGeohashSnapshots(childSnaps, bounds, seen, all);
+    saturated = children.filter(
+      (_, i) => childSnaps[i] != null && childSnaps[i]!.size >= refineLimit
     );
-    mergeGeohashSnapshots(boostSnaps, bounds, seen, all);
+    refineWaves++;
   }
+  const cellSaturated = saturated.length > 0;
 
   const totalInBounds = all.length;
-  const listings = applyListingFilters(all, filters);
-  const filteredCount = listings.length;
-  const resultsMayBeIncomplete =
-    prefixCapActive ||
-    isLikelyResultCapSaturated(totalInBounds, gridSteps, limitPerPrefix);
+  const filtered = applyListingFilters(all, filters);
+  const filteredCount = filtered.length;
+  const pinCapped = filtered.length > MAP_PIN_TARGET;
+  const listings = pinCapped ? prioritizeForPinCap(filtered, centerLat, centerLng) : filtered;
+  const resultsMayBeIncomplete = cellSaturated || pinCapped;
 
   logListingsFetchMetrics({
     zoom: options?.zoom,
     rawPrefixCount: rawPrefixes.length,
     queriedPrefixCount: prefixes.length,
-    prefixCapActive,
-    primaryWaveCount,
-    boostWaveCount,
+    prefixCapActive: false,
+    primaryWaveCount: 1,
+    boostWaveCount: refineWaves,
     limitPerPrefix,
-    boostLimitPerPrefix,
     totalInBounds,
     filteredCount,
     resultsMayBeIncomplete,
   });
 
-  return { listings, totalInBounds, filteredCount, resultsMayBeIncomplete, prefixCapActive };
+  return {
+    listings,
+    totalInBounds,
+    filteredCount,
+    resultsMayBeIncomplete,
+    prefixCapActive: false,
+  };
+}
+
+/** Keep promoted listings, then those nearest the map centre, when over the pin cap. */
+function prioritizeForPinCap(
+  listings: ListingCard[],
+  centerLat: number,
+  centerLng: number
+): ListingCard[] {
+  const dist = (l: ListingCard) => (l.lat - centerLat) ** 2 + (l.lng - centerLng) ** 2;
+  const keep = [...listings]
+    .sort((a, b) => Number(b.isPromoted) - Number(a.isPromoted) || dist(a) - dist(b))
+    .slice(0, MAP_PIN_TARGET);
+  const keepIds = new Set(keep.map((l) => l.id));
+  // Preserve the caller's sort order for the kept listings.
+  return listings.filter((l) => keepIds.has(l.id));
 }
 
 export async function fetchListingById(id: string): Promise<ListingDetail | null> {

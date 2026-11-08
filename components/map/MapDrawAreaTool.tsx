@@ -50,7 +50,7 @@ export default function MapDrawAreaTool({
       className="pointer-events-auto absolute left-3 top-[7.5rem] z-20 flex max-w-[min(100vw-1.5rem,18rem)] flex-col gap-2 md:top-[7.75rem]"
       aria-label="Draw search area on map"
     >
-      {drawMode && prompt && (
+      {drawMode && drawProgress && prompt && (
         <div className="rounded-xl border border-[var(--brand-orange)]/30 bg-[var(--surface)]/95 px-3 py-2 shadow-sm backdrop-blur-sm">
           <p className="text-[11px] font-semibold leading-snug text-[var(--brand-navy)]">
             {drawMode === "rect" ? "Drawing rectangle" : "Drawing custom area"}

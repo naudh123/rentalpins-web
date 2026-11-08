@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   }
 
   const clientKey = getAgentClientKey(request);
-  const rateLimit = checkAgentRateLimit(clientKey);
+  const rateLimit = await checkAgentRateLimit(clientKey);
   if (!rateLimit.allowed) {
     return NextResponse.json({ error: "Daily agent message limit reached." }, { status: 429 });
   }

@@ -35,6 +35,21 @@ async function bitmapToJpegFile(bitmap: ImageBitmap, file: File, quality: number
   return new File([blob], `${baseName}.jpg`, { type: "image/jpeg" });
 }
 
+/** Fit width x height inside a maxDimension square, keeping aspect ratio; never enlarges. */
+export function scaledDimensions(
+  width: number,
+  height: number,
+  maxDimension: number
+): { width: number; height: number } {
+  const longest = Math.max(width, height);
+  if (!longest || longest <= maxDimension) return { width, height };
+  const scale = maxDimension / longest;
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
+
 async function resizeImageCore(
   file: File,
   maxDimension: number,
@@ -44,29 +59,18 @@ async function resizeImageCore(
 
   let bitmap: ImageBitmap | null = null;
   try {
-    try {
-      // Decode at reduced size — avoids loading 12MP+ frames into memory.
-      bitmap = await createImageBitmap(file, {
-        resizeWidth: maxDimension,
-        resizeHeight: maxDimension,
-        resizeQuality: "medium",
+    // Decode once, then scale proportionally. (Passing both resizeWidth and
+    // resizeHeight to createImageBitmap forces an exact box and stretches the photo.)
+    bitmap = await createImageBitmap(file);
+    const { width, height } = scaledDimensions(bitmap.width, bitmap.height, maxDimension);
+    if (width !== bitmap.width || height !== bitmap.height) {
+      const scaled = await createImageBitmap(bitmap, {
+        resizeWidth: width,
+        resizeHeight: height,
+        resizeQuality: "high",
       });
-    } catch {
-      bitmap = await createImageBitmap(file);
-      const longest = Math.max(bitmap.width, bitmap.height);
-      if (longest <= maxDimension && file.size <= SKIP_RESIZE_BYTES) {
-        return file;
-      }
-      if (longest > maxDimension) {
-        const scale = maxDimension / longest;
-        const scaled = await createImageBitmap(bitmap, {
-          resizeWidth: Math.round(bitmap.width * scale),
-          resizeHeight: Math.round(bitmap.height * scale),
-          resizeQuality: "medium",
-        });
-        bitmap.close();
-        bitmap = scaled;
-      }
+      bitmap.close();
+      bitmap = scaled;
     }
 
     if (bitmap.width <= maxDimension && bitmap.height <= maxDimension && isSmallJpeg(file)) {
@@ -77,6 +81,24 @@ async function resizeImageCore(
   } finally {
     bitmap?.close();
   }
+}
+
+/**
+ * Make a small display copy (thumbnail / icon). Unlike resizeImageForUpload this
+ * never skips small JPEGs, since the point is a file far smaller than the photo.
+ */
+export async function resizeImageVariant(
+  file: File,
+  maxDimension: number,
+  quality: number
+): Promise<File> {
+  if (!isLikelyImage(file)) return file;
+  await yieldToMain();
+  return withTimeout(
+    resizeImageCore(file, maxDimension, quality),
+    25_000,
+    "Photo processing took too long. Try a smaller image or screenshot."
+  );
 }
 
 /** Downscale large photos before upload to save bandwidth and keep the UI responsive. */

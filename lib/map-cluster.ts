@@ -2,8 +2,11 @@ import type { Renderer } from "@googlemaps/markerclusterer";
 import type { Cluster } from "@googlemaps/markerclusterer";
 import type { SuperClusterOptions } from "@googlemaps/markerclusterer/dist/algorithms/supercluster";
 
-/** Stop clustering above this zoom so individual price pins appear sooner. */
-export const MAP_CLUSTER_MAX_ZOOM = 14;
+/**
+ * Zillow-style: every listing is its own pin at city zoom and closer; count
+ * bubbles only appear when zoomed out to region/state level (below this zoom).
+ */
+export const MAP_CLUSTER_MAX_ZOOM = 9;
 
 /** SuperCluster radius in pixels — slightly tighter than library default (60). */
 export const MAP_CLUSTER_RADIUS = 50;

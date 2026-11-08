@@ -1,0 +1,42 @@
+name: CI
+
+# Runs on every push and pull request so a broken build is caught before
+# Vercel tries to deploy it (4 production deploys failed in Jul 2026 for this reason).
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Server secrets are deliberately absent: the build must succeed without them
+      # (Firebase Admin is optional at build time). Public keys are placeholders.
+      NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PUBLIC_SITE_URL: https://www.rentalpins.com
+      NEXT_PUBLIC_FIREBASE_PROJECT_ID: rent-it-dev-6bcfd
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Lint
+        run: npx eslint . --quiet
+
+      - name: Production build (includes type-check)
+        run: npm run build

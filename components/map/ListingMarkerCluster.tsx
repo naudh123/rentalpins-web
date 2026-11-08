@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MarkerClusterer,
   type Cluster,
@@ -25,7 +25,13 @@ import {
   coLocatedPinIndexById,
   markerDisplayPosition,
 } from "@/lib/map-pin-offset";
-import { buildPriceMarkerIcon, buildHoverRingIcon, buildUnitCountMarkerIcon, formatMapPinLabel } from "@/lib/map-pins";
+import {
+  buildDotMarkerIcon,
+  buildPriceMarkerIcon,
+  buildHoverRingIcon,
+  buildUnitCountMarkerIcon,
+  formatMapPinLabel,
+} from "@/lib/map-pins";
 import { resolveHoverRingPosition } from "@/lib/map-hover-ring-position";
 import {
   afterFitBoundsClampMobile,
@@ -78,6 +84,10 @@ function markerIcon(
 ): google.maps.Icon | undefined {
   if (typeof google === "undefined") return undefined;
   const sale = isSalePin(listing, saleMode);
+  // City zoom: small dot per listing; the selected listing still shows its price pill.
+  if (labelTier === "dot" && listing.id !== selectedId) {
+    return buildDotMarkerIcon({ promoted: listing.isPromoted, sale }, google.maps);
+  }
   const label = formatMapPinLabel(listing, labelTier);
   return buildPriceMarkerIcon(
     label,
@@ -254,6 +264,22 @@ export default function ListingMarkerCluster({
 
   const hoverRingMarkerRef = useRef<google.maps.Marker | null>(null);
 
+  /** MarkerClusterer asserts map.getZoom() — only hand it markers once the map has a camera. */
+  const [mapReady, setMapReady] = useState(false);
+  useEffect(() => {
+    if (!map) {
+      setMapReady(false);
+      return;
+    }
+    if (map.getZoom() != null) {
+      setMapReady(true);
+      return;
+    }
+    setMapReady(false);
+    const listener = map.addListener("idle", () => setMapReady(map.getZoom() != null));
+    return () => listener.remove();
+  }, [map]);
+
   useEffect(() => {
     spiderfyDisplayRef.current.clear();
   }, [spiderfyEpoch]);
@@ -261,7 +287,7 @@ export default function ListingMarkerCluster({
   useEffect(() => {
     if (!map || !paused) return;
     hoverRingMarkerRef.current?.setMap(null);
-    clustererRef.current?.clearMarkers();
+    clustererRef.current?.clearMarkers(true);
     clustererRef.current?.setMap(null);
     clustererRef.current = null;
     for (const marker of markersByIdRef.current.values()) {
@@ -283,7 +309,7 @@ export default function ListingMarkerCluster({
   }, [map, paused]);
 
   useEffect(() => {
-    if (!map || paused) return;
+    if (!map || paused || !mapReady) return;
 
     if (mapZoom < MAP_CLUSTER_MAX_ZOOM) {
       spiderfyDisplayRef.current.clear();
@@ -549,7 +575,7 @@ export default function ListingMarkerCluster({
     };
 
     if (clustererRef.current && lastClusterSaleRef.current !== saleMode) {
-      clustererRef.current.clearMarkers();
+      clustererRef.current.clearMarkers(true);
       clustererRef.current.setMap(null);
       clustererRef.current = null;
     }
@@ -634,13 +660,13 @@ export default function ListingMarkerCluster({
       ring.setMap(map);
       ring.setZIndex(700);
     }
-  }, [map, paused, highlightedId, selectedId, listings, mapZoom, buildingPinZoom, spiderfyEpoch, saleMode]);
+  }, [map, mapReady, paused, highlightedId, selectedId, listings, mapZoom, buildingPinZoom, spiderfyEpoch, saleMode]);
 
   useEffect(() => {
     return () => {
       hoverRingMarkerRef.current?.setMap(null);
       hoverRingMarkerRef.current = null;
-      clustererRef.current?.clearMarkers();
+      clustererRef.current?.clearMarkers(true);
       clustererRef.current?.setMap(null);
       markersByIdRef.current.forEach((m) => {
         google.maps.event.clearInstanceListeners(m);

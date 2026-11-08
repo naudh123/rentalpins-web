@@ -94,8 +94,12 @@ describe("listing-share", () => {
     );
   });
 
-  it("builds SEO share description with location", () => {
-    const d = listingShareDescription(baseListing);
+  it("uses the owner's description for sharing when long enough", () => {
+    expect(listingShareDescription(baseListing)).toBe(baseListing.description);
+  });
+
+  it("builds SEO share description with location when description is short", () => {
+    const d = listingShareDescription({ ...baseListing, description: "Nice flat" });
     expect(d).toMatch(/Chandigarh|Sector/i);
     expect(d).toMatch(/RentalPins/i);
   });

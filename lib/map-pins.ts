@@ -206,6 +206,31 @@ export function buildPriceMarkerIcon(
   };
 }
 
+const dotIconCache = new Map<string, google.maps.Icon>();
+
+/** Zillow-style small dot used for every listing at city zoom (price shows when selected). */
+export function buildDotMarkerIcon(
+  style: PriceMarkerStyle,
+  googleMaps: typeof google.maps
+): google.maps.Icon {
+  const { bg } = resolveMapPinColors({ promoted: false, sale: style.sale });
+  const fill = style.promoted ? MAP_PIN_ORANGE : bg;
+  const cacheKey = fill;
+  const cached = dotIconCache.get(cacheKey);
+  if (cached) return cached;
+  const size = 14;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+  <circle cx="7" cy="7" r="5.5" fill="${fill}" stroke="#ffffff" stroke-width="1.5"/>
+</svg>`;
+  const icon = {
+    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+    scaledSize: new googleMaps.Size(size, size),
+    anchor: new googleMaps.Point(size / 2, size / 2),
+  };
+  dotIconCache.set(cacheKey, icon);
+  return icon;
+}
+
 const hoverRingCache = new Map<string, google.maps.Icon>();
 
 /** Lightweight ring shown under list-hovered pins (no price-pill SVG rebuild). */

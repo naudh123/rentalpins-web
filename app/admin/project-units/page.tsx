@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useAuth } from "@/components/providers/AuthProvider";
 import BuilderAdminShell from "@/components/builders/BuilderAdminShell";
 import ProjectInventoryTable from "@/components/builders/ProjectInventoryTable";
@@ -114,9 +115,9 @@ export default function AdminProjectUnitsPage() {
       <BuilderAdminShell title="Inventory">
         <p className="text-[var(--muted)]">
           No projects yet.{" "}
-          <a href="/projects/post" className="text-[var(--brand-navy)] underline">
+          <Link href="/projects/post" className="text-[var(--brand-navy)] underline">
             List a project
-          </a>
+          </Link>
         </p>
       </BuilderAdminShell>
     );
