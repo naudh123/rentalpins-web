@@ -53,13 +53,6 @@ export default function ProjectsIndexClient({
     return sortFeaturedFirst(filterProjects(projects, active));
   }, [projects, filters, lockedCitySlug]);
 
-  const gridProjects = useMemo(() => {
-    if (showFeaturedRail) {
-      return excludeFeaturedFromGrid(filtered, featuredProjects);
-    }
-    return filtered;
-  }, [filtered, featuredProjects, showFeaturedRail]);
-
   const hasActiveFilters =
     filters.query.trim() !== "" ||
     (!lockedCitySlug && filters.citySlug != null) ||
@@ -71,6 +64,13 @@ export default function ProjectsIndexClient({
     featuredProjects.length > 0 &&
     !hasActiveFilters &&
     !lockedCitySlug;
+
+  const gridProjects = useMemo(() => {
+    if (showFeaturedRail) {
+      return excludeFeaturedFromGrid(filtered, featuredProjects);
+    }
+    return filtered;
+  }, [filtered, featuredProjects, showFeaturedRail]);
 
   function clearFilters() {
     setFilters({

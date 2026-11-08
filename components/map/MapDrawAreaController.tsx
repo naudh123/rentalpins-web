@@ -224,7 +224,7 @@ export default function MapDrawAreaController({
         };
 
         const onMouseMove = (e: google.maps.MapMouseEvent) => {
-          if (!start || !e.latLng || !preview) return;
+          if (!start || !e.latLng || !(preview instanceof google.maps.Rectangle)) return;
           preview.setBounds(boundsFromCorners(start, e.latLng));
         };
 
@@ -398,7 +398,7 @@ export default function MapDrawAreaController({
       cleanups.forEach((fn) => fn());
       clearPreview();
       if (restoreGestureTimerRef.current) clearTimeout(restoreGestureTimerRef.current);
-      restoreGestureTimerRef.current = window.setTimeout(() => {
+      restoreGestureTimerRef.current = setTimeout(() => {
         map.setOptions({
           draggable: previousDraggable,
           disableDoubleClickZoom: previousDisableDoubleClickZoom,
