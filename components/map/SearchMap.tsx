@@ -104,7 +104,6 @@ export default function SearchMap({
   /** Sidebar / save-search only — do not pass to GoogleMap (avoids pan lock). */
   const [mapZoom, setMapZoom] = useState(urlState.zoom ?? DEFAULT_ZOOM);
   const [mapViewMode, setMapViewMode] = useState<MapViewMode>("auto");
-  const pinLabelTier = useMemo(() => mapPinLabelTier(mapZoom), [mapZoom]);
   const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>(() => ({
     lat: urlState.centerLat ?? DEFAULT_CENTER.lat,
     lng: urlState.centerLng ?? DEFAULT_CENTER.lng,
@@ -231,6 +230,11 @@ export default function SearchMap({
     semanticQuery,
     drawnShape,
   });
+
+  const pinLabelTier = useMemo(
+    () => mapPinLabelTier(mapZoom, listings.length),
+    [mapZoom, listings.length]
+  );
 
   const activeFilterCount = countActiveFilters(filters);
 

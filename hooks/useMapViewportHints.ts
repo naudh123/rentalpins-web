@@ -5,6 +5,7 @@ import type { MapMobileView } from "@/components/map/MapMobileViewSwitcher";
 import type { MapEmptyVariant } from "@/lib/map-empty-state";
 import type { MapBounds } from "@/lib/types/saved-search";
 import { mapDensityHint } from "@/lib/map-results-cap";
+import { mapPinLabelTier } from "@/lib/map-zoom-tier";
 import { buildMapViewportKey } from "@/lib/map-viewport-key";
 import { useMapDensityBannerDismiss } from "@/hooks/useMapDensityBannerDismiss";
 import { useMapViewportHintDismiss } from "@/hooks/useMapViewportHintDismiss";
@@ -75,7 +76,9 @@ export function useMapViewportHints({
   const { show: showDensityBanner, dismiss: dismissDensityBanner } =
     useMapDensityBannerDismiss(densityHintRaw, viewportKey);
 
-  const showLowZoomHintRaw = mapZoom <= 10 && listingsCount > 0;
+  // Only while pins are bare dots — sparse areas already show price pills (Zillow-style).
+  const showLowZoomHintRaw =
+    listingsCount > 0 && mapPinLabelTier(mapZoom, listingsCount) === "dot";
   const { show: showLowZoomHint, dismiss: dismissLowZoomHint } =
     useMapViewportHintDismiss(
       showLowZoomHintRaw,

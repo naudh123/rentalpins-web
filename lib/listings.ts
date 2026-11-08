@@ -214,9 +214,15 @@ export async function fetchListingsInBounds(
   );
   let refineWaves = 0;
   let refineLimit = limitPerPrefix;
+  let droppedCells = false;
   while (saturated.length > 0 && refineWaves < 2 && !options?.limitPerPrefix) {
-    const children = [...new Set(saturated.flatMap((cell) => refineGeohashCell(cell, bounds)))]
-      .slice(0, MAP_REFINE_MAX_CELLS);
+    const allChildren = [...new Set(saturated.flatMap((cell) => refineGeohashCell(cell, bounds)))];
+    // Over budget: query the first cells (nearest centre) and report the rest as incomplete.
+    if (allChildren.length > MAP_REFINE_MAX_CELLS) droppedCells = true;
+    const children = sortGeohashPrefixesNearCenter(allChildren, centerLat, centerLng).slice(
+      0,
+      MAP_REFINE_MAX_CELLS
+    );
     if (children.length === 0) break;
     refineLimit = limitPerCoverCell(children.length);
     const childSnaps = await fetchGeohashPrefixWave(children, refineLimit, listingsRef);
@@ -226,7 +232,7 @@ export async function fetchListingsInBounds(
     );
     refineWaves++;
   }
-  const cellSaturated = saturated.length > 0;
+  const cellSaturated = saturated.length > 0 || droppedCells;
 
   const totalInBounds = all.length;
   const filtered = applyListingFilters(all, filters);
