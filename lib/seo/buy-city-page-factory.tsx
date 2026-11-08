@@ -26,7 +26,7 @@ export function buyCityMoneyMetadata(country: string, city: string): Metadata {
   const path = buyCityPath(country, city);
   const canonical = `${siteUrl}${appPath(path)}`;
   return {
-    title: `Property for sale in ${cityMeta.name} | RentalPins Buy`,
+    title: `Property for sale in ${cityMeta.name}`,
     description: `Buy flats, villas, and plots across ${cityMeta.name} — owner-direct sale listings on the map. ${seo.intro[0]?.slice(0, 120)}`,
     alternates: { canonical },
     openGraph: {

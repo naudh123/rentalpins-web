@@ -13,7 +13,7 @@ import {
 } from "@/lib/sale/buy-projects-config";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "New projects for sale | RentalPins Buy",
+  title: "New projects for sale",
   description:
     "Explore new and upcoming real estate projects in Chandigarh Tricity — Mohali, Zirakpur, Panchkula, and Kharar. Compare price ranges and book site visits.",
   path: "/buy/projects",

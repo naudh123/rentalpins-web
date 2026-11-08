@@ -67,7 +67,7 @@ function cityPage(
 ): ListForSalePageConfig {
   return {
     path: `/list-for-sale/${slug}`,
-    title: `List Property for Sale in ${cityName} | RentalPins Buy`,
+    title: `List Property for Sale in ${cityName}`,
     metaDescription: `List your flat, house, or plot for sale in ${cityName} on RentalPins Buy — map-based discovery for Tricity buyers.`,
     h1: `List property for sale in ${cityName}`,
     intro,
@@ -136,7 +136,7 @@ const CITY_PAGES: Record<string, ListForSalePageConfig> = {
 
 const ROOT_PAGE: ListForSalePageConfig = {
   path: "/list-for-sale",
-  title: "List Property for Sale in India | RentalPins Buy",
+  title: "List Property for Sale in India",
   metaDescription:
     "List flats, houses, and plots for sale in Chandigarh Tricity — Mohali, Kharar, Zirakpur, Panchkula. Map-based buyer discovery on RentalPins Buy.",
   h1: "List property for sale",

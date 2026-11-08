@@ -4,6 +4,7 @@ import { buildPageMetadata } from "@/lib/seo/metadata";
 import {
   getSeoEntity,
   getSeoEntitiesByType,
+  getProgrammaticSeoSitemapPaths,
   getUniversitySubPage,
   seoEntityPath,
   shouldIndexSeoPage,
@@ -16,7 +17,7 @@ import {
 } from "@/lib/seo/seo-page-template";
 import type { SeoEntity, SeoPageType } from "@/lib/seo/seoTypes";
 
-async function listingCountForEntity(entity: SeoEntity): Promise<number> {
+export async function listingCountForEntity(entity: SeoEntity): Promise<number> {
   const areaSlug = entity.areaSlug;
   if (!areaSlug) return 0;
   const area = getAreaConfig("", areaSlug) ?? getAreaConfig(areaSlug);
@@ -101,4 +102,26 @@ export function staticParamsForLocalities() {
 
 export function staticParamsForType(type: SeoPageType, paramKey: string) {
   return getSeoEntitiesByType(type).map((e) => ({ [paramKey]: e.slug }));
+}
+
+/**
+ * Programmatic sitemap paths filtered by the SAME rule the pages use for their robots tag
+ * (shouldIndexSeoPage with the live listing count), so the sitemap never lists a page that
+ * noindexes itself. If a count cannot be read (no database at build time), the page stays
+ * listed as before rather than being dropped.
+ */
+export async function getIndexableProgrammaticSeoSitemapPaths(): Promise<{ path: string; priority: number }[]> {
+  const entries = getProgrammaticSeoSitemapPaths();
+  const keep = await Promise.all(
+    entries.map(async ({ entity }) => {
+      const t = entity.type;
+      if (t === "guide" || t === "comparison" || t === "calculator") return shouldIndexSeoPage(entity, 1);
+      try {
+        return shouldIndexSeoPage(entity, await listingCountForEntity(entity));
+      } catch {
+        return true;
+      }
+    })
+  );
+  return entries.filter((_, i) => keep[i]).map(({ path, priority }) => ({ path, priority }));
 }

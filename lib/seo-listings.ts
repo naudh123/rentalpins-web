@@ -59,16 +59,29 @@ export async function fetchAreaListings(
 
   return safeAdminRead(async (db) => {
     const listingsRef = db.collection("listings");
-    const queryPromises = area.geohashPrefixes.map((prefix) =>
-      listingsRef
+    const queryPromises = area.geohashPrefixes.map((prefix) => {
+      if (opts?.mainCategory) {
+        // Filter by category IN the query (index: isActive + category + position.geohash).
+        // Filtering after a 48-per-cell read left category pages (e.g. PG in Aliganj)
+        // showing 0 listings in busy areas, which then noindexed themselves.
+        return listingsRef
+          .where("isActive", "==", true)
+          .where("category", "==", opts.mainCategory)
+          .where("position.geohash", ">=", prefix)
+          .where("position.geohash", "<=", prefix + "\uf8ff")
+          .orderBy("position.geohash")
+          .limit(limit)
+          .get();
+      }
+      return listingsRef
         .where("isActive", "==", true)
         .where("position.geohash", ">=", prefix)
         .where("position.geohash", "<=", prefix + "\uf8ff")
         .orderBy("position.geohash")
         .orderBy("createdAt", "desc")
         .limit(limit)
-        .get()
-    );
+        .get();
+    });
 
     const snapshots = await Promise.all(queryPromises);
     const seen = new Set<string>();

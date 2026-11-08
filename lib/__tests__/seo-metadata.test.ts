@@ -24,3 +24,14 @@ describe("seo metadata title helpers", () => {
     );
   });
 });
+
+describe("brand suffix is never doubled", () => {
+  it("strips sub-brand segments before the template adds | RentalPins", async () => {
+    const { stripBrandSuffix, withBrandSuffix } = await import("@/lib/seo/metadata");
+    expect(stripBrandSuffix("Property for sale in Kharar | RentalPins Buy")).toBe("Property for sale in Kharar");
+    expect(stripBrandSuffix("PropTech platform showcase | RentalPins for developers | RentalPins")).toBe("PropTech platform showcase");
+    expect(stripBrandSuffix("PG near LPU | RentalPins")).toBe("PG near LPU");
+    expect(withBrandSuffix("New projects for sale | RentalPins Buy | RentalPins")).toBe("New projects for sale | RentalPins");
+    expect(stripBrandSuffix("RentalPins vs NoBroker")).toBe("RentalPins vs NoBroker");
+  });
+});

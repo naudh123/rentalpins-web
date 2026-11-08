@@ -13,15 +13,19 @@ import { categoryAuthoritySitemapPaths } from "@/lib/seo/category-authority-page
 import { LISTING_CATEGORY_SEGMENTS } from "@/lib/seo/listing-category-segments";
 import { getAllCities } from "@/lib/cities-config";
 import { getGeoPageSitemapPaths } from "@/lib/seo/geo-pages-config";
-import { getProgrammaticSeoSitemapPaths } from "@/lib/seo/seoData";
+import { getIndexableProgrammaticSeoSitemapPaths } from "@/lib/seo/seo-page-factory";
 import { getInvestSitemapPaths } from "@/lib/invest/invest-sitemap";
 import { getDeveloperSitemapPaths } from "@/lib/seo/developers-config";
 
 /** Core sitemap — city/locality/listing/blog URLs live in dedicated XML routes (daily revalidate). */
-export default function sitemap(): MetadataRoute.Sitemap {
+/** Rebuilt daily so pages that gain or lose listings enter or leave the sitemap. */
+export const revalidate = 86400;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date().toISOString();
 
   const marketingSlugs = getCoreMarketingSitemapSlugs();
+  const programmatic = await getIndexableProgrammaticSeoSitemapPaths();
 
   const core: MetadataRoute.Sitemap = [
     { url: canonicalUrl("/"), lastModified: now, changeFrequency: "daily", priority: 1 },
@@ -133,7 +137,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: 0.74,
     })),
-    ...getProgrammaticSeoSitemapPaths().map(({ path, priority }) => ({
+    ...programmatic.map(({ path, priority }) => ({
       url: canonicalUrl(path),
       lastModified: now,
       changeFrequency: "weekly" as const,

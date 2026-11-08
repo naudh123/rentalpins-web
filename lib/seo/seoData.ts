@@ -445,32 +445,32 @@ export function buildSeoFaqs(entity: SeoEntity, listingCount: number): SeoFaqIte
   return faqs.slice(0, 6);
 }
 
-export function getProgrammaticSeoSitemapPaths(): { path: string; priority: number }[] {
-  const paths: { path: string; priority: number }[] = [];
+export function getProgrammaticSeoSitemapPaths(): { path: string; priority: number; entity: SeoEntity }[] {
+  const paths: { path: string; priority: number; entity: SeoEntity }[] = [];
 
   for (const uni of UNIVERSITIES) {
-    paths.push({ path: seoEntityPath(uni), priority: uni.priority ?? 0.7 });
+    paths.push({ path: seoEntityPath(uni), priority: uni.priority ?? 0.7, entity: uni });
     for (const sub of ["university_pg", "university_hostel", "university_flat"] as const) {
       const subEntity = getUniversitySubPage(uni.slug, sub);
       if (subEntity && shouldIndexSeoPage(subEntity, 1)) {
-        paths.push({ path: seoEntityPath(subEntity), priority: (uni.priority ?? 0.7) - 0.05 });
+        paths.push({ path: seoEntityPath(subEntity), priority: (uni.priority ?? 0.7) - 0.05, entity: subEntity });
       }
     }
   }
 
   for (const city of CITIES) {
-    paths.push({ path: seoEntityPath(city), priority: city.priority ?? 0.7 });
+    paths.push({ path: seoEntityPath(city), priority: city.priority ?? 0.7, entity: city });
   }
 
   for (const loc of LOCALITIES) {
-    paths.push({ path: seoEntityPath(loc), priority: loc.priority ?? 0.65 });
+    paths.push({ path: seoEntityPath(loc), priority: loc.priority ?? 0.65, entity: loc });
   }
 
   for (const entity of [...LANDMARKS, ...ROADS, ...SOCIETIES, ...GUIDES, ...COMPARISONS, ...TOOLS]) {
     const pseudoCount =
       entity.type === "guide" || entity.type === "comparison" || entity.type === "calculator" ? 1 : 0;
     if (shouldIndexSeoPage(entity, pseudoCount)) {
-      paths.push({ path: seoEntityPath(entity), priority: entity.priority ?? 0.6 });
+      paths.push({ path: seoEntityPath(entity), priority: entity.priority ?? 0.6, entity });
     }
   }
 

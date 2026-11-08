@@ -33,9 +33,10 @@ const SEGMENT_LABELS: Record<ListingCategorySegment, string> = {
 
 function categoryCityPath(segment: ListingCategorySegment, city: string, locality?: string): string {
   const base = listingSegmentBasePath(segment);
-  return locality
-    ? `${base}/locality/${city}/${locality}`
-    : `${base}/locality/${city}`;
+  if (locality) return `${base}/locality/${city}/${locality}`;
+  // There is no city-level category page (it was a 404): link the city's rental hub instead.
+  const cityConfig = getCityBySlug(city);
+  return cityConfig ? `/rentals/${cityConfig.countrySlug}/${cityConfig.slug}` : "/rentals";
 }
 
 export function createCategoryAuthorityPage(segment: ListingCategorySegment) {
@@ -202,10 +203,12 @@ export function createCategoryAuthorityPage(segment: ListingCategorySegment) {
 }
 
 /** City slugs with live category authority pages in sitemap. */
+/**
+ * Category pages exist only per locality (/rentals/{segment}/locality/{city}/{locality});
+ * city-level paths 404'd and were listed in the sitemap. City hubs are in sitemap-cities.xml.
+ */
 export function categoryAuthoritySitemapPaths(
-  segment: ListingCategorySegment
+  _segment: ListingCategorySegment
 ): string[] {
-  return getAllCities()
-    .filter((c) => c.status === "live")
-    .map((c) => categoryCityPath(segment, c.slug));
+  return [];
 }

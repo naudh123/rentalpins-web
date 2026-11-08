@@ -1,3 +1,5 @@
+import { getCityBySlug } from "@/lib/cities-config";
+
 /** Buy-side developer project hub — Tricity launch inventory. */
 
 export interface BuyProjectConfig {
@@ -86,10 +88,16 @@ export function buyProjectPath(citySlug: string, projectSlug: string): string {
   return `/buy/projects/${citySlug}/${projectSlug}`;
 }
 
+/**
+ * Only URLs whose pages render: the city page needs a live top-level city and the
+ * project page needs its city to resolve (Mohali/Zirakpur/Panchkula are Tricity areas,
+ * not cities, so their project URLs 404'd while listed in the sitemap).
+ */
 export function getBuyProjectSitemapPaths(): string[] {
+  const liveCity = (slug: string) => getCityBySlug(slug)?.status === "live";
   return [
     "/buy/projects",
-    ...getBuyProjectCitySlugs().map((c) => `/buy/projects/${c}`),
-    ...BUY_PROJECTS.map((p) => buyProjectPath(p.citySlug, p.slug)),
+    ...getBuyProjectCitySlugs().filter(liveCity).map((c) => `/buy/projects/${c}`),
+    ...BUY_PROJECTS.filter((p) => getCityBySlug(p.citySlug)).map((p) => buyProjectPath(p.citySlug, p.slug)),
   ];
 }

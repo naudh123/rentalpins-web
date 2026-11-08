@@ -12,7 +12,7 @@ import { BUY_PROJECTS } from "@/lib/sale/buy-projects-config";
 import { DEVELOPER_PROFILES } from "@/lib/seo/developers-config";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "PropTech platform showcase | RentalPins for developers",
+  title: "PropTech platform showcase",
   description:
     "RentalPins is Rudder Tech's reference real-estate platform: map-native rent & buy, AI agents, buyer demand, projects hub, and mobile parity — book a build like this.",
   path: "/developers",

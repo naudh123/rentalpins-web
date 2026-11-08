@@ -22,7 +22,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const project = getBuyProject(slug);
-  if (!project) return { title: "Project | RentalPins Buy" };
+  if (!project) return { title: "Project" };
   return buildPageMetadata({
     title: `${project.name} — ${project.locality}, ${project.cityName}`,
     description: `${project.name} in ${project.locality}, ${project.cityName}. ${project.priceRange}. ${project.types.join(", ")}. Enquire for brochure and site visit.`,
