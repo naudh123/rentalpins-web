@@ -1,3 +1,4 @@
+import { NEW_INDIA_CITY_AREAS } from "./area-config-new-cities";
 // lib/area-config.ts
 // Geohash prefixes computed from: node scripts/compute-geohashes.mjs
 // Precision 4 ≈ ~20km cell (city-level pages)
@@ -977,6 +978,7 @@ export const ALL_AREAS: AreaConfig[] = [
   ...LONDON_AREAS,
   ...NAIROBI_AREAS,
   ...LAGOS_AREAS,
+  ...Object.values(NEW_INDIA_CITY_AREAS).flat(),
 ];
 
 const CITY_HUB_ROW: Record<string, AreaConfig | undefined> = {
@@ -990,6 +992,7 @@ const CITY_HUB_ROW: Record<string, AreaConfig | undefined> = {
   london: LONDON_AREAS[0],
   nairobi: NAIROBI_AREAS[0],
   lagos: LAGOS_AREAS[0],
+  ...Object.fromEntries(Object.entries(NEW_INDIA_CITY_AREAS).map(([city, areas]) => [city, areas[0]])),
 };
 
 export function getAreaConfig(citySlug: string, areaSlug?: string): AreaConfig | undefined {
