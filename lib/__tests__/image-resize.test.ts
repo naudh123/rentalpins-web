@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resizeImageForUpload } from "@/lib/image-resize";
+import { resizeImageForUpload, scaledDimensions } from "@/lib/image-resize";
 import { withTimeout } from "@/lib/async-timeout";
 
 describe("withTimeout", () => {
@@ -40,5 +40,19 @@ describe("resizeImageForUpload", () => {
     });
     const out = await resizeImageForUpload(file);
     expect(out).toBe(file);
+  });
+});
+
+describe("scaledDimensions", () => {
+  it("keeps aspect ratio when shrinking a landscape photo", () => {
+    expect(scaledDimensions(8192, 6144, 640)).toEqual({ width: 640, height: 480 });
+  });
+
+  it("keeps aspect ratio when shrinking a portrait photo", () => {
+    expect(scaledDimensions(1200, 1600, 200)).toEqual({ width: 150, height: 200 });
+  });
+
+  it("never enlarges a small photo", () => {
+    expect(scaledDimensions(300, 200, 640)).toEqual({ width: 300, height: 200 });
   });
 });
