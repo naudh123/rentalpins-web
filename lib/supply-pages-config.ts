@@ -184,7 +184,37 @@ const LIST_PROPERTY_CITIES: Record<string, SupplyPageConfig> = {
     ],
     faq: flatFaq("Ludhiana"),
   },
+  bengaluru: listCity("bengaluru", "Bengaluru", "BTM Layout, Koramangala, HSR Layout, Whitefield and Hebbal", ["Flats & apartments", "PG & co-living", "Houses", "Offices"]),
+  gurugram: listCity("gurugram", "Gurugram", "Sushant Lok, Golf Course Road, Sohna Road and Palam Vihar", ["Flats & apartments", "Builder floors", "PG", "Offices", "Shops"]),
+  hyderabad: listCity("hyderabad", "Hyderabad", "Kondapur, Madhapur, Gachibowli and Kukatpally", ["Flats & apartments", "PG & hostel", "Houses", "Offices"]),
+  kolkata: listCity("kolkata", "Kolkata", "Salt Lake, New Town, Garia and South Kolkata", ["Flats & apartments", "PG & hostel", "Rooms", "Offices"]),
+  ghaziabad: listCity("ghaziabad", "Ghaziabad", "Indirapuram, Vaishali, Raj Nagar Extension and Crossings Republik", ["Flats & apartments", "Builder floors", "Rooms", "Shops"]),
+  pune: listCity("pune", "Pune", "Hinjewadi, Wakad, Baner, Kharadi and Viman Nagar", ["Flats & apartments", "PG & hostel", "Rooms", "Offices"]),
+  patna: listCity("patna", "Patna", "Bailey Road, Patliputra, Boring Road and Kankarbagh", ["Flats", "Rooms & PG", "Houses", "Shops"]),
+  indore: listCity("indore", "Indore", "Vijay Nagar, Palasia, AB Road and Bhawarkuan", ["Flats", "PG & hostel", "Offices", "Shops"]),
+  bhopal: listCity("bhopal", "Bhopal", "MP Nagar, Arera Colony, Kolar Road and Indrapuri", ["Flats", "Rooms & PG", "Houses", "Offices"]),
 };
+
+/** Owner "list free" page for a city hub added in Nov 2026. */
+function listCity(slug: string, name: string, areas: string, types: string[]): SupplyPageConfig {
+  return {
+    path: `/list-property/${slug}`,
+    title: `List Property Free in ${name}`,
+    metaDescription: `List your flat, PG, house or office in ${name} free on RentalPins. Reach renters browsing ${areas.split(",")[0]} and nearby areas on the map — no broker commission.`,
+    h1: `List your property free in ${name}`,
+    intro: `${name} owners and PG operators can post listings on RentalPins and reach renters browsing ${areas} on the live map. Renters contact you directly, with no brokerage.`,
+    intent: "property",
+    cityName: name,
+    citySlug: slug,
+    supportedTypes: types,
+    nearbyLinks: [
+      { label: `Flats for rent in ${name}`, href: browseCity(slug, "flats") },
+      { label: `PG in ${name}`, href: browseCity(slug, "pg") },
+      { label: `${name} rentals hub`, href: browseCity(slug) },
+    ],
+    faq: flatFaq(name),
+  };
+}
 
 const LIST_PG_AREAS: Record<string, SupplyPageConfig> = {
   "chandigarh-university": {

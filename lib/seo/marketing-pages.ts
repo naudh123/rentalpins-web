@@ -230,6 +230,9 @@ export const WITHOUT_BROKER_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Chandigarh property", href: appPath("/property-without-broker-chandigarh") },
       { label: "Delhi property", href: appPath("/property-without-broker-delhi") },
       { label: "Jaipur property", href: appPath("/property-without-broker-jaipur") },
+      { label: "Gurugram property", href: appPath("/property-without-broker-gurugram") },
+      { label: "Bengaluru property", href: appPath("/property-without-broker-bengaluru") },
+      { label: "Hyderabad property", href: appPath("/property-without-broker-hyderabad") },
       { label: "All rentals", href: appPath("/rentals") },
     ],
   },
@@ -279,6 +282,93 @@ export const WITHOUT_BROKER_PAGES: Record<string, MarketingPageConfig> = {
       { label: "Delhi rental guide", href: appPath("/rentals/in/delhi#city-seo-content-heading") },
       { label: "Property without broker India", href: appPath("/property-without-broker") },
       { label: "Rent without broker", href: appPath("/rent-without-broker") },
+    ],
+  },
+  "property-without-broker-gurugram": {
+    slug: "property-without-broker-gurugram",
+    title: "Property for Rent in Gurugram Without Broker | RentalPins",
+    description:
+      "Flats, builder floors, PG and office space in Gurugram — Sushant Lok, Golf Course Road, Sohna Road and more. Contact owners directly, no broker.",
+    h1: "Gurugram property for rent without broker",
+    intro:
+      "RentalPins Gurugram covers Sushant Lok, Golf Course Road, Sohna Road, Palam Vihar, Sector 14, Sector 56 and the rest of the city on one live map — browse flats, builder floors, PG and office space and message owners directly, with no brokerage.",
+    benefits: [
+      { title: "Gurugram locality pages", desc: "Sushant Lok, Golf Course Road, Sohna Road, Palam Vihar, Sector 14 and Sector 56, each with live listings." },
+      { title: "Builder floors and societies", desc: "Compare independent floors in older sectors with society flats on Sohna Road and Golf Course Extension." },
+      { title: "Metro-side search", desc: "Pan the map along the Rapid Metro and Yellow Line to check commute before you visit." },
+      { title: "Office and retail space", desc: "Office and shop listings on Golf Course Road, MG Road and Sector 14 Market." },
+      { title: "Free post for owners", desc: "Owners list from the web or the app and get enquiries directly." },
+    ],
+    faqs: [
+      { q: "Which Gurugram areas are live on RentalPins?", a: "Sushant Lok, Golf Course Road, Sohna Road, Palam Vihar, Sector 14, Sector 56 and the city-wide Gurugram hub." },
+      { q: "Can I rent a builder floor in Gurugram without a broker?", a: "Yes. Filter flats and houses on the Gurugram map, open a pin and contact the owner directly." },
+      { q: "Does RentalPins charge tenants brokerage?", a: "No. You message owners from listing pins and pay no search commission." },
+      { q: "How do I compare flats near Cyber City?", a: "Pan the map across Sushant Lok, DLF Phase 3 and MG Road, open pins for exact location, then shortlist before visits." },
+    ],
+    relatedLinks: [
+      { label: "Gurugram rentals hub", href: appPath(rentalCityPath("in", "gurugram")) },
+      { label: "Sushant Lok rentals", href: appPath("/rentals/in/gurugram/sushant-lok") },
+      { label: "Golf Course Road rentals", href: appPath("/rentals/in/gurugram/golf-course-road") },
+      { label: "List property free in Gurugram", href: appPath("/list-property/gurugram") },
+      { label: "Property without broker India", href: appPath("/property-without-broker") },
+    ],
+  },
+  "property-without-broker-bengaluru": {
+    slug: "property-without-broker-bengaluru",
+    title: "Property for Rent in Bengaluru Without Broker | RentalPins",
+    description:
+      "Flats, PG, shared rooms and co-living in Bengaluru — BTM Layout, Koramangala, HSR Layout, Whitefield, Hebbal. Contact owners directly, no broker.",
+    h1: "Bengaluru property for rent without broker",
+    intro:
+      "RentalPins Bengaluru covers BTM Layout, Koramangala, HSR Layout, Whitefield, Hebbal and the rest of the city on one live map — browse flats, PG, shared rooms and houses near your office and message owners directly, with no brokerage.",
+    benefits: [
+      { title: "Bengaluru locality pages", desc: "BTM Layout, Koramangala, HSR Layout, Whitefield and Hebbal, each with live listings." },
+      { title: "PG and shared flats", desc: "Filter PG and shared rooms in the BTM, Koramangala and HSR belt." },
+      { title: "Office-side search", desc: "Check distance to Outer Ring Road, ITPL or Manyata Tech Park on the map before visiting." },
+      { title: "Family flats", desc: "Compare apartments and independent floors in HSR Layout, JP Nagar and Hebbal." },
+      { title: "Free post for owners", desc: "Owners and PG operators list from the web or the app and get enquiries directly." },
+    ],
+    faqs: [
+      { q: "Which Bengaluru areas are live on RentalPins?", a: "BTM Layout, Koramangala, HSR Layout, Whitefield, Hebbal and the city-wide Bengaluru hub." },
+      { q: "Can I find PG in BTM Layout without a broker?", a: "Yes. Filter PG on the Bengaluru map and contact the PG owner directly from the pin." },
+      { q: "Does RentalPins charge tenants brokerage?", a: "No. You message owners from listing pins and pay no search commission." },
+      { q: "How do I choose an area near my office?", a: "Pan the map from your office location, compare pins in nearby localities, and shortlist by commute before visiting." },
+    ],
+    relatedLinks: [
+      { label: "Bengaluru rentals hub", href: appPath(rentalCityPath("in", "bengaluru")) },
+      { label: "BTM Layout rentals", href: appPath("/rentals/in/bengaluru/btm-layout") },
+      { label: "Koramangala rentals", href: appPath("/rentals/in/bengaluru/koramangala") },
+      { label: "List property free in Bengaluru", href: appPath("/list-property/bengaluru") },
+      { label: "Property without broker India", href: appPath("/property-without-broker") },
+    ],
+  },
+  "property-without-broker-hyderabad": {
+    slug: "property-without-broker-hyderabad",
+    title: "Property for Rent in Hyderabad Without Broker | RentalPins",
+    description:
+      "Flats, PG and rooms in Hyderabad — Kondapur, Madhapur, HITEC City, Gachibowli and Kukatpally. Contact owners directly, no broker.",
+    h1: "Hyderabad property for rent without broker",
+    intro:
+      "RentalPins Hyderabad covers Kondapur, Madhapur, Gachibowli, Kukatpally, Secunderabad and the rest of the city on one live map — browse flats, gated-community apartments, PG and rooms and message owners directly, with no brokerage.",
+    benefits: [
+      { title: "Hyderabad locality pages", desc: "Kondapur and Madhapur pages plus the city-wide Hyderabad hub, each with live listings." },
+      { title: "IT corridor search", desc: "Compare pins near HITEC City, Gachibowli and the Financial District." },
+      { title: "PG near HITEC City", desc: "Filter PG and shared rooms in Madhapur and Kondapur." },
+      { title: "Gated communities", desc: "Compare society apartments in the western corridor with independent houses elsewhere." },
+      { title: "Free post for owners", desc: "Owners list from the web or the app and get enquiries directly." },
+    ],
+    faqs: [
+      { q: "Which Hyderabad areas are live on RentalPins?", a: "Kondapur, Madhapur and the city-wide Hyderabad hub, with listings across Gachibowli, Kukatpally and Secunderabad." },
+      { q: "Can I find PG near HITEC City without a broker?", a: "Yes. Filter PG on the Hyderabad map around Madhapur and Kondapur and contact owners directly." },
+      { q: "Does RentalPins charge tenants brokerage?", a: "No. You message owners from listing pins and pay no search commission." },
+      { q: "Is the metro useful when choosing an area?", a: "Yes. Areas near the HITEC City, Durgam Cheruvu and Kukatpally metro stations make the IT corridor commute easier." },
+    ],
+    relatedLinks: [
+      { label: "Hyderabad rentals hub", href: appPath(rentalCityPath("in", "hyderabad")) },
+      { label: "Kondapur rentals", href: appPath("/rentals/in/hyderabad/kondapur") },
+      { label: "Madhapur rentals", href: appPath("/rentals/in/hyderabad/madhapur") },
+      { label: "List property free in Hyderabad", href: appPath("/list-property/hyderabad") },
+      { label: "Property without broker India", href: appPath("/property-without-broker") },
     ],
   },
   "property-without-broker-jaipur": {
