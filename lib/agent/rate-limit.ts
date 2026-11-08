@@ -1,25 +1,18 @@
 import { agentDailyMessageLimit } from "./env";
+import { checkSharedRateLimit } from "@/lib/shared-rate-limit";
 
-const store = new Map<string, { count: number; resetAt: number }>();
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-export function checkAgentRateLimit(key: string): { allowed: boolean; remaining: number } {
-  const now = Date.now();
-  const dayMs = 24 * 60 * 60 * 1000;
-  const entry = store.get(key);
-
-  if (!entry || now > entry.resetAt) {
-    store.set(key, { count: 1, resetAt: now + dayMs });
-    return { allowed: true, remaining: agentDailyMessageLimit - 1 };
-  }
-
-  if (entry.count >= agentDailyMessageLimit) {
-    return { allowed: false, remaining: 0 };
-  }
-
-  entry.count += 1;
-  store.set(key, entry);
-  return { allowed: true, remaining: agentDailyMessageLimit - entry.count };
+/** Daily AI message cap per client, shared across all server instances. */
+export async function checkAgentRateLimit(
+  key: string
+): Promise<{ allowed: boolean; remaining: number }> {
+  const result = await checkSharedRateLimit(`agent:${key}`, agentDailyMessageLimit, DAY_MS);
+  return { allowed: result.allowed, remaining: result.remaining };
 }
+
+/** Lead form submissions per client per hour — stops spam floods of fake leads. */
+export const LEAD_CAPTURE_LIMIT = { limit: 5, windowMs: 60 * 60 * 1000 } as const;
 
 export function getAgentClientKey(request: Request): string {
   const forwarded = request.headers.get("x-forwarded-for");
