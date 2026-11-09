@@ -1,8 +1,8 @@
-/** Default OG / card image when blog cover is invalid or missing. */
-export const DEFAULT_BLOG_OG_IMAGE = "/images/blog/rentalpins-default-og.jpg";
-
-/** Site-wide fallback when blog default asset is not deployed. */
+/** Site-wide brand image (public/og-image.png, 1920×1080). */
 export const FALLBACK_OG_IMAGE = "/og-image.png";
+
+/** Default hero / OG / card image when blog cover is invalid or missing. */
+export const DEFAULT_BLOG_OG_IMAGE = FALLBACK_OG_IMAGE;
 
 const INVALID_HOST_PATTERNS = [
   /gemini\.google\.com/i,
