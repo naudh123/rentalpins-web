@@ -9,10 +9,8 @@ import SiteFooter from "@/components/marketing/SiteFooter";
 import SeoCtaTracker from "@/components/seo/SeoCtaTracker";
 import { appPath } from "@/lib/config";
 import { BUY_NAV } from "@/lib/nav/mode-nav";
-import {
-  BUY_POST_PATH,
-  BUY_SEARCH_PATH,
-} from "@/lib/sale/buy-app-paths";
+import { PostButton } from "@/components/post/PostChooser";
+import { BUY_SEARCH_PATH } from "@/lib/sale/buy-app-paths";
 
 export default function SaleShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -62,12 +60,11 @@ export default function SaleShell({ children }: { children: React.ReactNode }) {
             >
               Search properties
             </Link>
-            <Link
-              href={appPath(BUY_POST_PATH)}
-              className="rp-btn rp-btn-secondary hidden px-4 py-2 text-xs md:inline-flex"
-            >
-              Post property
-            </Link>
+            <PostButton
+              source="sale_header"
+              hideInsideAppShell
+              className="inline-flex items-center gap-1.5 rounded-full bg-[var(--sale-gold)] px-3.5 py-2 text-sm font-bold text-[var(--brand-navy)] shadow-sm transition hover:brightness-105 sm:px-4"
+            />
             <Link
               href={appPath("/search")}
               className="hidden text-xs font-semibold text-[var(--muted)] hover:text-[var(--brand-navy)] lg:inline-flex"
