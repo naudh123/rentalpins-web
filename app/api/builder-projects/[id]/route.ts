@@ -6,6 +6,7 @@ import {
   updateProject,
 } from "@/lib/builders/builders-server";
 import { canManageProject } from "@/lib/builders/builder-auth";
+import { pickOwnerProjectPatch } from "@/lib/builders/project-patch";
 
 export async function GET(
   _request: Request,
@@ -54,8 +55,11 @@ export async function PUT(
 
   const isStaff = isAdminRole(role) || role === "superadmin";
   if (!isStaff) {
-    delete patch.isFeatured;
-    delete patch.featuredUntil;
+    // Owners may only edit listing content — never ownership, slug, routing, counters or featured flags.
+    patch = pickOwnerProjectPatch(patch);
+    if (Object.keys(patch).length === 0) {
+      return NextResponse.json({ error: "No editable fields in request." }, { status: 400 });
+    }
   }
 
   try {

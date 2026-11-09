@@ -10,6 +10,8 @@ interface ProjectEditFormProps {
   projectId: string;
   saving: boolean;
   allowFeatured?: boolean;
+  /** Staff only: owners cannot publish — RentalPins reviews and publishes new projects. */
+  allowPublish?: boolean;
   onSave: (patch: Record<string, unknown>, options?: { upload?: boolean }) => Promise<void>;
 }
 
@@ -18,6 +20,7 @@ export default function ProjectEditForm({
   projectId,
   saving,
   allowFeatured = false,
+  allowPublish = false,
   onSave,
 }: ProjectEditFormProps) {
   const [form, setForm] = useState(project);
@@ -60,7 +63,7 @@ export default function ProjectEditForm({
           brochureUrl: form.brochureUrl,
           paymentPlan: form.paymentPlan,
           masterPlanImageUrl: form.masterPlanImageUrl,
-          isPublished: form.isPublished,
+          isPublished: allowPublish ? form.isPublished : undefined,
           isFeatured: allowFeatured ? form.isFeatured : undefined,
           seoTitle: form.seoTitle,
           seoDescription: form.seoDescription,
@@ -175,14 +178,22 @@ export default function ProjectEditForm({
           className="w-full rounded-lg border border-[var(--border)] px-3 py-2"
         />
       </div>
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={form.isPublished}
-          onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
-        />
-        Published — live on RentalPins
-      </label>
+      {allowPublish ? (
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={form.isPublished}
+            onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+          />
+          Published — live on RentalPins
+        </label>
+      ) : (
+        <p className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--muted)]">
+          {project.isPublished
+            ? "Live on RentalPins."
+            : "Draft — the RentalPins team reviews new projects and publishes them. Save your details and we'll be in touch."}
+        </p>
+      )}
       {allowFeatured && (
         <label className="flex items-center gap-2 text-sm">
           <input

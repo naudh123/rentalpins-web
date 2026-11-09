@@ -1,7 +1,7 @@
 /** Listing fields needed on the activate / pay page. */
 
 import { readGeopointFromPosition } from "@/lib/listing-plans";
-import type { OwnerListingSource } from "@/lib/owner-listing-lifecycle";
+import { timestampToMs, type OwnerListingSource } from "@/lib/owner-listing-lifecycle";
 
 export interface ActivateListing {
   id: string;
@@ -17,6 +17,25 @@ export interface ActivateListing {
   urlSlug?: string;
   sourceCollection: OwnerListingSource;
   isRenewal: boolean;
+  /** Current plan expiry (ms) — used to confirm a renewal actually extended it. */
+  listingExpiresAtMs?: number;
+}
+
+/**
+ * Whether a listing snapshot proves checkout succeeded.
+ * New / re-list: the doc became active. Renew: the listing was already active, so
+ * only a later expiry than the one seen at checkout counts (any other write,
+ * e.g. a view-count bump, must not be read as payment success).
+ */
+export function isActivationConfirmed(
+  listing: Pick<ActivateListing, "isActive" | "listingExpiresAtMs">,
+  renewBaseline: { expiresAtMs: number | undefined } | null
+): boolean {
+  if (!listing.isActive) return false;
+  if (!renewBaseline) return true;
+  const next = listing.listingExpiresAtMs;
+  if (next == null) return false;
+  return renewBaseline.expiresAtMs == null || next > renewBaseline.expiresAtMs;
 }
 
 function str(v: unknown, fallback = ""): string {
@@ -62,5 +81,6 @@ export function parseActivateListing(
     urlSlug: urlSlug || undefined,
     sourceCollection,
     isRenewal: sourceCollection === "deactivated_listings",
+    listingExpiresAtMs: timestampToMs(data.listingExpiresAt),
   };
 }
