@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const seoTitle = postSeoTitle(post);
   const seoDescription = postSeoDescription(post);
   const authorName = resolveBlogAuthorName(post.author);
-  const coverImage = resolveBlogImageAbsolute(post.coverImage, siteUrl, appPath);
+  const coverImage = resolveBlogImageAbsolute(post.coverImage, siteUrl, appPath, post.slug);
 
   return {
     title: `${seoTitle} — Blog`,
