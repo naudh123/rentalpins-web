@@ -11,6 +11,7 @@ import {
   resolveListingOgImageAbsoluteUrl,
 } from "@/lib/listing-og-image";
 import {
+  listingSearchTitle,
   listingShareMetaDescription,
   listingShareMetaTitle,
 } from "@/lib/listing-share-meta-copy";
@@ -75,12 +76,15 @@ export function listingShareDescription(listing: ListingDetail): string {
 export function listingShareMetadata(listing: ListingDetail): Metadata {
   const seo = normalizeListingSeo(listing);
   const canonical = seo.canonicalAbsoluteUrl;
-  const title = listingShareMetaTitle(listing);
+  const title = listingSearchTitle(listing);
+  const shareTitle = listingShareMetaTitle(listing);
   const description = listingShareMetaDescription(listing);
   const ogImage = listingOgImageOpenGraphEntry(listing);
   const isSale = listing.transactionType === "sale";
   const brandSuffix = isSale ? "RentalPins Buy" : "RentalPins";
-  const pageTitle = title.includes("RentalPins") ? title : `${title} | ${brandSuffix}`;
+  const pageTitle = shareTitle.includes("RentalPins")
+    ? shareTitle
+    : `${shareTitle} | ${brandSuffix}`;
 
   return {
     title,

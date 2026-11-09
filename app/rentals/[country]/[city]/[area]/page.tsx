@@ -13,8 +13,12 @@ import {
 } from "@/lib/cities-config";
 import { fetchAreaListings } from "@/lib/seo-listings";
 import { getAreaConfig } from "@/lib/area-config";
-import { canonicalUrl } from "@/lib/seo";
-import { robotsForCity } from "@/lib/seo/indexing-policy";
+import { canonicalUrl, composeMetaDescription } from "@/lib/seo";
+import {
+  isInventoryGatedCountry,
+  robotsForCity,
+  robotsForInventoryGatedHub,
+} from "@/lib/seo/indexing-policy";
 import { applyProgrammaticIndexability } from "@/lib/seo/programmatic-metadata";
 import { isRentalCategorySlug } from "@/lib/seo/categories";
 import {
@@ -89,7 +93,11 @@ export async function generateMetadata({
       ctx,
       `/rentals/${resolvedParams.country}/${resolvedParams.city}/${resolvedParams.area}`
     );
-    return { ...meta, robots: robotsForCity(ctx.city) };
+    const robots =
+      ctx.city.status !== "coming-soon" && isInventoryGatedCountry(ctx.city.countrySlug)
+        ? robotsForInventoryGatedHub(ctx.listings.length)
+        : robotsForCity(ctx.city);
+    return { ...meta, robots };
   }
   const result = getAreaBySlug(
     resolvedParams.country,
@@ -126,7 +134,12 @@ export async function generateMetadata({
 
   const baseMeta = {
     title: `Rentals in ${area.name} — ${areaNames} & More`,
-    description: `Find rooms, apartments, PG, vehicles, office space and more on rent in ${area.name}. ${area.heroDescription} Contact owners directly on RentalPins. No broker fee.`,
+    description: composeMetaDescription([
+      area.heroDescription,
+      `Flats, PG, rooms and office space on rent in ${area.name}.`,
+      "Contact owners directly on RentalPins.",
+      "No broker fee.",
+    ]),
     keywords: [
       `rentals in ${area.name}`,
       ...area.popularAreas.slice(0, 6).map((a) => `${a} ${area.name} rentals`),

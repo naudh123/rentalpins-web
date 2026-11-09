@@ -22,7 +22,8 @@ export async function listingCountForEntity(entity: SeoEntity): Promise<number> 
   if (!areaSlug) return 0;
   const area = getAreaConfig("", areaSlug) ?? getAreaConfig(areaSlug);
   if (!area) return 0;
-  const listings = await fetchAreaListings(area, 1);
+  // Up to 24 so titles/descriptions can show a real live count ("24+ live PGs").
+  const listings = await fetchAreaListings(area, 24);
   return listings.length;
 }
 

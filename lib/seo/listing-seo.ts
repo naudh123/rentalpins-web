@@ -164,6 +164,26 @@ function furnishingHint(title: string): string | null {
   return null;
 }
 
+const PLACEHOLDER_PLACE = /^(location set|location|unknown|n\/?a|na|-|\.|india)$/i;
+
+/**
+ * "Locality, City" for titles and descriptions: drops placeholders and repeats
+ * ("Bengaluru Metro, Bengaluru Metro" → "Bengaluru Metro").
+ * Not used for slugs — changing slugs would move canonical URLs.
+ */
+export function joinPlaceLabel(locality: string, city: string): string {
+  const out: string[] = [];
+  for (const raw of [locality, city]) {
+    for (const part of raw.split(",").map((p) => p.trim()).filter(Boolean)) {
+      if (PLACEHOLDER_PLACE.test(part)) continue;
+      const lower = part.toLowerCase();
+      if (out.some((p) => p.toLowerCase() === lower)) continue;
+      out.push(part);
+    }
+  }
+  return out.join(", ");
+}
+
 function buildSeoTitle(
   listing: ListingSlugInput,
   segment: ListingCategorySegment | null,
@@ -184,7 +204,7 @@ function buildSeoTitle(
   }
 
   const action = transactionLabel === "Sale" ? "Sale" : "Rent";
-  const locationPart = [locality, city].filter(Boolean).join(", ");
+  const locationPart = joinPlaceLabel(locality, city);
 
   if (locationPart) {
     return `${itemType} for ${action} in ${locationPart}`;
@@ -201,7 +221,7 @@ function buildSeoDescription(
 ): string {
   const itemType = inferItemTypeLabel(listing, segment).toLowerCase();
   const action = transactionLabel === "Sale" ? "sale" : "rent";
-  const locationPart = [locality, city].filter(Boolean).join(", ");
+  const locationPart = joinPlaceLabel(locality, city);
 
   if (segment === "equipment") {
     return `Rent ${itemType} in ${locationPart || "your area"} through RentalPins. Compare nearby listings and contact owners directly.`;
@@ -290,7 +310,7 @@ export function normalizeListingSeo(listing: ListingSeoInput): NormalizedListing
     locationName: input.locationName,
   });
   const { locality, city } = parseLocalityAndCity(input.locationName ?? "", placeLabel);
-  const normalizedLocationLabel = [locality, city].filter(Boolean).join(", ");
+  const normalizedLocationLabel = joinPlaceLabel(locality, city);
 
   const normalizedCategoryLabel =
     input.subCategory?.trim() && input.subCategory.toLowerCase() !== "others"

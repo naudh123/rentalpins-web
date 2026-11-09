@@ -10,8 +10,13 @@ import {
 } from "@/lib/cities-config";
 import { fetchAreaListings } from "@/lib/seo-listings";
 import { getAreaConfig } from "@/lib/area-config";
-import { canonicalUrl } from "@/lib/seo";
-import { canonicalForCity, robotsForCity } from "@/lib/seo/indexing-policy";
+import { canonicalUrl, composeMetaDescription } from "@/lib/seo";
+import {
+  canonicalForCity,
+  isInventoryGatedCountry,
+  robotsForCity,
+  robotsForInventoryGatedHub,
+} from "@/lib/seo/indexing-policy";
 import ListingsGrid from "@/components/ListingsGrid";
 import FAQSchema from "@/components/seo/FAQSchema";
 import CitySeoContent from "@/components/seo/CitySeoContent";
@@ -51,9 +56,28 @@ export async function generateMetadata({
   const areaNames = city.popularAreas.slice(0, 5).join(", ");
   const base = canonicalForCity(city);
 
+  // Non-primary countries (UK, KE, NG): index only once the hub has real inventory.
+  let robots = robotsForCity(city);
+  if (city.status !== "coming-soon" && isInventoryGatedCountry(city.countrySlug)) {
+    let listingCount = 0;
+    try {
+      const area = getAreaConfig(resolvedParams.city);
+      if (area) listingCount = (await fetchAreaListings(area, 20)).length;
+    } catch {
+      listingCount = 0;
+    }
+    robots = robotsForInventoryGatedHub(listingCount);
+  }
+
   return {
     title: `Rentals in ${city.name} — ${areaNames} & More`,
-    description: `Find rooms, apartments, PG, vehicles, electronics and more on rent across ${city.name}. ${city.heroDescription} Contact owners directly on RentalPins. No broker fee. Free to list.`,
+    // Hero copy first (it is city-specific), then the generic pitch — deduped and capped.
+    description: composeMetaDescription([
+      city.heroDescription,
+      `Flats, PG, rooms and shops on rent across ${city.name}.`,
+      "Contact owners directly on RentalPins.",
+      "No broker fee.",
+    ]),
     keywords: [
       `rentals in ${city.name}`,
       ...city.popularAreas.slice(0, 8).map((a) => `rentals in ${a}`),
@@ -82,7 +106,7 @@ export async function generateMetadata({
     alternates: {
       canonical: base,
     },
-    robots: robotsForCity(city),
+    robots,
   };
 }
 

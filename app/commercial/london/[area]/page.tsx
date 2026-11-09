@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import CommercialLandingPage from "@/components/seo/commercial/CommercialLandingPage";
 import {
   COMMERCIAL_LONDON_AREA_SLUGS,
+  COMMERCIAL_LONDON_NOINDEX,
   commercialLondonAreaPath,
   getCommercialLondonArea,
 } from "@/lib/commercial-london-config";
@@ -34,6 +35,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       "RentalPins",
     ],
     locale: "en_GB",
+    noIndex: COMMERCIAL_LONDON_NOINDEX,
   });
 }
 

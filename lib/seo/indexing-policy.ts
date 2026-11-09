@@ -31,3 +31,27 @@ export function robotsForSearchPage(
   }
   return { index: true, follow: true };
 }
+
+/**
+ * Countries where RentalPins has real inventory and editorial authority.
+ * Hubs outside these countries are inventory-gated: template copy alone does
+ * not make them indexable (GSC Aug–Nov 2026: 62 UK URLs, 27k impressions,
+ * 22 clicks at position 20–70 — thin pages that drag site-wide quality).
+ */
+export const SEO_PRIMARY_COUNTRY_SLUGS: readonly string[] = ["in"];
+
+/** Minimum live listings before an inventory-gated hub is indexable. */
+export const MIN_LISTINGS_FOR_GATED_HUB = 3;
+
+export function isInventoryGatedCountry(countrySlug: string): boolean {
+  return !SEO_PRIMARY_COUNTRY_SLUGS.includes(countrySlug);
+}
+
+/** noindex,follow until a gated hub has enough live listings. */
+export function robotsForInventoryGatedHub(
+  listingCount: number
+): NonNullable<Metadata["robots"]> {
+  return listingCount >= MIN_LISTINGS_FOR_GATED_HUB
+    ? { index: true, follow: true }
+    : { index: false, follow: true };
+}

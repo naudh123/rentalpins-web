@@ -31,6 +31,7 @@ export function applyProgrammaticIndexability(
 
   const policy = getProgrammaticPageIndexability({
     isCityLevel: input.isCityLevel,
+    countrySlug: input.countrySlug,
     area: input.areaSlug,
     category: input.categorySlug,
     listingCount: input.listingCount,
