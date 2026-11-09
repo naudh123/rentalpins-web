@@ -36,7 +36,7 @@ export default function HomeHero({ liveIndiaCityCount }: Props) {
       aria-labelledby="home-hero-heading"
       className="relative overflow-hidden border-b border-[var(--border-subtle)] bg-[radial-gradient(ellipse_70%_60%_at_15%_0%,rgba(30,58,110,0.10),transparent),radial-gradient(ellipse_50%_50%_at_95%_10%,rgba(232,80,26,0.08),transparent)]"
     >
-      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-12 pt-10 sm:px-6 md:pb-16 md:pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:pb-20 lg:pt-16">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-12 pt-10 sm:px-6 md:pb-16 md:pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:pb-16 lg:pt-10">
         <div>
           <p className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-white/80 px-3 py-1 text-xs font-semibold text-[var(--brand-navy)]">
             <PinIcon className="h-3.5 w-3.5 text-[var(--brand-orange)]" />
@@ -96,7 +96,7 @@ export default function HomeHero({ liveIndiaCityCount }: Props) {
           </form>
 
           <ul
-            className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--text)]"
+            className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--text)]"
             aria-label="Why RentalPins"
           >
             {HOME_TRUST_POINTS.map((point) => (
@@ -111,8 +111,8 @@ export default function HomeHero({ liveIndiaCityCount }: Props) {
             </li>
           </ul>
 
-          {/* Phones/tablets: the three verticals at a glance (desktop sees the cards sooner). */}
-          <nav aria-label="Choose a vertical" className="mt-6 lg:hidden">
+          {/* The three verticals at a glance, above the fold on every screen size. */}
+          <nav aria-label="Choose a vertical" className="mt-5 max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
               I want to
             </p>
