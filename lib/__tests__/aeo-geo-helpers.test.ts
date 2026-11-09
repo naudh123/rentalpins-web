@@ -74,7 +74,7 @@ describe("blog-image", () => {
   });
 
   it("falls back for invalid covers", () => {
-    expect(resolveBlogImageUrl("")).toBe("/images/blog/rentalpins-default-og.jpg");
+    expect(resolveBlogImageUrl("")).toBe("/og-image.png");
   });
 });
 

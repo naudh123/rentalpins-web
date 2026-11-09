@@ -2,6 +2,7 @@ import { getLiveCities } from "@/lib/cities-config";
 import { buildSitemapXml, toSitemapEntry } from "@/lib/seo/sitemap-xml";
 import { RENTAL_CATEGORIES } from "@/lib/seo/categories";
 import { getStaticRentalCityHubSitemapPaths } from "@/lib/seo/sitemap-config";
+import { isInventoryGatedCountry } from "@/lib/seo/indexing-policy";
 
 export const revalidate = 86400;
 
@@ -10,6 +11,8 @@ export async function GET() {
   const cities = getLiveCities();
   const pathSet = new Set<string>(getStaticRentalCityHubSitemapPaths());
   for (const city of cities) {
+    // UK/KE/NG hubs are inventory-gated (noindex until they have live listings) — keep them out.
+    if (isInventoryGatedCountry(city.countrySlug)) continue;
     pathSet.add(`/rentals/${city.countrySlug}/${city.slug}`);
     for (const cat of RENTAL_CATEGORIES) {
       pathSet.add(`/rentals/${city.countrySlug}/${city.slug}/${cat.slug}`);

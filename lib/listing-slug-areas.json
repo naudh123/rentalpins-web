@@ -889,5 +889,275 @@
       "lng": 3.2068
     },
     "radiusKm": 5
+  },
+  {
+    "slug": "bengaluru-metro",
+    "name": "Bengaluru Metro",
+    "center": {
+      "lat": 12.9716,
+      "lng": 77.5946
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "btm-layout",
+    "name": "BTM Layout",
+    "center": {
+      "lat": 12.9166,
+      "lng": 77.6101
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "whitefield",
+    "name": "Whitefield",
+    "center": {
+      "lat": 12.9698,
+      "lng": 77.75
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "koramangala",
+    "name": "Koramangala",
+    "center": {
+      "lat": 12.9352,
+      "lng": 77.6245
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "hebbal",
+    "name": "Hebbal",
+    "center": {
+      "lat": 13.0358,
+      "lng": 77.597
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "hsr-layout",
+    "name": "HSR Layout",
+    "center": {
+      "lat": 12.9116,
+      "lng": 77.6474
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "gurugram-metro",
+    "name": "Gurugram Metro",
+    "center": {
+      "lat": 28.4595,
+      "lng": 77.0266
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "sushant-lok",
+    "name": "Sushant Lok",
+    "center": {
+      "lat": 28.4636,
+      "lng": 77.0757
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "golf-course-road",
+    "name": "Golf Course Road",
+    "center": {
+      "lat": 28.4503,
+      "lng": 77.099
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "sohna-road",
+    "name": "Sohna Road",
+    "center": {
+      "lat": 28.4089,
+      "lng": 77.042
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "palam-vihar",
+    "name": "Palam Vihar",
+    "center": {
+      "lat": 28.5065,
+      "lng": 77.0367
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "sector-14-gurugram",
+    "name": "Sector 14, Gurugram",
+    "center": {
+      "lat": 28.471,
+      "lng": 77.043
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "sector-56-gurugram",
+    "name": "Sector 56, Gurugram",
+    "center": {
+      "lat": 28.422,
+      "lng": 77.108
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "hyderabad-metro",
+    "name": "Hyderabad Metro",
+    "center": {
+      "lat": 17.385,
+      "lng": 78.4867
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "kondapur",
+    "name": "Kondapur",
+    "center": {
+      "lat": 17.47,
+      "lng": 78.3637
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "madhapur",
+    "name": "Madhapur",
+    "center": {
+      "lat": 17.4483,
+      "lng": 78.3915
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "kolkata-metro",
+    "name": "Kolkata Metro",
+    "center": {
+      "lat": 22.5726,
+      "lng": 88.3639
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "salt-lake",
+    "name": "Salt Lake",
+    "center": {
+      "lat": 22.58,
+      "lng": 88.415
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "ghaziabad-metro",
+    "name": "Ghaziabad Metro",
+    "center": {
+      "lat": 28.6692,
+      "lng": 77.4538
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "pune-metro",
+    "name": "Pune Metro",
+    "center": {
+      "lat": 18.5204,
+      "lng": 73.8567
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "hinjewadi",
+    "name": "Hinjewadi",
+    "center": {
+      "lat": 18.5913,
+      "lng": 73.7389
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "patna-metro",
+    "name": "Patna Metro",
+    "center": {
+      "lat": 25.5941,
+      "lng": 85.1376
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "bailey-road",
+    "name": "Bailey Road",
+    "center": {
+      "lat": 25.609,
+      "lng": 85.08
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "patliputra",
+    "name": "Patliputra",
+    "center": {
+      "lat": 25.623,
+      "lng": 85.096
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "kankarbagh",
+    "name": "Kankarbagh",
+    "center": {
+      "lat": 25.594,
+      "lng": 85.159
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "boring-road",
+    "name": "Boring Road",
+    "center": {
+      "lat": 25.612,
+      "lng": 85.11
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "indore-metro",
+    "name": "Indore Metro",
+    "center": {
+      "lat": 22.7196,
+      "lng": 75.8577
+    },
+    "radiusKm": 25
+  },
+  {
+    "slug": "vijay-nagar-indore",
+    "name": "Vijay Nagar",
+    "center": {
+      "lat": 22.753,
+      "lng": 75.894
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "palasia",
+    "name": "Palasia",
+    "center": {
+      "lat": 22.724,
+      "lng": 75.884
+    },
+    "radiusKm": 3
+  },
+  {
+    "slug": "bhopal-metro",
+    "name": "Bhopal Metro",
+    "center": {
+      "lat": 23.2599,
+      "lng": 77.4126
+    },
+    "radiusKm": 25
   }
 ]

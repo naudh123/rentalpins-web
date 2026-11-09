@@ -41,6 +41,37 @@ export function listingShareMetaTitle(listing: ListingDetail): string {
   return truncate(parts.join(" · "), MAX_OG_TITLE);
 }
 
+const MAX_SEARCH_TITLE = 62;
+
+/**
+ * Search-result <title>: "{type} for Rent in {Locality}, {City} · ₹12,000 per month".
+ * Google matches "2 BHK for rent in Sector 70 Mohali" mostly on the title, so the
+ * normalized type + place leads; the owner's own wording stays in the H1 and OG.
+ * Falls back to the share title when no place can be resolved.
+ */
+export function listingSearchTitle(listing: ListingDetail): string {
+  const seo = normalizeListingSeo(listing);
+  if (!seo.normalizedLocationLabel || !seo.seoTitle?.trim()) {
+    return listingShareMetaTitle(listing);
+  }
+
+  const priceLabel = formatListingPrice({
+    price: listing.price,
+    priceUnit: listing.priceUnit,
+    category: listing.category,
+    subCategory: listing.subCategory,
+    transactionType: listing.transactionType,
+    homeIso: listing.homeIso,
+  });
+
+  const core = seo.seoTitle.trim();
+  const withPrice =
+    priceLabel && !/contact/i.test(priceLabel) ? `${core} · ${priceLabel}` : core;
+  // Drop the price before truncating the place name.
+  if (withPrice.length <= MAX_SEARCH_TITLE) return withPrice;
+  return truncate(core, MAX_OG_TITLE);
+}
+
 /** Social / meta description: user description when available, else composed fallback. */
 export function listingShareMetaDescription(listing: ListingDetail): string {
   const userDesc = listing.description?.trim().replace(/\s+/g, " ");

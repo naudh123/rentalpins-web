@@ -366,14 +366,23 @@ export function buildSeoIntro(entity: SeoEntity, listingCount: number): string {
   return `Find ${types} in ${entity.name}, ${place}. RentalPins map search connects you with verified owners — no broker search fee.${rent}${nearby}${inventory}`;
 }
 
+/** "₹5,000–₹14,000" → "₹5,000" (lowest typical rent, for "from ₹X" copy). */
+export function rentFromLabel(rentRange?: string): string | null {
+  const m = rentRange?.match(/₹\s?[\d,]+/);
+  return m ? m[0].replace(/\s/g, "") : null;
+}
+
 export function buildSeoTitle(entity: SeoEntity): string {
+  const from = rentFromLabel(entity.rentRange);
+  const fromPart = from ? ` from ${from}` : "";
   switch (entity.type) {
+    // GSC: these rank 5–8 with 1–3% CTR — price in the title lifts clicks.
     case "university_pg":
-      return `PG Near ${entity.name} | Boys & Girls PG, Food, WiFi`;
+      return `PG Near ${entity.name}${fromPart} | Boys & Girls`;
     case "university_hostel":
-      return `Hostels Near ${entity.name} | Student Housing`;
+      return `Hostels Near ${entity.name}${fromPart} | Student Housing`;
     case "university_flat":
-      return `Flats Near ${entity.name} | Shared Apartments`;
+      return `Flats Near ${entity.name}${fromPart} | Shared & BHK`;
     case "university":
       return `Rentals Near ${entity.name} | PG, Flats & Hostels`;
     case "city":
@@ -397,9 +406,26 @@ export function buildSeoTitle(entity: SeoEntity): string {
   }
 }
 
+const UNIVERSITY_NOUN: Partial<Record<SeoEntity["type"], string>> = {
+  university_pg: "PGs",
+  university_hostel: "hostels",
+  university_flat: "flats",
+  university: "PGs, flats & hostels",
+};
+
 export function buildSeoDescription(entity: SeoEntity, listingCount: number): string {
-  const base = buildSeoIntro(entity, listingCount).slice(0, 155);
-  return base.length < buildSeoIntro(entity, listingCount).length ? `${base}…` : base;
+  const noun = UNIVERSITY_NOUN[entity.type];
+  if (noun) {
+    // Lead with live inventory + price — the long intro got cut at 155 chars
+    // before ever reaching either.
+    const count = listingCount > 1 ? `${listingCount}${listingCount >= 24 ? "+" : ""} live ` : "";
+    const rent = entity.rentRange ? ` Rent ${entity.rentRange}/month.` : "";
+    const lead = `${count}${count ? noun : noun.charAt(0).toUpperCase() + noun.slice(1)} near ${entity.name} for boys & girls.${rent} Direct owner contact, no brokerage — see photos & location on the map.`;
+    return lead.length <= 158 ? lead : `${lead.slice(0, 155).trimEnd()}…`;
+  }
+  const intro = buildSeoIntro(entity, listingCount);
+  const base = intro.slice(0, 155);
+  return base.length < intro.length ? `${base}…` : base;
 }
 
 export function buildSeoFaqs(entity: SeoEntity, listingCount: number): SeoFaqItem[] {

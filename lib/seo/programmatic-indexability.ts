@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { isInventoryGatedCountry } from "@/lib/seo/indexing-policy";
 
 /** Minimum live listings for area/category programmatic pages to be indexable. */
 export const MIN_LISTINGS_FOR_INDEXABLE_AREA_CATEGORY = 3;
 
 export interface ProgrammaticPageIndexabilityInput {
+  /** Country of the hub; non-primary countries are inventory-gated. */
+  countrySlug?: string;
   /** True when the page is a city-level hub (broader editorial content). */
   isCityLevel?: boolean;
   area?: string;
@@ -28,8 +31,9 @@ export function getProgrammaticPageIndexability(
   input: ProgrammaticPageIndexabilityInput
 ): ProgrammaticPageIndexability {
   const { isCityLevel, listingCount, hasUniqueContent } = input;
+  const gated = input.countrySlug ? isInventoryGatedCountry(input.countrySlug) : false;
 
-  if (isCityLevel) {
+  if (isCityLevel && !gated) {
     return {
       robots: { index: true, follow: true },
       includeInSitemap: true,
@@ -37,7 +41,8 @@ export function getProgrammaticPageIndexability(
   }
 
   const enoughListings = listingCount >= MIN_LISTINGS_FOR_INDEXABLE_AREA_CATEGORY;
-  const indexable = enoughListings || hasUniqueContent;
+  // Gated countries: template/editorial copy alone is not enough — require inventory.
+  const indexable = gated ? enoughListings : enoughListings || hasUniqueContent;
 
   if (!indexable) {
     return {

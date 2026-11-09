@@ -1,7 +1,9 @@
-import { GET as sitemapLocalitiesGET } from "@/app/sitemap-localities.xml/route";
+import { siteUrl } from "@/lib/config";
 
-export const revalidate = 86400;
-
-export async function GET() {
-  return sitemapLocalitiesGET();
+/**
+ * Legacy alias — 301 to the primary sitemap so crawlers see one sitemap per
+ * content type (duplicate alias sitemaps split discovery in Search Console).
+ */
+export function GET() {
+  return Response.redirect(`${siteUrl}/sitemap-localities.xml`, 301);
 }

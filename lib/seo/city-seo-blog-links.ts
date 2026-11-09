@@ -21,6 +21,15 @@ export const CITY_SEO_FEATURED_BLOG_SLUGS: Record<string, string[]> = {
   ],
   "in/ludhiana": ["how-to-find-room-ludhiana"],
   "in/delhi": ["delhi-rentals-without-broker-guide"],
+  "in/gurugram": ["best-areas-to-rent-in-gurugram-2026"],
+  "in/bengaluru": ["best-areas-to-rent-in-bengaluru-2026"],
+  "in/hyderabad": ["best-areas-to-rent-in-hyderabad-2026"],
+  "in/kolkata": ["best-areas-to-rent-in-kolkata-2026"],
+  "in/ghaziabad": ["best-areas-to-rent-in-ghaziabad-2026"],
+  "in/pune": ["best-areas-to-rent-in-pune-2026"],
+  "in/patna": ["best-areas-to-rent-in-patna-2026"],
+  "in/indore": ["best-areas-to-rent-in-indore-2026"],
+  "in/bhopal": ["best-areas-to-rent-in-bhopal-2026"],
 };
 
 /** Primary geo tag — filler posts must match this before secondary hints apply. */

@@ -511,7 +511,14 @@ export function commercialLondonPostHref(): string {
   return appPath("/post");
 }
 
+/**
+ * London commercial pages have no live inventory yet. Keep them out of the
+ * index and sitemap until listings exist — flip to false when they do.
+ */
+export const COMMERCIAL_LONDON_NOINDEX = true;
+
 export function getCommercialLondonSitemapPaths(): string[] {
+  if (COMMERCIAL_LONDON_NOINDEX) return [];
   return [
     commercialLondonHubPath(),
     ...COMMERCIAL_LONDON_AREA_SLUGS.map((slug) => commercialLondonAreaPath(slug)),

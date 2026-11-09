@@ -59,13 +59,18 @@ async function pathsForArea(area: ReturnType<typeof getIndexableAreas>[number]):
   ]);
 
   const paths: string[] = [];
-  if (getProgrammaticPageIndexability({ listingCount: areaListings.length, hasUniqueContent }).includeInSitemap) {
+  if (getProgrammaticPageIndexability({
+      countrySlug: area.parentCountrySlug,
+      listingCount: areaListings.length,
+      hasUniqueContent,
+    }).includeInSitemap) {
     paths.push(areaPath);
   }
 
   RENTAL_CATEGORIES.forEach((cat, i) => {
     const filtered = filterListingsForRentalCategory(categoryListings[i], cat);
     const catPolicy = getProgrammaticPageIndexability({
+      countrySlug: area.parentCountrySlug,
       listingCount: filtered.length,
       hasUniqueContent,
       category: cat.slug,

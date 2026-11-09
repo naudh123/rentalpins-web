@@ -8,6 +8,7 @@ import {
   commercialLondonPostHref,
   getCommercialLondonArea,
   getCommercialLondonSitemapPaths,
+  COMMERCIAL_LONDON_NOINDEX,
 } from "@/lib/commercial-london-config";
 
 const FAKE_COUNT_PATTERN =
@@ -26,7 +27,8 @@ describe("commercial london config", () => {
       "westminster",
       "canary-wharf",
     ]);
-    expect(getCommercialLondonSitemapPaths()).toHaveLength(10);
+    // Noindexed until live UK inventory exists.
+    expect(getCommercialLondonSitemapPaths()).toHaveLength(COMMERCIAL_LONDON_NOINDEX ? 0 : 10);
   });
 
   it("resolves each area slug", () => {

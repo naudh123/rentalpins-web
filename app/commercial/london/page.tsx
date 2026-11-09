@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import CommercialLandingPage from "@/components/seo/commercial/CommercialLandingPage";
 import {
   COMMERCIAL_LONDON_HUB,
+  COMMERCIAL_LONDON_NOINDEX,
   commercialLondonHubPath,
 } from "@/lib/commercial-london-config";
 import { buildPageMetadata } from "@/lib/seo/metadata";
@@ -19,6 +20,8 @@ export const metadata: Metadata = buildPageMetadata({
     "RentalPins",
   ],
   locale: "en_GB",
+  // No live UK inventory yet — keep crawlable for links, out of the index (GSC: 10k impressions, 2 clicks).
+  noIndex: COMMERCIAL_LONDON_NOINDEX,
 });
 
 export default function CommercialLondonHubPage() {
