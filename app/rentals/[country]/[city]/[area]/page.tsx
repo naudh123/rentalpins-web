@@ -27,6 +27,8 @@ import {
 } from "@/lib/seo/render-category-hub";
 import CategoryHubPage from "@/components/seo/CategoryHubPage";
 import ListingsGrid from "@/components/ListingsGrid";
+import HubPagination from "@/components/seo/HubPagination";
+import { fetchAllHubListings, sliceHubPage, type HubPage } from "@/lib/seo/hub-pagination";
 import FAQSchema from "@/components/seo/FAQSchema";
 import CitySeoContent from "@/components/seo/CitySeoContent";
 import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
@@ -238,11 +240,14 @@ export default async function AreaPage({
         locality: area.name,
       });
 
+  // Page 1 of the locality's full inventory; pages 2+ live at /page/{n}.
   let listings: Awaited<ReturnType<typeof fetchAreaListings>> = [];
+  let hubPage: HubPage | null = null;
   try {
     const areaConfig = getAreaConfig(resolvedParams.city, resolvedParams.area);
     if (areaConfig) {
-      listings = await fetchAreaListings(areaConfig, 20);
+      hubPage = sliceHubPage(await fetchAllHubListings(areaConfig), 1);
+      listings = hubPage?.listings ?? [];
     }
   } catch (err) {
     console.error("AreaPage listings fetch failed:", err);
@@ -354,10 +359,21 @@ export default async function AreaPage({
         <EntityClusterLinks links={entityLinks} className="mt-8" heading="Explore related topics" />
       </div>
       <ListingsGrid listings={listings} areaName={area.name} />
+      {hubPage ? (
+        <HubPagination
+          basePath={rentalAreaPath(city.countrySlug, city.slug, area.slug)}
+          page={1}
+          totalPages={hubPage.totalPages}
+          total={hubPage.total}
+          from={hubPage.from}
+          to={hubPage.to}
+          placeName={area.name}
+        />
+      ) : null}
       {seoConfig ? (
         <CitySeoContent config={seoConfig} relatedGuides={relatedGuides} />
       ) : null}
-      <AreaClient area={areaData} listingsCount={listings.length} />
+      <AreaClient area={areaData} listingsCount={hubPage?.total ?? listings.length} />
     </>
   );
 }

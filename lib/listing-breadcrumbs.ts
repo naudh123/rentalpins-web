@@ -27,7 +27,7 @@ export interface ListingBreadcrumbUiItem {
   href?: string;
 }
 
-interface ResolvedLocation {
+export interface ResolvedLocation {
   countrySlug: string;
   citySlug: string;
   cityName: string;
@@ -102,6 +102,52 @@ function resolveMarketingArea(lat: number, lng: number): ResolvedLocation | null
   return null;
 }
 
+/** Max distance from a live city's centre for the coordinate fallback. */
+const NEAREST_CITY_MAX_KM = 40;
+/** Max distance from a locality's centre to show it as a crumb in the fallback. */
+const NEAREST_AREA_MAX_KM = 4;
+
+function distanceKm(aLat: number, aLng: number, bLat: number, bLng: number): number {
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(bLat - aLat);
+  const dLng = toRad(bLng - aLng);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
+  return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+}
+
+/**
+ * Fallback when the geo-area lookup finds no marketing hub: nearest live city
+ * (and its nearest locality, if close). Gives listings a City › Locality trail
+ * — and an internal link up to the hub — instead of "Home › Rentals › title".
+ */
+export function resolveNearestLiveCity(lat: number, lng: number): ResolvedLocation | null {
+  let best: { city: ReturnType<typeof getLiveCities>[number]; km: number } | null = null;
+  for (const city of getLiveCities()) {
+    const km = distanceKm(lat, lng, city.coordinates.lat, city.coordinates.lng);
+    if (km <= NEAREST_CITY_MAX_KM && (!best || km < best.km)) best = { city, km };
+  }
+  if (!best) return null;
+  const { city } = best;
+
+  let area: { slug: string; name: string; km: number } | null = null;
+  for (const a of city.areas) {
+    const km = distanceKm(lat, lng, a.coordinates.lat, a.coordinates.lng);
+    if (km <= NEAREST_AREA_MAX_KM && (!area || km < area.km)) {
+      area = { slug: a.slug, name: a.name, km };
+    }
+  }
+
+  return {
+    countrySlug: city.countrySlug,
+    citySlug: city.slug,
+    cityName: city.name,
+    areaSlug: area?.slug ?? null,
+    areaName: area?.name ?? null,
+  };
+}
+
 function resolveCityFromLocationName(locationName: string): ResolvedLocation | null {
   const lower = locationName.toLowerCase();
   if (!lower.trim()) return null;
@@ -149,7 +195,13 @@ export function buildListingBreadcrumbs(
 ): {
   schema: ListingBreadcrumbItem[];
   ui: ListingBreadcrumbUiItem[];
+  /** Deepest place hub (locality, else city) — for "More rentals in X" links. */
+  hub: { label: string; href: string } | null;
+  /** Category hub within that place, e.g. "PG & Hostels" in Mohali. */
+  categoryHub: { label: string; href: string } | null;
 } {
+  let hub: { label: string; href: string } | null = null;
+  let categoryHub: { label: string; href: string } | null = null;
   const schema: ListingBreadcrumbItem[] = [
     { name: "Home", url: `${siteUrl}${appPath("/")}` },
     { name: "Rentals", url: `${siteUrl}${appPath("/rentals")}` },
@@ -168,7 +220,8 @@ export function buildListingBreadcrumbs(
 
   const location =
     (hasCoords ? resolveMarketingArea(listing.lat, listing.lng) : null) ??
-    resolveCityFromLocationName(listing.locationName);
+    resolveCityFromLocationName(listing.locationName) ??
+    (hasCoords ? resolveNearestLiveCity(listing.lat, listing.lng) : null);
 
   if (location) {
     const cityPath = rentalCityPath(location.countrySlug, location.citySlug);
@@ -180,6 +233,7 @@ export function buildListingBreadcrumbs(
       label: location.cityName,
       href: appPath(cityPath),
     });
+    hub = { label: location.cityName, href: appPath(cityPath) };
 
     if (shouldShowAreaCrumb(location)) {
       const areaPath = rentalAreaPath(
@@ -195,6 +249,7 @@ export function buildListingBreadcrumbs(
         label: location.areaName!,
         href: appPath(areaPath),
       });
+      hub = { label: location.areaName!, href: appPath(areaPath) };
     }
   }
 
@@ -217,6 +272,7 @@ export function buildListingBreadcrumbs(
       label: category.pluralLabel,
       href: appPath(categoryPath),
     });
+    categoryHub = { label: category.pluralLabel, href: appPath(categoryPath) };
   }
 
   const listingLabel =
@@ -225,5 +281,5 @@ export function buildListingBreadcrumbs(
   schema.push({ name: listing.title, url: listingUrl });
   ui.push({ label: listingLabel });
 
-  return { schema, ui };
+  return { schema, ui, hub, categoryHub };
 }

@@ -6,6 +6,7 @@ import {
   getCityBySlug,
   getAllCities,
   rentalAreaPath,
+  rentalCityPath,
   RENTAL_COUNTRY_SLUGS,
 } from "@/lib/cities-config";
 import { fetchAreaListings } from "@/lib/seo-listings";
@@ -18,6 +19,8 @@ import {
   robotsForInventoryGatedHub,
 } from "@/lib/seo/indexing-policy";
 import ListingsGrid from "@/components/ListingsGrid";
+import HubPagination from "@/components/seo/HubPagination";
+import { fetchAllHubListings, sliceHubPage, type HubPage } from "@/lib/seo/hub-pagination";
 import FAQSchema from "@/components/seo/FAQSchema";
 import CitySeoContent from "@/components/seo/CitySeoContent";
 import { getCitySeoConfig } from "@/lib/seo/city-seo-config";
@@ -134,11 +137,14 @@ export default async function CityPage({
     : [];
   const pageFaqs = seoConfig?.faq.length ? seoConfig.faq : city.faqs;
 
+  // Page 1 of the hub's full inventory; pages 2+ live at /page/{n} (crawlable links below the grid).
   let listings: any[] = [];
+  let hubPage: HubPage | null = null;
   try {
     const area = getAreaConfig(resolvedParams.city);
     if (area) {
-      listings = await fetchAreaListings(area, 20);
+      hubPage = sliceHubPage(await fetchAllHubListings(area), 1);
+      listings = hubPage?.listings ?? [];
     }
   } catch (err) {
     console.error("CityPage listings fetch failed:", err);
@@ -213,7 +219,18 @@ export default async function CityPage({
         />
       ) : null}
       <ListingsGrid listings={listings} areaName={city.name} />
-      <AreaClient area={areaData} listingsCount={listings.length} />
+      {hubPage ? (
+        <HubPagination
+          basePath={rentalCityPath(city.countrySlug, city.slug)}
+          page={1}
+          totalPages={hubPage.totalPages}
+          total={hubPage.total}
+          from={hubPage.from}
+          to={hubPage.to}
+          placeName={city.name}
+        />
+      ) : null}
+      <AreaClient area={areaData} listingsCount={hubPage?.total ?? listings.length} />
       {seoConfig ? (
         <CitySeoContent config={seoConfig} relatedGuides={relatedGuides} />
       ) : null}
