@@ -67,6 +67,12 @@ export function useMapListingsFetch({
   const lastEmptyFetchAtRef = useRef(0);
   const skipNextIdleFetchRef = useRef(false);
   const listingsLengthRef = useRef(initial.listings.length);
+  // Read through a ref so a caller passing an inline callback can't change
+  // fetchBounds' identity on every render (that drove a refetch loop).
+  const onFetchedRef = useRef(onFetched);
+  useEffect(() => {
+    onFetchedRef.current = onFetched;
+  });
 
   const EMPTY_REFETCH_MIN_MS = 4000;
 
@@ -88,7 +94,7 @@ export function useMapListingsFetch({
       const fetchKey = `${buildBoundsFetchKey(strictBounds)}|z${zoom}|${listingFiltersFetchKey(filters)}`;
 
       if (!force && fetchKey === lastFetchKeyRef.current) {
-        onFetched?.(map);
+        onFetchedRef.current?.(map);
         return;
       }
 
@@ -98,7 +104,7 @@ export function useMapListingsFetch({
         lastEmptyFetchAtRef.current > 0 &&
         Date.now() - lastEmptyFetchAtRef.current < EMPTY_REFETCH_MIN_MS
       ) {
-        onFetched?.(map);
+        onFetchedRef.current?.(map);
         return;
       }
 
@@ -174,7 +180,7 @@ export function useMapListingsFetch({
         );
         if (mergedCount === 0) lastEmptyFetchAtRef.current = Date.now();
         else lastEmptyFetchAtRef.current = 0;
-        onFetched?.(map);
+        onFetchedRef.current?.(map);
       } catch (e) {
         if (abortController.signal.aborted) return;
         if (generation !== fetchGenerationRef.current) return;
@@ -190,7 +196,7 @@ export function useMapListingsFetch({
         }
       }
     },
-    [filtersRef, onFetched, pageVisibleRef]
+    [filtersRef, pageVisibleRef]
   );
 
   const scheduleFetchBounds = useCallback(

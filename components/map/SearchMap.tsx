@@ -145,6 +145,12 @@ export default function SearchMap({
   }, [mapInstance, mapViewMode, mapZoom, isSaleMode]);
 
   const onFetchedRef = useRef<(map: google.maps.Map) => void>(() => {});
+  // Stable identity: an inline arrow here re-created fetchBounds every render,
+  // which re-ran the visibility trigger and forced a fetch → render → fetch loop.
+  const handleFetched = useCallback(
+    (map: google.maps.Map) => onFetchedRef.current(map),
+    []
+  );
 
   const { visible: pageVisible, visibleRef: pageVisibleRef } = usePageVisible();
 
@@ -177,7 +183,7 @@ export default function SearchMap({
     },
     filtersRef,
     pageVisibleRef,
-    onFetched: (map) => onFetchedRef.current(map),
+    onFetched: handleFetched,
   });
 
   const {
