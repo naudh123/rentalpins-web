@@ -75,6 +75,7 @@ describe("blog-image", () => {
 
   it("falls back for invalid covers", () => {
     expect(resolveBlogImageUrl("")).toBe("/og-image.png");
+    expect(resolveBlogImageUrl("", "a-post")).toBe("/blog/a-post/cover");
   });
 });
 

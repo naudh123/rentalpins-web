@@ -2,26 +2,29 @@
 import type { BlogPostSummary } from "@/lib/blog-types";
 import { verticalBadgeClass, verticalLabel } from "@/lib/blog-vertical";
 import { appPath } from "@/lib/config";
+import { resolveBlogImageUrl } from "@/lib/blog-image";
 
 interface Props {
   post: BlogPostSummary;
 }
 
 export default function BlogCard({ post }: Props) {
+  const cover = resolveBlogImageUrl(post.coverImage, post.slug);
   return (
     <Link
       href={appPath(`/blog/${post.slug}`)}
       className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-[#E8501A]/35 hover:shadow-lg"
     >
-      {post.coverImage && (
-        <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
-          <img
-            src={post.coverImage}
-            alt={post.title}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
-          />
-        </div>
-      )}
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={cover.startsWith("/") ? appPath(cover) : cover}
+          alt={post.title}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+        />
+      </div>
       <div className="flex flex-1 flex-col p-5">
         <div className="flex flex-wrap items-center gap-2">
           <span

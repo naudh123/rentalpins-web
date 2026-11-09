@@ -71,8 +71,8 @@ export default async function BlogPostArticle({ post, postUrl }: Props) {
 
   const seoDescription = postSeoDescription(post);
   const authorName = resolveBlogAuthorName(post.author);
-  const coverImage = resolveBlogImageUrl(post.coverImage);
-  const coverImageAbsolute = resolveBlogImageAbsolute(post.coverImage, siteUrl, appPath);
+  const coverImage = resolveBlogImageUrl(post.coverImage, post.slug);
+  const coverImageAbsolute = resolveBlogImageAbsolute(post.coverImage, siteUrl, appPath, post.slug);
   const toc = extractBlogToc(post.content);
   const mdxComponents = createBlogMdxComponents(toc);
 
