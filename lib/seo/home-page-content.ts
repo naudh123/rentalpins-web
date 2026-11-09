@@ -1,424 +1,304 @@
-/** Homepage copy — honest, SEO-friendly, owner-listing focused. */
+/**
+ * Homepage copy and link inventory — honest, SEO-friendly, three verticals
+ * (Rent, Buy & Sell, Invest). Every href here is an internal app route; the
+ * home-page-content test checks that each one resolves to a real page.
+ */
+import { getLiveCities, rentalCityPath } from "@/lib/cities-config";
+import {
+  getListPropertyCityConfig,
+  getListPropertyCitySlugs,
+} from "@/lib/supply-pages-config";
 
-export type HomeTricityLane = "rent" | "buy" | "invest";
+export interface HomeLink {
+  label: string;
+  href: string;
+}
 
-export type HomeAdvisorMode = "Rent" | "Buy" | "Invest" | "Commercial";
-
-/** Premium trust signals — lane-neutral on hero (lane tags live on gateway cards). */
-export const HOME_TRUST_PILLS = [
-  "Map-based discovery",
-  "Owner direct",
-  "Free to list",
-  "India + global hubs",
-] as const;
+export const HOME_META = {
+  title: "Rent, Buy & Sell Property Without Brokers in India",
+  description:
+    "Rent flats, PG and commercial space or buy and sell property directly from owners on a live map. List free and explore new projects across India.",
+  keywords: [
+    "property without broker",
+    "rent property directly from owner",
+    "flats for rent without brokerage",
+    "PG for rent",
+    "buy property from owner",
+    "sell property without broker",
+    "new projects investment",
+    "list property free",
+    "map based property search",
+    "owner direct property India",
+  ],
+} as const;
 
 export const HOME_HERO = {
-  headline: "RentalPins",
-  subhead: "Rent, Buy, Sell, Invest Property AI Solution",
+  eyebrow: "Owner-direct property marketplace",
+  headline: "Rent, buy or invest in property — straight from owners",
+  subhead:
+    "RentalPins puts flats, PG, houses, shops and offices on a live map so you deal with owners directly. No brokerage to search, and listing is free.",
+  searchLabel: "City, locality or landmark",
+  searchPlaceholder: "Try “Koramangala”, “Sector 70 Mohali” or “near LPU”",
+  rentSearch: { label: "Search rentals", action: "/search" },
+  buySearch: { label: "Search for sale", action: "/buy/search" },
 } as const;
 
-export const HOME_MODE_GATEWAY = {
-  headline: "Discover property on the map",
-  subhead: "Choose how you want to explore RentalPins.",
-  rent: {
-    title: "Rent",
-    copy: "Find rentals near you and contact owners directly.",
-    primary: { label: "Open map", href: "/search" },
-    secondary: { label: "Post listing", href: "/post" },
+/** Honest trust signals only — no user counts or invented ratings. */
+export const HOME_TRUST_POINTS = [
+  "No brokerage to search",
+  "Free to list",
+  "Chat or WhatsApp owners",
+] as const;
+
+export type HomeVerticalKey = "rent" | "buy" | "invest";
+
+export interface HomeVertical {
+  key: HomeVerticalKey;
+  badge: string;
+  title: string;
+  audience: string;
+  bullets: readonly string[];
+  primary: HomeLink;
+  secondary: HomeLink;
+  more: readonly HomeLink[];
+}
+
+export const HOME_VERTICALS_SECTION = {
+  eyebrow: "Choose your path",
+  title: "What would you like to do?",
+  subtitle:
+    "Three ways to use RentalPins. Pick the one that fits — each has its own map, listings and tools.",
+} as const;
+
+export const HOME_VERTICALS: readonly HomeVertical[] = [
+  {
+    key: "rent",
+    badge: "Rent",
+    title: "Rent a home or workspace",
+    audience:
+      "For tenants, students and professionals looking for a flat, PG, room, shop or office.",
+    bullets: [
+      "Flats, houses, PG, rooms and commercial space",
+      "Contact owners on WhatsApp, call or chat",
+      "Filter by budget, BHK, furnishing and area",
+    ],
+    primary: { label: "Browse rentals on the map", href: "/search" },
+    secondary: { label: "List your rental free", href: "/post" },
+    more: [
+      { label: "PG near me", href: "/pg-near-me" },
+      { label: "Flats without broker", href: "/flats-without-broker" },
+      { label: "Commercial for rent", href: "/commercial-property-for-rent" },
+    ],
   },
-  buy: {
-    title: "Buy",
-    copy: "Discover properties for sale, new projects, and investment opportunities.",
-    primary: { label: "Browse for sale", href: "/buy/search" },
-    secondary: { label: "List for sale", href: "/buy/post" },
-    tertiary: { label: "Post requirement", href: "/buy/requirements" },
-    quaternary: { label: "New projects", href: "/projects" },
+  {
+    key: "buy",
+    badge: "Buy & Sell",
+    title: "Buy or sell property",
+    audience:
+      "For home buyers, and for owners selling a flat, house, plot or commercial unit without a middleman.",
+    bullets: [
+      "Owner-direct resale listings on a sale map",
+      "Post what you want to buy and get matched",
+      "Sell with a free listing — no commission",
+    ],
+    primary: { label: "Browse property for sale", href: "/buy/search" },
+    secondary: { label: "Sell your property", href: "/buy/post" },
+    more: [
+      { label: "Buy hub", href: "/buy" },
+      { label: "Post a requirement", href: "/buy/requirements" },
+      { label: "Buying guides", href: "/blog/buy" },
+    ],
   },
-  invest: {
-    title: "Invest",
-    copy: "Compare growth corridors, read market insights, and shortlist investment-ready areas.",
-    primary: { label: "Tricity market insights", href: "/property-market-insights/chandigarh-tricity" },
-    secondary: { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
-    tertiary: { label: "New Chandigarh corridor", href: "/buy/new-chandigarh-investment-guide" },
-    quaternary: { label: "Ask AI advisor", href: "/advisor" },
+  {
+    key: "invest",
+    badge: "Invest",
+    title: "Invest with better data",
+    audience:
+      "For investors comparing growth corridors, rental yields and new builder projects.",
+    bullets: [
+      "New launch and under-construction projects",
+      "Rental-yield calculator and area comparison",
+      "Growth-corridor investment guides",
+    ],
+    primary: { label: "Explore the Invest hub", href: "/invest" },
+    secondary: { label: "Browse new projects", href: "/invest/projects" },
+    more: [
+      { label: "Yield calculator", href: "/invest/calculator" },
+      { label: "Compare areas", href: "/invest/compare" },
+      { label: "Investment guides", href: "/invest/guides" },
+    ],
   },
-} as const;
+];
 
-export const HOME_RENT_LANE = {
-  eyebrow: "Rent",
-  heading: "Rent without broker",
-  copy: "Find rental properties near you and contact owners directly.",
-  benefits: [
-    "Owner-direct rentals",
-    "Map-based discovery",
-    "No broker-first experience",
-  ],
-  primaryCta: { label: "Open map", href: "/search" },
-  secondaryCta: { label: "Post listing", href: "/post" },
-} as const;
-
-export const HOME_BUY_LANE = {
-  eyebrow: "Buy",
-  heading: "Buy owner-direct",
-  copy:
-    "Find properties for sale, compare locations, explore new projects, and buy smart.",
-  benefits: [
-    "Owner-direct listings",
-    "New projects",
-    "Investment opportunities",
-    "Commercial properties",
-  ],
-  primaryCta: { label: "Browse for sale", href: "/buy/search" },
-  secondaryCta: { label: "List for sale", href: "/buy/post" },
-  tertiaryCta: { label: "Post requirement", href: "/buy/requirements" },
-  projectsCta: { label: "New projects", href: "/projects" },
-} as const;
-
-/**
- * Tricity buy hub chips — canonical hub URLs (not /buy/chandigarh shorthand).
- * Chandigarh uses city money page; New Chandigarh uses hub/area route.
- */
-export const HOME_BUY_HERO_CHIPS = [
+/** Chandigarh Tricity buy hubs — canonical hub URLs, shown on the Buy card. */
+export const HOME_BUY_CHIPS: readonly HomeLink[] = [
   { label: "Chandigarh", href: "/buy/in/chandigarh" },
   { label: "Mohali", href: "/buy/mohali" },
   { label: "Panchkula", href: "/buy/panchkula" },
   { label: "Zirakpur", href: "/buy/zirakpur" },
   { label: "New Chandigarh", href: "/buy/mohali/new-chandigarh" },
-] as const;
-
-export const HOME_PLATFORM_PILLS = [
-  { label: "Listing fee", value: "Free" },
-  { label: "Rent + buy maps", value: "2" },
-  { label: "Owner contact", value: "Direct" },
-] as const;
-
-export const HOME_TRICITY_LANES = {
-  rent: {
-    label: "Rent",
-    subtitle: "Owner-direct rentals across Chandigarh, Mohali, Panchkula, Zirakpur, and New Chandigarh.",
-  },
-  buy: {
-    label: "Buy",
-    subtitle: "Resale properties for sale and new launch projects across the Tricity.",
-  },
-  invest: {
-    label: "Invest",
-    subtitle: "Growth corridors, market reports, and project-led investment entry points.",
-  },
-} as const satisfies Record<
-  HomeTricityLane,
-  { label: string; subtitle: string }
->;
-
-type TricityLaneLinks = Record<HomeTricityLane, readonly { label: string; href: string }[]>;
-
-export const HOME_TRICITY_CITIES: readonly {
-  name: string;
-  lanes: TricityLaneLinks;
-}[] = [
-  {
-    name: "Chandigarh",
-    lanes: {
-      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh" }],
-      buy: [
-        { label: "Properties for sale", href: "/buy/in/chandigarh" },
-        { label: "New projects", href: "/projects/chandigarh" },
-      ],
-      invest: [
-        { label: "Tricity market insights", href: "/property-market-insights/chandigarh-tricity" },
-        { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
-      ],
-    },
-  },
-  {
-    name: "Mohali",
-    lanes: {
-      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/mohali" }],
-      buy: [
-        { label: "Properties for sale", href: "/buy/mohali" },
-        { label: "New projects", href: "/projects/mohali" },
-      ],
-      invest: [
-        { label: "Mohali investment guide", href: "/buy/mohali-investment-guide" },
-        { label: "Airport Road projects", href: "/projects/mohali" },
-      ],
-    },
-  },
-  {
-    name: "Panchkula",
-    lanes: {
-      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/panchkula" }],
-      buy: [
-        { label: "Properties for sale", href: "/buy/panchkula" },
-        { label: "New projects", href: "/projects/panchkula" },
-      ],
-      invest: [
-        { label: "Panchkula projects", href: "/projects/panchkula" },
-        { label: "Tricity market insights", href: "/property-market-insights/chandigarh-tricity" },
-      ],
-    },
-  },
-  {
-    name: "Zirakpur",
-    lanes: {
-      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/zirakpur" }],
-      buy: [
-        { label: "Properties for sale", href: "/buy/zirakpur" },
-        { label: "New projects", href: "/projects/zirakpur" },
-      ],
-      invest: [
-        { label: "VIP Road corridor", href: "/projects/zirakpur" },
-        { label: "Commercial potential", href: "/buy/zirakpur" },
-      ],
-    },
-  },
-  {
-    name: "New Chandigarh",
-    lanes: {
-      rent: [{ label: "Browse rentals", href: "/rentals/in/chandigarh/kharar" }],
-      buy: [
-        { label: "Properties for sale", href: "/buy/mohali/new-chandigarh" },
-        { label: "New projects", href: "/projects/kharar" },
-      ],
-      invest: [
-        { label: "New Chandigarh guide", href: "/buy/new-chandigarh-investment-guide" },
-        { label: "Growth corridor projects", href: "/projects/kharar" },
-      ],
-    },
-  },
 ];
 
-export const HOME_TRICITY_SECTION = {
-  title: "Explore Chandigarh Tricity",
-  cities: HOME_TRICITY_CITIES,
-} as const;
-
-export const HOME_BUYER_DEMAND = {
-  title: "Post your property requirement",
-  subtitle:
-    "Tell RentalPins what you want to buy or rent. Owners, sellers, and developers can match with your demand.",
-  examples: [
-    "Need a plot in New Chandigarh",
-    "Looking for 3 BHK in Mohali",
-    "Commercial space near Airport Road",
+export const HOME_STEPS = {
+  eyebrow: "How it works",
+  title: "From search to keys, without the middleman",
+  steps: [
+    {
+      title: "Search the map",
+      desc: "Pan to your city, sector or campus and see owner-posted pins with photos, price and details.",
+    },
+    {
+      title: "Talk to the owner",
+      desc: "Message on WhatsApp, call or chat straight from the listing — no unlock fee, no broker in between.",
+    },
+    {
+      title: "Close directly",
+      desc: "Visit, agree terms and sign with the owner. Owners list free and manage everything from web or app.",
+    },
   ],
-  primaryCta: { label: "Post requirement", href: "/buy/requirements" },
-  secondaryCta: { label: "Browse buyer demand", href: "/buy/requirements" },
 } as const;
 
-export const HOME_INVESTMENT_INTEL = {
-  title: "Where smart property decisions begin",
+export interface HomeCityCard {
+  name: string;
+  href: string;
+  areas: string;
+}
+
+function trimAreas(tagline: string | undefined): string {
+  if (!tagline) return "";
+  const parts = tagline
+    .split("·")
+    .map((p) => p.trim())
+    .filter(Boolean);
+  return parts.slice(0, 4).join(" · ");
+}
+
+/** Live India city hubs (/rentals/in/{city}) — includes every live city. */
+export function getHomeIndiaCities(): HomeCityCard[] {
+  return getLiveCities()
+    .filter((c) => c.countrySlug === "in")
+    .map((c) => ({
+      name: c.name,
+      href: rentalCityPath(c.countrySlug, c.slug),
+      areas: trimAreas(c.tagline),
+    }));
+}
+
+export function getHomeGlobalCities(): HomeLink[] {
+  return getLiveCities()
+    .filter((c) => c.countrySlug !== "in")
+    .map((c) => ({ label: c.name, href: rentalCityPath(c.countrySlug, c.slug) }));
+}
+
+export const HOME_CITIES_SECTION = {
+  eyebrow: "Browse by city",
+  title: "Property across India's fastest-moving cities",
   subtitle:
-    "Compare locations, discover growth corridors, and explore investment-ready property opportunities.",
-  areas: [
+    "Each city hub has locality guides, rent ranges and live owner listings on the map.",
+  allCities: { label: "See all cities and localities", href: "/rentals" },
+} as const;
+
+export const HOME_OWNERS = {
+  eyebrow: "For owners, sellers and builders",
+  title: "List your property free — reach people already searching",
+  subtitle:
+    "Drop a pin, add photos and go live in minutes. Enquiries come straight to you.",
+  paths: [
     {
-      name: "New Chandigarh",
-      tag: "Growth corridor",
-      href: "/buy/new-chandigarh-investment-guide",
+      title: "Renting out?",
+      desc: "Flats, PG, rooms, shops, offices or warehouses.",
+      cta: { label: "Post a rental", href: "/post" },
     },
     {
-      name: "Mohali",
-      tag: "Investment guide",
-      href: "/buy/mohali-investment-guide",
+      title: "Selling?",
+      desc: "Resale flats, houses, plots and commercial units.",
+      cta: { label: "List for sale", href: "/buy/post" },
     },
     {
-      name: "Tricity overview",
-      tag: "Market insights",
+      title: "Builder or developer?",
+      desc: "Showcase projects and receive site-visit requests.",
+      cta: { label: "List a project", href: "/projects/post" },
+    },
+  ],
+  noBrokerTitle: "Property without broker",
+  noBrokerLinks: [
+    { label: "Chandigarh", href: "/property-without-broker-chandigarh" },
+    { label: "Mohali", href: "/property-without-broker-mohali" },
+    { label: "Delhi", href: "/property-without-broker-delhi" },
+    { label: "Gurugram", href: "/property-without-broker-gurugram" },
+    { label: "Bengaluru", href: "/property-without-broker-bengaluru" },
+    { label: "Hyderabad", href: "/property-without-broker-hyderabad" },
+    { label: "Jaipur", href: "/property-without-broker-jaipur" },
+    { label: "Ludhiana", href: "/property-without-broker-ludhiana" },
+  ] as readonly HomeLink[],
+  listCityTitle: "List property free in your city",
+} as const;
+
+/** /list-property/{city} landings, labelled by city name. */
+export function getHomeListPropertyLinks(): HomeLink[] {
+  return getListPropertyCitySlugs().map((slug) => {
+    const title = getListPropertyCityConfig(slug)?.title ?? slug;
+    const label = title.replace(/^List Property Free in\s+/i, "").trim() || slug;
+    return { label, href: `/list-property/${slug}` };
+  });
+}
+
+export const HOME_GUIDES = {
+  eyebrow: "Guides & insights",
+  title: "Know the area before you decide",
+  subtitle:
+    "Locality guides, rent and price trends, and practical how-tos from the RentalPins blog.",
+  cards: [
+    {
+      title: "RentalPins blog",
+      desc: "Best areas to rent, PG guides and city explainers.",
+      href: "/blog",
+    },
+    {
+      title: "Buying guides",
+      desc: "Paperwork, pricing and resale checks before you buy.",
+      href: "/blog/buy",
+    },
+    {
+      title: "Investment guides",
+      desc: "Growth corridors, yields and project due diligence.",
+      href: "/invest/guides",
+    },
+    {
+      title: "Tricity market insights",
+      desc: "Rent and price movement across Chandigarh, Mohali and Panchkula.",
       href: "/property-market-insights/chandigarh-tricity",
     },
-    {
-      name: "Zirakpur",
-      tag: "Commuter yield",
-      href: "/buy/zirakpur-investment-guide",
-    },
-    {
-      name: "Yield calculator",
-      tag: "Underwrite",
-      href: "/invest/calculator",
-    },
-    {
-      name: "Invest hub",
-      tag: "RentalPins Invest",
-      href: "/invest",
-    },
   ],
-  cta: { label: "Explore invest hub", href: "/invest" },
-  advisorCta: { label: "Ask AI advisor", href: "/invest/advisor" },
-  projectsCta: { label: "Browse investor projects", href: "/invest/projects" },
-} as const;
-
-export const HOME_AI_ADVISOR = {
-  title: "Not sure where to start?",
-  subtitle:
-    "Use RentalPins AI to shortlist locations based on your budget, purpose, and timeline.",
-  modes: ["Rent", "Buy", "Invest", "Commercial"] as const,
-  modeLinks: {
-    Rent: {
-      label: "Ask about rentals",
-      href: "/advisor",
-      hint: "Shortlist rental areas and browse owner-direct pins on the rent map.",
-    },
-    Buy: {
-      label: "Ask about buying",
-      href: "/advisor",
-      hint: "Compare resale, projects, and BHK bands on the buy map.",
-    },
-    Invest: {
-      label: "Ask about investing",
-      href: "/advisor",
-      hint: "Explore growth corridors, yields, and project-led entry points.",
-    },
-    Commercial: {
-      label: "Ask about commercial",
-      href: "/advisor",
-      hint: "Shops, offices, warehouses, and commercial sale inventory.",
-    },
-  } satisfies Record<
-    HomeAdvisorMode,
-    { label: string; href: string; hint: string }
-  >,
-} as const;
-
-export const HOME_DEVELOPER_TEASER = {
-  title: "For developers and property sellers",
-  subtitle:
-    "Showcase projects, capture qualified buyer leads, and reach serious property seekers on the map.",
-  benefits: [
-    "Project visibility",
-    "Buyer leads",
-    "Site visit requests",
-    "Brochure downloads",
-    "Location-based discovery",
-  ],
-  cta: { label: "List your project", href: "/projects/post" },
-  secondaryCta: { label: "Developer hub", href: "/developers" },
-  projectsCta: { label: "Browse all projects", href: "/projects" },
-} as const;
-
-export const HOME_INVEST_PREVIEW = {
-  eyebrow: "Invest",
-  title: "Investment intelligence",
-  copy: "Growth corridors, market reports, and project insights — launching soon on RentalPins Invest.",
-  cta: { label: "Preview RentalPins Invest", href: "/invest" },
-} as const;
-
-export const HOME_OWNER_VALUE = {
-  title: "Why owners list on RentalPins",
-  subtitle:
-    "A calmer alternative to classified spam — your pin sits where renters already search on the map.",
-  benefits: [
-    {
-      title: "Free to list",
-      desc: "Post flats, PG, hostels, shops, offices, warehouses and more at no listing charge on supported cities.",
-    },
-    {
-      title: "Direct renter inquiries",
-      desc: "Tenants message you on WhatsApp, call, or chat from your listing pin — no unlock fee to search.",
-    },
-    {
-      title: "Map-based discovery",
-      desc: "Your property appears on the same interactive map renters use on the website and Android app.",
-    },
-    {
-      title: "Housing & commercial",
-      desc: "List residential inventory alongside shops, offices, co-working units and warehouse space in one flow.",
-    },
-    {
-      title: "Web or app",
-      desc: "Sign in with Google on the web, drop a map pin, add photos, and manage listings from the RentalPins app.",
-    },
-    {
-      title: "Growing city hubs",
-      desc: "Live in Chandigarh Tricity, Delhi NCR, Bengaluru, Hyderabad, Ludhiana, Jaipur, Lucknow, Pune, Mumbai and more — with new areas added regularly.",
-    },
-  ],
-} as const;
-
-export const HOME_LISTING_STEPS = {
-  title: "List your property in three steps",
-  subtitle: "Most owners complete a first draft in a few minutes.",
-  rentCta: { label: "Post rental", href: "/post" },
-  saleCta: { label: "List for sale", href: "/buy/post" },
-  steps: [
-    {
-      step: "01",
-      title: "Sign in & choose category",
-      desc: "Use Google sign-in, pick Property, PG, commercial or another category, and open the post listing flow.",
-    },
-    {
-      step: "02",
-      title: "Pin location & add details",
-      desc: "Place your listing on the map, upload photos, set rent, and write a clear title with society or sector context.",
-    },
-    {
-      step: "03",
-      title: "Go live on the map",
-      desc: "Publish your listing — renters browsing your city see your pin in search results and can contact you directly.",
-    },
-  ],
-} as const;
-
-export const HOME_PROPERTY_TYPES = {
-  title: "What you can list",
-  types: [
-    { label: "Flats & apartments", href: "/rentals/in/chandigarh/mohali/flats" },
-    { label: "Houses & villas", href: "/rentals/in/chandigarh/mohali/houses" },
-    { label: "PG & hostels", href: "/rentals/in/chandigarh/mohali/pg" },
-    { label: "Shops & retail", href: "/rentals/in/chandigarh/mohali/shops" },
-    { label: "Offices", href: "/rentals/in/chandigarh/mohali/offices" },
-    { label: "Warehouses", href: "/rentals/in/chandigarh/mohali/warehouses" },
-    { label: "Commercial units", href: "/rentals/in/chandigarh/mohali/commercial" },
-    { label: "Vehicles & equipment", href: "/search?category=Vehicles" },
-  ],
-} as const;
-
-export const HOME_RENTER_SECTION = {
-  title: "For renters & buyers",
-  subtitle: "Browse owner-posted pins — no broker search commission.",
-  steps: [
-    { step: "1", title: "Open the map", desc: "Use the rent map or buy map for resale — pan to your city, phase, or sector." },
-    { step: "2", title: "Filter & shortlist", desc: "Narrow by category, budget, and area — or ask in plain English with AI search." },
-    { step: "3", title: "Contact the owner", desc: "Message on WhatsApp or chat from the listing — deal directly." },
-  ],
-} as const;
-
-/** Supporting buy links below the hero — deep links only (hero owns primary CTAs). */
-export const HOME_BUY_SECTION = {
-  title: "Explore property for sale",
-  subtitle: "Tricity buy guides, corridors, and sector pages on RentalPins Buy.",
-  links: [
-    { label: "New projects (Tricity)", href: "/projects" },
-    { label: "Mohali for sale", href: "/buy/mohali" },
-    { label: "Kharar for sale", href: "/buy/kharar" },
-    { label: "Zirakpur for sale", href: "/buy/zirakpur" },
-    { label: "Panchkula for sale", href: "/buy/panchkula" },
-    { label: "New Chandigarh", href: "/buy/mohali/new-chandigarh" },
-    { label: "Tricity property", href: "/property-for-sale-chandigarh" },
-  ],
-} as const;
-
-export const HOME_SEO_LINKS = {
-  title: "Popular guides",
-  links: [
-    { label: "Mohali rentals", href: "/rentals/mohali" },
-    { label: "Mohali for sale", href: "/buy/mohali" },
-    { label: "Sector 70 Mohali", href: "/rentals/mohali/sector-70" },
-    { label: "Buy in Chandigarh", href: "/buy/in/chandigarh" },
-    { label: "Delhi flats", href: "/rentals/in/delhi/flats" },
-    { label: "PG near CU", href: "/pg-near-chandigarh-university" },
-    { label: "PG near PU", href: "/pg-near-panjab-university" },
-    { label: "PG near Chitkara", href: "/pg-near-chitkara-university" },
-    { label: "PG near ISB Mohali", href: "/pg-near-isb-mohali" },
-    { label: "PG near IISER Mohali", href: "/pg-near-iiser-mohali" },
+  more: [
     { label: "Rent without broker", href: "/rent-without-broker" },
-    { label: "List property free", href: "/post" },
+    { label: "No-broker rentals in India", href: "/no-broker-rental-india" },
+    { label: "PG near Chandigarh University", href: "/pg-near-chandigarh-university" },
+    { label: "PG near LPU", href: "/pg-near-lpu" },
+    { label: "RentalPins vs NoBroker", href: "/rentalpins-vs-nobroker" },
+  ] as readonly HomeLink[],
+} as const;
+
+export const HOME_ABOUT = {
+  title: "About RentalPins",
+  paragraphs: [
+    "RentalPins is an owner-direct property marketplace built around a map. Instead of scrolling endless lists, you see where each flat, PG, house, shop or office actually is — next to your college, office or metro line — and contact the owner yourself.",
+    "Renting, buying and investing each have their own space: the rent map for tenants and students, RentalPins Buy for resale property and seller listings, and RentalPins Invest for new projects, growth corridors and yield tools. Owners, sellers and builders list free, and searching never carries a brokerage fee.",
   ],
 } as const;
 
 export const HOME_FAQS = [
   {
+    q: "What is RentalPins?",
+    a: "RentalPins is a map-first, owner-direct property marketplace in India. You can rent flats, PG, rooms and commercial space, buy or sell property, and explore new projects for investment — dealing with owners and builders directly.",
+  },
+  {
+    q: "Do I pay brokerage to find a property on RentalPins?",
+    a: "No. Browsing the map and contacting owners is free. RentalPins does not charge tenants or buyers a search commission or an unlock fee.",
+  },
+  {
     q: "Is it free to list property on RentalPins?",
-    a: "Yes — owners can post flats, PG, houses, shops, offices and warehouses on supported cities at no listing fee. Renters browse and contact owners without a search commission.",
+    a: "Yes — owners can post flats, PG, houses, shops, offices and warehouses at no listing fee, and sellers can list resale property free on RentalPins Buy.",
   },
   {
     q: "How do I list my flat or PG on RentalPins?",
@@ -426,30 +306,32 @@ export const HOME_FAQS = [
   },
   {
     q: "Who can list on RentalPins?",
-    a: "Property owners, PG and hostel operators, shop and office owners, warehouse landlords, brokers with owner authorisation, and vehicle or equipment rental businesses.",
+    a: "Property owners, PG and hostel operators, shop and office owners, warehouse landlords, sellers of resale property, builders with new projects, and brokers with owner authorisation.",
   },
   {
-    q: "How do renters find my listing?",
-    a: "Renters open the RentalPins map, filter by category and area, and tap your pin. Listings also surface on city and area SEO pages for local search.",
+    q: "Can I buy or sell property on RentalPins?",
+    a: "Yes. RentalPins Buy has a separate sale map with owner-direct resale listings, strongest today in Chandigarh Tricity. Sellers list free, and buyers can post a requirement describing what they want.",
+  },
+  {
+    q: "What is RentalPins Invest?",
+    a: "RentalPins Invest brings together new builder projects, growth-corridor guides, a rental-yield calculator and area comparisons so investors can shortlist locations before visiting.",
   },
   {
     q: "Which cities are live on RentalPins?",
-    a: "Chandigarh Tricity, Ludhiana, Delhi, Noida, Gurugram, Ghaziabad, Bengaluru, Hyderabad, Pune, Kolkata, Jaipur, Lucknow, Patna, Indore, Bhopal, Mumbai, London, Nairobi, and Lagos — with Mohali, Kharar, and Delhi area guides on the site.",
-  },
-  {
-    q: "Can I buy property on RentalPins?",
-    a: "Yes — RentalPins Buy is a separate map for owner-direct resale in Chandigarh Tricity. Open the buy map, filter by budget and BHK, or use AI search in plain English.",
+    a: "Chandigarh Tricity, Ludhiana, Delhi, Noida, Gurugram, Ghaziabad, Bengaluru, Hyderabad, Pune, Kolkata, Jaipur, Lucknow, Patna, Indore, Bhopal and Mumbai in India, plus London, Nairobi and Lagos — with locality guides for each city.",
   },
   {
     q: "Can I manage listings from the Android app?",
-    a: "Yes. The same Google account works on the web and RentalPins Android app — edit photos, location and availability from either.",
+    a: "Yes. The same Google account works on the web and the RentalPins Android app — edit photos, location and availability from either.",
   },
 ] as const;
 
 export const HOME_FINAL_CTA = {
-  title: "Ready to list or browse?",
+  title: "Your next property is already on the map",
   subtitle:
-    "Free listing for owners. Map-first search for renters and buyers. No broker commission to discover or post.",
+    "Search owner-direct listings, or list yours free and let people nearby find it.",
+  primary: { label: "Start searching", href: "/search" },
+  secondary: { label: "List property free", href: "/post" },
 } as const;
 
 /** Patterns we avoid on the homepage (no fake social proof). */
