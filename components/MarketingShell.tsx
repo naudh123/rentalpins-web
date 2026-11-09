@@ -5,6 +5,7 @@ import { useState } from "react";
 import Logo from "@/components/brand/Logo";
 import SiteFooter from "@/components/marketing/SiteFooter";
 import MarketingGlobalNav from "@/components/nav/MarketingGlobalNav";
+import { PostButton } from "@/components/post/PostChooser";
 import SeoCtaTracker from "@/components/seo/SeoCtaTracker";
 import { appPath } from "@/lib/config";
 import { PLAY_STORE_URL } from "@/lib/site-links";
@@ -27,6 +28,11 @@ export default function MarketingShell({
           </div>
 
           <div className="flex items-center gap-2">
+            <PostButton
+              source="marketing_header"
+              hideInsideAppShell
+              className="inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-orange)] px-3.5 py-2 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition hover:bg-[var(--brand-orange-hover)] sm:px-4"
+            />
             <Link
               href={appPath("/auth/login")}
               className="hidden px-3 py-2 text-xs font-semibold text-[var(--brand-navy)] hover:text-[var(--brand-orange)] sm:inline-flex"

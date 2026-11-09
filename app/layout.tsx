@@ -6,6 +6,7 @@ import { GoogleMapsLoaderProvider } from "@/components/providers/GoogleMapsLoade
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
 import { SavedListingsProvider } from "@/components/providers/SavedListingsProvider";
 import AppShell from "@/components/layout/AppShell";
+import { PostChooserProvider } from "@/components/post/PostChooser";
 import FloatingAgentAssistant from "@/components/agent/FloatingAgentAssistant";
 import { isAgentConfigured } from "@/lib/agent/env";
 import {
@@ -58,8 +59,10 @@ export default function RootLayout({
         <AuthProvider>
           <GoogleMapsLoaderProvider>
             <SavedListingsProvider>
-              <AppShell>{children}</AppShell>
-              <FloatingAgentAssistant agentEnabled={isAgentConfigured} />
+              <PostChooserProvider>
+                <AppShell>{children}</AppShell>
+                <FloatingAgentAssistant agentEnabled={isAgentConfigured} />
+              </PostChooserProvider>
             </SavedListingsProvider>
           </GoogleMapsLoaderProvider>
           <AnalyticsProvider />

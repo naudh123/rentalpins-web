@@ -8,12 +8,13 @@ import Logo from "@/components/brand/Logo";
 import ProductBadge from "@/components/brand/ProductBadge";
 import {
   IconChat,
-  IconPost,
   IconSaved,
   IconSearch,
   IconUser,
 } from "@/components/icons/NavIcons";
+import { NestedInAppShell, PostButton } from "@/components/post/PostChooser";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { isPostFlowPath } from "@/lib/nav/post-options";
 import { appPath, basePath, showStagingBanner } from "@/lib/config";
 import { isBuyAppPath } from "@/lib/sale/buy-app-paths";
 import { getClientDb } from "@/lib/firebase-client";
@@ -22,7 +23,6 @@ const DESKTOP_NAV = [
   { href: "/search", label: "Search rentals" },
   { href: "/saved-listings", label: "Saved" },
   { href: "/rentals", label: "Cities" },
-  { href: "/post", label: "Post rental" },
   { href: "/chat", label: "Chat" },
 ] as const;
 
@@ -35,8 +35,6 @@ const MOBILE_NAV_RIGHT = [
   { href: "/chat", label: "Chat", Icon: IconChat },
   { href: "/auth/login", label: "Account", Icon: IconUser },
 ] as const;
-
-const POST_HREF = "/post";
 
 const MARKETING_PREFIXES = [
   "/rentals",
@@ -79,7 +77,7 @@ function isPostPath(pathname: string | null): boolean {
     basePath && pathname.startsWith(basePath)
       ? pathname.slice(basePath.length) || "/"
       : pathname;
-  return normalized === POST_HREF || normalized.startsWith(`${POST_HREF}/`);
+  return isPostFlowPath(normalized);
 }
 
 function MobileNavItem({
@@ -188,34 +186,18 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
             {DESKTOP_NAV.map((item) => {
               const active = isActive(pathname, item.href);
-              const isPost = item.href === POST_HREF;
               return (
                 <Link
                   key={item.href}
                   href={appPath(item.href)}
-                  className={
-                    isPost
-                      ? `inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold shadow-[var(--shadow-glow)] transition ${
-                          active
-                            ? "bg-[var(--brand-orange-hover)] text-white"
-                            : "bg-[var(--brand-orange)] text-white hover:bg-[var(--brand-orange-hover)]"
-                        }`
-                      : `rounded-full px-3.5 py-1.5 text-sm transition ${
-                          active
-                            ? "bg-[color-mix(in_srgb,var(--brand-orange)_14%,transparent)] font-semibold text-[var(--brand-orange)]"
-                            : "text-[var(--muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--brand-navy)]"
-                        }`
-                  }
+                  className={`rounded-full px-3.5 py-1.5 text-sm transition ${
+                    active
+                      ? "bg-[color-mix(in_srgb,var(--brand-orange)_14%,transparent)] font-semibold text-[var(--brand-orange)]"
+                      : "text-[var(--muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--brand-navy)]"
+                  }`}
                 >
                   <span className="relative inline-flex items-center">
-                    {isPost ? (
-                      <>
-                        <IconPost className="h-4 w-4" />
-                        {item.label}
-                      </>
-                    ) : (
-                      item.label
-                    )}
+                    {item.label}
                     {item.href === "/chat" && unreadChatCount > 0 && (
                       <span className="ml-1 inline-flex min-w-4 items-center justify-center rounded-full bg-[var(--brand-orange)] px-1 text-[10px] font-bold leading-4 text-white">
                         {unreadChatCount > 9 ? "9+" : unreadChatCount}
@@ -234,12 +216,14 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             >
               Open map
             </Link>
-            <Link
-              href={appPath("/post")}
-              className="rp-btn rp-btn-secondary hidden px-4 py-2 text-xs lg:inline-flex"
-            >
-              Post rental
-            </Link>
+            <PostButton
+              source="app_header"
+              className={`hidden items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold text-white shadow-[var(--shadow-glow)] transition md:inline-flex ${
+                isPostPath(pathname)
+                  ? "bg-[var(--brand-orange-hover)]"
+                  : "bg-[var(--brand-orange)] hover:bg-[var(--brand-orange-hover)]"
+              }`}
+            />
             {user ? (
               <>
                 <Link
@@ -269,7 +253,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="rp-app-main">{children}</main>
+      <main className="rp-app-main">
+        <NestedInAppShell>{children}</NestedInAppShell>
+      </main>
 
       <nav
         className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border-subtle)] bg-[var(--surface)]/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(30,58,110,0.08)] backdrop-blur-md md:hidden"
@@ -287,10 +273,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             />
           ))}
 
-          <Link
-            href={appPath(POST_HREF)}
-            aria-label="Post a listing — list your property for rent"
-            aria-current={isPostPath(pathname) ? "page" : undefined}
+          <PostButton
+            source="app_mobile_nav"
+            ariaLabel="Post — rent out, sell, or list a project"
             className="relative -mt-6 flex flex-col items-center justify-end pb-1.5"
           >
             <span
@@ -320,7 +305,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             >
               Post
             </span>
-          </Link>
+          </PostButton>
 
           {MOBILE_NAV_RIGHT.map((item) => {
             const href =
