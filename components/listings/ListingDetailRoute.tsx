@@ -114,7 +114,8 @@ export default async function ListingDetailRoute({
   const [ownerTrust, similarListings, ownerListings, reviewSummary, saleIntel] =
     await Promise.all([
       listing.ownerUid ? fetchOwnerTrust(listing.ownerUid) : Promise.resolve(null),
-      fetchSimilarListingsNearby(listing, 4),
+      // 8 (was 4): more crawlable links between nearby listings.
+      fetchSimilarListingsNearby(listing, 8),
       listing.ownerUid
         ? fetchMoreFromOwner(listing.ownerUid, listingId, 4)
         : Promise.resolve([]),
@@ -449,6 +450,33 @@ export default async function ListingDetailRoute({
           </div>
         </section>
       )}
+
+      {/* Rental hubs only — sale listings belong to the /buy funnel. */}
+      {!isSale && breadcrumbItems.hub ? (
+        <nav
+          aria-label="More rentals nearby"
+          className="mt-6 rounded-[var(--radius-xl)] border border-[var(--border)] p-4"
+        >
+          <h2 className="font-serif text-lg">More rentals in {breadcrumbItems.hub.label}</h2>
+          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            <li>
+              <a
+                href={breadcrumbItems.hub.href}
+                className="font-semibold text-[var(--brand-orange)] hover:underline"
+              >
+                All rentals in {breadcrumbItems.hub.label} →
+              </a>
+            </li>
+            {breadcrumbItems.categoryHub ? (
+              <li>
+                <a href={breadcrumbItems.categoryHub.href} className="hover:underline">
+                  {breadcrumbItems.categoryHub.label} in {breadcrumbItems.hub.label} →
+                </a>
+              </li>
+            ) : null}
+          </ul>
+        </nav>
+      ) : null}
 
       <ListingDetailFaqSection faqs={listingFaqs} />
 
