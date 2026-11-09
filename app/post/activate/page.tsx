@@ -9,7 +9,11 @@ import AccountUnavailable from "@/components/auth/AccountUnavailable";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { appPath } from "@/lib/config";
 import { listingPublicPathFromActivateListing } from "@/lib/listing-path";
-import { parseActivateListing, type ActivateListing } from "@/lib/activate-listing";
+import {
+  isActivationConfirmed,
+  parseActivateListing,
+  type ActivateListing,
+} from "@/lib/activate-listing";
 import { mapCallableError } from "@/lib/auth-errors";
 import {
   createPayPalOrderForListing,
@@ -141,6 +145,12 @@ function ActivateContent() {
   const hadWaitTimeoutRef = useRef(hadWaitTimeout);
   const trackedWaitResolvedRef = useRef(trackedWaitResolved);
   const usePayPalRef = useRef(false);
+  /**
+   * Renew checkout: the expiry seen when checkout started. A live listing is already
+   * isActive, so success means the expiry moved later — not just "any snapshot".
+   * null for first activation / re-list.
+   */
+  const renewBaselineRef = useRef<{ expiresAtMs: number | undefined } | null>(null);
 
   const homeIso = profile?.homeIso || "IN";
   const usePayPal = homeIso !== "IN" && homeIso !== "IND";
@@ -440,7 +450,11 @@ function ActivateContent() {
     let deactivatedDoc: ActivateListing | null = null;
 
     function handleActivationSuccess(parsed: ActivateListing) {
-      if (!parsed.isActive || !waitingActivationRef.current || activationHandledRef.current) {
+      if (
+        !isActivationConfirmed(parsed, renewBaselineRef.current) ||
+        !waitingActivationRef.current ||
+        activationHandledRef.current
+      ) {
         return;
       }
       activationHandledRef.current = true;
@@ -702,6 +716,7 @@ function ActivateContent() {
     setBusy(true);
     setError("");
     setActivationTimedOut(false);
+    captureRenewBaseline();
     const attempt = nextCheckoutAttempt(planId);
     const selectedPlan = plans.find((plan) => plan.id === planId);
     const planPosition = findPlanPosition(plans, planId);
@@ -800,6 +815,7 @@ function ActivateContent() {
     setBusy(true);
     setError("");
     setActivationTimedOut(false);
+    captureRenewBaseline();
     const attempt = nextCheckoutAttempt(planId);
     const selectedPlan = plans.find((plan) => plan.id === planId);
     const planPosition = findPlanPosition(plans, planId);
@@ -874,6 +890,13 @@ function ActivateContent() {
       availability_state: plansStatus,
       ...planContextMeta(),
     });
+  }
+
+  function captureRenewBaseline() {
+    renewBaselineRef.current =
+      isRenewMode && listing?.isActive
+        ? { expiresAtMs: listing.listingExpiresAtMs }
+        : null;
   }
 
   function resolveListingIdForPayment(): string {

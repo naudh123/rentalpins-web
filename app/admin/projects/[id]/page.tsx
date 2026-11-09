@@ -87,6 +87,7 @@ export default function EditProjectPage() {
         projectId={id!}
         saving={saving}
         allowFeatured
+        allowPublish
         onSave={save}
       />
       {message && (

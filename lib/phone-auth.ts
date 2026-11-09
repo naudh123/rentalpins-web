@@ -10,6 +10,20 @@ export function normalizePhoneForAuth(phone: string): string {
   return `+${digits}`;
 }
 
+/**
+ * A listing's contact number counts as verified only when it is the same number
+ * the owner proved via Firebase phone OTP — not just because they verified some phone.
+ */
+export function isOwnerPhoneVerified(
+  contactPhone: string,
+  verifiedAuthPhone: string | null | undefined
+): boolean {
+  if (!verifiedAuthPhone) return false;
+  const contact = normalizePhoneForAuth(contactPhone);
+  if (!isValidPhoneForAuth(contact)) return false;
+  return contact === normalizePhoneForAuth(verifiedAuthPhone);
+}
+
 export function isValidPhoneForAuth(phone: string): boolean {
   const normalized = normalizePhoneForAuth(phone);
   if (!normalized.startsWith("+")) return false;

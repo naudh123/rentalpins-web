@@ -44,7 +44,11 @@ import {
   generateRankingKey,
 } from "@/lib/listing-publish";
 import { allowUnverifiedOwnerContact, appPath } from "@/lib/config";
-import { isValidPhoneForAuth, normalizePhoneForAuth } from "@/lib/phone-auth";
+import {
+  isOwnerPhoneVerified,
+  isValidPhoneForAuth,
+  normalizePhoneForAuth,
+} from "@/lib/phone-auth";
 import { resolveIsoFromPhone } from "@/lib/phone-iso";
 import { parsePostDraftListing } from "@/lib/draft-listing";
 import { listingPublicPath, listingToSlugInput } from "@/lib/listing-path";
@@ -106,7 +110,10 @@ export default function PostListingForm({
     if (!SALE_PROPERTY_SUBCATEGORIES.includes(subCategory as (typeof SALE_PROPERTY_SUBCATEGORIES)[number])) {
       setSubCategory("Apartments / Flats");
     }
-    setPriceUnit("total");
+    // Keep a valid sale unit (e.g. "per acre" on a loaded plot draft); only replace rent units.
+    setPriceUnit((prev) =>
+      (SALE_PRICE_UNITS as readonly string[]).includes(prev) ? prev : "total"
+    );
   }, [isSale, subCategory]);
 
   useEffect(() => {
@@ -694,7 +701,7 @@ export default function PostListingForm({
     }
     const listingHomeIso =
       resolveIsoFromPhone(ownerPhone) || profile.homeIso || "IN";
-    const ownerPhoneVerified = allowUnverifiedOwnerContact ? false : Boolean(user.phoneNumber);
+    const ownerPhoneVerified = isOwnerPhoneVerified(ownerPhone, user.phoneNumber);
 
     setAiNotice(null);
     setError("");

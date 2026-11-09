@@ -84,8 +84,8 @@ export default function MyProjectEditPage() {
                 {project.name}
               </h1>
               <p className="mt-2 text-sm text-[var(--muted)]">
-                Add photos, pricing, and publish when ready. Enquiries go to RentalPins for lead
-                qualification.
+                Add photos and pricing. Our team reviews new projects before they go live, and
+                enquiries go to RentalPins for lead qualification.
               </p>
 
               <div className="mt-4 flex flex-wrap gap-2">
