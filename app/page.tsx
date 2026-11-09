@@ -1,193 +1,82 @@
 import type { Metadata } from "next";
 
-import HomeRecentlyViewed from "@/components/listings/HomeRecentlyViewed";
-
 import MarketingShell from "@/components/MarketingShell";
-
-import HomeAiAdvisorSection from "@/components/home/HomeAiAdvisorSection";
-
-import HomeBuyerDemandSection from "@/components/home/HomeBuyerDemandSection";
-
-import HomeDeveloperSection from "@/components/home/HomeDeveloperSection";
-
-import HomeDiscoverSection from "@/components/home/HomeDiscoverSection";
-
-import HomeFaqSection from "@/components/home/HomeFaqSection";
-
+import HomeAboutFaq from "@/components/home/HomeAboutFaq";
+import HomeCities from "@/components/home/HomeCities";
 import HomeFinalCta from "@/components/home/HomeFinalCta";
-
+import HomeGuides from "@/components/home/HomeGuides";
 import HomeHero from "@/components/home/HomeHero";
-
-import HomeInvestmentIntelSection from "@/components/home/HomeInvestmentIntelSection";
-
-import HomeLaneZone from "@/components/home/HomeLaneZone";
-
-import HomeOwnerListingSection from "@/components/home/HomeOwnerListingSection";
-
-import HomeTricitySection from "@/components/home/HomeTricitySection";
-
+import HomeOwners from "@/components/home/HomeOwners";
+import HomeSteps from "@/components/home/HomeSteps";
+import HomeVerticals from "@/components/home/HomeVerticals";
 import StickySeoCTA from "@/components/seo/StickySeoCTA";
-
-import { JsonLdFAQ } from "@/components/JsonLd";
-
-import BreadcrumbSchema from "@/components/seo/BreadcrumbSchema";
-
 import StructuredData from "@/components/seo/StructuredData";
-
-import { getLiveCities } from "@/lib/cities-config";
-
-import AeoAnswerBox from "@/components/seo/AeoAnswerBox";
-
-import { HOME_FAQS, HOME_HERO } from "@/lib/seo/home-page-content";
-
-import { buildPageMetadata } from "@/lib/seo/metadata";
-
 import { canonicalUrl } from "@/lib/seo";
+import {
+  HOME_ABOUT,
+  HOME_FAQS,
+  HOME_META,
+  HOME_VERTICALS,
+  getHomeGlobalCities,
+  getHomeIndiaCities,
+  getHomeListPropertyLinks,
+} from "@/lib/seo/home-page-content";
+import { buildPageMetadata, withBrandSuffix } from "@/lib/seo/metadata";
+import { buildFAQSchema } from "@/lib/seo/schema-helpers";
 
-
-
-export const metadata: Metadata = buildPageMetadata({
-
-  title: "RentalPins — Rent & Buy Property on the Map | India",
-
-  description:
-
-    "Find rentals and properties for sale on RentalPins. Browse map-based listings, compare locations, contact owners directly, and list your property free.",
-
-  path: "/",
-
-  keywords: [
-
-    "rent property on map",
-
-    "buy property on map",
-
-    "owner-direct property",
-
-    "property for sale",
-
-    "Chandigarh Tricity property",
-
-    "Mohali property",
-
-    "New Chandigarh investment",
-
-    "no broker rentals",
-
-    "list property free",
-
-    "flats for rent",
-
-  ],
-
-});
-
-
+export const metadata: Metadata = {
+  ...buildPageMetadata({
+    title: HOME_META.title,
+    description: HOME_META.description,
+    path: "/",
+    keywords: [...HOME_META.keywords],
+  }),
+  // The root layout's "%s | RentalPins" template only applies to child
+  // segments, so the home page sets its full branded title itself.
+  title: { absolute: withBrandSuffix(HOME_META.title) },
+};
 
 export default function HomePage() {
+  const indiaCities = getHomeIndiaCities();
+  const globalCities = getHomeGlobalCities();
+  const listPropertyLinks = getHomeListPropertyLinks();
 
-  const liveCities = getLiveCities();
-  const liveIndiaCities = liveCities.filter((c) => c.countrySlug === "in");
-  const globalHubCities = liveCities.filter((c) => c.countrySlug !== "in");
-  const topCities = liveIndiaCities.slice(0, 8);
-
-
+  // Organization + WebSite (with SearchAction → /search?q=) are emitted
+  // globally by app/layout.tsx; the home page adds WebPage + FAQPage only.
+  const webPageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: HOME_META.title,
+    url: canonicalUrl("/"),
+    description: HOME_META.description,
+    isPartOf: { "@type": "WebSite", name: "RentalPins", url: canonicalUrl("/") },
+    about: HOME_ABOUT.paragraphs[0],
+    hasPart: HOME_VERTICALS.map((v) => ({
+      "@type": "WebPage",
+      name: v.title,
+      url: canonicalUrl(v.primary.href),
+    })),
+  };
 
   return (
-
     <MarketingShell>
-
-      <BreadcrumbSchema items={[{ name: "Home", url: canonicalUrl("/") }]} />
-
       <StructuredData
-
-        data={{
-
-          "@context": "https://schema.org",
-
-          "@type": "WebPage",
-
-          name: "RentalPins — Rent & buy property on the map",
-
-          url: canonicalUrl("/"),
-
-          description:
-
-            "RentalPins helps people rent, buy, sell, and discover property directly through live map-based listings.",
-
-          isPartOf: { "@type": "WebSite", name: "RentalPins", url: canonicalUrl("/") },
-
-        }}
-
+        data={[
+          webPageSchema,
+          buildFAQSchema(HOME_FAQS.map((f) => ({ question: f.q, answer: f.a }))),
+        ]}
       />
 
-      <JsonLdFAQ faqs={HOME_FAQS.map((f) => ({ question: f.q, answer: f.a }))} />
-
-
-
-      <div className="rp-gradient-hero">
-
-        <HomeHero liveCityCount={liveCities.length} />
-
-        <div className="mx-auto max-w-3xl px-4 pb-4">
-
-          <AeoAnswerBox summary={HOME_HERO.subhead} heading="What is RentalPins?" />
-
-        </div>
-
-
-
-        <HomeLaneZone lane="rent">
-
-          <HomeTricitySection />
-
-        </HomeLaneZone>
-
-
-
-        <HomeLaneZone lane="buy">
-
-          <HomeBuyerDemandSection />
-
-          <HomeDeveloperSection />
-
-        </HomeLaneZone>
-
-
-
-        <HomeLaneZone lane="invest">
-
-          <HomeInvestmentIntelSection />
-
-          <HomeAiAdvisorSection />
-
-        </HomeLaneZone>
-
-
-
-        <HomeOwnerListingSection />
-
-        <HomeRecentlyViewed />
-
-        <HomeDiscoverSection
-          liveIndiaCities={liveIndiaCities}
-          globalHubCities={globalHubCities}
-          topCities={topCities}
-        />
-
-        <HomeFaqSection />
-
-        <HomeFinalCta />
-
-      </div>
-
-
+      <HomeHero liveIndiaCityCount={indiaCities.length} />
+      <HomeVerticals />
+      <HomeSteps />
+      <HomeCities indiaCities={indiaCities} globalCities={globalCities} />
+      <HomeOwners listPropertyLinks={listPropertyLinks} />
+      <HomeGuides />
+      <HomeAboutFaq />
+      <HomeFinalCta />
 
       <StickySeoCTA />
-
     </MarketingShell>
-
   );
-
 }
-

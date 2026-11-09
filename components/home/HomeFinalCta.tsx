@@ -1,36 +1,32 @@
 import Link from "next/link";
 import { appPath } from "@/lib/config";
 import { HOME_FINAL_CTA } from "@/lib/seo/home-page-content";
+import { ArrowIcon } from "@/components/home/HomeIcons";
 
 export default function HomeFinalCta() {
   return (
-    <section className="rp-home-navy-band relative overflow-hidden px-4 py-16 text-center text-white md:py-20">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_50%_120%,rgba(232,80,26,0.18),transparent)]"
-        aria-hidden
-      />
-      <div className="relative mx-auto max-w-2xl">
-        <h2 className="font-serif text-2xl md:text-3xl">{HOME_FINAL_CTA.title}</h2>
-        <p className="mx-auto mt-4 text-sm leading-relaxed text-white/75 md:text-base">
-          {HOME_FINAL_CTA.subtitle}
-        </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+    <section aria-labelledby="home-final-cta-heading" className="px-4 py-16 sm:px-6 md:py-20">
+      <div className="mx-auto max-w-4xl rounded-3xl bg-[linear-gradient(135deg,var(--brand-navy)_0%,var(--brand-navy-dark)_100%)] px-6 py-12 text-center text-white shadow-[0_30px_80px_-40px_rgba(15,37,84,0.8)] sm:px-12">
+        <h2 id="home-final-cta-heading" className="font-serif text-[1.75rem] leading-tight sm:text-4xl">
+          {HOME_FINAL_CTA.title}
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-base text-white/75">{HOME_FINAL_CTA.subtitle}</p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
-            href={appPath("/post")}
-            data-cta="list-property-free"
-            data-cta-location="home-footer"
-            data-intent="general"
-            className="rp-btn bg-white px-8 py-3.5 font-semibold text-[var(--brand-navy)] hover:brightness-95"
+            href={appPath(HOME_FINAL_CTA.primary.href)}
+            data-cta="home-final-search"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--brand-orange)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[var(--brand-orange-hover)]"
           >
-            List property free
+            {HOME_FINAL_CTA.primary.label}
+            <ArrowIcon />
           </Link>
           <Link
-            href={appPath("/search")}
-            data-cta="browse-rentals-map"
-            data-cta-location="home-footer"
-            className="rp-btn border border-white/40 px-8 py-3.5 text-white hover:bg-white/10"
+            href={appPath(HOME_FINAL_CTA.secondary.href)}
+            data-cta="list-property-free"
+            data-cta-location="home-final-cta"
+            className="inline-flex items-center justify-center rounded-xl border border-white/30 px-6 py-3 text-sm font-semibold text-white transition hover:border-white"
           >
-            Browse rentals on map
+            {HOME_FINAL_CTA.secondary.label}
           </Link>
         </div>
       </div>
