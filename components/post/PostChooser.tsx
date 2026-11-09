@@ -311,7 +311,9 @@ export function PostChooserProvider({ children }: { children: React.ReactNode })
           aria-label="Post — rent out, sell, or list a project"
           onClick={() => openPostChooser("floating_fallback")}
           style={{ padding: "12px 20px" }}
-          className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 z-[60] inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-orange)] text-sm font-bold text-white shadow-[0_8px_28px_rgba(232,80,26,0.45)] transition hover:bg-[var(--brand-orange-hover)] active:scale-95"
+          // Below md, SEO/hub pages pin a sticky CTA bar to the bottom edge;
+          // sit above it so the two never overlap.
+          className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] md:bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 z-[60] inline-flex items-center gap-1.5 rounded-full bg-[var(--brand-orange)] text-sm font-bold text-white shadow-[0_8px_28px_rgba(232,80,26,0.45)] transition hover:bg-[var(--brand-orange-hover)] active:scale-95"
         >
           <svg
             className="h-4 w-4"
